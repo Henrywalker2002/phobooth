@@ -1,5 +1,4 @@
-import uuid
-from user.serializers import UserSerializer, LoginSerializer
+from user.serializers import UserSerializer, LoginSerializer, UserSignUpSerializer
 from user.models import User 
 from base.views import CustomModelViewSetBase
 from django.db import transaction
@@ -11,7 +10,7 @@ from django.contrib.auth import login, logout
 
 class UserViewSet(CustomModelViewSetBase):
     
-    serializer_class = {"default" : UserSerializer}
+    serializer_class = {"default" : UserSerializer, "sign_up" : UserSignUpSerializer}
     queryset = User.objects.all() 
     
     def create(self, request, *args, **kwargs):
@@ -23,6 +22,19 @@ class UserViewSet(CustomModelViewSetBase):
         user.set_password(user.password)
         user.save()        
         return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+    
+    @action(methods=['post'], detail=False, url_path="customer-sign-up") 
+    @transaction.atomic
+    def sign_up(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        
+        serializer.save(role = [1])
+        user = serializer.instance
+        user.set_password(user.password)
+        user.save()
+        return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+    
     
 class AuthenticationViewSet(viewsets.GenericViewSet):
     serializer_class = {"default": LoginSerializer}

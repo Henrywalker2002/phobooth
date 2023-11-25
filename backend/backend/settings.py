@@ -43,7 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', 
     'drf_yasg',
-    'user'
+    'user',
+    'category',
+    'item',
+    'role',
+    'studio',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.custom_middleware.CustomMiddleware'
 ]
 
 ROOT_URLCONF = 'backend.urls'

@@ -1,3 +1,17 @@
 from django.db import models
+from user.models import User
 
-# Create your models here.
+
+class BaseModel(models.Model):
+    """
+    BaseModel contains id, created_at, modified_at, created_by, updated_by
+    """
+    id = models.AutoField(primary_key = True, editable = False)
+    created_at = models.DateTimeField(auto_now_add= True)
+    modified_at = models.DateTimeField(auto_now= True)
+    created_by = models.ForeignKey(to = User, on_delete = models.SET_NULL, null = True, related_name = "%(class)s_created_by")
+    updated_by = models.ForeignKey(to = User, on_delete = models.SET_NULL, null = True, related_name = "%(class)s_updated_by")
+    
+    class Meta:
+        abstract = True
+    
