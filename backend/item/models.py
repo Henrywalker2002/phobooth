@@ -48,3 +48,9 @@ class Item(BaseModel):
 
     def __str__(self) -> str:
         return self.name
+    
+    def __lt__(self, other):
+        return self.id < other.id
+    
+    def __gt__(self, other):
+        return self.id > other.id

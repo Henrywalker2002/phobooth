@@ -17,4 +17,9 @@ class ItemServicesSerializer(serializers.ModelSerializer):
         fields = ['name', 'description', 'type', 'category', 'picture', 'status', 
                   'studio', 'min_price', 'max_price' ]
     
-    
+
+class ItemSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ['id', 'name', 'picture', "type", "category", "picture", 
+                  "status", "min_price", "max_price"]
