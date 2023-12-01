@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import authenticate
 from django.contrib.auth import login, logout
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserViewSet(CustomModelViewSetBase):
     
@@ -60,9 +61,9 @@ class AuthenticationViewSet(viewsets.GenericViewSet):
         if user:
             if not user.is_active:
                 return Response("user is not active", status= status.HTTP_401_UNAUTHORIZED)
-            login(request, user)
-            user_data = self.get_serializer(user).data 
-            return Response(user_data)
+            token = RefreshToken.for_user(user)
+            # user_data = self.get_serializer(user).data 
+            return Response({"username" : user.username, "access" : str(token.access_token), "refresh" : str(token)}, status= status.HTTP_200_OK)
         return Response({"messsage" : "wrong username or password"}, status= status.HTTP_401_UNAUTHORIZED)
 
     @action(methods=['post'], detail=False, url_path="logout")

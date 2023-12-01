@@ -11,6 +11,7 @@ from category.views import CategoryViewSet
 from item.views import ItemServicesViewSet, ItemViewSet
 from cart.views import CartViewSet
 from order.views import OrderViewSet
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenBlacklistView)
 
 router = DefaultRouter() 
 
@@ -32,6 +33,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('docs/', schema_view.with_ui()), 
     path('login/', AuthenticationViewSet.as_view({'post': 'login'})),
-    path('logout/', AuthenticationViewSet.as_view({'post': 'logout'})),
+    path('logout/', TokenBlacklistView.as_view(), name='logout'),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls))
 ]
