@@ -7,7 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { ColoredInput } from "./styles";
+import { ColoredInput } from "./Styles";
 import { Navigate } from "react-router-dom";
 import { Dialog } from "@mui/material";
 import axios from "axios";

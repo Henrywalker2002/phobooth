@@ -9,10 +9,14 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Dialog } from "@mui/material";
-import { ColoredInput } from "./styles";
-import axios from "axios";
+import { ColoredInput } from "./Styles";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+
+const LOGIN_URL = "/login/";
 
 function Login() {
+  const { setAuth } = useAuth();
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -31,7 +35,6 @@ function Login() {
   }, [user, pwd]);
 
   useEffect(() => {
-    console.log(sessionStorage.getItem("username"));
     if (sessionStorage.getItem("username")) {
       navigate("/");
     }
@@ -45,14 +48,13 @@ function Login() {
     });
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/login/",
-        loginInfo,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post(LOGIN_URL, loginInfo, {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log(JSON.stringify(response?.data));
+      const accessToken = response?.data?.access;
+      // const roles = response?.data?.roles;
+      setAuth({ user, pwd, accessToken });
       sessionStorage.setItem("username", response.data.username);
       setUser("");
       setPwd("");

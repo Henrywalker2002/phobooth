@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import axios from "axios";
+import { FaArrowDownLong } from "react-icons/fa6";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   // const [items, setItems] = useState([]);
+  const navigate = useNavigate();
   const list0 = [1, 2, 3];
   const list1 = [1, 2, 3, 4];
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
@@ -119,7 +123,7 @@ function Home() {
                               </div>
                             </div>
                           </div>
-                          <div className="relative flex items-stretch gap-5 mt-3">
+                          <div className="relative flex gap-5 mt-3">
                             <div className="flex flex-col items-stretch w-fit">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
                                 Chụp ảnh gia đình
@@ -128,13 +132,26 @@ function Home() {
                                 Studio: PhotoHN
                               </div>
                             </div>
-                            <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                              <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                                className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                              />
-                            </div>
+                            <Button
+                              variant="contained"
+                              onClick={() => navigate("/item/detail")}
+                              sx={{
+                                alignSelf: "center",
+                                borderRadius: "50%",
+                                color: "#F6F5FB",
+                                bgcolor: "#3F41A6",
+                                width: "30px",
+                                height: "30px",
+                                minWidth: 0,
+                                padding: "0",
+                                transform: "rotate(-90deg)",
+                                "&:hover": {
+                                  bgcolor: "#3F41A6B2",
+                                },
+                              }}
+                            >
+                              <FaArrowDownLong />
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -192,13 +209,26 @@ function Home() {
                                 Studio: PhotoHN
                               </div>
                             </div>
-                            <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                              <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                                className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                              />
-                            </div>
+                            <Button
+                              variant="contained"
+                              onClick={() => navigate("/item/detail")}
+                              sx={{
+                                alignSelf: "center",
+                                borderRadius: "50%",
+                                color: "#F6F5FB",
+                                bgcolor: "#3F41A6",
+                                width: "30px",
+                                height: "30px",
+                                minWidth: 0,
+                                padding: "0",
+                                transform: "rotate(-90deg)",
+                                "&:hover": {
+                                  bgcolor: "#3F41A6B2",
+                                },
+                              }}
+                            >
+                              <FaArrowDownLong />
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -273,13 +303,26 @@ function Home() {
                             Studio: PhotoHN
                           </div>
                         </div>
-                        <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                          <img
-                            loading="lazy"
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                          />
-                        </div>
+                        <Button
+                          variant="contained"
+                          onClick={() => navigate("/item/detail")}
+                          sx={{
+                            alignSelf: "center",
+                            borderRadius: "50%",
+                            color: "#F6F5FB",
+                            bgcolor: "#3F41A6",
+                            width: "30px",
+                            height: "30px",
+                            minWidth: 0,
+                            padding: "0",
+                            transform: "rotate(-90deg)",
+                            "&:hover": {
+                              bgcolor: "#3F41A6B2",
+                            },
+                          }}
+                        >
+                          <FaArrowDownLong />
+                        </Button>
                       </div>
                     </div>
                   </div>
