@@ -2,6 +2,7 @@ from rest_framework import serializers
 from order.models import Order, OrderItem
 from item.models import Item
 from item.serializers import ItemSummarySerializer
+from user.models import User
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class CreateOrderItemSerializer(serializers.ModelSerializer):
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
-    customer = serializers.PrimaryKeyRelatedField(read_only=True)
+    customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     order_item = CreateOrderItemSerializer(many=True)
     
     class Meta:

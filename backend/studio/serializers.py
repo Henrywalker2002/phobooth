@@ -30,3 +30,9 @@ class StudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
         fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address']
+        
+        
+class StudioSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Studio
+        fields = ['id', 'code_name', 'friendly_name']

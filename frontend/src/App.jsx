@@ -54,11 +54,12 @@ function App() {
         <Route path="/booking" element={<Booking />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/order/detail" element={<OrderDetail />} />
-        <Route path="/item/detail" element={<ItemDetail />} />
+        <Route path="/item/detail/:id" element={<ItemDetail />} />
 
         {/* Studio */}
         <Route path="/studio/order/detail" element={<StudioOrderDetail />} />
         <Route path="/studio/orders" element={<StudioOrders />} />
+
         <Route path="/" element={<Home />} />
       </Routes>
     </ThemeProvider>

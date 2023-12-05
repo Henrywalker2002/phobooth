@@ -43,6 +43,7 @@ class Item(BaseModel):
 
     min_price = models.IntegerField(null=True)
     max_price = models.IntegerField(null=True)
+    star = models.FloatField(default= 5)
 
     item = models.ManyToManyField(to="Item", related_name="item_item")
 

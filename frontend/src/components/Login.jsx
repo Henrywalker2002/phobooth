@@ -16,7 +16,7 @@ import useAuth from "../hooks/useAuth";
 const LOGIN_URL = "/login/";
 
 function Login() {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ function Login() {
       const accessToken = response?.data?.access;
       // const roles = response?.data?.roles;
       setAuth({ user, pwd, accessToken });
+      sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("username", response.data.username);
       setUser("");
       setPwd("");
@@ -96,8 +97,8 @@ function Login() {
             <div className="text-neutral-800 text-center text-4xl font-semibold leading-9 tracking-tight self-center w-[463px]">
               Chào mừng bạn quay trở lại với cộng đồng PhoBooth
             </div>
-            <div class="mt-6 flex flex-row justify-evenly">
-              <div class="w-[200px]">
+            <div className="mt-6 flex flex-row justify-evenly">
+              <div className="w-[200px]">
                 <button
                   type="button"
                   className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
@@ -110,10 +111,10 @@ function Login() {
                   Đăng nhập với Google{" "}
                 </button>
               </div>
-              <div class="w-[200px]">
+              <div className="w-[200px]">
                 <button
                   type="button"
-                  class="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
+                  className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
                 >
                   <img
                     loading="lazy"
@@ -124,7 +125,7 @@ function Login() {
                 </button>
               </div>
             </div>
-            <div class="my-6 text-sm text-gray-600 text-center">
+            <div className="my-6 text-sm text-gray-600 text-center">
               <p>or</p>
             </div>
             {/* Login Form */}
@@ -177,18 +178,18 @@ function Login() {
               <div>
                 <button
                   type="submit"
-                  class="w-full shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                  className="w-full shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
                 >
                   Đăng nhập
                 </button>
               </div>
             </form>
-            <div class="mt-6 text-sm text-neutral-700 text-center">
+            <div className="mt-6 text-sm text-neutral-700 text-center">
               <p>
                 Bạn mới biết đến PhoBooth?{" "}
                 <a
                   href="/signup"
-                  class="text-indigo-800 font-semibold hover:underline"
+                  className="text-indigo-800 font-semibold hover:underline"
                 >
                   ĐĂNG KÍ
                 </a>

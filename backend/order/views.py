@@ -16,6 +16,7 @@ class OrderViewSet(CustomModelViewSetBase):
     
     @transaction.atomic
     def create(self, request, *kawrgs, **kwargs):
+        request.data['customer'] = request.user.id
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception = True)
         order_item = serializer.validated_data.pop('order_item')

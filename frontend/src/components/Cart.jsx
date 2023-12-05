@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import {
   Table,
@@ -15,6 +15,8 @@ import {
 import { CiCircleRemove } from "react-icons/ci";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
+import axios from "../api/axios";
+// import { useHistory } from "react-router-dom";
 
 function createData(item, type, category, quantity, min_price, max_price) {
   return { item, type, category, quantity, min_price, max_price };
@@ -29,6 +31,30 @@ const rows = [
 ];
 
 function Cart() {
+  const [items, setItems] = React.useState([]);
+  useEffect(() => {
+    axios
+      .get("/cart/", {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  function getPrice(item) {
+    if (item?.item?.price) {
+      return item?.item?.price;
+    }
+    return item?.min_price + " - " + item?.max_price;
+  }
+  const [order_item, set_order_item] = React.useState([]);
+
   return (
     <div>
       <Navbar />
@@ -64,13 +90,29 @@ function Cart() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {items.map((row, index) => (
               <TableRow
                 key={index}
                 // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell sx={{ width: "42px" }}>
                   <Checkbox
+                    onChange={(event) => {
+                      if (event.target.checked) {
+                        let old_items = order_item;
+                        old_items.push({
+                          item: row.item.id,
+                          number: row.number,
+                        });
+                        set_order_item(old_items);
+                      } else {
+                        let old_items = order_item;
+                        old_items = old_items.filter(
+                          (item) => item.item !== row.item.id
+                        );
+                        set_order_item(old_items);
+                      }
+                    }}
                     inputProps={{ "aria-label": "Checkbox demo" }}
                     sx={{
                       "&.Mui-checked": {
@@ -87,24 +129,23 @@ function Cart() {
                       className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
                     />
                     <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                      {row.item}
+                      {row?.item?.name}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {row.type}
+                    {/* {row?.type?.type } */}
+                    Dịch vụ
                   </div>
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {row.category}
+                    {row?.category?.title}
                   </div>
                 </TableCell>
-                <TableCell align="left">{row.quantity}</TableCell>
-                <TableCell align="left">
-                  {row.min_price} - {row.max_price}
-                </TableCell>
+                <TableCell align="left">{row?.number}</TableCell>
+                <TableCell align="left">{getPrice(row?.item)}</TableCell>
                 <TableCell>
                   <IconButton aria-label="delete">
                     <CiCircleRemove style={{ color: "#666666" }} />
@@ -196,6 +237,26 @@ function Cart() {
             "&:hover": {
               bgcolor: "#3F41A6B2",
             },
+          }}
+          onClick={() => {
+            axios
+              .post(
+                "/order/",
+                { order_item: order_item },
+                {
+                  headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(
+                      "accessToken"
+                    )}`,
+                  },
+                }
+              )
+              .then((res) => {
+                console.log(res); // TODO: redirect to order
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }}
         >
           Đặt dịch vụ
