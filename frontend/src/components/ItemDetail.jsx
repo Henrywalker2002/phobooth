@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useEffect, useState} from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import {
@@ -16,8 +16,23 @@ import { IoIosAdd } from "react-icons/io";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
-function ItemDetail() {
+function ItemDetail(props) {
+  const {auth, setAuth} = useAuth();
+  let {id} = useParams(props, "id");
+  const [item, setItem] = useState({});
+  useEffect(() => {
+    axios.get("/item/" + id + "/")
+    .then((res) => {
+      setItem(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+  }) }, []);
+
   const list0 = ["Hàng hóa khác của Studio", "Tương tự"];
   const list1 = [1, 2, 3, 4];
   return (
@@ -38,7 +53,7 @@ function ItemDetail() {
           >
             Dịch vụ
           </Link>
-          <Typography color="#3F41A6">Gia đình</Typography>
+          <Typography color="#3F41A6">{item?.category?.title || "Gia đình"}</Typography>
         </Breadcrumbs>
 
         {/* Content */}
@@ -80,11 +95,11 @@ function ItemDetail() {
           <div className="flex flex-col items-end mt-1 w-[61%] mr-[180px]">
             <div className="flex grow flex-col w-[620px]">
               <div className="text-zinc-900 text-4xl font-semibold leading-10 whitespace-nowrap self-start">
-                Chụp ảnh gia đình
+                {item?.name || "Chụp ảnh gia đình"}
               </div>
               <div className="flex gap-1.5 mt-2.5 self-start items-center">
                 <div className="justify-center text-indigo-800 text-base font-medium tracking-wider self-center my-auto">
-                  4.9
+                  {item.star}
                 </div>
                 <FaStar style={{ color: "#3F41A6", width: "17px" }} />
                 <div className="text-zinc-400 text-xl font-medium leading-8 self-stretch">
@@ -95,7 +110,7 @@ function ItemDetail() {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                1.000.000Đ - 2.000.000Đ
+                {item?.min_price || "1.000.000"}đ - {item?.max_price || "2.000.000"}đ
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -108,16 +123,14 @@ function ItemDetail() {
                   Lĩnh vực :
                 </div>
                 <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch grow px-2 py-1">
-                  Gia đình
+                  {item?.category?.title || "Gia đình"}
                 </div>
               </div>
               <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-5" />
               <div className="text-zinc-500 text-sm leading-5 self-stretch mt-3">
-                Class aptent taciti sociosqu ad litora torquent per conubia
-                nostra, per inceptos himenaeos. Nulla nibh diam, blandit vel
-                consequat nec, ultrices et ipsum.{" "}
+               {item?.description + " "}
               </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
+              {/* <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
                   100 g of fresh leaves provides.
@@ -140,7 +153,7 @@ function ItemDetail() {
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
                   100 g of fresh leaves provides.
                 </div>
-              </div>
+              </div> */}
               <div className="text-indigo-800 text-base font-bold self-stretch whitespace-nowrap mt-3">
                 Read More
               </div>
@@ -176,6 +189,23 @@ function ItemDetail() {
                       bgcolor: "#F6F5FB",
                       borderColor: "#3F41A6",
                     },
+                  }}
+                  onClick={() => {
+                    
+                    axios.post("/cart/", 
+                      {item: id,
+                      number : 1}, 
+                      {headers : {
+                        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json",
+                      }
+                    })
+                    .then((res) => {
+                      console.log(res); // TODO: show success message
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    })
                   }}
                 >
                   Thêm vào giỏ hàng

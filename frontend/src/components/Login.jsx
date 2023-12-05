@@ -16,7 +16,7 @@ import useAuth from "../hooks/useAuth";
 const LOGIN_URL = "/login/";
 
 function Login() {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ function Login() {
       const accessToken = response?.data?.access;
       // const roles = response?.data?.roles;
       setAuth({ user, pwd, accessToken });
+      sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("username", response.data.username);
       setUser("");
       setPwd("");

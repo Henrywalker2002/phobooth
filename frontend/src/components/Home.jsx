@@ -13,14 +13,16 @@ function Home() {
   const list1 = [1, 2, 3, 4];
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
 
-  // useEffect(() => {
-  //   axios
-  //     .get("http://127.0.0.1:8000/item")
-  //     .then((res) => {
-  //       setItems(res.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [items]);
+  const [items, setItems] = useState([])
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/item")
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div>
@@ -96,7 +98,7 @@ function Home() {
                 </div>
                 <div className="self-center w-[860px] max-w-full mt-1">
                   <div className="flex justify-around">
-                    {list0.map((item) => (
+                    {items.map((item) => (
                       <div className="flex flex-col items-stretch">
                         <div className="flex-col fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4 max-md:mt-10 max-md:pr-5">
                           <img
@@ -113,7 +115,7 @@ function Home() {
                             <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                               <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                 <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                  4.8
+                                  {item["start"] || 5.0}
                                 </div>
                                 <img
                                   loading="lazy"
@@ -126,15 +128,15 @@ function Home() {
                           <div className="relative flex gap-5 mt-3">
                             <div className="flex flex-col items-stretch w-fit">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                                Chụp ảnh gia đình
+                                {item?.name || "title"}
                               </div>
                               <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                                Studio: PhotoHN
+                                Studio: {item?.studio?.friendly_name || "studio"}
                               </div>
                             </div>
                             <Button
                               variant="contained"
-                              onClick={() => navigate("/item/detail")}
+                              onClick={() => navigate("/item/detail/" + item.id)}
                               sx={{
                                 alignSelf: "center",
                                 borderRadius: "50%",

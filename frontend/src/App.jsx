@@ -50,7 +50,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/orders" element={<Orders />} />
-        <Route path="/item/detail" element={<ItemDetail />} />
+        <Route path="/item/detail/:id" element={<ItemDetail />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </ThemeProvider>
