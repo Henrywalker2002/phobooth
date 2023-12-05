@@ -1,6 +1,4 @@
 import React from "react";
-import Navbar from "./Navbar";
-import PropTypes from "prop-types";
 import {
   Box,
   Collapse,
@@ -11,19 +9,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
   Paper,
   Button,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Navbar from "../components/Navbar";
 
 function Orders() {
   // Collapsible table
-  function createData(id, studio, quantity, status, price) {
+  function createData(id, createdDate, quantity, status, price) {
     return {
       id,
-      studio,
+      createdDate,
       quantity,
       status,
       price,
@@ -65,9 +63,7 @@ function Orders() {
           <TableCell component="th" scope="row">
             {row.id}
           </TableCell>
-          <TableCell align="left" sx={{ color: "#3F41A6" }}>
-            {row.studio}
-          </TableCell>
+          <TableCell align="left">{row.createdDate}</TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
@@ -123,7 +119,12 @@ function Orders() {
                   </TableHead>
                   <TableBody>
                     {row.details.map((detailedRow, index) => (
-                      <TableRow key={index}>
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
                         <TableCell component="th" scope="row">
                           <div className="items-stretch flex gap-5">
                             <img
@@ -163,52 +164,6 @@ function Orders() {
                     ))}
                   </TableBody>
                 </Table>
-
-                {/* yêu cầu thanh toán */}
-                <div className="flex flex-col gap-3 my-5 ml-4">
-                  <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
-                    Yêu cầu thanh toán mới nhất
-                  </div>
-                  <div className="max-w-[430px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-5 p-2.5 rounded-lg border-solid">
-                    <div className=" flex grow basis-[0%] flex-col pr-2 py-px">
-                      <div className="text-[#808080] text-base font-medium leading-6">
-                        Thanh toán lần 3
-                      </div>
-                      <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                        200,000
-                      </div>
-                      <div className="flex justify-start gap-4 mt-2.5">
-                        <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
-                          Thời hạn :
-                        </div>
-                        <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                          30-10-2023
-                        </div>
-                        <div className="w-[90px] max-h-5 text-red-500 text-xs leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 px-3">
-                          Còn 3 ngày
-                        </div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        justifyContent: "center",
-                        alignSelf: "center",
-                        textTransform: "none",
-                        borderRadius: "43px",
-                        color: "#F6F5FB",
-                        bgcolor: "#3F41A6",
-                        width: "110px",
-                        height: "28px",
-                        "&:hover": {
-                          bgcolor: "#3F41A6B2",
-                        },
-                      }}
-                    >
-                      Thanh toán
-                    </Button>
-                  </div>
-                </div>
               </Box>
             </Collapse>
           </TableCell>
@@ -217,31 +172,11 @@ function Orders() {
     );
   }
 
-  //   Ràng buộc kiểu cho các field
-  //   Row.propTypes = {
-  //     row: PropTypes.shape({
-  //       calories: PropTypes.number.isRequired,
-  //       carbs: PropTypes.number.isRequired,
-  //       fat: PropTypes.number.isRequired,
-  //       history: PropTypes.arrayOf(
-  //         PropTypes.shape({
-  //           amount: PropTypes.number.isRequired,
-  //           customerId: PropTypes.string.isRequired,
-  //           date: PropTypes.string.isRequired,
-  //         })
-  //       ).isRequired,
-  //       name: PropTypes.string.isRequired,
-  //       price: PropTypes.number.isRequired,
-  //       protein: PropTypes.number.isRequired,
-  //     }).isRequired,
-  //   };
-
   const rows = [
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Đã đặt", "200000 - 400000"),
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Đã chấp nhận", "800000"),
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Vận chuyển", "800000"),
+    createData("ANUW482NUENQ", "20-10-2023", "2", "Đã đặt", "200000 - 400000"),
+    createData("ANUW482NUENQ", "20-10-2023", "2", "Đã chấp nhận", "800000"),
+    createData("ANUW482NUENQ", "20-10-2023", "2", "Vận chuyển", "800000"),
   ];
-
   return (
     <div>
       <Navbar />
@@ -261,7 +196,7 @@ function Orders() {
               <TableCell />
               <TableCell sx={{ color: "#3F41A6" }}>MÃ ĐƠN HÀNG</TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                NHÀ CUNG CẤP
+                NGÀY ĐẶT
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 SỐ LƯỢNG HÀNG HÓA
