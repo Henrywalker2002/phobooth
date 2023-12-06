@@ -66,6 +66,11 @@ MIDDLEWARE = [
     'backend.custom_middleware.CustomMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+<<<<<<< Updated upstream
+=======
+    'backend.JWTMiddleware.JWTAuthenticationMiddleware',
+    'backend.custom_middleware.CustomMiddleware',
+>>>>>>> Stashed changes
 ]
 
 ROOT_URLCONF = 'backend.urls'
