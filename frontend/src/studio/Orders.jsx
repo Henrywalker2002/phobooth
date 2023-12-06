@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {
   Box,
   Collapse,
@@ -15,9 +15,25 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Navbar from "../components/Navbar";
+import axios from "../api/axios";
 
 function Orders() {
   // Collapsible table
+
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios.get("order/list_order_of_studio/", {
+      headers: { Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
+    })
+    .then((res) => {
+      setItems(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
   function createData(id, createdDate, quantity, status, price) {
     return {
       id,
@@ -44,13 +60,20 @@ function Orders() {
     };
   }
 
+  function getPrice(item) {
+    if (item.price) {
+      return item.price;
+    }
+    return item.item.min_price + " - " + item.item.max_price;
+  }
+
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
 
     return (
       <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow hover = {true} sx={{ "& > *": { borderBottom: "unset" } }}>
           <TableCell>
             <IconButton
               aria-label="expand row"
@@ -63,14 +86,14 @@ function Orders() {
           <TableCell component="th" scope="row">
             {row.id}
           </TableCell>
-          <TableCell align="left">{row.createdDate}</TableCell>
-          <TableCell align="left">{row.quantity}</TableCell>
+          <TableCell align="left">{row.created_at}</TableCell>
+          <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
               {row.status}
             </div>
           </TableCell>
-          <TableCell align="left">{row.price}</TableCell>
+          <TableCell align="left">{row.total_price || "Chưa cập nhật"}</TableCell>
           <TableCell align="left">
             <Button
               variant="outlined"
@@ -86,8 +109,11 @@ function Orders() {
                   borderColor: "#3F41A6",
                 },
               }}
+              onClick={(event) => {
+                window.location.href = `/studio/order/detail/${row.id}`;
+              }}
             >
-              Hủy đơn
+              Chỉnh sửa
             </Button>
           </TableCell>
         </TableRow>
@@ -118,7 +144,7 @@ function Orders() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.details.map((detailedRow, index) => (
+                    {row.order_item.map((detailedRow, index) => (
                       <TableRow
                         key={index}
                         sx={{
@@ -133,7 +159,7 @@ function Orders() {
                               className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
                             />
                             <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {detailedRow.name}
+                              {detailedRow.item.name}
                             </div>
                           </div>
                         </TableCell>
@@ -144,9 +170,9 @@ function Orders() {
                         <TableCell align="left">
                           {detailedRow.quantity}
                         </TableCell>
-                        <TableCell align="left">{detailedRow.price}</TableCell>
+                        <TableCell align="left">{getPrice(detailedRow)}</TableCell>
                         <TableCell align="left">
-                          <Button
+                          {/* <Button
                             variant="text"
                             sx={{
                               color: "#3F41A6",
@@ -158,7 +184,7 @@ function Orders() {
                             }}
                           >
                             Đánh giá
-                          </Button>
+                          </Button> */}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -213,8 +239,8 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
+            {items.map((row) => (
+              <Row key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>

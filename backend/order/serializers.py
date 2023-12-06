@@ -10,10 +10,11 @@ from studio.serializers import StudioSummarySerializer
 class CreateOrderItemSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(), required=False)    
+    price = serializers.IntegerField(required=False)
     
     class Meta:
         model = OrderItem
-        fields = ["order", "item", "quantity"]
+        fields = ["order", "item", "quantity", "price"]
         extra_kwargs = {"order": {"required": False, "allow_null": True}}
 
 class CreateOrderSerializer(serializers.ModelSerializer):

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import {
   Box,
@@ -29,14 +29,44 @@ import { MdEdit, MdDeleteOutline } from "react-icons/md";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { FaXmark } from "react-icons/fa6";
+import axios from "../api/axios";
+import { useParams } from "react-router-dom";
 
-function OrderDetail() {
+function OrderDetail(props) {
   // Edit
+  let { id } = useParams(props, "id");
+  const [order, setOrder] = useState({});
+  const [orderItem, setOrderItem] = useState([]);
+  const [price, setPrice] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [status, setStatus] = useState("OREDERD"); // [1, 2, 3
+  
+  useEffect(() => {
+    axios.get(`/order/${id}`, {
+      headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
+    }).
+    then((res) => {
+      setOrder(res.data);
+      setStatus(res.data.status);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }, []);
+
   const [open, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  //   setOrderItem
+  // };
+
+  function handleClickOpen(orderItem) {
     setOpen(true);
-  };
+    setOrderItem(orderItem);
+    console.log(orderItem);
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -45,7 +75,19 @@ function OrderDetail() {
   // selection
   const [value, setValue] = useState("");
   const handleChange = (event) => {
-    setValue(event.target.value);
+    let value = event.target.value;
+    axios.patch(`/order/${order.id}/`, {
+      status: value,
+    }, {
+      headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
+    })
+    .then((res) => {
+      console.log(res.data); // TODO: notify for user
+      setStatus(value);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   };
 
   // Collapsible table
@@ -57,6 +99,13 @@ function OrderDetail() {
       quantity,
       price,
     };
+  }
+
+  function getPrice(item) {
+    if (item.price) {
+      return item.price;
+    }
+    return item.item.min_price + " - " + item.item.max_price;
   }
 
   function Row(props) {
@@ -83,26 +132,29 @@ function OrderDetail() {
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
               />
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row.item}
+                {row.item.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.type}
+              {row.item.type === "service" ? "Dịch vụ" : "Sản phẩm"}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.category}
+              {/* {row.item.category.name} */}
+              Chụp ảnh gia đình
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
-          <TableCell align="left">{row.price}</TableCell>
+          <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
             <IconButton>
               <MdEdit
-                onClick={handleClickOpen}
+                onClick={() =>
+                   handleClickOpen(row.id)
+                }
                 style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
               />
             </IconButton>
@@ -145,11 +197,11 @@ function OrderDetail() {
       >
         <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-20 py-4 rounded-lg">
           <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
-            ABYW527BH
+            {order.id}
           </div>
-          <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
+          {/* <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
             3 hàng hóa
-          </div>
+          </div> */}
         </div>
         <Table aria-label="collapsible table">
           <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
@@ -174,8 +226,8 @@ function OrderDetail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
+            {order.order_item?.map((row) => (
+              <Row key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>
@@ -200,11 +252,12 @@ function OrderDetail() {
                     value={value}
                     onChange={handleChange}
                     sx={{ marginTop: "10px", height: "33px" }}
-                    defaultValue="Đã đặt"
+                    defaultValue = {status} // NOT WORKING ? 
                   >
-                    <MenuItem value={1}>Đang tiến hành</MenuItem>
-                    <MenuItem value={2}>Vận chuyển</MenuItem>
-                    <MenuItem value={3}>Hoàn thành</MenuItem>
+                    <MenuItem value={"ORDERED"}>ORDERED</MenuItem>
+                    <MenuItem value={"IN_PROCESS"}>IN_PROCESS</MenuItem>
+                    <MenuItem value={"SHIPPING"}>SHIPPING</MenuItem>
+                    <MenuItem value={"COMPLETED"}>COMPLETED</MenuItem>
                   </Select>
                 </FormControl>
               </div>
@@ -215,7 +268,7 @@ function OrderDetail() {
                   Tổng cộng
                 </div>
                 <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                  540,000
+                  {order.total_price || 0} VNĐ
                 </div>
               </div>
             </div>
@@ -267,6 +320,10 @@ function OrderDetail() {
                     width: "100px",
                     boxSizing: "border-box",
                   }}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+
+                   }}
                 />
                 {/* <div className="text-stone-500 text-xs font-light tracking-wide whitespace-nowrap justify-center items-stretch border-[color:var(--Border,#EAEAEA)] mt-1.5 px-14 py-4 rounded-md border-2 border-solid max-md:px-5">
                   500,000
@@ -285,7 +342,7 @@ function OrderDetail() {
                   </IconButton>
                 </div>
                 <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
-                  5
+                  1
                 </div>
                 <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                   <IconButton color="primary">
@@ -313,6 +370,21 @@ function OrderDetail() {
                 "&:hover": {
                   bgcolor: "#3F41A6B2",
                 },
+              }}
+              onClick={() => {
+                axios.patch(`/order-item/${orderItem}/`, {
+                  price: price,
+                  quantity : quantity
+                }, {
+                  headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
+                })
+                .then((res) => {
+                  setOrder(res.data);
+                  setOpen(false);
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
               }}
             >
               Lưu thay đổi

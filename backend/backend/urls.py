@@ -10,7 +10,7 @@ from studio.views import StudioViewSet
 from category.views import CategoryViewSet
 from item.views import ItemServicesViewSet, ItemViewSet
 from cart.views import CartViewSet
-from order.views import OrderViewSet
+from order.views import OrderViewSet, OrderItemViewSet
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenBlacklistView)
 
 router = DefaultRouter() 
@@ -24,6 +24,7 @@ router.register(r'item/services', ItemServicesViewSet, 'item_services')
 router.register(r'item', ItemViewSet, 'item')
 router.register(r'cart', CartViewSet, 'cart')
 router.register(r'order', OrderViewSet, 'order')
+router.register(r'order-item', OrderItemViewSet, 'order-item')
 
 schema_view = get_schema_view(openapi.Info(
     "docs", default_version= 'v1', public = True), permission_classes= (permissions.AllowAny, ))
