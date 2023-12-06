@@ -21,6 +21,12 @@ class Order(BaseModel):
         related_name="order",
         default= get_current_user,
     )
+    studio = models.ForeignKey(
+        "studio.Studio",
+        on_delete=models.CASCADE,
+        related_name="order",
+        null= False,
+    )
     status = models.CharField(
         max_length=255,
         choices=OrderStatusChoice.choices,

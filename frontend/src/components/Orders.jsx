@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import PropTypes from "prop-types";
 import {
@@ -17,9 +17,12 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import axios from "../api/axios";
 
 function Orders() {
   // Collapsible table
+
+  const [orders, setOrders] = React.useState([]);
   function createData(id, studio, quantity, status, price) {
     return {
       id,
@@ -46,9 +49,31 @@ function Orders() {
     };
   }
 
+  useEffect(() => {
+    axios.get("/order/", {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      }
+    })
+    .then((res) => {
+      setOrders(res?.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
+  ,[]);
+
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+
+    function getPrice(item){
+      if (item.price) {
+        return item.price;
+      }
+      return item.item.min_price + " - " + item.item.max_price;
+    }
 
     return (
       <React.Fragment>
@@ -66,7 +91,7 @@ function Orders() {
             {row.id}
           </TableCell>
           <TableCell align="left" sx={{ color: "#3F41A6" }}>
-            {row.studio}
+            {row?.studio?.friendly_name}
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">
@@ -74,7 +99,7 @@ function Orders() {
               {row.status}
             </div>
           </TableCell>
-          <TableCell align="left">{row.price}</TableCell>
+          <TableCell align="left">{row.total_price || "Chưa cập nhật"}</TableCell>
           <TableCell align="left">
             <Button
               variant="outlined"
@@ -122,7 +147,7 @@ function Orders() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.details.map((detailedRow, index) => (
+                    {row.order_item?.map((detailedRow, index) => (
                       <TableRow key={index}>
                         <TableCell component="th" scope="row">
                           <div className="items-stretch flex gap-5">
@@ -132,18 +157,18 @@ function Orders() {
                               className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
                             />
                             <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {detailedRow.name}
+                              {detailedRow.item?.name}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{detailedRow.type}</TableCell>
+                        <TableCell>{detailedRow.type || "Gia đình"}</TableCell>
                         <TableCell align="left">
                           {detailedRow.category}
                         </TableCell>
                         <TableCell align="left">
                           {detailedRow.quantity}
                         </TableCell>
-                        <TableCell align="left">{detailedRow.price}</TableCell>
+                        <TableCell align="left"> {getPrice(detailedRow)} </TableCell>
                         <TableCell align="left">
                           <Button
                             variant="text"
@@ -278,9 +303,12 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
+            {orders.map((row) => (
+              <Row key={row?.id} row={row} />
             ))}
+            {/* {orders.map((row) => (
+              <Row key={row.id} row={row} />
+            ))} */}
           </TableBody>
         </Table>
       </TableContainer>

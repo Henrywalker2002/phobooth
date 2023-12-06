@@ -164,7 +164,7 @@ function Cart() {
                 className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
               />
               <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
-                Studio Chuyên nghiệp
+                Studio_HCM
               </div>
             </div>
             <div className="flex items-stretch justify-between gap-5 mt-4">
