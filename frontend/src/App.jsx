@@ -1,17 +1,20 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Logout from "./components/Logout";
-import Signup from "./components/Signup";
-import ItemDetail from "./components/ItemDetail";
-import Cart from "./components/Cart";
-import Booking from "./components/Booking";
+import Home from "./user/Home";
+import Login from "./user/Login";
+import Logout from "./user/Logout";
+import Signup from "./user/Signup";
+import ItemDetail from "./user/ItemDetail";
+import Cart from "./user/Cart";
+import Booking from "./user/Booking";
 import { ThemeProvider, createTheme } from "@mui/material";
-import Orders from "./components/Orders";
-import OrderDetail from "./components/OrderDetail";
+import Orders from "./user/Orders";
+import OrderDetail from "./user/OrderDetail";
 import StudioOrderDetail from "./studio/OrderDetail";
 import StudioOrders from "./studio/Orders";
+import { CartProvider } from "./context/CartProvider";
+import CartContextLayout from "./context/CartContextLayout";
+import PersistLogin from "./user/PersistLogin";
 
 function App() {
   const theme = createTheme({
@@ -50,14 +53,24 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/booking" element={<Booking />} />
+
+        {/* <Route element={<PersistLogin />}>
+          
+        </Route> */}
+
+        <Route element={<CartContextLayout />}>
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/booking" element={<Booking />} />
+        </Route>
         <Route path="/orders" element={<Orders />} />
-        <Route path="/order/detail" element={<OrderDetail />} />
+        <Route path="/order/detail/:id" element={<OrderDetail />} />
         <Route path="/item/detail/:id" element={<ItemDetail />} />
 
         {/* Studio */}
-        <Route path="/studio/order/detail/:id" element={<StudioOrderDetail />} />
+        <Route
+          path="/studio/order/detail/:id"
+          element={<StudioOrderDetail />}
+        />
         <Route path="/studio/orders" element={<StudioOrders />} />
 
         <Route path="/" element={<Home />} />

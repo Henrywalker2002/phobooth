@@ -25,7 +25,7 @@ class Order(BaseModel):
         "studio.Studio",
         on_delete=models.CASCADE,
         related_name="order",
-        null= False,
+        null= True,
     )
     status = models.CharField(
         max_length=255,

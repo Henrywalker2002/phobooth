@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import {
   Breadcrumbs,
   Button,
@@ -114,8 +114,8 @@ function ItemDetail(props) {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {item?.min_price || "1.000.000"}đ -{" "}
-                {item?.max_price || "2.000.000"}đ
+                {item?.min_price || "1.000.000"}Đ -{" "}
+                {item?.max_price || "2.000.000"}Đ
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -135,32 +135,35 @@ function ItemDetail(props) {
               <div className="text-zinc-500 text-sm leading-5 self-stretch mt-3">
                 {item?.description + " "}
               </div>
-              {/* <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
+              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  100 g of fresh leaves provides.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </div>
               </div>
               <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  100 g of fresh leaves provides.
+                  Pellentesque diam volutpat commodo sed egestas egestas
+                  fringilla phasellus.
                 </div>
               </div>
               <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  100 g of fresh leaves provides.
+                  Dolor sit amet consectetur adipiscing elit. Est ullamcorper
+                  eget nulla facilisi etiam dignissim diam.
                 </div>
               </div>
               <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  100 g of fresh leaves provides.
+                  Diam quam nulla porttitor massa id.
                 </div>
-              </div> */}
+              </div>
               <div className="text-indigo-800 text-base font-bold self-stretch whitespace-nowrap mt-3">
-                Read More
+                Xem thêm
               </div>
               <div className="justify-start items-stretch self-stretch flex gap-5 mt-5 px-px py-5 ">
                 <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">

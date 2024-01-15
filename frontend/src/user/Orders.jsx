@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -18,10 +18,11 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Orders() {
+  const navigate = useNavigate();
   // Collapsible table
-
   const [orders, setOrders] = React.useState([]);
   function createData(id, studio, quantity, status, price) {
     return {
@@ -50,25 +51,26 @@ function Orders() {
   }
 
   useEffect(() => {
-    axios.get("/order/", {
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      }
-    })
-    .then((res) => {
-      setOrders(res?.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }
-  ,[]);
+    axios
+      .get("/order/", {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setOrders(res?.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
 
-    function getPrice(item){
+    function getPrice(item) {
       if (item.price) {
         return item.price;
       }
@@ -77,7 +79,10 @@ function Orders() {
 
     return (
       <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow
+          onClick={() => navigate("/order/detail/" + row.id)}
+          sx={{ "& > *": { borderBottom: "unset" } }}
+        >
           <TableCell>
             <IconButton
               aria-label="expand row"
@@ -99,7 +104,9 @@ function Orders() {
               {row.status}
             </div>
           </TableCell>
-          <TableCell align="left">{row.total_price || "Chưa cập nhật"}</TableCell>
+          <TableCell align="left">
+            {row.total_price || "Chưa cập nhật"}
+          </TableCell>
           <TableCell align="left">
             <Button
               variant="outlined"
@@ -168,7 +175,10 @@ function Orders() {
                         <TableCell align="left">
                           {detailedRow.quantity}
                         </TableCell>
-                        <TableCell align="left"> {getPrice(detailedRow)} </TableCell>
+                        <TableCell align="left">
+                          {" "}
+                          {getPrice(detailedRow)}{" "}
+                        </TableCell>
                         <TableCell align="left">
                           <Button
                             variant="text"
@@ -261,11 +271,11 @@ function Orders() {
   //     }).isRequired,
   //   };
 
-  const rows = [
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Đã đặt", "200000 - 400000"),
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Đã chấp nhận", "800000"),
-    createData("ANUW482NUENQ", "Studio Demo", "2", "Vận chuyển", "800000"),
-  ];
+  // const rows = [
+  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Đã đặt", "200000 - 400000"),
+  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Đã chấp nhận", "800000"),
+  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Vận chuyển", "800000"),
+  // ];
 
   return (
     <div>
@@ -306,9 +316,6 @@ function Orders() {
             {orders.map((row) => (
               <Row key={row?.id} row={row} />
             ))}
-            {/* {orders.map((row) => (
-              <Row key={row.id} row={row} />
-            ))} */}
           </TableBody>
         </Table>
       </TableContainer>

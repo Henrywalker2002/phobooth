@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Navbar from "./Navbar";
+import React, { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
 import {
   Box,
   Collapse,
@@ -24,11 +24,31 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { ColoredStep } from "./Styles";
+import { ColoredStep } from "../styles/Styles";
+import { useParams } from "react-router-dom";
+import axios from "../api/axios";
 
 function OrderDetail() {
   // selection
   const [value, setValue] = useState("");
+  const [order, setOrder] = useState({});
+  let { id } = useParams();
+
+  useEffect(() => {
+    axios
+      .get(`/order/${id}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setOrder(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [order.id]);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -69,22 +89,24 @@ function OrderDetail() {
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
               />
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row.item}
+                {row.item.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.type}
+              {row.item.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.category}
+              {row.item.category}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
-          <TableCell align="left">{row.price}</TableCell>
+          <TableCell align="left">
+            {row.min_price} - {row.max_price}
+          </TableCell>
           <TableCell align="left">
             <Button
               variant="text"
@@ -119,11 +141,11 @@ function OrderDetail() {
     );
   }
 
-  const rows = [
-    createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 200000),
-    createData("Khung ảnh trắng", "Sản phẩm", "Khung ảnh", 1, 100000),
-    createData("Chụp hình gia đình", "Gói dịch vụ", "Gia đình", 1, 240000),
-  ];
+  // const rows = [
+  //   createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 200000),
+  //   createData("Khung ảnh trắng", "Sản phẩm", "Khung ảnh", 1, 100000),
+  //   createData("Chụp hình gia đình", "Gói dịch vụ", "Gia đình", 1, 240000),
+  // ];
 
   //   status process
   const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
@@ -140,7 +162,7 @@ function OrderDetail() {
             Studio Demo
           </div>
           <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
-            3 hàng hóa
+            {order.order_item?.length} hàng hóa
           </div>
         </div>
         <Table aria-label="collapsible table">
@@ -166,12 +188,13 @@ function OrderDetail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
+            {order.order_item?.map((item, index) => (
+              <Row key={index} row={item} />
             ))}
           </TableBody>
         </Table>
 
+        {/* Status bar */}
         <Box sx={{ width: "100%", marginY: "50px" }}>
           <Stepper activeStep={2} alternativeLabel>
             {steps.map((label) => (
@@ -303,7 +326,7 @@ function OrderDetail() {
                       Mã đơn :
                     </div>
                     <div className="text-zinc-900 text-sm leading-5 mt-1.5">
-                      #4152
+                      {order.id}
                     </div>
                   </div>
                   <Divider orientation="vertical" flexItem></Divider>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Collapse,
@@ -23,15 +23,18 @@ function Orders() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    axios.get("order/list_order_of_studio/", {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
-    })
-    .then((res) => {
-      setItems(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    axios
+      .get("order/list_order_of_studio/", {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   function createData(id, createdDate, quantity, status, price) {
@@ -73,7 +76,7 @@ function Orders() {
 
     return (
       <React.Fragment>
-        <TableRow hover = {true} sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow hover={true} sx={{ "& > *": { borderBottom: "unset" } }}>
           <TableCell>
             <IconButton
               aria-label="expand row"
@@ -93,7 +96,9 @@ function Orders() {
               {row.status}
             </div>
           </TableCell>
-          <TableCell align="left">{row.total_price || "Chưa cập nhật"}</TableCell>
+          <TableCell align="left">
+            {row.total_price || "Chưa cập nhật"}
+          </TableCell>
           <TableCell align="left">
             <Button
               variant="outlined"
@@ -170,7 +175,9 @@ function Orders() {
                         <TableCell align="left">
                           {detailedRow.quantity}
                         </TableCell>
-                        <TableCell align="left">{getPrice(detailedRow)}</TableCell>
+                        <TableCell align="left">
+                          {getPrice(detailedRow)}
+                        </TableCell>
                         <TableCell align="left">
                           {/* <Button
                             variant="text"

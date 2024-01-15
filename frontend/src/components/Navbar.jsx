@@ -2,19 +2,22 @@ import { Button, IconButton, Menu, MenuItem } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GrCart } from "react-icons/gr";
-import { FaRegCircleUser } from "react-icons/fa6";
+import { FaRegCircleUser, FaUnderline } from "react-icons/fa6";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { MdNotificationsNone } from "react-icons/md";
+import useAuth from "../hooks/useAuth";
+import { useCookies } from "react-cookie";
 
 function Navbar() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState("");
+  const { auth, setAuth, setPersist } = useAuth();
+  const [, , removeCookie] = useCookies(["userInfo"]);
 
   useEffect(() => {
-    const user = sessionStorage.getItem("username");
-    if (user) {
-      setUserInfo(user);
-      console.log(user);
+    if (auth.user !== undefined) {
+      setUserInfo(auth.user);
+      console.log(auth.user);
     } else setUserInfo("");
   }, []);
 
@@ -28,7 +31,11 @@ function Navbar() {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    navigate("/logout");
+    setAuth({});
+    setPersist(false);
+    localStorage.setItem("persist", false);
+    removeCookie("userInfo");
+    navigate("/login");
   };
   return (
     <div className="container max-w-[1440px] w-full mx-auto mb-5 px-12 flex items-center">
@@ -147,11 +154,11 @@ function Navbar() {
             }}
           >
             <MenuItem onClick={handleClose}>{userInfo}</MenuItem>
+            <MenuItem onClick={handleClose}>Kênh Studio</MenuItem>
             <MenuItem onClick={() => navigate("/orders")}>
               Quản lý đơn hàng
             </MenuItem>
             <MenuItem onClick={handleClose}>Khuyến mãi</MenuItem>
-            <MenuItem onClick={handleClose}>Thông báo</MenuItem>
             <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
           </Menu>
         </div>

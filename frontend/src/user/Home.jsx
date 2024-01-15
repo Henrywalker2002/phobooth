@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import axios from "axios";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { Button } from "@mui/material";
@@ -19,7 +19,7 @@ function Home() {
     axios
       .get("http://127.0.0.1:8000/item")
       .then((res) => {
-        setItems(res.data);
+        setItems([res.data[0], res.data[0], res.data[0]]);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -112,7 +112,7 @@ function Home() {
                               srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                               className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
                             />
-                            <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
+                            <div className="relative w-[43px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                               <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                 <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
                                   {item["start"] || 5.0}
@@ -126,13 +126,13 @@ function Home() {
                             </div>
                           </div>
                           <div className="relative flex gap-5 mt-3">
-                            <div className="flex flex-col items-stretch w-fit">
+                            <div className="flex flex-col items-stretch w-[165px]">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                                {item?.name || "title"}
+                                {item?.name || "Chụp ảnh gia đình"}
                               </div>
                               <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
                                 Studio:{" "}
-                                {item?.studio?.friendly_name || "studio"}
+                                {item?.studio?.friendly_name || "Studio Demo"}
                               </div>
                             </div>
                             <Button
@@ -178,7 +178,7 @@ function Home() {
                 </div>
                 <div className="self-center mt-0 w-[860px] max-w-full">
                   <div className="flex justify-around">
-                    {list0.map((item, index) => (
+                    {items.map((item, index) => (
                       <div className="flex flex-col items-stretch" key={index}>
                         <div className="flex-col fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4 max-md:mt-10 max-md:pr-5">
                           <img
@@ -192,10 +192,10 @@ function Home() {
                               srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                               className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
                             />
-                            <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
+                            <div className="relative w-[43px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                               <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                 <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                  4.8
+                                  {item["start"] || 5.0}
                                 </div>
                                 <img
                                   loading="lazy"
@@ -205,18 +205,21 @@ function Home() {
                               </div>
                             </div>
                           </div>
-                          <div className="relative flex items-stretch gap-5 mt-3">
-                            <div className="flex flex-col items-stretch w-fit">
+                          <div className="relative flex gap-5 mt-3">
+                            <div className="flex flex-col items-stretch w-[165px]">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                                Chụp ảnh gia đình
+                                {item?.name || "Chụp ảnh gia đình"}
                               </div>
                               <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                                Studio: PhotoHN
+                                Studio:{" "}
+                                {item?.studio?.friendly_name || "Studio Demo"}
                               </div>
                             </div>
                             <Button
                               variant="contained"
-                              onClick={() => navigate("/item/detail")}
+                              onClick={() =>
+                                navigate("/item/detail/" + item.id)
+                              }
                               sx={{
                                 alignSelf: "center",
                                 borderRadius: "50%",

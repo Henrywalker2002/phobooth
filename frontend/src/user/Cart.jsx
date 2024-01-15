@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import Navbar from "./Navbar";
+import React, { useContext, useEffect } from "react";
+import Navbar from "../components/Navbar";
 import {
   Table,
   TableBody,
@@ -16,6 +16,8 @@ import { CiCircleRemove } from "react-icons/ci";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
 import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import CartContext from "../context/CartProvider";
 // import { useHistory } from "react-router-dom";
 
 function createData(item, type, category, quantity, min_price, max_price) {
@@ -32,6 +34,10 @@ const rows = [
 
 function Cart() {
   const [items, setItems] = React.useState([]);
+  const [order_item, set_order_item] = React.useState([]);
+  const navigate = useNavigate();
+  const { itemLists, setItemLists } = useContext(CartContext);
+
   useEffect(() => {
     axios
       .get("/cart/", {
@@ -40,6 +46,7 @@ function Cart() {
         },
       })
       .then((res) => {
+        console.log(res.data);
         setItems(res.data);
       })
       .catch((err) => {
@@ -53,7 +60,25 @@ function Cart() {
     }
     return item?.min_price + " - " + item?.max_price;
   }
-  const [order_item, set_order_item] = React.useState([]);
+
+  const handleBooking = () => {
+    console.log(order_item);
+    setItemLists([
+      ...itemLists,
+      { studio: "Studio Demo", itemList: order_item },
+    ]);
+    navigate("/booking");
+  };
+
+  const handleSelectItem = (e, row) => {
+    if (e.target.checked) {
+      set_order_item([...order_item, row]);
+    } else {
+      let new_items = order_item;
+      new_items = new_items.filter((item) => item.item !== row.item.id);
+      set_order_item(new_items);
+    }
+  };
 
   return (
     <div>
@@ -97,22 +122,7 @@ function Cart() {
               >
                 <TableCell sx={{ width: "42px" }}>
                   <Checkbox
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        let old_items = order_item;
-                        old_items.push({
-                          item: row.item.id,
-                          number: row.number,
-                        });
-                        set_order_item(old_items);
-                      } else {
-                        let old_items = order_item;
-                        old_items = old_items.filter(
-                          (item) => item.item !== row.item.id
-                        );
-                        set_order_item(old_items);
-                      }
-                    }}
+                    onChange={(e) => handleSelectItem(e, row)}
                     inputProps={{ "aria-label": "Checkbox demo" }}
                     sx={{
                       "&.Mui-checked": {
@@ -135,13 +145,12 @@ function Cart() {
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {/* {row?.type?.type } */}
-                    Dịch vụ
+                    {row?.item.category?.type == "SERVICE" ? "Dịch vụ" : ""}
                   </div>
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {row?.category?.title}
+                    {row?.item.category?.title == "family" ? "Gia đình" : ""}
                   </div>
                 </TableCell>
                 <TableCell align="left">{row?.number}</TableCell>
@@ -238,26 +247,7 @@ function Cart() {
               bgcolor: "#3F41A6B2",
             },
           }}
-          onClick={() => {
-            axios
-              .post(
-                "/order/",
-                { order_item: order_item },
-                {
-                  headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(
-                      "accessToken"
-                    )}`,
-                  },
-                }
-              )
-              .then((res) => {
-                console.log(res); // TODO: redirect to order
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }}
+          onClick={handleBooking}
         >
           Đặt dịch vụ
         </Button>
