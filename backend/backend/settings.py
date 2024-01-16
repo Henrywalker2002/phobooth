@@ -159,8 +159,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
+SECRET_KEY = "random_some_key"
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "UPDATE_LAST_LOGIN": True,
+    "SIGNING_KEY" : "random_string",
+    "ALGORITHM" : "HS256",
+    "SIGNING_KEY" : SECRET_KEY
 }
