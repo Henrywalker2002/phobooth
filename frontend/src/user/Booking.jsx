@@ -17,6 +17,7 @@ import { CiCircleRemove } from "react-icons/ci";
 import CartContext from "../context/CartProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 function createData(item, type, category, quantity, min_price, max_price) {
   return { item, type, category, quantity, min_price, max_price };
@@ -32,6 +33,7 @@ const rows = [
 
 function Booking() {
   const navigate = useNavigate();
+  const { auth } = useAuth();
   const { itemLists, setItemLists } = useContext(CartContext);
   console.log(itemLists);
   const handleCreateOrder = () => {
@@ -49,7 +51,7 @@ function Booking() {
           { order_item: order_item },
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+              Authorization: `Bearer ${auth.access}`,
             },
           }
         )

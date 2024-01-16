@@ -18,6 +18,7 @@ import { MdStorefront } from "react-icons/md";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../context/CartProvider";
+import useAuth from "../hooks/useAuth";
 // import { useHistory } from "react-router-dom";
 
 function createData(item, type, category, quantity, min_price, max_price) {
@@ -33,6 +34,7 @@ const rows = [
 ];
 
 function Cart() {
+  const { auth } = useAuth();
   const [items, setItems] = React.useState([]);
   const [order_item, set_order_item] = React.useState([]);
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ function Cart() {
     axios
       .get("/cart/", {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {

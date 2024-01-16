@@ -16,17 +16,19 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Navbar from "../components/Navbar";
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 function Orders() {
   // Collapsible table
-
+  const { auth } = useAuth();
+  console.log(auth);
   const [items, setItems] = useState([]);
 
   useEffect(() => {
     axios
       .get("order/list_order_of_studio/", {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {
