@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'backend.JWTMiddleware.JWTAuthenticationMiddleware',
     'backend.custom_middleware.CustomMiddleware',
 ]
 
