@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import axios from "axios";
+import { FaArrowDownLong } from "react-icons/fa6";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   // const [items, setItems] = useState([]);
+  const navigate = useNavigate();
   const list0 = [1, 2, 3];
   const list1 = [1, 2, 3, 4];
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
 
-  // useEffect(() => {
-  //   axios
-  //     .get("http://127.0.0.1:8000/item")
-  //     .then((res) => {
-  //       setItems(res.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [items]);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/item")
+      .then((res) => {
+        setItems([res.data[0], res.data[0], res.data[0]]);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div>
@@ -92,8 +98,8 @@ function Home() {
                 </div>
                 <div className="self-center w-[860px] max-w-full mt-1">
                   <div className="flex justify-around">
-                    {list0.map((item) => (
-                      <div className="flex flex-col items-stretch">
+                    {items.map((item, index) => (
+                      <div className="flex flex-col items-stretch" key={index}>
                         <div className="flex-col fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4 max-md:mt-10 max-md:pr-5">
                           <img
                             loading="lazy"
@@ -106,10 +112,10 @@ function Home() {
                               srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                               className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
                             />
-                            <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
+                            <div className="relative w-[43px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                               <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                 <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                  4.8
+                                  {item["start"] || 5.0}
                                 </div>
                                 <img
                                   loading="lazy"
@@ -119,22 +125,38 @@ function Home() {
                               </div>
                             </div>
                           </div>
-                          <div className="relative flex items-stretch gap-5 mt-3">
-                            <div className="flex flex-col items-stretch w-fit">
+                          <div className="relative flex gap-5 mt-3">
+                            <div className="flex flex-col items-stretch w-[165px]">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                                Chụp ảnh gia đình
+                                {item?.name || "Chụp ảnh gia đình"}
                               </div>
                               <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                                Studio: PhotoHN
+                                Studio:{" "}
+                                {item?.studio?.friendly_name || "Studio Demo"}
                               </div>
                             </div>
-                            <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                              <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                                className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                              />
-                            </div>
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                navigate("/item/detail/" + item.id)
+                              }
+                              sx={{
+                                alignSelf: "center",
+                                borderRadius: "50%",
+                                color: "#F6F5FB",
+                                bgcolor: "#3F41A6",
+                                width: "30px",
+                                height: "30px",
+                                minWidth: 0,
+                                padding: "0",
+                                transform: "rotate(-90deg)",
+                                "&:hover": {
+                                  bgcolor: "#3F41A6B2",
+                                },
+                              }}
+                            >
+                              <FaArrowDownLong />
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -156,8 +178,8 @@ function Home() {
                 </div>
                 <div className="self-center mt-0 w-[860px] max-w-full">
                   <div className="flex justify-around">
-                    {list0.map((item) => (
-                      <div className="flex flex-col items-stretch">
+                    {items.map((item, index) => (
+                      <div className="flex flex-col items-stretch" key={index}>
                         <div className="flex-col fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4 max-md:mt-10 max-md:pr-5">
                           <img
                             loading="lazy"
@@ -170,10 +192,10 @@ function Home() {
                               srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                               className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
                             />
-                            <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
+                            <div className="relative w-[43px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                               <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                 <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                  4.8
+                                  {item["start"] || 5.0}
                                 </div>
                                 <img
                                   loading="lazy"
@@ -183,22 +205,38 @@ function Home() {
                               </div>
                             </div>
                           </div>
-                          <div className="relative flex items-stretch gap-5 mt-3">
-                            <div className="flex flex-col items-stretch w-fit">
+                          <div className="relative flex gap-5 mt-3">
+                            <div className="flex flex-col items-stretch w-[165px]">
                               <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                                Chụp ảnh gia đình
+                                {item?.name || "Chụp ảnh gia đình"}
                               </div>
                               <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                                Studio: PhotoHN
+                                Studio:{" "}
+                                {item?.studio?.friendly_name || "Studio Demo"}
                               </div>
                             </div>
-                            <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                              <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                                className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                              />
-                            </div>
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                navigate("/item/detail/" + item.id)
+                              }
+                              sx={{
+                                alignSelf: "center",
+                                borderRadius: "50%",
+                                color: "#F6F5FB",
+                                bgcolor: "#3F41A6",
+                                width: "30px",
+                                height: "30px",
+                                minWidth: 0,
+                                padding: "0",
+                                transform: "rotate(-90deg)",
+                                "&:hover": {
+                                  bgcolor: "#3F41A6B2",
+                                },
+                              }}
+                            >
+                              <FaArrowDownLong />
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -218,8 +256,8 @@ function Home() {
 
       {/* Các danh sách */}
       <div className="my-20 flex flex-col gap-14">
-        {list2.map((item) => (
-          <div className="flex flex-col items-center">
+        {list2.map((item, index) => (
+          <div className="flex flex-col items-center" key={index}>
             <div className="justify-between items-stretch flex w-[90%] gap-5 px-5">
               <div className="text-zinc-900 text-2xl font-semibold leading-10">
                 {item}
@@ -237,8 +275,8 @@ function Home() {
             </div>
             <div className="w-[90%] mt-2 px-5">
               <div className="flex justify-between">
-                {list1.map((item) => (
-                  <div className="flex flex-col items-stretch">
+                {list1.map((item, index) => (
+                  <div className="flex flex-col items-stretch" key={index}>
                     <div className="flex-col shadow duration-150 rounded-xl fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4">
                       <img
                         loading="lazy"
@@ -273,13 +311,26 @@ function Home() {
                             Studio: PhotoHN
                           </div>
                         </div>
-                        <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                          <img
-                            loading="lazy"
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                          />
-                        </div>
+                        <Button
+                          variant="contained"
+                          onClick={() => navigate("/item/detail")}
+                          sx={{
+                            alignSelf: "center",
+                            borderRadius: "50%",
+                            color: "#F6F5FB",
+                            bgcolor: "#3F41A6",
+                            width: "30px",
+                            height: "30px",
+                            minWidth: 0,
+                            padding: "0",
+                            transform: "rotate(-90deg)",
+                            "&:hover": {
+                              bgcolor: "#3F41A6B2",
+                            },
+                          }}
+                        >
+                          <FaArrowDownLong />
+                        </Button>
                       </div>
                     </div>
                   </div>

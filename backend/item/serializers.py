@@ -1,16 +1,19 @@
 from rest_framework import serializers
 from item.models import Item
-from studio.serializers import StudioSerializer
+from studio.serializers import StudioSerializer, StudioSummarySerializer
+from category.serializers import CategorySerializer
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    studio = StudioSummarySerializer(read_only=True)
     class Meta:
         model = Item
         exclude = ['created_by', 'updated_by']
 
 class ItemServicesSerializer(serializers.ModelSerializer):
     type = serializers.CharField(max_length=255, read_only=True)
-    studio = StudioSerializer(read_only=True)
+    studio = StudioSummarySerializer(read_only=True)
     
     class Meta:
         model = Item

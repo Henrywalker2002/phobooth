@@ -2,22 +2,26 @@ from rest_framework import serializers
 from order.models import Order, OrderItem
 from item.models import Item
 from item.serializers import ItemSummarySerializer
+from user.models import User
+from studio.models import Studio
+from studio.serializers import StudioSummarySerializer
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(), required=False)    
+    price = serializers.IntegerField(required=False)
     
     class Meta:
         model = OrderItem
-        fields = ["order", "item", "quantity"]
+        fields = ["order", "item", "quantity", "price"]
         extra_kwargs = {"order": {"required": False, "allow_null": True}}
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
-    customer = serializers.PrimaryKeyRelatedField(read_only=True)
+    customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     order_item = CreateOrderItemSerializer(many=True)
-    
+    studio = serializers.PrimaryKeyRelatedField(queryset=Studio.objects.all(), required=False)
     class Meta:
         model = Order
         fields = [
@@ -26,6 +30,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             "customer",
             "note",
             "order_item",
+            "studio",
         ]
 
 
@@ -52,7 +57,7 @@ class ReadOrderItemSerializer(serializers.ModelSerializer):
     
 class ReadOrderSerializer(serializers.ModelSerializer):
     order_item = ReadOrderItemSerializer(many=True, read_only=True)
-    
+    studio = StudioSummarySerializer(read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -66,6 +71,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "status",
             "note",
             "order_item",
+            "studio"
         ]
             
 

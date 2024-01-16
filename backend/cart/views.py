@@ -13,5 +13,9 @@ class CartViewSet(CustomModelViewSetBase):
         if self.action == "list":
             return self.queryset.filter(customer=self.request.user)
         return super().get_queryset()
+    
+    def create(self, request, *args, **kwargs):
+        request.data['customer'] = request.user.id
+        return super().create(request, *args, **kwargs)
 
     

@@ -8,14 +8,21 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Dialog } from "@mui/material";
-import { ColoredInput } from "./styles";
-import axios from "axios";
+import { Button, Checkbox, Dialog } from "@mui/material";
+import { ColoredInput } from "../styles/Styles";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+import { useCookies } from "react-cookie";
+import { FaRegArrowAltCircleLeft } from "react-icons/fa";
+
+const LOGIN_URL = "/login/";
 
 function Login() {
+  const navigate = useNavigate();
+  const { persist, setPersist, auth, setAuth } = useAuth();
+  const [cookies, setCookie] = useCookies(["userInfo"]);
   const userRef = useRef();
   const errRef = useRef();
-  const navigate = useNavigate();
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
@@ -31,8 +38,8 @@ function Login() {
   }, [user, pwd]);
 
   useEffect(() => {
-    console.log(sessionStorage.getItem("username"));
-    if (sessionStorage.getItem("username")) {
+    console.log(auth);
+    if (auth.user !== undefined) {
       navigate("/");
     }
   }, [user, pwd]);
@@ -45,14 +52,23 @@ function Login() {
     });
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/login/",
-        loginInfo,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post(LOGIN_URL, loginInfo, {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log(JSON.stringify(response?.data));
+      const accessToken = response?.data?.access;
+      setAuth({ user, pwd, access: accessToken });
+      if (persist) {
+        // luu token vao cookie
+        setCookie("userInfo", {
+          user,
+          pwd,
+          access: accessToken,
+          refresh: response?.data?.refresh,
+        });
+      }
+      console.log(cookies.Token);
+      sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("username", response.data.username);
       setUser("");
       setPwd("");
@@ -61,6 +77,15 @@ function Login() {
       setErrMsg(err);
     }
   };
+
+  // persist login
+  const togglePersist = () => {
+    setPersist((prev) => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist]);
 
   // pwd behavior
   const [showPassword, setShowPassword] = React.useState(false);
@@ -90,12 +115,21 @@ function Login() {
           </div>
         </div>
         <div className="flex flex-col items-center w-[55%] pt-[80px]">
+          {/* <div className="w-full flex justify-start mb-[50px]">
+            <Button
+              sx={{ textTransform: "none" }}
+              startIcon={<FaRegArrowAltCircleLeft />}
+            >
+              Quay lại
+            </Button>
+          </div> */}
+
           <div className="flex flex-col px-5 max-h-screen h-full">
             <div className="text-neutral-800 text-center text-4xl font-semibold leading-9 tracking-tight self-center w-[463px]">
               Chào mừng bạn quay trở lại với cộng đồng PhoBooth
             </div>
-            <div class="mt-6 flex flex-row justify-evenly">
-              <div class="w-[200px]">
+            <div className="mt-6 flex flex-row justify-evenly">
+              <div className="w-[200px]">
                 <button
                   type="button"
                   className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
@@ -108,10 +142,10 @@ function Login() {
                   Đăng nhập với Google{" "}
                 </button>
               </div>
-              <div class="w-[200px]">
+              <div className="w-[200px]">
                 <button
                   type="button"
-                  class="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
+                  className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
                 >
                   <img
                     loading="lazy"
@@ -122,7 +156,7 @@ function Login() {
                 </button>
               </div>
             </div>
-            <div class="my-6 text-sm text-gray-600 text-center">
+            <div className="my-6 text-sm text-gray-600 text-center">
               <p>or</p>
             </div>
             {/* Login Form */}
@@ -172,21 +206,41 @@ function Login() {
                   }
                 />
               </FormControl>
-              <div>
+
+              <div className="items-center flex w-full justify-between gap-5">
+                <span className="flex items-stretch gap-1.5 my-auto">
+                  <Checkbox
+                    onChange={togglePersist}
+                    inputProps={{ "aria-label": "Checkbox demo" }}
+                    sx={{
+                      "&.Mui-checked": {
+                        color: "#3F41A6",
+                      },
+                    }}
+                  />
+                  {/* <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/e8aa5b8c1112b1f751b9aa04545e7be72893fa413e51a837745d335b4f9400b4?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                    className="aspect-square object-contain object-center w-[22px] overflow-hidden shrink-0 max-w-full"
+                  /> */}
+                  <div className="text-neutral-500 text-xs leading-6 self-center grow whitespace-nowrap my-auto">
+                    Lưu mật khẩu
+                  </div>
+                </span>
                 <button
                   type="submit"
-                  class="w-full shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                  className="w-[130px] shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
                 >
                   Đăng nhập
                 </button>
               </div>
             </form>
-            <div class="mt-6 text-sm text-neutral-700 text-center">
+            <div className="mt-6 text-sm text-neutral-700 text-center">
               <p>
                 Bạn mới biết đến PhoBooth?{" "}
                 <a
                   href="/signup"
-                  class="text-indigo-800 font-semibold hover:underline"
+                  className="text-indigo-800 font-semibold hover:underline"
                 >
                   ĐĂNG KÍ
                 </a>
