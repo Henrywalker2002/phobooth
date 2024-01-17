@@ -27,9 +27,11 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ColoredStep } from "../styles/Styles";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 function OrderDetail() {
   // selection
+  const { auth } = useAuth();
   const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
   let { id } = useParams();
@@ -38,7 +40,7 @@ function OrderDetail() {
     axios
       .get(`/order/${id}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {

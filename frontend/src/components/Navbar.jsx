@@ -154,7 +154,9 @@ function Navbar() {
             }}
           >
             <MenuItem onClick={handleClose}>{userInfo}</MenuItem>
-            <MenuItem onClick={handleClose}>Kênh Studio</MenuItem>
+            <MenuItem onClick={() => navigate("/studio/orders")}>
+              Kênh Studio
+            </MenuItem>
             <MenuItem onClick={() => navigate("/orders")}>
               Quản lý đơn hàng
             </MenuItem>

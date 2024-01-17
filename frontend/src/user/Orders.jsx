@@ -19,9 +19,11 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Orders() {
   const navigate = useNavigate();
+  const { auth } = useAuth();
   // Collapsible table
   const [orders, setOrders] = React.useState([]);
   function createData(id, studio, quantity, status, price) {
@@ -54,7 +56,7 @@ function Orders() {
     axios
       .get("/order/", {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {
