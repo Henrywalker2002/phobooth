@@ -12,6 +12,8 @@ from item.views import ItemServicesViewSet, ItemViewSet
 from cart.views import CartViewSet
 from order.views import OrderViewSet, OrderItemViewSet
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenBlacklistView)
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter() 
 
@@ -35,7 +37,6 @@ urlpatterns = [
     path('docs/', schema_view.with_ui()), 
     path('login/', AuthenticationViewSet.as_view({'post': 'login'})),
     path('logout/', TokenBlacklistView.as_view(), name='logout'),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

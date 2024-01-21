@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework', 
     'drf_yasg',
+    'django_filters',
     'user',
     'category',
     'item',
@@ -149,7 +150,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication'
-    ]
+    ], 
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 
 AUTH_USER_MODEL = 'user.User'
@@ -169,3 +173,6 @@ SIMPLE_JWT = {
     "ALGORITHM" : "HS256",
     "SIGNING_KEY" : SECRET_KEY
 }
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'assets')
+MEDIA_URL = '/assets/'

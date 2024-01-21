@@ -6,6 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from user.models import User
 from django.contrib.auth.middleware import get_user
 from backend.settings import SECRET_KEY
+from user.models import User
 
 
 class JWTAuthenticationMiddleware(MiddlewareMixin):
@@ -23,7 +24,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             return user_jwt
         token = request.META.get('HTTP_AUTHORIZATION', None)
         if token:
-            token = token.split()[1]
+            token = token.split()[1] if len(token.split()) > 1 else None
 
         user_jwt = AnonymousUser()
         if token is not None:
@@ -36,7 +37,9 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
                 user_jwt = User.objects.get(
                     id=user_jwt["user_id"]
                 )
+            except User.DoesNotExist as e:
+                return AnonymousUser()
             except Exception as e: # NoQA
                 # traceback.print_exc()
-                return user_jwt
+                return AnonymousUser()
         return user_jwt

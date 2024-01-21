@@ -11,6 +11,7 @@ class User(AbstractBaseUser):
     full_name = models.CharField(max_length=128, null=False)
     is_active = models.BooleanField(default=True)
     role = models.ManyToManyField(to="role.Role")
+    avatar = models.ImageField(upload_to="avatars/", null=True)
     google_id = models.IntegerField(null=True)
     facebook_id = models.IntegerField(null=True)
     studio = models.OneToOneField(
