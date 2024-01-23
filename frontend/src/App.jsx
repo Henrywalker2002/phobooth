@@ -33,6 +33,9 @@ function App() {
                 borderColor: "#3F41A6",
               },
             },
+            "& .MuiOutlinedInput-input": {
+              boxSizing: "border-box",
+            },
             "& .MuiInputLabel-root": {
               color: "#3F41A6",
             },

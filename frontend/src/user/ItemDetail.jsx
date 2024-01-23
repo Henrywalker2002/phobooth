@@ -55,9 +55,7 @@ function ItemDetail(props) {
           >
             Dịch vụ
           </Link>
-          <Typography color="#3F41A6">
-            {item?.category?.title || "Gia đình"}
-          </Typography>
+          <Typography color="#3F41A6">{item?.category?.title}</Typography>
         </Breadcrumbs>
 
         {/* Content */}
@@ -99,7 +97,7 @@ function ItemDetail(props) {
           <div className="flex flex-col items-end mt-1 w-[61%] mr-[180px]">
             <div className="flex grow flex-col w-[620px]">
               <div className="text-zinc-900 text-4xl font-semibold leading-10 whitespace-nowrap self-start">
-                {item?.name || "Chụp ảnh gia đình"}
+                {item?.name}
               </div>
               <div className="flex gap-1.5 mt-2.5 self-start items-center">
                 <div className="justify-center text-indigo-800 text-base font-medium tracking-wider self-center my-auto">
@@ -128,7 +126,7 @@ function ItemDetail(props) {
                   Lĩnh vực :
                 </div>
                 <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch grow px-2 py-1">
-                  {item?.category?.title || "Gia đình"}
+                  {item?.category?.title}
                 </div>
               </div>
               <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-5" />

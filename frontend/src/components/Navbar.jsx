@@ -1,12 +1,18 @@
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GrCart } from "react-icons/gr";
-import { FaRegCircleUser, FaUnderline } from "react-icons/fa6";
-import { IoChatboxEllipsesOutline } from "react-icons/io5";
-import { MdNotificationsNone } from "react-icons/md";
+import { FaRegCircleUser } from "react-icons/fa6";
+import {
+  MdNotificationsNone,
+  MdOutlineChat,
+  MdOutlineShoppingCart,
+} from "react-icons/md";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
+import logo from "../assets/logo1.png";
+import { RiSearchLine } from "react-icons/ri";
+import { HiOutlineMenu } from "react-icons/hi";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -38,7 +44,7 @@ function Navbar() {
     navigate("/login");
   };
   return (
-    <div className="container max-w-[1440px] w-full mx-auto mb-5 px-12 flex items-center">
+    <div className="container max-w-[1440px] w-full mx-auto my-3 px-12 flex items-center">
       <div className="header w-[350px] flex gap-x-7">
         <div
           className="logo flex items-center w-[180px] cursor-pointer"
@@ -61,66 +67,102 @@ function Navbar() {
             PhoBooth
           </div>
         </div>
-        <div className="category flex items-center w-[120px]">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6 text-zinc-500"
+        {/* <div
+          className="logo flex items-center w-[100px] cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          <img src={logo} alt="logo-phobooth"></img>
+        </div> */}
+        <div className="self-center">
+          <Button
+            startIcon={<HiOutlineMenu />}
+            sx={{
+              textTransform: "none",
+              color: "#787282",
+              width: "140px",
+              height: "35px",
+              borderRadius: "5px",
+              fontSize: "17.5px",
+              "&:hover": {
+                color: "#3F41A6",
+              },
+            }}
           >
-            <path
-              fillRule="evenodd"
-              d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
-              clipRule="evenodd"
-            />
-          </svg>
-
-          <div className="text-zinc-500 text-xl font-semibold">Danh mục</div>
+            Danh mục
+          </Button>
         </div>
       </div>
 
       <div className="search flex-1">
-        <div className="flex w-[500px] h-[40px] mx-auto border border-[color:var(--gray-scale-gray-100,#E6E6E6)] rounded bg-white">
-          <input
+        <div className="flex w-[500px] h-[40px] mx-auto rounded bg-white">
+          <TextField
+            id="outlined-search"
+            type="search"
             placeholder="Tìm kiếm"
-            className="w-full border-none bg-transparent pl-4 py-2.5 text-zinc-500 outline-none focus:outline-none"
+            sx={{
+              "& .MuiInputBase-input": {
+                padding: "10px 12px",
+                width: "400px",
+                height: "40px",
+              },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "4px 0 0 4px",
+              },
+            }}
           />
-          <button className="w-[60px] h-full rounded-r bg-indigo-800 text-white text-base py-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6 mx-auto"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-              />
-            </svg>
-          </button>
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "0 4px 4px 0",
+              bgcolor: "#3F41A6",
+              "&:hover": {
+                bgcolor: "#303F9F",
+              },
+            }}
+          >
+            <RiSearchLine className="w-6 h-6 mx-auto" />
+          </Button>
         </div>
       </div>
       {userInfo == "" ? (
         <div className="btn-gr w-60">
-          <button
+          <Button
+            variant="text"
             onClick={() => {
               navigate("/signup");
             }}
-            className="px-3 md:px-4 py-1 md:py-2 border-none rounded-[22.5px] bg-white hover:text-indigo-700 text-indigo-800 text-base text-center"
+            sx={{
+              textTransform: "none",
+              color: "#3F41A6",
+              width: "100px",
+              marginRight: "10px",
+              borderRadius: "20px",
+              "&:hover": {
+                bgcolor: "#E2E5FF",
+              },
+            }}
           >
             Đăng kí
-          </button>
-          <button
-            className="px-3 md:px-4 py-1 md:py-2 border rounded-[22.5px] bg-indigo-800 hover:bg-indigo-700 text-white text-base text-center"
+          </Button>
+
+          <Button
+            variant="contained"
             onClick={() => {
               navigate("/login");
             }}
+            sx={{
+              textTransform: "none",
+              bgcolor: "#3F41A6",
+              width: "110px",
+              marginRight: "10px",
+              borderRadius: "20px",
+              "&:hover": {
+                bgcolor: "#3949AB",
+              },
+            }}
           >
             Đăng nhập
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="action-gr flex items-center justify-evenly w-60">
@@ -129,11 +171,11 @@ function Navbar() {
           </IconButton>
 
           <IconButton>
-            <IoChatboxEllipsesOutline style={{ color: "#666666" }} />
+            <MdOutlineChat style={{ color: "#666666" }} />
           </IconButton>
 
           <IconButton onClick={() => navigate("/cart")}>
-            <GrCart style={{ color: "#666666" }} />
+            <MdOutlineShoppingCart style={{ color: "#666666" }} />
           </IconButton>
 
           <IconButton
