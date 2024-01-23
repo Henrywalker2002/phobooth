@@ -8,10 +8,12 @@ from user.views import AuthenticationViewSet, UserViewSet
 from role.views import RoleViewSet, PermissionViewSet
 from studio.views import StudioViewSet
 from category.views import CategoryViewSet
-from item.views import ItemServicesViewSet, ItemViewSet
 from cart.views import CartViewSet
 from order.views import OrderViewSet, OrderItemViewSet
-from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenBlacklistView)
+from item.views.service import ItemServicesViewset
+from item.views.item import ItemViewSet
+from address.views import ProvinceViewSet
+from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -22,11 +24,12 @@ router.register(r'role', RoleViewSet, 'role')
 router.register(r'permission', PermissionViewSet, 'permission')
 router.register(r'studio', StudioViewSet, 'studio')
 router.register(r'category', CategoryViewSet, 'category')
-router.register(r'item/services', ItemServicesViewSet, 'item_services')
+router.register(r'item-services', ItemServicesViewset, 'item_services')
 router.register(r'item', ItemViewSet, 'item')
 router.register(r'cart', CartViewSet, 'cart')
 router.register(r'order', OrderViewSet, 'order')
 router.register(r'order-item', OrderItemViewSet, 'order-item')
+router.register(r'province', ProvinceViewSet, 'province')
 
 schema_view = get_schema_view(openapi.Info(
     "docs", default_version= 'v1', public = True), permission_classes= (permissions.AllowAny, ))

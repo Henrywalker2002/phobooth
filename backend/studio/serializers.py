@@ -1,15 +1,11 @@
 from rest_framework import serializers
-from studio.models import Studio, StudioAddress
+from studio.models import Studio
 from django.db import transaction
 from backend.custom_middleware import get_current_user
 import re
 from role.models import Role
-
-
-class StudioAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StudioAddress
-        fields = ['id', 'address', 'city', 'district', 'ward', 'postal_code']
+from address.serializers import AddressSerializer
+from address.models import Address
         
         
 class StudioSummarySerializer(serializers.ModelSerializer):
@@ -19,10 +15,10 @@ class StudioSummarySerializer(serializers.ModelSerializer):
 
 
 class StudioSerializer(serializers.ModelSerializer):
-    address = StudioAddressSerializer(many=True)
+
     is_verified = serializers.BooleanField(read_only=True)
     tax_code = serializers.CharField(read_only=True)
-    
+    address = AddressSerializer(required=True)
     
     def validate_code_name(self, value):
         pattern = re.compile(r'[a-zA-Z][a-zA-Z0-9_]*')
@@ -39,9 +35,8 @@ class StudioSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         address_data = validated_data.pop('address')
-        studio = Studio.objects.create(**validated_data)
-        for address in address_data:
-            StudioAddress.objects.create(studio=studio, **address)
+        address = Address.objects.create(**address_data)
+        studio = Studio.objects.create(address = address,**validated_data)
         user = get_current_user()
         user.studio = studio
         role = Role.objects.get(code_name = "studio")
@@ -60,4 +55,12 @@ class StudioUpdateSerializer(StudioSerializer):
         model = Studio
         fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]
     
+
+class StudioDetailSerializer(serializers.ModelSerializer):
+    
+    address = serializers.StringRelatedField(read_only=True)
+    
+    class Meta:
+        model = Studio
+        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]
         

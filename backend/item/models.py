@@ -4,6 +4,28 @@ from category.models import Category
 from backend.custom_middleware import get_current_studio
 
 
+class Option(BaseModel):
+    name = models.CharField(max_length=255, null=False)
+    item = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False)
+    
+    class Meta:
+        unique_together = ["name", "item"]
+    
+class OptionValue(BaseModel):
+    name = models.CharField(max_length=255, null=False)
+    option = models.ForeignKey(to="Option", on_delete=models.CASCADE, null=False)
+    variation = models.ForeignKey(to="Variation", on_delete=models.CASCADE, null=True, related_name="option_values")
+    
+    class Meta:
+        unique_together = ["name", "option"]
+        
+
+class Variation(BaseModel):
+    description = models.TextField(null=True)
+    price = models.IntegerField(null=False)
+    product = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name="variations")
+
+
 class ItemTypeChoices(models.TextChoices):
     SERVICE = "SERVICE", "SERVICE"
     SERVICE_PACK = "SERVICE_PACK", "SERVICE_PACK"
@@ -17,6 +39,10 @@ class ItemStatusChoices(models.TextChoices):
     DRAFT = "DRAFT", "DRAFT"
 
 
+class ItemPicture(models.Model):
+    item = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name="pictures")
+    picture = models.ImageField(upload_to="item", null=False)
+
 class Item(BaseModel):
     name = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
@@ -28,11 +54,10 @@ class Item(BaseModel):
         default=get_current_studio,
         related_name="items",
     )
-    picture = models.ImageField(upload_to="item", null=True)
     status = models.CharField(
         choices=ItemStatusChoices.choices,
         null=False,
-        default=ItemStatusChoices.DRAFT,
+        default=ItemStatusChoices.ACTIVE,
         max_length=255,
     )
     width = models.FloatField(null=True)

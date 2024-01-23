@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from order.models import Order, OrderItem
 from item.models import Item
-from item.serializers import ItemSummarySerializer
+from item.serializers.item import ItemDetailSerializer
 from user.models import User
 from studio.models import Studio
 from studio.serializers import StudioSummarySerializer
@@ -35,7 +35,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
 
 class ReadOrderItemSerializer(serializers.ModelSerializer):
-    item = ItemSummarySerializer(read_only=True)
+    item = ItemDetailSerializer(read_only=True)
     
     class Meta:
         model = OrderItem
