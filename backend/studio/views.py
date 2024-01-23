@@ -1,19 +1,23 @@
 from base.views import CustomModelViewSetBase
 from studio.models import Studio
-from studio.serializers import StudioSerializer, StudioUpdateSerializer
+from studio.serializers import StudioSerializer, StudioUpdateSerializer, StudioSummarySerializer, StudioDetailSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from studio.permission import StudioPermission
 from django.db import transaction
 from role.models import Role
 import json
+from address.models import Address
 
 
 class StudioViewSet(CustomModelViewSetBase):
     queryset = Studio.objects.all()
-    serializer_class = {'default': StudioSerializer}
+    serializer_class = {'default': StudioSerializer, 'update': StudioUpdateSerializer,
+                        'partial_update': StudioUpdateSerializer, "retrieve": StudioDetailSerializer, "list": StudioSummarySerializer}
     permission_classes = [StudioPermission]
+    lookup_field = 'code_name'
     
+
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         if request.user.studio:
@@ -29,19 +33,19 @@ class StudioViewSet(CustomModelViewSetBase):
             serializer.save()
         except Role.DoesNotExist:
             return Response(data={"detail": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-    
-    @transaction.atomic 
+
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         studio = self.get_object()
-        user = request.user 
+        user = request.user
         role = Role.objects.filter(code_name="studio")
         if role:
             user.role.remove(role.first())
         studio.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -50,8 +54,18 @@ class StudioViewSet(CustomModelViewSetBase):
             data = json.loads(data)
         if request.FILES:
             data['avatar'] = request.FILES['avatar']
+
         serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
+
+        if 'address' in data:
+            address_data = serializer.validated_data.pop('address')
+            address = instance.address
+            if address:
+                address.delete()
+            address = Address.objects.create(**address_data)
+            instance.address = address
+
         self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
@@ -59,6 +73,5 @@ class StudioViewSet(CustomModelViewSetBase):
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        data = self.get_serializer(instance, is_get = True).data
+        data = self.get_serializer(instance, is_get=True).data
         return Response(data)
-    

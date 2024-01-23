@@ -1,5 +1,6 @@
 from base.models import BaseModel
 from django.db import models
+from address.models import Address
 
 
 class DocumentStatusChoices(models.TextChoices):
@@ -19,15 +20,6 @@ class Document(BaseModel):
     studio = models.ForeignKey(to="Studio", on_delete=models.CASCADE, null=False)
 
 
-class StudioAddress(BaseModel):
-    studio = models.ForeignKey(to="Studio", on_delete=models.CASCADE, null=False, related_name='address')
-    city = models.CharField(max_length=255, null=False)
-    district = models.CharField(max_length=255, null=False)
-    ward = models.CharField(max_length=255, null=False)
-    address = models.CharField(max_length=255, null=False)
-    postal_code = models.CharField(max_length=255, null=False)
-
-
 class Studio(BaseModel):
     code_name = models.CharField(max_length=255, null=False, unique=True)
     friendly_name = models.CharField(max_length=255, null=False)
@@ -37,3 +29,4 @@ class Studio(BaseModel):
     phone = models.CharField(max_length=255, null=False, unique=True)
     email = models.EmailField(max_length=255, null=False, unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True)
+    address = models.ForeignKey(to = Address, on_delete=models.SET_NULL, null=True)
