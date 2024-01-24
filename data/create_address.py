@@ -29,7 +29,7 @@ for provide_code in data:
     provide['districts'] = district_lst    
     provide['code'] = int(provide_code)
     
-    response = requests.post(url + 'provide/', json=provide)
+    response = requests.post(url + 'province/', json=provide)
     
     os.system('cls')
     print(count, '/', len(data.keys()))

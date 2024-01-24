@@ -8,12 +8,12 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Button, Checkbox, Dialog } from "@mui/material";
+import { Alert, Button, Checkbox, Dialog, TextField } from "@mui/material";
 import { ColoredInput } from "../styles/Styles";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
-import { FaRegArrowAltCircleLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const LOGIN_URL = "/login/";
 
@@ -74,7 +74,8 @@ function Login() {
       setPwd("");
       setSuccess(true);
     } catch (err) {
-      setErrMsg(err);
+      setErrMsg(err.response.data.messsage);
+      // errRef.current.focus();
     }
   };
 
@@ -114,49 +115,80 @@ function Login() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center w-[55%] pt-[80px]">
-          {/* <div className="w-full flex justify-start mb-[50px]">
+        <div className="flex flex-col items-center w-[55%] pt-[50px]">
+          <div className="w-[650px] flex justify-start mb-[10px]">
             <Button
-              sx={{ textTransform: "none" }}
-              startIcon={<FaRegArrowAltCircleLeft />}
+              sx={{
+                textTransform: "none",
+                color: "#3F41A6",
+                "&:hover": {
+                  color: "#1A237E",
+                  bgcolor: "transparent",
+                },
+              }}
+              onClick={() => navigate("/")}
+              startIcon={<FaArrowLeft />}
             >
               Quay lại
             </Button>
-          </div> */}
+          </div>
 
           <div className="flex flex-col px-5 max-h-screen h-full">
             <div className="text-neutral-800 text-center text-4xl font-semibold leading-9 tracking-tight self-center w-[463px]">
               Chào mừng bạn quay trở lại với cộng đồng PhoBooth
             </div>
             <div className="mt-6 flex flex-row justify-evenly">
-              <div className="w-[200px]">
-                <button
-                  type="button"
-                  className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
-                >
+              <Button
+                variant="outlined"
+                startIcon={
                   <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/22388b6f-92e9-4bea-8a53-420626dc6f50?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                     className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  />{" "}
-                  Đăng nhập với Google{" "}
-                </button>
-              </div>
-              <div className="w-[200px]">
-                <button
-                  type="button"
-                  className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
-                >
+                  />
+                }
+                sx={{
+                  textTransform: "none",
+                  bgcolor: "transparent",
+                  borderRadius: "48px",
+                  padding: "8px 20px",
+                  color: "#525b56",
+                  borderColor: "#BDBDBD",
+                  fontSize: "13px",
+                  "&:hover": {
+                    borderColor: "#787282",
+                  },
+                }}
+              >
+                Đăng nhập với Google
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={
                   <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/7512ddff-a94a-4804-98c3-a188169b8c7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                     className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  />{" "}
-                  Đăng nhập với Facebook{" "}
-                </button>
-              </div>
+                  />
+                }
+                sx={{
+                  textTransform: "none",
+                  bgcolor: "transparent",
+                  borderRadius: "48px",
+                  padding: "8px 15px",
+                  color: "#525b56",
+                  borderColor: "#BDBDBD",
+                  fontSize: "13px",
+                  "&:hover": {
+                    borderColor: "#787282",
+                  },
+                }}
+              >
+                Đăng nhập với Facebook
+              </Button>
             </div>
-            <div className="my-6 text-sm text-gray-600 text-center">
+            <div className="my-4 text-sm text-gray-600 text-center">
               <p>or</p>
             </div>
             {/* Login Form */}
@@ -164,16 +196,17 @@ function Login() {
               onSubmit={handleLogin}
               // action="#"
               // method="POST"
-              className="w-[80%] self-center mt-3 flex flex-col gap-10"
+              className="w-[80%] self-center mt-3 flex flex-col gap-8"
             >
-              <p
-                ref={errRef}
-                className={errMsg ? "errmsg" : "offscreen"}
-                aria-live="assertive"
-              >
-                {errMsg}
-              </p>
-              <ColoredInput
+              {errMsg !== "" ? (
+                <Alert ref={errRef} severity="error">
+                  Tên người dùng hoặc mật khẩu không chính xác
+                </Alert>
+              ) : (
+                ""
+              )}
+
+              <TextField
                 required
                 id="standard-basic"
                 label="Tên người dùng"
@@ -190,7 +223,7 @@ function Login() {
                   required
                   onChange={(e) => setPwd(e.target.value)}
                   value={pwd}
-                  sx={{ width: "400px" }}
+                  sx={{ width: "370.4px" }}
                   id="standard-adornment-password"
                   type={showPassword ? "text" : "password"}
                   endAdornment={
@@ -218,21 +251,28 @@ function Login() {
                       },
                     }}
                   />
-                  {/* <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/e8aa5b8c1112b1f751b9aa04545e7be72893fa413e51a837745d335b4f9400b4?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                    className="aspect-square object-contain object-center w-[22px] overflow-hidden shrink-0 max-w-full"
-                  /> */}
+
                   <div className="text-neutral-500 text-xs leading-6 self-center grow whitespace-nowrap my-auto">
                     Lưu mật khẩu
                   </div>
                 </span>
-                <button
+
+                <Button
+                  variant="contained"
                   type="submit"
-                  className="w-[130px] shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                  sx={{
+                    textTransform: "none",
+                    bgcolor: "#3F41A6",
+                    width: "130px",
+                    borderRadius: "56px",
+                    padding: "10px",
+                    "&:hover": {
+                      bgcolor: "#3949AB",
+                    },
+                  }}
                 >
                   Đăng nhập
-                </button>
+                </Button>
               </div>
             </form>
             <div className="mt-6 text-sm text-neutral-700 text-center">

@@ -1,18 +1,30 @@
-import { Button, IconButton, Menu, MenuItem, TextField } from "@mui/material";
+import {
+  Button,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { GrCart } from "react-icons/gr";
 import { FaRegCircleUser } from "react-icons/fa6";
+import { BiStore } from "react-icons/bi";
+import { CgFileDocument } from "react-icons/cg";
+import { LuTicket } from "react-icons/lu";
+import { RiSearchLine } from "react-icons/ri";
+import { HiOutlineMenu } from "react-icons/hi";
 import {
   MdNotificationsNone,
   MdOutlineChat,
   MdOutlineShoppingCart,
+  MdLogout,
 } from "react-icons/md";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
 import logo from "../assets/logo1.png";
-import { RiSearchLine } from "react-icons/ri";
-import { HiOutlineMenu } from "react-icons/hi";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -195,15 +207,45 @@ function Navbar() {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={handleClose}>{userInfo}</MenuItem>
+            <MenuItem
+              onClick={handleClose}
+              sx={{
+                color: "#3F41A6",
+                fontSize: "20px",
+                fontWeight: "500",
+                lineHeight: "25px",
+                fontStyle: "normal",
+              }}
+            >
+              {userInfo}
+            </MenuItem>
+            <Divider />
             <MenuItem onClick={() => navigate("/studio/orders")}>
-              Kênh Studio
+              <ListItemIcon>
+                <BiStore style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Kênh Studio</ListItemText>
             </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
-              Quản lý đơn hàng
+            <MenuItem
+            // onClick={() => navigate("/orders")}
+            >
+              <ListItemIcon>
+                <CgFileDocument style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Quản lý đơn hàng</ListItemText>
             </MenuItem>
-            <MenuItem onClick={handleClose}>Khuyến mãi</MenuItem>
-            <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <LuTicket style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Khuyến mãi</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon>
+                <MdLogout style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Đăng xuất</ListItemText>
+            </MenuItem>
           </Menu>
         </div>
       )}

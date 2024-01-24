@@ -12,37 +12,25 @@ import Orders from "./user/Orders";
 import OrderDetail from "./user/OrderDetail";
 import StudioOrderDetail from "./studio/OrderDetail";
 import StudioOrders from "./studio/Orders";
-import { CartProvider } from "./context/CartProvider";
 import CartContextLayout from "./context/CartContextLayout";
 import PersistLogin from "./user/PersistLogin";
 
 function App() {
   const theme = createTheme({
     components: {
-      MuiTextField: {
+      MuiInputBase: {
         styleOverrides: {
           root: {
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "#E6E6E6",
-              },
-              "&:hover fieldset": {
-                borderColor: "#3F41A6",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#3F41A6",
-              },
+            "&.MuiInput-root:after": {
+              borderBottomColor: "#3F41A6",
             },
-            "& .MuiOutlinedInput-input": {
-              boxSizing: "border-box",
-            },
-            "& .MuiInputLabel-root": {
-              color: "#3F41A6",
-            },
-            "& .MuiInputLabel-shrink": {
-              color: "#3F41A6",
-            },
-            "&.Mui-focused .MuiInputLabel-root": {
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            "&.Mui-focused": {
               color: "#3F41A6",
             },
           },

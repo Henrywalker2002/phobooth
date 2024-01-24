@@ -8,19 +8,26 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { ColoredInput } from "../styles/Styles";
-import { Navigate } from "react-router-dom";
-import { Dialog } from "@mui/material";
-import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  FormHelperText,
+  TextField,
+} from "@mui/material";
+import { FaArrowLeft } from "react-icons/fa6";
+import axios from "../api/axios";
 
 function Signup() {
   const userRef = useRef();
-  const errRef = useRef();
+  const navigate = useNavigate();
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState({});
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -37,13 +44,9 @@ function Signup() {
     });
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/user/customer-sign-up/",
-        signupInfo,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post("/user/sign-up/", signupInfo, {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log(JSON.stringify(response?.data));
       sessionStorage.setItem("username", user);
       setUser("");
@@ -53,8 +56,7 @@ function Signup() {
       setSuccess(true);
     } catch (err) {
       console.log(err);
-      // setErrMsg(err.username[0] ? err.username[0] : err.email[0]);
-      // setErrMsg(err);
+      setErrMsg(err.response.data);
     }
   };
   // show/hide pwd
@@ -84,55 +86,90 @@ function Signup() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center w-[55%] pt-[40px]">
+        <div className="flex flex-col items-center w-[55%] pt-[20px]">
+          <div className="w-[650px] flex justify-start ">
+            <Button
+              sx={{
+                textTransform: "none",
+                color: "#3F41A6",
+                "&:hover": {
+                  color: "#1A237E",
+                  bgcolor: "transparent",
+                },
+              }}
+              onClick={() => navigate("/")}
+              startIcon={<FaArrowLeft />}
+            >
+              Quay lại
+            </Button>
+          </div>
           <div className="flex flex-col px-5 max-h-screen h-full">
             <div className="text-neutral-800 text-center text-4xl font-semibold leading-9 tracking-tight self-center w-[500px]">
               Tham gia vào cộng động trực tuyến dành cho các dịch vụ ảnh
             </div>
+
+            {/* Đăng kí gg,fb */}
             <div class="mt-6 flex flex-row justify-evenly">
-              <div class="w-[200px]">
-                <button
-                  type="button"
-                  className="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
-                >
+              <Button
+                variant="outlined"
+                startIcon={
                   <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/22388b6f-92e9-4bea-8a53-420626dc6f50?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                     className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  />{" "}
-                  Đăng kí với Google{" "}
-                </button>
-              </div>
-              <div class="w-[200px]">
-                <button
-                  type="button"
-                  class="w-full flex justify-center items-center gap-2 border border-solid border-zinc-100 bg-neutral-50 text-zinc-600 text-right text-xs p-2 rounded-[48px] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors duration-300"
-                >
+                  />
+                }
+                sx={{
+                  textTransform: "none",
+                  bgcolor: "transparent",
+                  borderRadius: "48px",
+                  padding: "8px 20px",
+                  color: "#525b56",
+                  borderColor: "#BDBDBD",
+                  fontSize: "13px",
+                  width: "195px",
+                  "&:hover": {
+                    borderColor: "#787282",
+                  },
+                }}
+              >
+                Đăng kí với Google
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={
                   <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/7512ddff-a94a-4804-98c3-a188169b8c7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                     className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  />{" "}
-                  Đăng kí với Facebook{" "}
-                </button>
-              </div>
+                  />
+                }
+                sx={{
+                  textTransform: "none",
+                  bgcolor: "transparent",
+                  borderRadius: "48px",
+                  padding: "8px 20px",
+                  color: "#525b56",
+                  borderColor: "#BDBDBD",
+                  fontSize: "13px",
+                  "&:hover": {
+                    borderColor: "#787282",
+                  },
+                }}
+              >
+                Đăng kí với Facebook
+              </Button>
             </div>
-            <div class="my-5 text-sm text-gray-600 text-center">
+            <div class="my-3 text-sm text-gray-600 text-center">
               <p>or</p>
             </div>
             {/* Login Form */}
             <form
               onSubmit={handleSignup}
-              className="w-[80%] self-center flex flex-col gap-10"
+              className="w-[80%] self-center flex flex-col gap-8"
             >
-              <p
-                ref={errRef}
-                className={errMsg ? "errmsg" : "offscreen"}
-                aria-live="assertive"
-              >
-                {errMsg}
-              </p>
-              <ColoredInput
+              <TextField
                 id="fullname"
                 label="Họ và tên"
                 variant="standard"
@@ -141,34 +178,42 @@ function Signup() {
                 value={fullname}
               />
 
-              <ColoredInput
+              <TextField
                 id="username"
                 label="Tên người dùng"
                 variant="standard"
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
+                error={errMsg.username ? true : false}
+                helperText={errMsg.username ? "Tên người dùng đã tồn tại" : ""}
               />
 
-              <FormControl variant="standard">
+              <FormControl
+                error={errMsg.email ? true : false}
+                variant="standard"
+              >
                 <InputLabel htmlFor="my-input">Email</InputLabel>
                 <Input
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   type="email"
-                  sx={{
-                    width: "400px",
-                    "& label": {
-                      "&.Mui-focused": {
-                        color: "#3F41A6",
-                      },
-                    },
-                  }}
                   id="my-input"
                   aria-describedby="my-helper-text"
                 />
+                <FormHelperText
+                  id="component-helper-text"
+                  sx={{
+                    display: errMsg.email ? "block" : "none",
+                  }}
+                >
+                  Email này đã được đăng kí
+                </FormHelperText>
               </FormControl>
 
-              <FormControl variant="standard">
+              <FormControl
+                error={errMsg.password ? true : false}
+                variant="standard"
+              >
                 <InputLabel htmlFor="standard-adornment-password">
                   Mật khẩu
                 </InputLabel>
@@ -190,18 +235,46 @@ function Signup() {
                     </InputAdornment>
                   }
                 />
+                <FormHelperText id="component-helper-text">
+                  Mật khẩu có độ dài tối thiểu 8 ký tự
+                </FormHelperText>
               </FormControl>
 
-              <div>
-                <button
+              <div className="items-center flex w-full justify-between gap-5">
+                <span className="flex items-stretch gap-1.5 my-auto">
+                  <Checkbox
+                    inputProps={{ "aria-label": "Checkbox demo" }}
+                    sx={{
+                      "&.Mui-checked": {
+                        color: "#3F41A6",
+                      },
+                    }}
+                  />
+
+                  <div className="text-neutral-500 text-xs leading-6 self-center grow whitespace-nowrap">
+                    Tôi đồng ý với các điều khoản
+                  </div>
+                </span>
+
+                <Button
+                  variant="contained"
                   type="submit"
-                  class="w-full shadow-2xl bg-indigo-800 bg-opacity-70 text-white text-center text-sm font-semibold leading-6 px-3 py-3 rounded-[56px] hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                  sx={{
+                    textTransform: "none",
+                    bgcolor: "#3F41A6",
+                    width: "130px",
+                    borderRadius: "56px",
+                    padding: "10px",
+                    "&:hover": {
+                      bgcolor: "#3949AB",
+                    },
+                  }}
                 >
                   Đăng kí
-                </button>
+                </Button>
               </div>
             </form>
-            <div class="mt-6 text-sm text-neutral-700 text-center">
+            <div class="mt-3 text-sm text-neutral-700 text-center">
               <p>
                 Bạn đã có tài khoản?{" "}
                 <a
