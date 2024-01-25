@@ -18,10 +18,6 @@ import {
   Select,
   MenuItem,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -40,22 +36,24 @@ function OrderDetail(props) {
   const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [status, setStatus] = useState("OREDERD"); // [1, 2, 3
-  
+
   useEffect(() => {
-    axios.get(`/order/${id}`, {
-      headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
-    }).
-    then((res) => {
-      setOrder(res.data);
-      setStatus(res.data.status);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+    axios
+      .get(`/order/${id}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        setOrder(res.data);
+        setStatus(res.data.status);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const [open, setOpen] = useState(false);
-
 
   // const handleClickOpen = () => {
   //   setOpen(true);
@@ -76,18 +74,25 @@ function OrderDetail(props) {
   const [value, setValue] = useState("");
   const handleChange = (event) => {
     let value = event.target.value;
-    axios.patch(`/order/${order.id}/`, {
-      status: value,
-    }, {
-      headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
-    })
-    .then((res) => {
-      console.log(res.data); // TODO: notify for user
-      setStatus(value);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+    axios
+      .patch(
+        `/order/${order.id}/`,
+        {
+          status: value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data); // TODO: notify for user
+        setStatus(value);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // Collapsible table
@@ -152,9 +157,7 @@ function OrderDetail(props) {
           <TableCell align="left">
             <IconButton>
               <MdEdit
-                onClick={() =>
-                   handleClickOpen(row.id)
-                }
+                onClick={() => handleClickOpen(row.id)}
                 style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
               />
             </IconButton>
@@ -252,7 +255,7 @@ function OrderDetail(props) {
                     value={value}
                     onChange={handleChange}
                     sx={{ marginTop: "10px", height: "33px" }}
-                    defaultValue = {status} // NOT WORKING ? 
+                    defaultValue={status} // NOT WORKING ?
                   >
                     <MenuItem value={"ORDERED"}>ORDERED</MenuItem>
                     <MenuItem value={"IN_PROCESS"}>IN_PROCESS</MenuItem>
@@ -322,8 +325,7 @@ function OrderDetail(props) {
                   }}
                   onChange={(e) => {
                     setPrice(e.target.value);
-
-                   }}
+                  }}
                 />
                 {/* <div className="text-stone-500 text-xs font-light tracking-wide whitespace-nowrap justify-center items-stretch border-[color:var(--Border,#EAEAEA)] mt-1.5 px-14 py-4 rounded-md border-2 border-solid max-md:px-5">
                   500,000
@@ -372,19 +374,28 @@ function OrderDetail(props) {
                 },
               }}
               onClick={() => {
-                axios.patch(`/order-item/${orderItem}/`, {
-                  price: price,
-                  quantity : quantity
-                }, {
-                  headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` },
-                })
-                .then((res) => {
-                  setOrder(res.data);
-                  setOpen(false);
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
+                axios
+                  .patch(
+                    `/order-item/${orderItem}/`,
+                    {
+                      price: price,
+                      quantity: quantity,
+                    },
+                    {
+                      headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(
+                          "accessToken"
+                        )}`,
+                      },
+                    }
+                  )
+                  .then((res) => {
+                    setOrder(res.data);
+                    setOpen(false);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
               }}
             >
               Lưu thay đổi

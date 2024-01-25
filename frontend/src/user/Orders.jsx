@@ -14,9 +14,13 @@ import {
   Typography,
   Paper,
   Button,
+  Breadcrumbs,
+  Link,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -140,7 +144,7 @@ function Orders() {
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ color: "#808080" }}>
-                        TÊN HÀNG HÓA
+                        TÊN SẢN PHẨM
                       </TableCell>
                       <TableCell sx={{ color: "#808080" }}>PHÂN LOẠI</TableCell>
                       <TableCell align="left" sx={{ color: "#808080" }}>
@@ -282,6 +286,40 @@ function Orders() {
   return (
     <div>
       <Navbar />
+
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080" }}
+          href="/"
+          // onClick={handleClick}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          Quản lý đơn hàng
+        </Typography>
+      </Breadcrumbs>
+
       {/* Header */}
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
         Quản lý đơn hàng

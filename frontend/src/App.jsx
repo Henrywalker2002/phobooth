@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./user/Home";
 import Login from "./user/Login";
-import Logout from "./user/Logout";
 import Signup from "./user/Signup";
 import ItemDetail from "./user/ItemDetail";
 import Cart from "./user/Cart";
@@ -13,7 +12,7 @@ import OrderDetail from "./user/OrderDetail";
 import StudioOrderDetail from "./studio/OrderDetail";
 import StudioOrders from "./studio/Orders";
 import CartContextLayout from "./context/CartContextLayout";
-import PersistLogin from "./user/PersistLogin";
+// import PersistLogin from "./user/PersistLogin";
 
 function App() {
   const theme = createTheme({
@@ -36,6 +35,26 @@ function App() {
           },
         },
       },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                // borderColor: "#E6E6E6",
+              },
+              "&:hover fieldset": {
+                borderColor: "#3F41A6",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#3F41A6",
+              },
+            },
+            "& .MuiOutlinedInput-input": {
+              boxSizing: "border-box",
+            },
+          },
+        },
+      },
     },
   });
   return (
@@ -43,7 +62,6 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/logout" element={<Logout />} />
 
         {/* <Route element={<PersistLogin />}>
           
