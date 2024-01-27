@@ -51,6 +51,9 @@ class StudioSerializer(serializers.ModelSerializer):
         
 
 class StudioUpdateSerializer(StudioSerializer):
+    
+    address = AddressSerializer()
+    
     class Meta:
         model = Studio
         fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]

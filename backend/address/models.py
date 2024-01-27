@@ -38,13 +38,13 @@ class Ward(models.Model):
 
 class Address(models.Model):
     id = models.AutoField(primary_key=True)
-    street = models.CharField(max_length=100)
+    street = models.CharField(max_length=100, blank= False, null = False)
     ward = models.ForeignKey(Ward, on_delete=models.CASCADE)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
-    provide = models.ForeignKey(Province, on_delete=models.CASCADE)
+    province = models.ForeignKey(Province, on_delete=models.CASCADE)
     
     
     def __str__(self):
-        return f"{self.street}, {self.ward.name_with_type}, {self.district.name_with_type}, {self.provide.name_with_type}"
+        return f"{self.street}, {self.ward.name_with_type}, {self.district.name_with_type}, {self.province.name_with_type}"
     
     

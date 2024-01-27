@@ -1,27 +1,27 @@
 from base.views import CustomModelViewSetBase
-from item.models import Item, ItemTypeChoices, ItemPicture
-from item.serializers.service import ItemServicesSerializer
-from item.serializers.item import ItemDetailSerializer
+from item.models import Item, Option, OptionValue, Variation, ItemTypeChoices, ItemPicture
 from item.permission import ItemPermission
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
+from item.serializers.service_pack import ServicePackSerializer, ServicePackDetailSerializer
+from item.serializers.item import ItemDetailSerializer
 
 
-class ItemServicesViewset(CustomModelViewSetBase):
+class ServicePackItemViewSet(CustomModelViewSetBase):
     queryset = Item.objects.all()
-    serializer_class = {"default": ItemServicesSerializer,
-                        "retrieve": ItemDetailSerializer, "list": ItemDetailSerializer}
+    serializer_class = {"default": ServicePackSerializer, "retrieve": ServicePackDetailSerializer}
     permission_classes = [ItemPermission]
-
+    
+    
     def get_queryset(self):
-        return super().get_queryset().filter(type__in=[ItemTypeChoices.SERVICE, ItemTypeChoices.ACCESSORY], 
-                                             studio=self.request.user.studio)
-
+        return super().get_queryset().filter(type=ItemTypeChoices.SERVICE_PACK, studio=self.request.user.studio)
+    
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.validated_data['type'] = ItemTypeChoices.SERVICE_PACK
         self.perform_create(serializer)
 
         pictures = request.data.pop('pictures', [])
@@ -57,3 +57,5 @@ class ItemServicesViewset(CustomModelViewSetBase):
         self.perform_update(serializer)
 
         return Response(self.get_serializer(instance, is_get=True).data)
+
+    

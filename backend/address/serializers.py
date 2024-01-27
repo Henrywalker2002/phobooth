@@ -34,7 +34,28 @@ class ProvideSummarySerializer(serializers.ModelSerializer):
 
 class AddressSerializer(serializers.ModelSerializer):
     
+    ward = serializers.PrimaryKeyRelatedField(queryset=Ward.objects.all(), required=True)
+    district = serializers.PrimaryKeyRelatedField(queryset=District.objects.all(), required=True)
+    province = serializers.PrimaryKeyRelatedField(queryset=Province.objects.all(), required=True)
+    street = serializers.CharField(required=True)
+    
+    def validate_street(self, value):
+        if value == "" or value == None:
+            raise serializers.ValidationError("Street is required")
+        return value
+    
+    def validate(self, data):
+        try: 
+            if data['ward'].district != data['district']:
+                raise serializers.ValidationError("Ward and district does not match")
+            if data['district'].provide != data['province']:
+                raise serializers.ValidationError("District and province does not match")
+        except KeyError as e:
+            raise serializers.ValidationError(f"{e.args[0]} is required")
+        return data
+    
+    
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ['id', 'street', 'ward', 'district', 'province']
         
