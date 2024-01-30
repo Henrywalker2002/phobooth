@@ -18,7 +18,7 @@ class District(models.Model):
     code_name = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     name_with_type = models.CharField(max_length=100)
-    provide = models.ForeignKey(Province, on_delete=models.CASCADE, related_name='districts')
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, related_name='districts')
     
     def __str__(self) -> str:
         return self.name_with_type

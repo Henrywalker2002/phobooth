@@ -13,7 +13,7 @@ class DistrictSerializer(serializers.ModelSerializer):
     wards = WardSerializer(many=True)  
     class Meta:
         model = District
-        exclude = ('provide',)
+        exclude = ('province',)
 
 
 class ProvideSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class AddressSerializer(serializers.ModelSerializer):
         try: 
             if data['ward'].district != data['district']:
                 raise serializers.ValidationError("Ward and district does not match")
-            if data['district'].provide != data['province']:
+            if data['district'].province != data['province']:
                 raise serializers.ValidationError("District and province does not match")
         except KeyError as e:
             raise serializers.ValidationError(f"{e.args[0]} is required")

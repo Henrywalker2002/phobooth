@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 from user.views import AuthenticationViewSet, UserViewSet
 from role.views import RoleViewSet, PermissionViewSet
@@ -36,14 +34,13 @@ router.register(r'order', OrderViewSet, 'order')
 router.register(r'order-item', OrderItemViewSet, 'order-item')
 router.register(r'province', ProvinceViewSet, 'province')
 
-schema_view = get_schema_view(openapi.Info(
-    "docs", default_version= 'v1', public = True), permission_classes= (permissions.AllowAny, ))
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('docs/', schema_view.with_ui()), 
-    path('login/', AuthenticationViewSet.as_view({'post': 'login'})),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('login/', AuthenticationViewSet.as_view({'post': 'login'}), name='login'),
     path('logout/', TokenBlacklistView.as_view(), name='logout'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls))

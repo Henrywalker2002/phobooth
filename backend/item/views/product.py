@@ -26,16 +26,15 @@ class ProductViewSet(CustomModelViewSetBase):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        pictures = request.data.pop('pictures', [])
+        pictures = serializer.validated_data.pop('pictures', [])
+        serializer.validated_data['type'] = ItemTypeChoices.PRODUCT
+        option = serializer.validated_data.pop('option', None)
+        serializer.save()
         
         item = serializer.instance
         
         for picture in pictures:
             ItemPicture.objects.create(item = item, picture = picture)
-        
-        option = serializer.validated_data.pop('option', None)
-        serializer.validated_data['type'] = ItemTypeChoices.PRODUCT
-        serializer.save()
 
         instance = serializer.instance
         if option:

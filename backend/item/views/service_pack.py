@@ -22,9 +22,8 @@ class ServicePackItemViewSet(CustomModelViewSetBase):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['type'] = ItemTypeChoices.SERVICE_PACK
+        pictures = serializer.validated_data.pop('pictures', [])
         self.perform_create(serializer)
-
-        pictures = request.data.pop('pictures', [])
 
         item = serializer.instance
 

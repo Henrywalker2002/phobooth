@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from item.models import Item, Option, OptionValue, Variation
 from item.serializers.item import ItemPictureSerializer
+from category.models import Category, CategoryTypeChoices
 
 
 class VariationSerializer(serializers.Serializer):
@@ -31,6 +32,9 @@ class ItemProductSerializer(serializers.ModelSerializer):
         required=False,
         max_length=5
     )
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.filter(type=CategoryTypeChoices.PRODUCT)
+    )
     
     def validate_option(self, value):
         if value:
@@ -52,6 +56,9 @@ class ItemProductUpdateSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(use_url=True), 
         required=False,
         max_length=5
+    )
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.filter(type=CategoryTypeChoices.PRODUCT)
     )
     
     class Meta:
