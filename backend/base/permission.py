@@ -13,9 +13,13 @@ class IsStaff(permissions.BasePermission):
 
 class IsCustomer(permissions.BasePermission):
     def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
         return request.user.is_authenticated and "customer" in request.user.role.values_list("code_name", flat=True)
     
 
 class IsStudio(permissions.BasePermission):
     def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
         return request.user.is_authenticated and "studio" in request.user.role.values_list("code_name", flat=True)

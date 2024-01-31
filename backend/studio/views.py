@@ -34,7 +34,10 @@ class StudioViewSet(CustomModelViewSetBase):
         except Role.DoesNotExist:
             return Response(data={"detail": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            data=self.get_serializer(serializer.instance, is_get = True).data, 
+            status=status.HTTP_201_CREATED
+        )
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
