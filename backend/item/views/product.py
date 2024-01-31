@@ -2,6 +2,7 @@ from base.views import CustomModelViewSetBase
 from item.models import Item, Option, OptionValue, Variation, ItemTypeChoices, ItemPicture
 from item.serializers.product import (ItemProductSerializer, ItemProductDetailSerializer, 
                                       VariationUpdateSerializer, ItemProductUpdateSerializer)
+from item.serializers.item import ItemSummarySerializer
 from item.permission import ItemPermission, VariationPermission
 from rest_framework import status
 from rest_framework.response import Response
@@ -14,7 +15,8 @@ class ProductViewSet(CustomModelViewSetBase):
 
     queryset = Item.objects.all()
     serializer_class = {'default': ItemProductSerializer, "retrieve": ItemProductDetailSerializer, 
-                        "update" : ItemProductUpdateSerializer, "partial_update": ItemProductUpdateSerializer,}
+                        "update" : ItemProductUpdateSerializer, "partial_update": ItemProductUpdateSerializer, 
+                        "list": ItemSummarySerializer}
     permission_classes = [ItemPermission]
     
     def get_queryset(self):

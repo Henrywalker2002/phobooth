@@ -1,7 +1,7 @@
 from base.views import CustomModelViewSetBase
 from item.models import Item, ItemTypeChoices, ItemPicture
 from item.serializers.service import ItemServicesSerializer
-from item.serializers.item import ItemDetailSerializer
+from item.serializers.item import ItemDetailSerializer, ItemSummarySerializer
 from item.permission import ItemPermission
 from django.db import transaction
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from rest_framework import status
 class ItemServicesViewset(CustomModelViewSetBase):
     queryset = Item.objects.all()
     serializer_class = {"default": ItemServicesSerializer,
-                        "retrieve": ItemDetailSerializer, "list": ItemDetailSerializer}
+                        "retrieve": ItemDetailSerializer, "list": ItemSummarySerializer}
     permission_classes = [ItemPermission]
 
     def get_queryset(self):

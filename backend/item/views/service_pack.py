@@ -5,12 +5,13 @@ from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
 from item.serializers.service_pack import ServicePackSerializer, ServicePackDetailSerializer
-from item.serializers.item import ItemDetailSerializer
+from item.serializers.item import ItemSummarySerializer
 
 
 class ServicePackItemViewSet(CustomModelViewSetBase):
     queryset = Item.objects.all()
-    serializer_class = {"default": ServicePackSerializer, "retrieve": ServicePackDetailSerializer}
+    serializer_class = {"default": ServicePackSerializer, "retrieve": ServicePackDetailSerializer, 
+                        "list": ItemSummarySerializer}
     permission_classes = [ItemPermission]
     
     
