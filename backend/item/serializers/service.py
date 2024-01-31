@@ -1,6 +1,7 @@
 from item.models import Item, ItemTypeChoices
 from rest_framework import serializers
 from studio.serializers import StudioSummarySerializer
+from category.models import Category, CategoryTypeChoices
 
 
 class ItemServicesSerializer(serializers.ModelSerializer):
@@ -10,6 +11,9 @@ class ItemServicesSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(use_url=True), 
         required=False,
         max_length=5
+    )
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.filter(type=CategoryTypeChoices.SERVICE)
     )
     
     def validate_type(self, value):

@@ -6,15 +6,14 @@ from backend.custom_middleware import get_current_studio
 
 class Option(BaseModel):
     name = models.CharField(max_length=255, null=False)
-    item = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False)
+    product = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name = "option")
     
     class Meta:
-        unique_together = ["name", "item"]
+        unique_together = ["name", "product"]
     
 class OptionValue(BaseModel):
     name = models.CharField(max_length=255, null=False)
-    option = models.ForeignKey(to="Option", on_delete=models.CASCADE, null=False)
-    variation = models.ForeignKey(to="Variation", on_delete=models.CASCADE, null=True, related_name="option_values")
+    option = models.ForeignKey(to="Option", on_delete=models.CASCADE, null=False, related_name = "option_value")
     
     class Meta:
         unique_together = ["name", "option"]
@@ -23,8 +22,9 @@ class OptionValue(BaseModel):
 class Variation(BaseModel):
     description = models.TextField(null=True)
     price = models.IntegerField(null=False)
-    product = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name="variations")
-
+    product = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name="variation")
+    value = models.ManyToManyField(to="OptionValue", related_name="variation")
+    stock = models.IntegerField(null=False)
 
 class ItemTypeChoices(models.TextChoices):
     SERVICE = "SERVICE", "SERVICE"

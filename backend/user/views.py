@@ -82,7 +82,7 @@ class AuthenticationViewSet(viewsets.GenericViewSet):
             user_data["access"] = str(token.access_token)
             user_data["refresh"] = str(token)
             return Response(user_data, status= status.HTTP_200_OK)
-        return Response({"messsage" : "wrong username or password"}, status= status.HTTP_401_UNAUTHORIZED)
+        return Response({"message" : "wrong username or password"}, status= status.HTTP_401_UNAUTHORIZED)
 
     @action(methods=['post'], detail=False, url_path="logout")
     def logout(self, request):
