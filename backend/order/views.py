@@ -1,4 +1,4 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet
 from order.models import Order, OrderItem
 from order.serializers import OrderSerializer, CreateOrderSerializer, CreateOrderItemSerializer, ReadOrderSerializer, UpdateOrderItemSerializer, UpdateOrderSerializer
 from django.db import transaction
@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from django.db.models import Sum, F
 
 
-class OrderViewSet(CustomModelViewSetBase):
+class OrderViewSet(BaseModelViewSet):
     queryset = Order.objects.all()
     serializer_class = {"create": CreateOrderSerializer, "list":ReadOrderSerializer,"update" : UpdateOrderSerializer 
                         ,"default": OrderSerializer, "partial_update": UpdateOrderSerializer, 
@@ -82,7 +82,7 @@ class OrderViewSet(CustomModelViewSetBase):
         return Response(serializer.data)
     
     
-class OrderItemViewSet(CustomModelViewSetBase):
+class OrderItemViewSet(BaseModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = {"default" : CreateOrderItemSerializer}
     permission_classes = [permissions.IsAuthenticated]

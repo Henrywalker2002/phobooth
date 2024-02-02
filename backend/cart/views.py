@@ -1,10 +1,11 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseGenericViewSet
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModelMixin
 from cart.models import Cart
 from cart.serializers import CartSerializer, CartListSerializer
 from rest_framework import permissions
 
 
-class CartViewSet(CustomModelViewSetBase):
+class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
     queryset = Cart.objects.all()
     serializer_class = {"default": CartSerializer, "list": CartListSerializer}
     permission_classes = [permissions.IsAuthenticated]

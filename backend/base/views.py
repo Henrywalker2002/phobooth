@@ -2,13 +2,10 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 
-class CustomModelViewSetBase(viewsets.ModelViewSet):
+class BaseGenericViewSet(viewsets.GenericViewSet):
     """
-    Inherit from viewsets.ModelViewSet
-    Custom get serializer class to get serializer class base on dict only
-    for create and update action, input serializer is key create , update and output is retrieve 
+    Custom generic viewset to get serializer class base on dict only
     """
-    
     serializer_class = {}
     def get_serializer_class(self):
         # ensure that serializer_class must be a dict and have default 
@@ -37,7 +34,14 @@ class CustomModelViewSetBase(viewsets.ModelViewSet):
             serializer_class = self.get_serializer_class()
         kwargs.setdefault('context', self.get_serializer_context())
         return serializer_class(*args, **kwargs)
-    
+
+
+class BaseModelViewSet(BaseGenericViewSet, viewsets.ModelViewSet):
+    """
+    Inherit from viewsets.ModelViewSet
+    Custom get serializer class to get serializer class base on dict only
+    for create and update action, input serializer is key create , update and output is retrieve 
+    """
 
     def create(self, request, *args, **kwargs):
         """

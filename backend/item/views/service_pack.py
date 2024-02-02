@@ -1,4 +1,4 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet
 from item.models import Item, Option, OptionValue, Variation, ItemTypeChoices, ItemPicture
 from item.permission import ItemPermission
 from django.db import transaction
@@ -8,7 +8,7 @@ from item.serializers.service_pack import ServicePackSerializer, ServicePackDeta
 from item.serializers.item import ItemSummarySerializer
 
 
-class ServicePackItemViewSet(CustomModelViewSetBase):
+class ServicePackItemViewSet(BaseModelViewSet):
     queryset = Item.objects.all()
     serializer_class = {"default": ServicePackSerializer, "retrieve": ServicePackDetailSerializer, 
                         "list": ItemSummarySerializer}
