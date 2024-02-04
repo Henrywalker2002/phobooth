@@ -38,5 +38,5 @@ for provide_code in data:
     if (response.status_code != 201):
         print(response.status_code)
         print(response.text)
-        break
+        
         

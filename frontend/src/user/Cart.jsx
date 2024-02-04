@@ -133,7 +133,7 @@ function Cart() {
         sx={{ width: "1200px", margin: "20px auto" }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead sx={{ bgcolor: "#E2E5FF", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
               <TableCell>
                 {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
@@ -232,7 +232,7 @@ function Cart() {
                   {row.min_price} - {row.max_price}
                 </TableCell>
                 <TableCell>
-                  <IconButton aria-label="delete">
+                  <IconButton>
                     <CiCircleRemove style={{ color: "#666666" }} />
                   </IconButton>
                 </TableCell>

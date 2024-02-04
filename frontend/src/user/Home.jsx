@@ -33,10 +33,20 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("/item")
+      .get("/item/?limit=6&offset=0")
       .then((res) => {
-        setItems([res.data[0], res.data[0], res.data[0]]);
-        setItemList([res.data[0], res.data[0], res.data[0], res.data[0]]);
+        console.log(res.data);
+        setItems([
+          res.data.results[0],
+          res.data.results[0],
+          res.data.results[0],
+        ]);
+        setItemList([
+          res.data.results[0],
+          res.data.results[0],
+          res.data.results[0],
+          res.data.results[0],
+        ]);
       })
       .catch((err) => console.log(err));
   }, [items.length]);
@@ -45,7 +55,8 @@ function Home() {
     axios
       .get("/category")
       .then((res) => {
-        setCategories(res.data);
+        console.log(res.data);
+        setCategories(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [categories.length]);
@@ -61,19 +72,21 @@ function Home() {
             <div className="flex flex-col items-stretch w-[18%] h-fit">
               <Paper>
                 <MenuList dense>
-                  {categories?.map((category, index) => (
-                    <MenuItem
-                      key={index}
-                      sx={{
-                        height: "50px",
-                        "&:hover": {
-                          bgcolor: "#99A3FF",
-                        },
-                      }}
-                    >
-                      <ListItemText inset>{category.title}</ListItemText>
-                    </MenuItem>
-                  ))}
+                  {categories.length > 0
+                    ? categories.map((category, index) => (
+                        <MenuItem
+                          key={index}
+                          sx={{
+                            height: "50px",
+                            "&:hover": {
+                              bgcolor: "#99A3FF",
+                            },
+                          }}
+                        >
+                          <ListItemText inset>{category.title}</ListItemText>
+                        </MenuItem>
+                      ))
+                    : "Empty"}
 
                   <Divider />
                   <MenuItem sx={{ height: "50px" }}>
@@ -135,7 +148,7 @@ function Home() {
                                     <div className="absolute top-2 left-3 w-[44px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                                       <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                         <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                          {item["start"] || 5.0}
+                                          {item?.star || 5.0}
                                         </div>
                                         <img
                                           loading="lazy"
@@ -216,7 +229,7 @@ function Home() {
                                     <div className="absolute top-2 left-3 w-[44px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                                       <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                         <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                          {item["start"] || 5.0}
+                                          {item?.star || 5.0}
                                         </div>
                                         <img
                                           loading="lazy"
@@ -335,7 +348,7 @@ function Home() {
                           <div className="absolute top-2 left-3 w-[44px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                             <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                               <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                                {item["start"] || 5.0}
+                                {item?.stars || 5.0}
                               </div>
                               <img
                                 loading="lazy"

@@ -9,7 +9,6 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Alert, Button, Checkbox, Dialog, TextField } from "@mui/material";
-import { ColoredInput } from "../styles/Styles";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
@@ -55,21 +54,18 @@ function Login() {
       const response = await axios.post(LOGIN_URL, loginInfo, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data?.access;
-      setAuth({ user, pwd, access: accessToken });
+      console.log(response?.data);
+      setAuth({ ...response?.data });
       if (persist) {
         // luu token vao cookie
         setCookie("userInfo", {
           user,
           pwd,
-          access: accessToken,
+          access: response?.data?.access,
           refresh: response?.data?.refresh,
         });
       }
       console.log(cookies.Token);
-      sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("username", response.data.username);
       setUser("");
       setPwd("");
       setSuccess(true);

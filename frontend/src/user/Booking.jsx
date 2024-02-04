@@ -39,7 +39,7 @@ const rows = [
 function Booking() {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const { itemLists, setItemLists } = useContext(CartContext);
+  const { itemLists } = useContext(CartContext);
   console.log(itemLists);
   const handleCreateOrder = () => {
     let order_item;
@@ -225,10 +225,11 @@ function Booking() {
                 id="outlined-basic"
                 label="Khuyến mãi"
                 variant="outlined"
-                // placeholder="Nhập mã khuyến mãi"
+                placeholder="Nhập mã khuyến mãi"
                 sx={{
-                  "& fieldset": {
+                  "& .MuiInputBase-input": {
                     height: "50px",
+                    boxSizing: "border-box",
                   },
                 }}
               />
