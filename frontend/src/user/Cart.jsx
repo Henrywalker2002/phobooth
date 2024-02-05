@@ -11,23 +11,27 @@ import {
   Checkbox,
   IconButton,
   Button,
+  Breadcrumbs,
+  Link,
+  Typography,
 } from "@mui/material";
 import { CiCircleRemove } from "react-icons/ci";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
+import { RiSubtractFill } from "react-icons/ri";
+import { IoIosAdd } from "react-icons/io";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../context/CartProvider";
 import useAuth from "../hooks/useAuth";
-// import { useHistory } from "react-router-dom";
 
 function createData(item, type, category, quantity, min_price, max_price) {
   return { item, type, category, quantity, min_price, max_price };
 }
 
 const rows = [
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
   createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
   createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
   createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
@@ -85,8 +89,42 @@ function Cart() {
   return (
     <div>
       <Navbar />
+
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080" }}
+          href="/"
+          // onClick={handleClick}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          Quản lý giỏ hàng
+        </Typography>
+      </Breadcrumbs>
+
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
         Quản lý giỏ hàng
       </div>
       {/* Tables */}
@@ -95,12 +133,12 @@ function Cart() {
         sx={{ width: "1200px", margin: "20px auto" }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF", color: "#3F41A6" }}>
             <TableRow>
               <TableCell>
                 {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
               </TableCell>
-              <TableCell sx={{ color: "#3F41A6" }}>HÀNG HÓA</TableCell>
+              <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 PHÂN LOẠI
               </TableCell>
@@ -117,7 +155,7 @@ function Cart() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((row, index) => (
+            {rows.map((row, index) => (
               <TableRow
                 key={index}
                 // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -141,22 +179,58 @@ function Cart() {
                       className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
                     />
                     <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                      {row?.item?.name}
+                      {/* {row?.item?.name} */}
+                      {row.item}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {row?.item.category?.type == "SERVICE" ? "Dịch vụ" : ""}
+                    {/* {row?.item.category?.type == "SERVICE" ? "Dịch vụ" : ""} */}
+                    {row.type}
                   </div>
                 </TableCell>
                 <TableCell align="left">
                   <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                    {row?.item.category?.title == "family" ? "Gia đình" : ""}
+                    {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
+                    {row.category}
                   </div>
                 </TableCell>
-                <TableCell align="left">{row?.number}</TableCell>
-                <TableCell align="left">{getPrice(row?.item)}</TableCell>
+                <TableCell align="left">
+                  {/* {row?.number} */}
+
+                  <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
+                    <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                      <IconButton color="primary">
+                        <RiSubtractFill
+                          style={{
+                            color: "#666666",
+                            width: "15px",
+                            height: "15px",
+                          }}
+                        />
+                      </IconButton>
+                    </div>
+                    <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
+                      {row.quantity}
+                    </div>
+                    <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                      <IconButton color="primary">
+                        <IoIosAdd
+                          style={{
+                            color: "#666666",
+                            width: "15px",
+                            height: "15px",
+                          }}
+                        />
+                      </IconButton>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell align="left">
+                  {/* {getPrice(row?.item)} */}
+                  {row.min_price} - {row.max_price}
+                </TableCell>
                 <TableCell>
                   <IconButton aria-label="delete">
                     <CiCircleRemove style={{ color: "#666666" }} />
@@ -235,7 +309,7 @@ function Cart() {
       </TableContainer>
 
       {/* Btn */}
-      <div className="max-w-[1200px] mx-auto my-6 flex justify-end">
+      <div className="max-w-[1200px] mx-auto mb-6 mt-2 flex justify-end">
         <Button
           variant="contained"
           sx={{

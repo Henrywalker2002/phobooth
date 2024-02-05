@@ -8,16 +8,21 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Checkbox,
+  // Checkbox,
   IconButton,
   Button,
   TextField,
+  Breadcrumbs,
+  Link,
+  Typography,
 } from "@mui/material";
 import { CiCircleRemove } from "react-icons/ci";
 import CartContext from "../context/CartProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 function createData(item, type, category, quantity, min_price, max_price) {
   return { item, type, category, quantity, min_price, max_price };
@@ -67,6 +72,50 @@ function Booking() {
   return (
     <div>
       <Navbar />
+
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080" }}
+          href="/"
+          // onClick={handleClick}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Link
+          underline="hover"
+          key="2"
+          color="inherit"
+          href="/cart"
+          // onClick={handleClick}
+        >
+          Quản lý giỏ hàng
+        </Link>
+
+        <Typography
+          key="3"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          Đặt sản phẩm
+        </Typography>
+      </Breadcrumbs>
+
       {/* Header */}
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
         Đặt dịch vụ
@@ -83,7 +132,7 @@ function Booking() {
             <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
               <TableRow>
                 <TableCell sx={{ color: "#3F41A6", paddingLeft: "40px" }}>
-                  HÀNG HÓA
+                  SẢN PHẨM
                 </TableCell>
                 <TableCell align="left" sx={{ color: "#3F41A6" }}>
                   PHÂN LOẠI
@@ -171,12 +220,17 @@ function Booking() {
                 }}
               />
             </div>
-            <div className="max-w-[450px] mr-5 self-center flex grow basis-[0%] flex-col items-stretch my-auto px-5">
+            <div className="max-w-[450px] mr-5 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
               <TextField
                 id="outlined-basic"
                 label="Khuyến mãi"
                 variant="outlined"
-                placeholder="Nhập mã khuyến mãi"
+                // placeholder="Nhập mã khuyến mãi"
+                sx={{
+                  "& fieldset": {
+                    height: "50px",
+                  },
+                }}
               />
               <div className="justify-between bg-white flex mt-4">
                 <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">

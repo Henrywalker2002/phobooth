@@ -24,7 +24,7 @@ import {
 } from "react-icons/md";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
-import logo from "../assets/logo1.png";
+// import logo from "../assets/logo1.png";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -105,8 +105,8 @@ function Navbar() {
         </div>
       </div>
 
-      <div className="search flex-1">
-        <div className="flex w-[500px] h-[40px] mx-auto rounded bg-white">
+      <div className="search flex">
+        <div className="justify-center flex w-[700px] h-[40px] mx-auto rounded bg-white">
           <TextField
             id="outlined-search"
             type="search"
@@ -220,15 +220,15 @@ function Navbar() {
               {userInfo}
             </MenuItem>
             <Divider />
-            <MenuItem onClick={() => navigate("/studio/orders")}>
+            <MenuItem
+            // onClick={() => navigate("/studio/orders")}
+            >
               <ListItemIcon>
                 <BiStore style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
               <ListItemText>Kênh Studio</ListItemText>
             </MenuItem>
-            <MenuItem
-            // onClick={() => navigate("/orders")}
-            >
+            <MenuItem onClick={() => navigate("/orders")}>
               <ListItemIcon>
                 <CgFileDocument style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
