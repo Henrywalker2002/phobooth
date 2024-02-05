@@ -25,9 +25,11 @@ function AddItem() {
   const [openSBar, setOpenSBar] = useState(false);
   const item_typ = ["Dịch vụ", "Hàng hóa", "Gói dịch vụ"];
   const [optionTyp, setOptionTyp] = useState("Dịch vụ");
+  const [reset, setReset] = useState(false);
   const [itemInfo, setItemInfo] = useState({});
   const [categories, setCategories] = useState([]);
   const [transInfo, setTransInfo] = useState({});
+  const [picList, setPicList] = useState([]);
 
   // category list
   useEffect(() => {
@@ -55,20 +57,40 @@ function AddItem() {
         : optionTyp === "Hàng hóa"
         ? "/item-product/"
         : "/item-service/";
-    axios
-      .post(
-        slug,
-        { ...itemInfo, ...transInfo },
-        {
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-            // "Content-Type": "multipart/form-data",
-            "Content-Type": "application/json",
-          },
+
+    // form-data
+    let formData = new FormData();
+    console.log(picList);
+    for (const pic of picList) {
+      formData.append("pictures", pic, pic.name);
+    }
+
+    const info = { ...itemInfo, ...transInfo };
+    console.log(info);
+
+    Object.entries(info).forEach(([key, value]) => {
+      if (key !== "item") {
+        formData.append(key, value);
+      } else {
+        for (const item of info.item) {
+          formData.append("item", item);
         }
-      )
+      }
+    });
+    console.log(formData.get("item"));
+
+    axios
+      .post(slug, formData, {
+        headers: {
+          Authorization: `Bearer ${auth.access}`,
+          "content-type": "multipart/form-data",
+        },
+      })
       .then((res) => {
         console.log(res.data);
+        setItemInfo({});
+        setTransInfo({});
+        setPicList([]);
         setOpenSBar(true);
       })
       .catch((err) => console.log(err));
@@ -175,6 +197,9 @@ function AddItem() {
               categories={categories?.filter(
                 (category) => category.type === "SERVICE"
               )}
+              setPicList={setPicList}
+              reset={reset}
+              setReset={setReset}
             />
           ) : optionTyp === "Hàng hóa" ? (
             <AddProduct
@@ -183,6 +208,9 @@ function AddItem() {
               categories={categories?.filter(
                 (category) => category.type === "PRODUCT"
               )}
+              setPicList={setPicList}
+              reset={reset}
+              setReset={setReset}
             />
           ) : (
             <AddService
@@ -191,6 +219,9 @@ function AddItem() {
               categories={categories?.filter(
                 (category) => category.type === "SERVICE"
               )}
+              setPicList={setPicList}
+              reset={reset}
+              setReset={setReset}
             />
           )}
 
@@ -297,22 +328,46 @@ function AddItem() {
               </div>
             </div>
           </Paper>
+          <div className="flex  gap-5 ml-4 my-5 self-center">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setItemInfo({});
+                setTransInfo({});
+                setPicList([]);
+                setReset(true);
+              }}
+              sx={{
+                textTransform: "none",
+                border: "1px solid #3F41A6",
+                color: "#3F41A6",
+                width: "120px",
 
-          <Button
-            variant="contained"
-            onClick={handleAddItem}
-            sx={{
-              textTransform: "none",
-              bgcolor: "#3F41A6",
-              width: "140px",
-              borderRadius: "20px",
-              "&:hover": {
-                bgcolor: "#3949AB",
-              },
-            }}
-          >
-            Thêm sản phẩm
-          </Button>
+                borderRadius: "20px",
+                "&:hover": {
+                  border: "1px solid #3949AB",
+                },
+              }}
+            >
+              Hủy thông tin
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={handleAddItem}
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "140px",
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Thêm sản phẩm
+            </Button>
+          </div>
 
           <Snackbar
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
