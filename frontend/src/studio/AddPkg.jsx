@@ -26,7 +26,14 @@ import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import AddItemForPkg from "./AddItemForPkg";
 
-function AddPkg({ pkgInfo, setPkgInfo, categories }) {
+function AddPkg({
+  pkgInfo,
+  setPkgInfo,
+  categories,
+  setPicList,
+  reset,
+  setReset,
+}) {
   // global
   const { auth } = useAuth();
 
@@ -43,7 +50,24 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
   const [productList, setProductList] = useState([]);
   const [totalPrice, setTotalPrice] = useState({});
 
+  // reset
+  useEffect(() => {
+    if (reset) {
+      setImgList([]);
+      setServiceList({ ...serviceList, selected: [] });
+      setAccsList({ ...serviceList, selected: [] });
+      setProductList({ ...serviceList, selected: [] });
+      setTotalPrice({});
+      setReset(false);
+    }
+  }, [reset]);
+
   // Image List
+  useEffect(() => {
+    let picList = imgList?.map((img) => img.img_file);
+    setPicList(picList);
+  }, [imgList]);
+
   const handleUpdateImgList = (e) => {
     console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
@@ -175,6 +199,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
                 id="outlined-basic"
                 variant="outlined"
                 name="name"
+                value={pkgInfo.name ? pkgInfo.name : ""}
                 onChange={updatePkgInfo}
                 sx={{
                   "& .MuiInputBase-input": {
@@ -190,6 +215,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
               <TextField
                 id="outlined-select-categories"
                 name="category"
+                value={pkgInfo.category ? pkgInfo.category : ""}
                 onChange={updatePkgInfo}
                 defaultValue=""
                 select
@@ -236,7 +262,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
                   <div className="flex flex-col items-center">
                     <RiImageAddFill className="w-11 h-11" />
                     <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                    <div className="text-[10px]">(0/5)</div>
+                    <div className="text-[10px]">({imgList.length}/5)</div>
                   </div>
 
                   <Input
@@ -260,6 +286,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
 
                 <ImageListItem
                   sx={{
+                    display: imgList.length > 0 ? "block" : "none",
                     marginTop: "10px",
                     width: "98px",
                     height: "105px",
@@ -273,16 +300,15 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
                   <img
                     width="98"
                     height="105"
-                    src={
-                      "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-                    }
+                    className="rounded-[5px]"
+                    src={imgList[0]?.img_preview}
                     // alt={item.title}
                     loading="lazy"
                   />
                   <ImageListItemBar
                     // title="Xem thêm"
                     subtitle="Xem thêm"
-                    sx={{ height: "40px" }}
+                    sx={{ height: "40px", borderRadius: "5px" }}
                     actionIcon={
                       <IconButton
                         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
@@ -399,6 +425,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
         <TextField
           id="outlined-multiline-static"
           name="description"
+          value={pkgInfo.description ? pkgInfo.description : ""}
           onChange={updatePkgInfo}
           multiline
           rows={3}
@@ -668,6 +695,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
                 id="outlined-basic"
                 variant="outlined"
                 name="min_price"
+                value={pkgInfo.min_price ? pkgInfo.min_price : ""}
                 placeholder={totalPrice.min_price ? totalPrice.min_price : 0}
                 onChange={updatePkgInfo}
                 sx={{
@@ -684,6 +712,7 @@ function AddPkg({ pkgInfo, setPkgInfo, categories }) {
                 id="outlined-basic"
                 variant="outlined"
                 name="max_price"
+                value={pkgInfo.max_price ? pkgInfo.max_price : ""}
                 placeholder={totalPrice.max_price ? totalPrice.max_price : 0}
                 onChange={updatePkgInfo}
                 sx={{

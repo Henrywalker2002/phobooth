@@ -26,13 +26,31 @@ import { FaRegArrowAltCircleRight } from "react-icons/fa";
 import { IoMdImages } from "react-icons/io";
 import { v4 as uuidv4 } from "uuid";
 
-function AddService({ serviceInfo, setServiceInfo, categories }) {
-  // const categories = ["Gia đình", "Doanh nhân", "Trẻ em", "Đám cưới"];
-
+function AddService({
+  serviceInfo,
+  setServiceInfo,
+  categories,
+  setPicList,
+  reset,
+  setReset,
+}) {
   const [imgList, setImgList] = useState([]);
   const [open, setOpen] = useState(false);
 
+  // reset
+  useEffect(() => {
+    if (reset) {
+      setImgList([]);
+      setReset(false);
+    }
+  }, [reset]);
+
   // Img List
+  useEffect(() => {
+    let picList = imgList?.map((img) => img.img_file);
+    setPicList(picList);
+  }, [imgList]);
+
   const handleUpdateImgList = (e) => {
     console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
@@ -79,6 +97,7 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
                 id="outlined-basic"
                 variant="outlined"
                 name="name"
+                value={serviceInfo.name ? serviceInfo.name : ""}
                 onChange={updateServiceInfo}
                 sx={{
                   "& .MuiInputBase-input": {
@@ -100,6 +119,9 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
                         id="outlined-basic"
                         variant="outlined"
                         name="min_price"
+                        value={
+                          serviceInfo.min_price ? serviceInfo.min_price : ""
+                        }
                         onChange={updateServiceInfo}
                         sx={{
                           "& .MuiInputBase-input": {
@@ -117,6 +139,9 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
                         id="outlined-basic"
                         variant="outlined"
                         name="max_price"
+                        value={
+                          serviceInfo.max_price ? serviceInfo.max_price : ""
+                        }
                         onChange={updateServiceInfo}
                         sx={{
                           "& .MuiInputBase-input": {
@@ -196,6 +221,7 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
               <TextField
                 id="outlined-select-categories"
                 name="category"
+                value={serviceInfo.category ? serviceInfo.category : ""}
                 onChange={updateServiceInfo}
                 select
                 defaultValue=""
@@ -241,7 +267,7 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
                   <div className="flex flex-col items-center">
                     <RiImageAddFill className="w-11 h-11" />
                     <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                    <div className="text-[10px]">(0/5)</div>
+                    <div className="text-[10px]">({imgList.length}/5)</div>
                   </div>
 
                   <Input
@@ -265,6 +291,7 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
 
                 <ImageListItem
                   sx={{
+                    display: imgList.length > 0 ? "block" : "none",
                     marginTop: "10px",
                     width: "98px",
                     height: "105px",
@@ -278,16 +305,15 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
                   <img
                     width="98"
                     height="105"
-                    src={
-                      "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-                    }
+                    className="rounded-[5px]"
+                    src={imgList[0]?.img_preview}
                     // alt={item.title}
                     loading="lazy"
                   />
                   <ImageListItemBar
                     // title="Xem thêm"
                     subtitle="Xem thêm"
-                    sx={{ height: "40px" }}
+                    sx={{ height: "40px", borderRadius: "5px" }}
                     actionIcon={
                       <IconButton
                         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
@@ -404,6 +430,7 @@ function AddService({ serviceInfo, setServiceInfo, categories }) {
         <TextField
           id="outlined-multiline-static"
           name="description"
+          value={serviceInfo.description ? serviceInfo.description : ""}
           onChange={updateServiceInfo}
           multiline
           rows={3}

@@ -32,6 +32,12 @@ function Register() {
   const [provinces, setProvinces] = useState([]);
   const [studioInfo, setStudioInfo] = useState({});
   const [avt, setAvt] = useState({});
+  const resetInfo = {
+    friendly_name: "",
+    code_name: "",
+    email: "",
+    description: "",
+  };
 
   useEffect(() => {
     axios
@@ -129,7 +135,7 @@ function Register() {
     };
     console.log(JSON.stringify(registerInfo), avt.avt_file);
     let formData = new FormData();
-    formData.append("avatar", avt.avt_file);
+    formData.append("avatar", avt.avt_file, avt.avt_file.name);
     formData.append("data", JSON.stringify(registerInfo));
 
     console.log(isTokenExpired(auth.access));
@@ -138,8 +144,8 @@ function Register() {
       .post(url, formData, {
         headers: {
           Authorization: `Bearer ${auth.access}`,
-          // "Content-Type": "multipart/form-data",
-          "Content-Type": "application/json",
+          "content-type": "multipart/form-data",
+          // "Content-Type": "application/json",
         },
       })
       .then((res) => {
@@ -206,6 +212,7 @@ function Register() {
               id="outlined-basic"
               variant="outlined"
               name="friendly_name"
+              value={studioInfo.friendly_name}
               onChange={updateStudioInfo}
               sx={{
                 "& .MuiInputBase-input": {
@@ -224,6 +231,7 @@ function Register() {
               id="outlined-basic"
               variant="outlined"
               name="code_name"
+              value={studioInfo.code_name}
               onChange={updateStudioInfo}
               sx={{
                 "& .MuiInputBase-input": {
@@ -242,6 +250,7 @@ function Register() {
               id="outlined-basic"
               variant="outlined"
               name="email"
+              value={studioInfo.email}
               onChange={updateStudioInfo}
               InputProps={{
                 type: "email",
@@ -263,6 +272,7 @@ function Register() {
               id="outlined-basic"
               variant="outlined"
               name="phone"
+              value={studioInfo.phone}
               onChange={updateStudioInfo}
               sx={{
                 "& .MuiInputBase-input": {
@@ -562,6 +572,7 @@ function Register() {
           <TextField
             id="outlined-multiline-static"
             name="description"
+            value={studioInfo.description}
             onChange={updateStudioInfo}
             multiline
             rows={3}
@@ -574,6 +585,11 @@ function Register() {
         <div className="flex  gap-5 ml-4 my-5 self-start">
           <Button
             variant="outlined"
+            onClick={() => {
+              setStudioInfo(resetInfo);
+              setAddresses([{ id: uuidv4() }]);
+              setAvt({});
+            }}
             sx={{
               textTransform: "none",
               border: "1px solid #3F41A6",

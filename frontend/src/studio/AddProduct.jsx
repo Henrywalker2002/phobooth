@@ -29,7 +29,14 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { v4 as uuidv4 } from "uuid";
 
-function AddProduct({ productInfo, setProductInfo, categories }) {
+function AddProduct({
+  productInfo,
+  setProductInfo,
+  categories,
+  setPicList,
+  reset,
+  setReset,
+}) {
   // const categories = ["Khung ảnh", "Ảnh chất lượng cao"];
   const [open, setOpen] = useState(false);
   const [optList1, setOptList1] = useState([{ id: uuidv4() }]);
@@ -37,6 +44,25 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
   const [optName, setOptName] = useState({});
   const [optValueList, setOptValueList] = useState([]);
   const [imgList, setImgList] = useState([]);
+
+  // Reset
+  useEffect(() => {
+    if (reset) {
+      setImgList([]);
+      setOptName({});
+      setOptValueList([]);
+      setOptList1([{ id: uuidv4() }]);
+      setOptList2([{ id: uuidv4() }]);
+      setReset(false);
+    }
+  }, [reset]);
+
+  // Img List
+  useEffect(() => {
+    let picList = imgList?.map((img) => img.img_file);
+    setPicList(picList);
+  }, [imgList]);
+
   const handleUpdateImgList = (e) => {
     console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
@@ -96,12 +122,60 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
     console.log(mergedList);
     return mergedList;
   };
-  const handleDeleteVariation = (delValue) => {
-    const newList = optValueList.filter(
-      (values) => !values.option_values.includes(delValue)
-    );
+
+  const getNumberOfValues = (lst) => {
+    let count = 0;
+    lst.forEach((opt) => {
+      if ("value" in opt && opt.value !== "") count++;
+    });
+    return count;
+  };
+  const handleDeleteVariation1 = (delValue) => {
+    let newList = [];
+    if (getNumberOfValues(optList1) > 1) {
+      newList = optValueList.filter(
+        (values) => !values.option_values.includes(delValue)
+      );
+    } else {
+      optValueList.forEach((values) => {
+        if (values.option_values.includes(delValue)) {
+          if (!values.option_values.includes("")) {
+            let newValues = { ...values };
+            newValues.option_values[0] = "";
+            newList.push(newValues);
+          }
+        } else {
+          newList.push(values);
+        }
+      });
+    }
     setOptValueList(newList);
   };
+
+  const handleDeleteVariation2 = (delValue) => {
+    let newList = [];
+    console.log(getNumberOfValues(optList2) > 1);
+    if (getNumberOfValues(optList2) > 1) {
+      newList = optValueList.filter(
+        (values) => !values.option_values.includes(delValue)
+      );
+    } else {
+      optValueList.forEach((values) => {
+        if (values.option_values.includes(delValue)) {
+          if (!values.option_values.includes("")) {
+            let newValues = { ...values };
+            newValues.option_values[1] = "";
+            console.log(newValues);
+            newList.push(newValues);
+          }
+        } else {
+          newList.push(values);
+        }
+      });
+    }
+    setOptValueList(newList);
+  };
+
   const handleAddOpt1 = () => {
     const newList = [...optList1, { id: uuidv4() }];
     setOptList1(newList);
@@ -138,13 +212,13 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
     const newList = optList1.filter((opt) => opt.id !== delOpt.id);
     setOptList1(newList);
     if ("value" in delOpt && delOpt.value !== "")
-      handleDeleteVariation(delOpt.value);
+      handleDeleteVariation1(delOpt.value);
   };
   const handleDeleteOpt2 = (delOpt) => {
     const newList = optList2.filter((opt) => opt.id !== delOpt.id);
     setOptList2(newList);
     if ("value" in delOpt && delOpt.value !== "")
-      handleDeleteVariation(delOpt.value);
+      handleDeleteVariation2(delOpt.value);
   };
 
   // Product Info
@@ -189,6 +263,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
                 id="outlined-basic"
                 variant="outlined"
                 name="name"
+                value={productInfo?.name ? productInfo.name : ""}
                 onChange={updateBasicInfo}
                 sx={{
                   "& .MuiInputBase-input": {
@@ -207,6 +282,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
                   <TextField
                     id="outlined-select-categories"
                     name="category"
+                    value={productInfo?.category ? productInfo.category : ""}
                     onChange={updateBasicInfo}
                     defaultValue=""
                     select
@@ -236,6 +312,9 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
                     id="outlined-basic"
                     variant="outlined"
                     name="fixed_price"
+                    value={
+                      productInfo?.fixed_price ? productInfo.fixed_price : ""
+                    }
                     onChange={updateBasicInfo}
                     sx={{
                       "& .MuiInputBase-input": {
@@ -276,7 +355,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
                   <div className="flex flex-col items-center">
                     <RiImageAddFill className="w-11 h-11" />
                     <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                    <div className="text-[10px]">(0/5)</div>
+                    <div className="text-[10px]">({imgList.length}/5)</div>
                   </div>
 
                   <Input
@@ -300,6 +379,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
 
                 <ImageListItem
                   sx={{
+                    display: imgList.length > 0 ? "block" : "none",
                     marginTop: "10px",
                     width: "98px",
                     height: "105px",
@@ -313,16 +393,15 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
                   <img
                     width="98"
                     height="105"
-                    src={
-                      "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-                    }
+                    className="rounded-[5px]"
+                    src={imgList[0]?.img_preview}
                     // alt={item.title}
                     loading="lazy"
                   />
                   <ImageListItemBar
                     // title="Xem thêm"
                     subtitle="Xem thêm"
-                    sx={{ height: "40px" }}
+                    sx={{ height: "40px", borderRadius: "5px" }}
                     actionIcon={
                       <IconButton
                         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
@@ -439,6 +518,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
         <TextField
           id="outlined-multiline-static"
           name="description"
+          value={productInfo?.description ? productInfo.description : ""}
           onChange={updateBasicInfo}
           multiline
           rows={3}
@@ -455,6 +535,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
             <TextField
               id="outlined-basic"
               variant="outlined"
+              value={optName.feature1 ? optName.feature1 : ""}
               onChange={(e) =>
                 setOptName({ ...optName, feature1: e.target.value })
               }
@@ -473,6 +554,7 @@ function AddProduct({ productInfo, setProductInfo, categories }) {
             <TextField
               id="outlined-basic"
               variant="outlined"
+              value={optName.feature2 ? optName.feature2 : ""}
               onChange={(e) =>
                 setOptName({ ...optName, feature2: e.target.value })
               }

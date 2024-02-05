@@ -123,7 +123,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {itemList.selectList.length > 0 ? (
+              {itemList?.selectList?.length > 0 ? (
                 itemList.selectList.map((item) => (
                   <TableRow
                     key={item.id}
