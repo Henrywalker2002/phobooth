@@ -46,7 +46,7 @@ class ProvinceViewSet(CreateModelMixin, GenericViewSet, ListModelMixin, Retrieve
         
         for dictrict in districts:
             wards = dictrict.pop('wards')
-            dictrict_object = District.objects.create(provide=provide, **dictrict)
+            dictrict_object = District.objects.create(province=provide, **dictrict)
             
             for ward in wards:
                 Ward.objects.create(district=dictrict_object, **ward)

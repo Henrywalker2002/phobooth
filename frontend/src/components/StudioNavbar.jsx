@@ -15,30 +15,27 @@ import { BiStore } from "react-icons/bi";
 import { CgFileDocument } from "react-icons/cg";
 import { LuTicket } from "react-icons/lu";
 import { RiSearchLine } from "react-icons/ri";
-import { HiOutlineMenu } from "react-icons/hi";
-import {
-  MdNotificationsNone,
-  MdOutlineChat,
-  MdOutlineShoppingCart,
-  MdLogout,
-} from "react-icons/md";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import InsertChartOutlinedRoundedIcon from "@mui/icons-material/InsertChartOutlinedRounded";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
-// import logo from "../assets/logo1.png";
 
-function Navbar() {
+function StudioNavbar() {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState("");
+  const [studioInfo, setStudioInfo] = useState({});
   const { auth, setAuth, setPersist } = useAuth();
   const [, , removeCookie] = useCookies(["userInfo"]);
 
   console.log(auth);
 
   useEffect(() => {
-    if (auth.username !== undefined) {
-      setUserInfo(auth.username);
-      console.log(auth.username);
-    } else setUserInfo("");
+    if (auth.studio !== undefined) {
+      setStudioInfo(auth.studio);
+      console.log(auth.studio);
+    }
   }, []);
 
   // profile nav
@@ -62,7 +59,7 @@ function Navbar() {
       <div className="header w-[350px] flex gap-x-7">
         <div
           className="logo flex items-center w-[180px] cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/studio")}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,28 +79,13 @@ function Navbar() {
           </div>
         </div>
         {/* <div
-          className="logo flex items-center w-[100px] cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <img src={logo} alt="logo-phobooth"></img>
-        </div> */}
-        <div className="self-center">
-          <Button
-            startIcon={<HiOutlineMenu />}
-            sx={{
-              textTransform: "none",
-              color: "#787282",
-              width: "140px",
-              height: "35px",
-              borderRadius: "5px",
-              fontSize: "17.5px",
-              "&:hover": {
-                color: "#3F41A6",
-              },
-            }}
+            className="logo flex items-center w-[100px] cursor-pointer"
+            onClick={() => navigate("/")}
           >
-            Danh mục
-          </Button>
+            <img src={logo} alt="logo-phobooth"></img>
+          </div> */}
+        <div className="self-center">
+          <div className="text-[#787282] text-[19px]">Studio</div>
         </div>
       </div>
 
@@ -139,7 +121,7 @@ function Navbar() {
           </Button>
         </div>
       </div>
-      {userInfo == "" ? (
+      {studioInfo.friendly_name == "" ? (
         <div className="btn-gr w-60">
           <Button
             variant="text"
@@ -182,15 +164,11 @@ function Navbar() {
       ) : (
         <div className="action-gr flex items-center justify-evenly w-60">
           <IconButton>
-            <MdNotificationsNone style={{ color: "#666666" }} />
+            <NotificationsNoneOutlinedIcon sx={{ color: "#666666" }} />
           </IconButton>
 
           <IconButton>
-            <MdOutlineChat style={{ color: "#666666" }} />
-          </IconButton>
-
-          <IconButton onClick={() => navigate("/cart")}>
-            <MdOutlineShoppingCart style={{ color: "#666666" }} />
+            <ChatOutlinedIcon sx={{ color: "#666666" }} />
           </IconButton>
 
           <IconButton
@@ -220,26 +198,28 @@ function Navbar() {
                 fontStyle: "normal",
               }}
             >
-              {userInfo}
+              {studioInfo.friendly_name}
             </MenuItem>
             <Divider />
             <MenuItem
               onClick={() => {
-                // kiểm tra đã có tài khoản studio chưa
-
-                if (!auth.studio) {
-                  navigate("/studio/register");
-                } else {
-                  navigate("/studio");
-                }
+                navigate("/");
               }}
             >
               <ListItemIcon>
                 <BiStore style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
-              <ListItemText>Kênh Studio</ListItemText>
+              <ListItemText>Kênh người mua</ListItemText>
             </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
+            <MenuItem onClick={() => navigate("/studio/items")}>
+              <ListItemIcon>
+                <Inventory2OutlinedIcon
+                  sx={{ width: "20px", height: "20px" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Quản lý sản phẩm</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/studio/orders")}>
               <ListItemIcon>
                 <CgFileDocument style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
@@ -249,11 +229,19 @@ function Navbar() {
               <ListItemIcon>
                 <LuTicket style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
-              <ListItemText>Khuyến mãi</ListItemText>
+              <ListItemText>Quản lý khuyến mãi</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <InsertChartOutlinedRoundedIcon
+                  sx={{ width: "20px", height: "20px" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Báo cáo kinh doanh</ListItemText>
             </MenuItem>
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>
-                <MdLogout style={{ width: "20px", height: "20px" }} />
+                <LogoutOutlinedIcon sx={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
               <ListItemText>Đăng xuất</ListItemText>
             </MenuItem>
@@ -264,4 +252,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default StudioNavbar;

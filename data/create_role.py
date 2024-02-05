@@ -7,9 +7,9 @@ def create_role():
     for role in lst:
         response = requests.get(url + 'role?code_name=' + role)
         json = response.json()
-        if len(json) == 0:
+        if json.get('count', 0) == 0:
             permission = requests.get(url + 'permission/?code_name=' + role)
-            if len(permission.json()) == 0:
+            if permission.json().get('count') == 0:
                 data = {
                     "code_name": role,
                     "friendly_name": role,
@@ -22,7 +22,7 @@ def create_role():
                 "friendly_name": role,
                 "description": role,
                 "permission": [
-                    permission.json()[0]['id']
+                    permission.json()['results'][0]['id']
                 ]
             }
             response = requests.post(url + 'role/', data=data)

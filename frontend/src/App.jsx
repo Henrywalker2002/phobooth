@@ -12,7 +12,10 @@ import OrderDetail from "./user/OrderDetail";
 import StudioOrderDetail from "./studio/OrderDetail";
 import StudioOrders from "./studio/Orders";
 import CartContextLayout from "./context/CartContextLayout";
-// import PersistLogin from "./user/PersistLogin";
+import Register from "./studio/Register";
+import ItemMgmt from "./studio/ItemMgmt";
+import AddItem from "./studio/AddItem";
+import StudioHome from "./studio/Home";
 
 function App() {
   const theme = createTheme({
@@ -39,18 +42,14 @@ function App() {
         styleOverrides: {
           root: {
             "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                // borderColor: "#E6E6E6",
-              },
+              boxSizing: "border-box",
+              "& fieldset": {},
               "&:hover fieldset": {
                 borderColor: "#3F41A6",
               },
               "&.Mui-focused fieldset": {
                 borderColor: "#3F41A6",
               },
-            },
-            "& .MuiOutlinedInput-input": {
-              boxSizing: "border-box",
             },
           },
         },
@@ -76,11 +75,15 @@ function App() {
         <Route path="/item/detail/:id" element={<ItemDetail />} />
 
         {/* Studio */}
+        <Route path="/studio/items/add" element={<AddItem />} />
+        <Route path="/studio/items" element={<ItemMgmt />} />
+        <Route path="/studio/register" element={<Register />} />
         <Route
           path="/studio/order/detail/:id"
           element={<StudioOrderDetail />}
         />
         <Route path="/studio/orders" element={<StudioOrders />} />
+        <Route path="/studio/" element={<StudioHome />} />
 
         <Route path="/" element={<Home />} />
       </Routes>

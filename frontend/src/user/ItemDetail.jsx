@@ -203,9 +203,7 @@ function ItemDetail(props) {
                         { item: id, number: 1 },
                         {
                           headers: {
-                            Authorization: `Bearer ${sessionStorage.getItem(
-                              "accessToken"
-                            )}`,
+                            Authorization: `Bearer ${auth.access}`,
                             "Content-Type": "application/json",
                           },
                         }
