@@ -36,6 +36,9 @@ function AddProduct({
   setPicList,
   reset,
   setReset,
+  errMsg,
+  addImgFlag,
+  setAddImgFlag,
 }) {
   // const categories = ["Khung ảnh", "Ảnh chất lượng cao"];
   const [open, setOpen] = useState(false);
@@ -260,11 +263,13 @@ function AddProduct({
                 Tên hàng hóa
               </div>
               <TextField
-                id="outlined-basic"
+                required
                 variant="outlined"
                 name="name"
                 value={productInfo?.name ? productInfo.name : ""}
                 onChange={updateBasicInfo}
+                error={errMsg.product?.name ? true : false}
+                helperText={errMsg.product?.name ? errMsg.product.name[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -280,12 +285,17 @@ function AddProduct({
                     Danh mục
                   </div>
                   <TextField
+                    required
                     id="outlined-select-categories"
                     name="category"
                     value={productInfo?.category ? productInfo.category : ""}
                     onChange={updateBasicInfo}
                     defaultValue=""
                     select
+                    error={errMsg.product?.category ? true : false}
+                    helperText={
+                      errMsg.product?.category ? errMsg.product.category[0] : ""
+                    }
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "45px",
@@ -309,13 +319,19 @@ function AddProduct({
                     Giá (VNĐ)
                   </div>
                   <TextField
-                    id="outlined-basic"
+                    required
                     variant="outlined"
                     name="fixed_price"
                     value={
                       productInfo?.fixed_price ? productInfo.fixed_price : ""
                     }
                     onChange={updateBasicInfo}
+                    error={errMsg.product?.fixed_price ? true : false}
+                    helperText={
+                      errMsg.product?.fixed_price
+                        ? errMsg.product.fixed_price[0]
+                        : ""
+                    }
                     sx={{
                       "& .MuiInputBase-input": {
                         height: "40px",
@@ -359,6 +375,7 @@ function AddProduct({
                   </div>
 
                   <Input
+                    required
                     type="file"
                     accept="image/*"
                     multiple
@@ -416,8 +433,11 @@ function AddProduct({
 
                 {/* Dialog Album */}
                 <Dialog
-                  open={open}
-                  onClose={() => setOpen(false)}
+                  open={addImgFlag ? addImgFlag : open}
+                  onClose={() => {
+                    setOpen(false);
+                    setAddImgFlag(false);
+                  }}
                   sx={{
                     "& .MuiDialog-paper": {
                       width: "800px",
@@ -499,10 +519,13 @@ function AddProduct({
                   <DialogActions>
                     <Button
                       sx={{
-                        textTransform: "none",
+                        // textTransform: "none",
                         color: "#3F41A6",
                       }}
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        setAddImgFlag(false);
+                      }}
                     >
                       Đóng
                     </Button>
@@ -516,12 +539,17 @@ function AddProduct({
           Mô tả hàng hóa
         </div>
         <TextField
+          required
           id="outlined-multiline-static"
           name="description"
           value={productInfo?.description ? productInfo.description : ""}
           onChange={updateBasicInfo}
           multiline
           rows={3}
+          error={errMsg.product?.description ? true : false}
+          helperText={
+            errMsg.product?.description ? errMsg.product.description[0] : ""
+          }
           sx={{
             width: "730px",
             marginTop: "10px",
@@ -533,7 +561,6 @@ function AddProduct({
           <div className="flex flex-col flex-1 items-stretch">
             <div className="text-sm leading-5 text-zinc-900">Đặc điểm 1</div>
             <TextField
-              id="outlined-basic"
               variant="outlined"
               value={optName.feature1 ? optName.feature1 : ""}
               onChange={(e) =>
@@ -552,7 +579,6 @@ function AddProduct({
           <div className="flex flex-col flex-1 items-stretch">
             <div className="text-sm leading-5 text-zinc-900">Đặc điểm 2</div>
             <TextField
-              id="outlined-basic"
               variant="outlined"
               value={optName.feature2 ? optName.feature2 : ""}
               onChange={(e) =>
@@ -662,13 +688,33 @@ function AddProduct({
           </div>
         </div>
 
+        {/* Variation */}
         <div className="flex flex-col items-stretch pb-2.5 mt-8 bg-white rounded-lg border border-solid border-slate-100 max-md:max-w-full">
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "#3F41A6" }}>Phân loại 1</TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    sx={{
+                      display:
+                        getNumberOfValues(optList1) == 0
+                          ? "none"
+                          : "table-cell",
+                      color: "#3F41A6",
+                    }}
+                  >
+                    Phân loại 1
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      display:
+                        getNumberOfValues(optList2) == 0
+                          ? "none"
+                          : "table-cell",
+                      color: "#3F41A6",
+                    }}
+                  >
                     Phân loại 2
                   </TableCell>
                   <TableCell align="left" sx={{ color: "#3F41A6" }}>
@@ -688,10 +734,27 @@ function AddProduct({
                         "&:last-child td, &:last-child th": { border: 0 },
                       }}
                     >
-                      <TableCell component="th" scope="row">
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        sx={{
+                          display:
+                            getNumberOfValues(optList1) == 0
+                              ? "none"
+                              : "table-cell",
+                        }}
+                      >
                         {values?.option_values ? values.option_values[0] : ""}
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell
+                        align="left"
+                        sx={{
+                          display:
+                            getNumberOfValues(optList2) == 0
+                              ? "none"
+                              : "table-cell",
+                        }}
+                      >
                         {values?.option_values ? values.option_values[1] : ""}
                       </TableCell>
 

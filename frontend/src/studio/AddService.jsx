@@ -33,6 +33,9 @@ function AddService({
   setPicList,
   reset,
   setReset,
+  errMsg,
+  addImgFlag,
+  setAddImgFlag,
 }) {
   const [imgList, setImgList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -94,11 +97,13 @@ function AddService({
                 Tên dịch vụ
               </div>
               <TextField
-                id="outlined-basic"
+                required
                 variant="outlined"
                 name="name"
                 value={serviceInfo.name ? serviceInfo.name : ""}
                 onChange={updateServiceInfo}
+                error={errMsg.service?.name ? true : false}
+                helperText={errMsg.service?.name ? errMsg.service.name[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -116,13 +121,19 @@ function AddService({
                     </div>
                     <div className="justify-center items-stretch flex gap-2.5 mt-1.5 pr-4">
                       <TextField
-                        id="outlined-basic"
+                        required
                         variant="outlined"
                         name="min_price"
                         value={
                           serviceInfo.min_price ? serviceInfo.min_price : ""
                         }
                         onChange={updateServiceInfo}
+                        error={errMsg.service?.min_price ? true : false}
+                        helperText={
+                          errMsg.service?.min_price
+                            ? errMsg.service.min_price[0]
+                            : ""
+                        }
                         sx={{
                           "& .MuiInputBase-input": {
                             height: "40px",
@@ -136,13 +147,19 @@ function AddService({
                         -
                       </div>
                       <TextField
-                        id="outlined-basic"
+                        required
                         variant="outlined"
                         name="max_price"
                         value={
                           serviceInfo.max_price ? serviceInfo.max_price : ""
                         }
                         onChange={updateServiceInfo}
+                        error={errMsg.service?.max_price ? true : false}
+                        helperText={
+                          errMsg.service?.max_price
+                            ? errMsg.service.max_price[0]
+                            : ""
+                        }
                         sx={{
                           "& .MuiInputBase-input": {
                             height: "40px",
@@ -164,9 +181,11 @@ function AddService({
                         </div>
                       </FormLabel>
                       <RadioGroup
-                        aria-labelledby="demo-controlled-radio-buttons-group"
+                        aria-labelledby="demo-radio-buttons-group-label"
                         name="type"
                         onChange={updateServiceInfo}
+                        // value={serviceInfo.type ? serviceInfo.type : "SERVICE"}
+                        defaultValue="SERVICE"
                       >
                         <FormControlLabel
                           value="SERVICE"
@@ -219,12 +238,17 @@ function AddService({
             <div className="flex grow flex-col items-stretch">
               <div className="text-zinc-900 text-sm leading-5">Danh mục</div>
               <TextField
+                required
                 id="outlined-select-categories"
                 name="category"
                 value={serviceInfo.category ? serviceInfo.category : ""}
                 onChange={updateServiceInfo}
                 select
                 defaultValue=""
+                error={errMsg.service?.category ? true : false}
+                helperText={
+                  errMsg.service?.category ? errMsg.service.category[0] : ""
+                }
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -271,6 +295,7 @@ function AddService({
                   </div>
 
                   <Input
+                    required
                     type="file"
                     accept="image/*"
                     multiple
@@ -307,7 +332,6 @@ function AddService({
                     height="105"
                     className="rounded-[5px]"
                     src={imgList[0]?.img_preview}
-                    // alt={item.title}
                     loading="lazy"
                   />
                   <ImageListItemBar
@@ -317,7 +341,6 @@ function AddService({
                     actionIcon={
                       <IconButton
                         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        // aria-label={`info about ${item.title}`}
                         onClick={() => setOpen(true)}
                       >
                         <FaRegArrowAltCircleRight />
@@ -328,8 +351,11 @@ function AddService({
 
                 {/* Dialog Album */}
                 <Dialog
-                  open={open}
-                  onClose={() => setOpen(false)}
+                  open={addImgFlag ? addImgFlag : open}
+                  onClose={() => {
+                    setOpen(false);
+                    setAddImgFlag(false);
+                  }}
                   sx={{
                     "& .MuiDialog-paper": {
                       width: "800px",
@@ -411,10 +437,13 @@ function AddService({
                   <DialogActions>
                     <Button
                       sx={{
-                        textTransform: "none",
+                        // textTransform: "none",
                         color: "#3F41A6",
                       }}
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        setAddImgFlag(false);
+                      }}
                     >
                       Đóng
                     </Button>
@@ -428,12 +457,16 @@ function AddService({
           Mô tả dịch vụ
         </div>
         <TextField
-          id="outlined-multiline-static"
+          required
           name="description"
           value={serviceInfo.description ? serviceInfo.description : ""}
           onChange={updateServiceInfo}
           multiline
           rows={3}
+          error={errMsg.service?.description ? true : false}
+          helperText={
+            errMsg.service?.description ? errMsg.service.description[0] : ""
+          }
           sx={{
             width: "730px",
             marginTop: "10px",

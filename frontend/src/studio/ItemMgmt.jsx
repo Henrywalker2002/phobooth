@@ -279,7 +279,9 @@ function ItemMgmt() {
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        {service.min_price} - {service.max_price}
+                        {service.min_price && service.max_price
+                          ? `${service.min_price} - ${service.max_price}`
+                          : ""}
                       </TableCell>
                       <TableCell align="left">
                         <div className="flex gap-1">
@@ -306,7 +308,7 @@ function ItemMgmt() {
           {/* Product Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "700px", margin: "20px auto" }}
+            sx={{ width: "900px", margin: "20px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -376,7 +378,7 @@ function ItemMgmt() {
           {/* Package Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "800px", margin: "20px auto" }}
+            sx={{ width: "900px", margin: "20px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -420,7 +422,9 @@ function ItemMgmt() {
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        {pkg.min_price} - {pkg.max_price}
+                        {pkg.min_price && pkg.max_price
+                          ? `${pkg.min_price} - ${pkg.max_price}`
+                          : ""}
                       </TableCell>
                       <TableCell align="left" sx={{ width: "140px" }}>
                         <div className="flex gap-1 w-fit">

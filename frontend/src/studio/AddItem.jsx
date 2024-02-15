@@ -19,9 +19,14 @@ import AddPkg from "./AddPkg";
 import StudioNavbar from "../components/StudioNavbar";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
+import OtherErrDialog from "../components/OtherErrDialog";
+import Err401Dialog from "../components/Err401Dialog";
+import ImgAlert from "../components/ImgAlert";
+import { validFixedPrice, validRangePrice } from "../util/Validation";
 
 function AddItem() {
   const { auth } = useAuth();
+  // local
   const [openSBar, setOpenSBar] = useState(false);
   const item_typ = ["Dịch vụ", "Hàng hóa", "Gói dịch vụ"];
   const [optionTyp, setOptionTyp] = useState("Dịch vụ");
@@ -30,6 +35,12 @@ function AddItem() {
   const [categories, setCategories] = useState([]);
   const [transInfo, setTransInfo] = useState({});
   const [picList, setPicList] = useState([]);
+  // error
+  const [errMsg, setErrMsg] = useState({});
+  const [openImgAlert, setOpenImgAlert] = useState(false);
+  const [addImgFlag, setAddImgFlag] = useState(false);
+  const [openErr401, setOpenErr401] = useState(false);
+  const [openOtherErr, setOpenOtherErr] = useState(false);
 
   // category list
   useEffect(() => {
@@ -47,53 +58,146 @@ function AddItem() {
     setTransInfo({ ...transInfo, [e.target.name]: e.target.value });
   };
 
+  // Check price for item
+  const checkPrice = (item, typ) => {
+    if (typ === "Hàng hóa") {
+      if (!validFixedPrice(item.fixed_price)) {
+        setErrMsg({
+          ...errMsg,
+          product: { fixed_price: ["Giá trị không hợp lệ!"] },
+        });
+        return false;
+      }
+    } else if (typ === "Gói dịch vụ") {
+      if (validFixedPrice(item.min_price) && validFixedPrice(item.max_price)) {
+        if (!validRangePrice(item.min_price, item.max_price)) {
+          setErrMsg({
+            ...errMsg,
+            pkg: {
+              min_price: ["Khoảng giá trị không phù hợp!"],
+              max_price: ["Khoảng giá trị không phù hợp!"],
+            },
+          });
+          return false;
+        }
+      } else {
+        if (!validFixedPrice(item.min_price))
+          setErrMsg({
+            ...errMsg,
+            pkg: { min_price: ["Giá trị không hợp lệ!"] },
+          });
+        if (!validFixedPrice(item.max_price))
+          setErrMsg({
+            ...errMsg,
+            pkg: { max_price: ["Giá trị không hợp lệ!"] },
+          });
+        return false;
+      }
+    } else {
+      if (validFixedPrice(item.min_price) && validFixedPrice(item.max_price)) {
+        if (!validRangePrice(item.min_price, item.max_price)) {
+          setErrMsg({
+            ...errMsg,
+            service: {
+              min_price: ["Khoảng giá trị không phù hợp!"],
+              max_price: ["Khoảng giá trị không phù hợp!"],
+            },
+          });
+          return false;
+        }
+      } else {
+        if (!validFixedPrice(item.min_price))
+          setErrMsg({
+            ...errMsg,
+            service: { min_price: ["Giá trị không hợp lệ!"] },
+          });
+        if (!validFixedPrice(item.max_price))
+          setErrMsg({
+            ...errMsg,
+            service: { max_price: ["Giá trị không hợp lệ!"] },
+          });
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Add Item
   const handleAddItem = async (e) => {
     e.preventDefault();
     console.log(itemInfo);
-    let slug =
-      optionTyp === "Gói dịch vụ"
-        ? "/item-service-pack/"
-        : optionTyp === "Hàng hóa"
-        ? "/item-product/"
-        : "/item-service/";
+    // check price for item
+    checkPrice(itemInfo, optionTyp);
+    // check imgs are existed
+    if (picList.length < 1) setOpenImgAlert(true);
+    else if (checkPrice(itemInfo, optionTyp)) {
+      let slug =
+        optionTyp === "Gói dịch vụ"
+          ? "/item-service-pack/"
+          : optionTyp === "Hàng hóa"
+          ? "/item-product/"
+          : "/item-service/";
 
-    // form-data
-    let formData = new FormData();
-    console.log(picList);
-    for (const pic of picList) {
-      formData.append("pictures", pic, pic.name);
-    }
-
-    const info = { ...itemInfo, ...transInfo };
-    console.log(info);
-
-    Object.entries(info).forEach(([key, value]) => {
-      if (key !== "item") {
-        formData.append(key, value);
-      } else {
-        for (const item of info.item) {
-          formData.append("item", item);
-        }
+      // form-data
+      let formData = new FormData();
+      console.log(picList);
+      for (const pic of picList) {
+        formData.append("pictures", pic, pic.name);
       }
-    });
-    console.log(formData.get("item"));
 
-    axios
-      .post(slug, formData, {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-          "content-type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setItemInfo({});
-        setTransInfo({});
-        setPicList([]);
-        setOpenSBar(true);
-      })
-      .catch((err) => console.log(err));
+      // if service, check type
+      if (slug === "/item-service/" && !itemInfo.type) {
+        setItemInfo({ ...itemInfo, type: "SERVICE" });
+      }
+      const info = { ...itemInfo, ...transInfo };
+      console.log(info);
+
+      Object.entries(info).forEach(([key, value]) => {
+        if (key !== "item") {
+          formData.append(key, value);
+        } else {
+          for (const item of info.item) {
+            formData.append("item", item);
+          }
+        }
+      });
+      console.log(formData.get("item"));
+
+      axios
+        .post(slug, formData, {
+          headers: {
+            Authorization: `Bearer ${auth.access}`,
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setItemInfo({});
+          setTransInfo({});
+          setPicList([]);
+          setOpenSBar(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response?.status === 400) {
+            let errData = err.response.data;
+            if (optionTyp === "Gói dịch vụ") {
+              let prevErr = errMsg.pkg ? errMsg.pkg : {};
+              setErrMsg({ ...errMsg, pkg: { ...prevErr, ...errData } });
+            } else if (optionTyp === "Hàng hóa") {
+              let prevErr = errMsg.product ? errMsg.product : {};
+              setErrMsg({ ...errMsg, product: { ...prevErr, ...errData } });
+            } else {
+              let prevErr = errMsg.service ? errMsg.service : {};
+              setErrMsg({ ...errMsg, service: { ...prevErr, ...errData } });
+            }
+          } else if (err.response?.status === 401) {
+            setOpenErr401(true);
+          } else {
+            setOpenOtherErr(true);
+          }
+        });
+    }
   };
 
   // Close SnackBar Success
@@ -101,7 +205,10 @@ function AddItem() {
     if (reason === "clickaway") {
       return;
     }
-
+    setItemInfo({});
+    setTransInfo({});
+    setPicList([]);
+    setErrMsg({});
     setOpenSBar(false);
   };
 
@@ -188,7 +295,10 @@ function AddItem() {
           ))}
         </TextField>
 
-        <div className="forms flex flex-col gap-5 items-center pb-5">
+        <form
+          onSubmit={handleAddItem}
+          className="forms flex flex-col gap-5 items-center pb-5"
+        >
           {/* Thông tin cơ bản */}
           {optionTyp === "Gói dịch vụ" ? (
             <AddPkg
@@ -200,6 +310,9 @@ function AddItem() {
               setPicList={setPicList}
               reset={reset}
               setReset={setReset}
+              errMsg={errMsg}
+              addImgFlag={addImgFlag}
+              setAddImgFlag={setAddImgFlag}
             />
           ) : optionTyp === "Hàng hóa" ? (
             <AddProduct
@@ -211,6 +324,9 @@ function AddItem() {
               setPicList={setPicList}
               reset={reset}
               setReset={setReset}
+              errMsg={errMsg}
+              addImgFlag={addImgFlag}
+              setAddImgFlag={setAddImgFlag}
             />
           ) : (
             <AddService
@@ -222,6 +338,9 @@ function AddItem() {
               setPicList={setPicList}
               reset={reset}
               setReset={setReset}
+              errMsg={errMsg}
+              addImgFlag={addImgFlag}
+              setAddImgFlag={setAddImgFlag}
             />
           )}
 
@@ -243,6 +362,7 @@ function AddItem() {
                 Cân nặng dự kiến (Sau khi đóng gói)
               </div>
               <TextField
+                required={optionTyp === "Hàng hóa" ? true : false}
                 id="outlined-start-adornment"
                 name="weight"
                 value={transInfo.weight ? transInfo.weight : ""}
@@ -266,6 +386,7 @@ function AddItem() {
               </div>
               <div className="items-stretch flex w-full justify-between gap-5 ">
                 <TextField
+                  required={optionTyp === "Hàng hóa" ? true : false}
                   name="height"
                   value={transInfo.height ? transInfo.height : ""}
                   onChange={updateTransInfo}
@@ -286,6 +407,7 @@ function AddItem() {
                   }}
                 />
                 <TextField
+                  required={optionTyp === "Hàng hóa" ? true : false}
                   id="outlined-start-adornment"
                   name="length"
                   value={transInfo.length ? transInfo.length : ""}
@@ -306,6 +428,7 @@ function AddItem() {
                   }}
                 />
                 <TextField
+                  required={optionTyp === "Hàng hóa" ? true : false}
                   id="outlined-start-adornment"
                   placeholder="Rộng"
                   value={transInfo.width ? transInfo.width : ""}
@@ -328,6 +451,8 @@ function AddItem() {
               </div>
             </div>
           </Paper>
+
+          {/* Action Btn */}
           <div className="flex  gap-5 ml-4 my-5 self-center">
             <Button
               variant="outlined"
@@ -335,6 +460,7 @@ function AddItem() {
                 setItemInfo({});
                 setTransInfo({});
                 setPicList([]);
+                setErrMsg({});
                 setReset(true);
               }}
               sx={{
@@ -354,7 +480,7 @@ function AddItem() {
 
             <Button
               variant="contained"
-              onClick={handleAddItem}
+              type="submit"
               sx={{
                 textTransform: "none",
                 bgcolor: "#3F41A6",
@@ -368,16 +494,28 @@ function AddItem() {
               Thêm sản phẩm
             </Button>
           </div>
-
-          <Snackbar
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            open={openSBar}
-            autoHideDuration={3000}
-            onClose={handleCloseSBar}
-            message="Thêm sản phẩm thành công !"
-          />
-        </div>
+        </form>
       </div>
+
+      {/* Add successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={3000}
+        onClose={handleCloseSBar}
+        message="Thêm sản phẩm thành công !"
+      />
+
+      {/* Img Alert Dialog */}
+      <ImgAlert
+        open={openImgAlert}
+        setOpen={setOpenImgAlert}
+        setAddImgFlag={setAddImgFlag}
+      />
+      {/* Error 401 */}
+      <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
+      {/* Other errors */}
+      <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
     </div>
   );
 }

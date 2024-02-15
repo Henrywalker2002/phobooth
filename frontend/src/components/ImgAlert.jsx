@@ -1,0 +1,52 @@
+import React from "react";
+import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
+
+function ImgAlert({ open, setOpen, setAddImgFlag }) {
+  return (
+    <Dialog
+      open={open}
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "500px",
+        },
+      }}
+    >
+      <DialogContent>
+        Bạn cần thêm hình ảnh minh họa cho sản phẩm của bạn.
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => setOpen(false)}
+          sx={{
+            // textTransform: "none",
+            color: "#3F41A6",
+            borderRadius: "20px",
+            marginRight: "10px",
+          }}
+        >
+          Quay lại
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setOpen(false);
+            setAddImgFlag(true);
+          }}
+          sx={{
+            // textTransform: "none",
+            bgcolor: "#3F41A6",
+            color: "#fff",
+            borderRadius: "20px",
+            "&:hover": {
+              bgcolor: "#3949AB",
+            },
+          }}
+        >
+          Thêm hình ảnh
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default ImgAlert;

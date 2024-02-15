@@ -7,7 +7,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { ColoredInput } from "../styles/Styles";
 import { Navigate, useNavigate } from "react-router-dom";
 import {
   Button,
