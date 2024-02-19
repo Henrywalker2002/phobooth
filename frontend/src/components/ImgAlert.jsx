@@ -12,7 +12,8 @@ function ImgAlert({ open, setOpen, setAddImgFlag }) {
       }}
     >
       <DialogContent>
-        Bạn cần thêm hình ảnh minh họa cho sản phẩm của bạn.
+        Bạn cần cập nhật đủ hình ảnh minh họa cho sản phẩm (tối thiểu 4 hình,
+        tối đa 10 hình).
       </DialogContent>
       <DialogActions>
         <Button
@@ -42,7 +43,7 @@ function ImgAlert({ open, setOpen, setAddImgFlag }) {
             },
           }}
         >
-          Thêm hình ảnh
+          Danh sách hình ảnh
         </Button>
       </DialogActions>
     </Dialog>

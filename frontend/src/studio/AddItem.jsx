@@ -129,7 +129,7 @@ function AddItem() {
     // check price for item
     checkPrice(itemInfo, optionTyp);
     // check imgs are existed
-    if (picList.length < 1) setOpenImgAlert(true);
+    if (picList.length < 4 || picList.length > 10) setOpenImgAlert(true);
     else if (checkPrice(itemInfo, optionTyp)) {
       let slug =
         optionTyp === "Gói dịch vụ"

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import Navbar from "../components/Navbar";
-import PropTypes from "prop-types";
 import {
   Box,
   Collapse,
@@ -65,7 +64,7 @@ function Orders() {
       })
       .then((res) => {
         console.log(res.data);
-        setOrders(res?.data);
+        setOrders(res?.data.results);
       })
       .catch((err) => {
         console.log(err);
@@ -331,7 +330,7 @@ function Orders() {
         sx={{ width: "1250px", margin: "20px auto" }}
       >
         <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
               <TableCell />
               <TableCell sx={{ color: "#3F41A6" }}>MÃ ĐƠN HÀNG</TableCell>
@@ -353,9 +352,14 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((row) => (
-              <Row key={row?.id} row={row} />
-            ))}
+            {orders.length > 0 ? (
+              orders.map((row) => <Row key={row?.id} row={row} />)
+            ) : (
+              <TableRow>
+                <TableCell />
+                <TableCell>Chưa có đơn hàng</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

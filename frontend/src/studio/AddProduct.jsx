@@ -371,7 +371,7 @@ function AddProduct({
                   <div className="flex flex-col items-center">
                     <RiImageAddFill className="w-11 h-11" />
                     <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                    <div className="text-[10px]">({imgList.length}/5)</div>
+                    <div className="text-[10px]">({imgList.length}/10)</div>
                   </div>
 
                   <Input

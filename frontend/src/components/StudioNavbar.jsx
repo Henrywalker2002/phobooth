@@ -62,7 +62,7 @@ function StudioNavbar() {
       sx={{
         bgcolor: "transparent",
         // borderBottom: "0.25px solid #EEEEEE",
-        boxShadow: "0px 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        boxShadow: "1.95px 1.95px 2.6px rgba(0, 0, 0, 0.15)",
       }}
     >
       <div className="container max-w-[1440px] w-full mx-auto py-2 px-12 flex items-center">

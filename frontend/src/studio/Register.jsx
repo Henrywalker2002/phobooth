@@ -23,6 +23,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import OtherErrDialog from "../components/OtherErrDialog";
 import Err401Dialog from "../components/Err401Dialog";
+import { translateErr } from "../util/Translate";
 
 function Register() {
   // global
@@ -163,7 +164,8 @@ function Register() {
       .catch((err) => {
         console.log(err);
         if (err.response?.status === 400) {
-          setErrMsg(err.response.data);
+          let newErr = translateErr(err.response.data);
+          setErrMsg(newErr);
         } else if (err.response?.status === 401) {
           setOpenErr401(true);
         } else {

@@ -151,6 +151,7 @@ function OrderDetail() {
 
   //   status process
   const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
+  console.log(order?.order_item);
   return (
     <div>
       <Navbar />
@@ -164,7 +165,7 @@ function OrderDetail() {
             Studio Demo
           </div>
           <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
-            {order.order_item?.length} hàng hóa
+            {order?.order_item?.length} hàng hóa
           </div>
         </div>
         <Table aria-label="collapsible table">
@@ -190,9 +191,15 @@ function OrderDetail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {order.order_item?.map((item, index) => (
-              <Row key={index} row={item} />
-            ))}
+            {order?.order_item.length > 0 ? (
+              order?.order_item.map((item, index) => (
+                <Row key={index} row={item} />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell>Chưa có đơn hàng</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
 
