@@ -7,7 +7,8 @@ from role.views import RoleViewSet, PermissionViewSet
 from studio.views import StudioViewSet
 from category.views import CategoryViewSet
 from cart.views import CartViewSet
-from order.views import OrderViewSet, OrderItemViewSet
+from order.views.order import OrderViewSet
+from order.views.order_item import OrderItemViewSet
 from item.views.service import ItemServicesViewset
 from item.views.item import ItemViewSet
 from item.views.product import ProductViewSet, VariationViewSet

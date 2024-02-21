@@ -1,8 +1,8 @@
 from user.serializers import UserSerializer, LoginSerializer, UserSignUpSerializer, UserDetailSerializer
 from user.models import User 
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet, BaseGenericViewSet
 from django.db import transaction
-from rest_framework import viewsets, permissions, status
+from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import authenticate
@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from role.models import Role 
 from user.permission import UserPermission
 
-class UserViewSet(CustomModelViewSetBase):
+class UserViewSet(BaseModelViewSet):
     
     serializer_class = {"default" : UserSerializer, "sign_up" : UserSignUpSerializer, "retrieve" : UserDetailSerializer}
     queryset = User.objects.all() 
@@ -44,23 +44,10 @@ class UserViewSet(CustomModelViewSetBase):
         return Response(data = self.get_serializer(user, is_get = True).data, status = status.HTTP_201_CREATED)
     
     
-class AuthenticationViewSet(viewsets.GenericViewSet):
+class AuthenticationViewSet(BaseGenericViewSet):
     serializer_class = {"default": LoginSerializer, "retrieve": UserDetailSerializer}
     permission_classes = [permissions.AllowAny]
     
-    def get_serializer_class(self):
-        if self.action in self.serializer_class.keys():
-            return self.serializer_class[self.action]
-        return self.serializer_class['default']
-    
-    def get_serializer(self, *args, **kwargs):
-        is_get = kwargs.pop('is_get', False)
-        if is_get:
-            serializer_class = self.serializer_class.get('retrieve', self.get_serializer_class())
-        else :
-            serializer_class = self.get_serializer_class()
-        kwargs.setdefault('context', self.get_serializer_context())
-        return serializer_class(*args, **kwargs)
 
     def get_permissions(self):
         if self.action == "logout":

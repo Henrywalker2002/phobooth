@@ -2,6 +2,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from item.models import Item, ItemTypeChoices, ItemStatusChoices
 from item.serializers.item import ItemDetailSerializer, ItemSummarySerializer
 from item.permission import ItemPermission
+from item.filters.item import ItemFilter
 
 
 class ItemViewSet(ReadOnlyModelViewSet):
@@ -9,7 +10,8 @@ class ItemViewSet(ReadOnlyModelViewSet):
     queryset = Item.objects.all()
     serializer_class = {"retrieve": ItemDetailSerializer, "default": ItemDetailSerializer, "list": ItemSummarySerializer}
     permission_classes = [ItemPermission]
-    
+    filterset_class = ItemFilter
+    search_fields = ["@name", "@description"]
     
     def get_serializer_class(self):
         # ensure that serializer_class must be a dict and have default 

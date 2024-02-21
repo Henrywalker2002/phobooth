@@ -1,6 +1,7 @@
 from base.models import BaseModel
 from django.db import models
 from backend.custom_middleware import get_current_user
+from item.models import Item, Variation
 
 
 class OrderStatusChoice(models.TextChoices):
@@ -33,7 +34,7 @@ class Order(BaseModel):
         default=OrderStatusChoice.ORDERED,
     )
     note = models.TextField(null=True, default=None)
-    
+        
 
 class OrderItemStatusChoice(models.TextChoices):
     PENDING = "PENDING", "PENDING"
@@ -43,7 +44,8 @@ class OrderItemStatusChoice(models.TextChoices):
 
 class OrderItem(BaseModel):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name="order_item")
-    item = models.ForeignKey(to="item.Item", on_delete=models.CASCADE)
+    item = models.ForeignKey(to=Item, on_delete=models.SET_NULL, related_name="order_item", null=True)
+    variation = models.ForeignKey(to=Variation, on_delete=models.SET_NULL, related_name="order_item", null=True)
     quantity = models.IntegerField(null=False, default=1)
     price = models.IntegerField(null=True, default=None)
     additional_information = models.JSONField(null=True, default=None)

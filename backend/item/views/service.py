@@ -1,4 +1,4 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet
 from item.models import Item, ItemTypeChoices, ItemPicture
 from item.serializers.service import ItemServicesSerializer
 from item.serializers.item import ItemDetailSerializer, ItemSummarySerializer
@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class ItemServicesViewset(CustomModelViewSetBase):
+class ItemServicesViewset(BaseModelViewSet):
     queryset = Item.objects.all()
     serializer_class = {"default": ItemServicesSerializer,
                         "retrieve": ItemDetailSerializer, "list": ItemSummarySerializer}
