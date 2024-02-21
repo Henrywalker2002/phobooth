@@ -3,6 +3,7 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModel
 from cart.models import Cart
 from cart.serializers import CartSerializer, CartListSerializer
 from rest_framework import permissions
+from rest_framework.response import Response
 
 
 class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
@@ -19,4 +20,25 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
         request.data['customer'] = request.user.id
         return super().create(request, *args, **kwargs)
 
-    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().order_by("modified_at", "item__studio_id")
+        
+        page = self.paginate_queryset(queryset)
+        if page:
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data 
+        else:
+            data = self.get_serializer(queryset, many=True).data
+        res = []
+        # studio_id = 123 : { studio : {}, items: ["id",.... ] }
+        for item in data:
+            studio = item["item"].pop("studio")
+            if res:
+                if res[-1]["studio"]["id"] == studio["id"]:
+                    res[-1]["items"].append(item)
+                else:
+                    res.append({"studio": studio, "items": [item]})
+            else:
+                res.append({"studio": studio, "items": [item]})
+        
+        return self.get_paginated_response(res) if page else Response(res)
