@@ -24,18 +24,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
-function createData(item, type, category, quantity, min_price, max_price) {
-  return { item, type, category, quantity, min_price, max_price };
-}
-
-const rows = [
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-];
-
 function Booking() {
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -84,13 +72,14 @@ function Booking() {
       order_item = itemList.itemList.map((item) => {
         return {
           item: item.item.id,
-          number: item.number,
+          quantity: item.number,
         };
       });
+      console.log(order_item);
       axios
         .post(
           "/order/",
-          { order_item: order_item },
+          { note: "note", order_item: order_item, studio: 1 },
           {
             headers: {
               Authorization: `Bearer ${auth.access}`,

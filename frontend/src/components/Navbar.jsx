@@ -1,15 +1,21 @@
 import {
   AppBar,
+  Avatar,
   Button,
   Divider,
+  Drawer,
   IconButton,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
+  MenuList,
   TextField,
+  Typography,
+  styled,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import * as React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { BiStore } from "react-icons/bi";
@@ -24,13 +30,31 @@ import {
   MdLogout,
 } from "react-icons/md";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import MenuIcon from "@mui/icons-material/Menu";
 import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
 // import logo from "../assets/logo1.png";
 
+const MenuBtn = styled(IconButton)(({ theme }) => ({
+  display: "none",
+  [theme.breakpoints.down("sm")]: {
+    display: "block",
+  },
+}));
+
+const Logo = styled(PhotoCameraIcon)(({ theme }) => ({
+  width: "40px",
+  height: "40px",
+  [theme.breakpoints.down("sm")]: {
+    width: "35px",
+    height: "35px",
+  },
+}));
+
 function Navbar() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState("");
+  const [openMenu, setOpenMenu] = useState(false);
   const { auth, setAuth, setPersist } = useAuth();
   const [, , removeCookie] = useCookies(["userInfo"]);
 
@@ -59,6 +83,12 @@ function Navbar() {
     removeCookie("userInfo");
     navigate("/login");
   };
+
+  // Open Menu
+  const toggleMenu = () => {
+    setOpenMenu(!openMenu);
+  };
+
   return (
     <AppBar
       position="static"
@@ -67,43 +97,140 @@ function Navbar() {
         boxShadow: "1.95px 1.95px 2.6px rgba(0, 0, 0, 0.15)",
       }}
     >
-      <div className="container max-w-[1440px] w-full mx-auto py-2 px-12 flex items-center">
-        <div className="header w-[350px] flex gap-x-7">
+      <div className="max-w-[1440px] w-full mx-auto flex items-center py-2 px-12 max-sm:px-3">
+        {/* Mobile */}
+        <MenuBtn onClick={toggleMenu}>
+          <MenuIcon sx={{ color: "#666666" }} />
+        </MenuBtn>
+
+        {/* Menu list */}
+        <Drawer anchor="left" open={openMenu} onClose={toggleMenu}>
+          <MenuList>
+            <MenuItem>
+              <Avatar src="/broken-image.jpg" />
+            </MenuItem>
+            <MenuItem>
+              <div className="btn-gr w-full px-0">
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    navigate("/signup");
+                  }}
+                  sx={{
+                    textTransform: "none",
+                    color: "#3F41A6",
+                    width: "fit-content",
+                    height: "20px",
+                    paddingLeft: "0",
+                    paddingRight: "15px",
+                    borderRadius: "0",
+                    borderRight: "1px solid #3F41A6",
+                    "&:hover": {
+                      bgcolor: "#E2E5FF",
+                    },
+                  }}
+                >
+                  Đăng kí
+                </Button>
+
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  sx={{
+                    textTransform: "none",
+                    color: "#3F41A6",
+                    width: "100px",
+                    height: "20px",
+                    marginRight: "10px",
+                    borderRadius: "0",
+                    "&:hover": {
+                      bgcolor: "#E2E5FF",
+                    },
+                  }}
+                >
+                  Đăng nhập
+                </Button>
+              </div>
+            </MenuItem>
+
+            <Divider />
+
+            <MenuItem
+              onClick={() => {
+                // kiểm tra đã có tài khoản studio chưa
+
+                if (!auth.studio) {
+                  navigate("/studio/register");
+                } else {
+                  navigate("/studio");
+                }
+              }}
+            >
+              <ListItemIcon>
+                <BiStore style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Kênh Studio</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/orders")}>
+              <ListItemIcon>
+                <MdOutlineShoppingCart
+                  style={{ width: "20px", height: "20px" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Giỏ hàng</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/orders")}>
+              <ListItemIcon>
+                <CgFileDocument style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Đơn hàng</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <LuTicket style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Khuyến mãi</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/orders")}>
+              <ListItemIcon>
+                <MdNotificationsNone
+                  style={{ width: "20px", height: "20px" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Thông báo</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/orders")}>
+              <ListItemIcon>
+                <MdOutlineChat style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Tin nhắn</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon>
+                <MdLogout style={{ width: "20px", height: "20px" }} />
+              </ListItemIcon>
+              <ListItemText>Đăng xuất</ListItemText>
+            </MenuItem>
+          </MenuList>
+        </Drawer>
+
+        <div className="header flex w-[350px] gap-x-7 max-sm:justify-center">
           <div
-            className="logo flex items-center w-[180px] cursor-pointer"
+            className="logo flex items-center w-[180px] cursor-pointer max-sm:w-fit"
             onClick={() => navigate("/")}
           >
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-11 h-11"
-            >
-              <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
-              <path
-                fillRule="evenodd"
-                d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                clipRule="evenodd"
-              />
-            </svg> */}
-            <PhotoCameraIcon
+            <Logo
               sx={{
                 color: "rgba(0, 0, 0, 0.87)",
-                width: "40px",
-                height: "40px",
               }}
             />
-            <div className="text-indigo-800 text-3xl leading-[54px] tracking-tighter self-center grow whitespace-nowrap my-auto">
+            <div className="text-indigo-800 text-3xl leading-[54px] tracking-tighter self-center grow whitespace-nowrap my-auto max-sm:text-2xl max-sm:w-[100px]">
               PhoBooth
             </div>
           </div>
-          {/* <div
-          className="logo flex items-center w-[100px] cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <img src={logo} alt="logo-phobooth"></img>
-        </div> */}
-          <div className="self-center">
+          <div className="self-center max-sm:hidden">
             <Button
               startIcon={<HiOutlineMenu />}
               sx={{
@@ -123,7 +250,7 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="search flex">
+        <div className="search flex max-sm:hidden">
           <div className="justify-center flex w-[700px] h-[40px] mx-auto rounded bg-white">
             <TextField
               id="outlined-search"
@@ -155,8 +282,14 @@ function Navbar() {
             </Button>
           </div>
         </div>
+
+        {/* Mobile */}
+        <MenuBtn>
+          <RiSearchLine style={{ color: "#666666", width: 20, height: 20 }} />
+        </MenuBtn>
+
         {userInfo == "" ? (
-          <div className="btn-gr w-60">
+          <div className="btn-gr w-60 max-sm:hidden">
             <Button
               variant="text"
               onClick={() => {
@@ -196,7 +329,7 @@ function Navbar() {
             </Button>
           </div>
         ) : (
-          <div className="action-gr flex items-center justify-evenly w-60">
+          <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
             <IconButton>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>

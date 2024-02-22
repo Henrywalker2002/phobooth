@@ -17,7 +17,7 @@ import {
   Link,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import axios from "../api/axios";
@@ -29,31 +29,6 @@ function Orders() {
   const { auth } = useAuth();
   // Collapsible table
   const [orders, setOrders] = React.useState([]);
-  function createData(id, studio, quantity, status, price) {
-    return {
-      id,
-      studio,
-      quantity,
-      status,
-      price,
-      details: [
-        {
-          name: "Chụp ảnh gia đình",
-          type: "Dịch vụ",
-          category: "Gia đình",
-          quantity: 1,
-          price: "200000-400000",
-        },
-        {
-          name: "Chụp ảnh gia đình",
-          type: "Dịch vụ",
-          category: "Gia đình",
-          quantity: 1,
-          price: "200000-400000",
-        },
-      ],
-    };
-  }
 
   useEffect(() => {
     axios
@@ -86,15 +61,22 @@ function Orders() {
       <React.Fragment>
         <TableRow
           onClick={() => navigate("/order/detail/" + row.id)}
-          sx={{ "& > *": { borderBottom: "unset" } }}
+          sx={{ "& > *": { borderBottom: "unset" }, cursor: "pointer" }}
         >
           <TableCell>
             <IconButton
               aria-label="expand row"
               size="small"
-              onClick={() => setOpen(!open)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(!open);
+              }}
             >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              {open ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightOutlinedIcon />
+              )}
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
@@ -257,31 +239,6 @@ function Orders() {
     );
   }
 
-  //   Ràng buộc kiểu cho các field
-  //   Row.propTypes = {
-  //     row: PropTypes.shape({
-  //       calories: PropTypes.number.isRequired,
-  //       carbs: PropTypes.number.isRequired,
-  //       fat: PropTypes.number.isRequired,
-  //       history: PropTypes.arrayOf(
-  //         PropTypes.shape({
-  //           amount: PropTypes.number.isRequired,
-  //           customerId: PropTypes.string.isRequired,
-  //           date: PropTypes.string.isRequired,
-  //         })
-  //       ).isRequired,
-  //       name: PropTypes.string.isRequired,
-  //       price: PropTypes.number.isRequired,
-  //       protein: PropTypes.number.isRequired,
-  //     }).isRequired,
-  //   };
-
-  // const rows = [
-  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Đã đặt", "200000 - 400000"),
-  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Đã chấp nhận", "800000"),
-  //   createData("ANUW482NUENQ", "Studio Demo", "2", "Vận chuyển", "800000"),
-  // ];
-
   return (
     <div>
       <Navbar />
@@ -327,7 +284,11 @@ function Orders() {
       {/* Table */}
       <TableContainer
         component={Paper}
-        sx={{ width: "1250px", margin: "20px auto" }}
+        sx={{
+          width: "1250px",
+          margin: "20px auto",
+          border: "0.5px solid #d6d3d1",
+        }}
       >
         <Table aria-label="collapsible table">
           <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -338,7 +299,7 @@ function Orders() {
                 NHÀ CUNG CẤP
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                SỐ LƯỢNG HÀNG HÓA
+                SỐ LƯỢNG SẢN PHẨM
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 TRẠNG THÁI

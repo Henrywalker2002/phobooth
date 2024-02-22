@@ -23,7 +23,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import { ColoredStep } from "../styles/Styles";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
@@ -50,23 +50,13 @@ function OrderDetail() {
       .catch((err) => {
         console.log(err);
       });
-  }, [order.id]);
+  }, []);
 
   const handleChange = (event) => {
     setValue(event.target.value);
   };
 
   // Collapsible table
-  function createData(item, type, category, quantity, price) {
-    return {
-      item,
-      type,
-      category,
-      quantity,
-      price,
-    };
-  }
-
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
@@ -80,7 +70,11 @@ function OrderDetail() {
               size="small"
               onClick={() => setOpen(!open)}
             >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              {open ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightOutlinedIcon />
+              )}
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
@@ -91,18 +85,18 @@ function OrderDetail() {
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
               />
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row.item.name}
+                {row?.item.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.type}
+              {row?.item.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.category}
+              {row.item.category.title}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
@@ -143,12 +137,6 @@ function OrderDetail() {
     );
   }
 
-  // const rows = [
-  //   createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 200000),
-  //   createData("Khung ảnh trắng", "Sản phẩm", "Khung ảnh", 1, 100000),
-  //   createData("Chụp hình gia đình", "Gói dịch vụ", "Gia đình", 1, 240000),
-  // ];
-
   //   status process
   const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
   console.log(order?.order_item);
@@ -158,7 +146,11 @@ function OrderDetail() {
 
       <TableContainer
         component={Paper}
-        sx={{ width: "1200px", margin: "50px auto" }}
+        sx={{
+          width: "1200px",
+          margin: "50px auto",
+          border: "0.5px solid #d6d3d1",
+        }}
       >
         <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-20 py-4 rounded-lg">
           <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
@@ -169,11 +161,11 @@ function OrderDetail() {
           </div>
         </div>
         <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
               <TableCell sx={{ maxWidth: "50px" }} />
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                HÀNG HÓA
+                SẢN PHẨM
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 PHÂN LOẠI
@@ -191,10 +183,8 @@ function OrderDetail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {order?.order_item.length > 0 ? (
-              order?.order_item.map((item, index) => (
-                <Row key={index} row={item} />
-              ))
+            {order?.order_item?.length > 0 ? (
+              order?.order_item.map((item) => <Row key={item.id} row={item} />)
             ) : (
               <TableRow>
                 <TableCell>Chưa có đơn hàng</TableCell>
