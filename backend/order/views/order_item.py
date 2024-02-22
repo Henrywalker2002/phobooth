@@ -1,5 +1,5 @@
 from base.views import BaseModelViewSet
-from order.models import OrderItem
+from order.models import OrderItem, OrderStatusChoice
 from order.serializers.order import ReadOrderSerializer
 from order.serializers.order_item import AppendOrderItemSerializer, UpdateOrderItemSerializer, ReadOrderItemSerializer
 from django.db import transaction
@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from django.db.models import Sum, F
 from rest_framework import status
+from order.exceptions import DeleteLastOrderItemException, UpdateCompletedOrderException
 
 
 class OrderItemViewSet(BaseModelViewSet):
@@ -60,6 +61,10 @@ class OrderItemViewSet(BaseModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         order = instance.order
+        
+        if len(order.order_item.all()) == 1:
+            raise DeleteLastOrderItemException()
+        
         self.perform_destroy(instance)
         self.update_order_price(order)
         data = self.get_serializer(order, is_order=True).data

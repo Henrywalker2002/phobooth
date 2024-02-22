@@ -1,12 +1,13 @@
 from rest_framework import serializers
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item
 from item.serializers.item import ItemDetailSerializer
 from user.models import User
 from studio.models import Studio
 from studio.serializers import StudioSummarySerializer
 from order.serializers.order_item import CreateOrderItemSerializer, ReadOrderItemSerializer, UpdateOrderItemSerializer
-
+from user.serializers import UserSummarySerializer
+from order.exceptions import UpdateCompletedOrderException
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -39,6 +40,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 class ReadOrderSerializer(serializers.ModelSerializer):
     order_item = ReadOrderItemSerializer(many=True, read_only=True)
     studio = StudioSummarySerializer(read_only=True)
+    customer = UserSummarySerializer(read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -57,6 +59,13 @@ class ReadOrderSerializer(serializers.ModelSerializer):
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):
+    
+    def validate(self, attrs):
+        instance = self.instance
+        if instance.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
+        return attrs
+        
     class Meta:
         model = Order
         fields = ["status"]

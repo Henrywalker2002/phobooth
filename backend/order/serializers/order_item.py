@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item, Variation
 from item.serializers.item import ItemShortSerializer
+from order.exceptions import UpdateCompletedOrderException
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
@@ -76,6 +77,12 @@ class ReadOrderItemSerializer(serializers.ModelSerializer):
 
 class UpdateOrderItemSerializer(serializers.ModelSerializer):
 
+    def validate(self, attrs):
+        if attrs.order.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
+
+        return attrs
+    
     class Meta:
         model = OrderItem
         fields = ["price", "quantity", "additional_information"]
