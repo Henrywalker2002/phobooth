@@ -1,9 +1,7 @@
-from rest_framework.test import testcases, APIClient, APIRequestFactory, APITestCase
+from rest_framework.test import testcases, APIClient
 from role.models import Role, Permission
 from address.models import District, Ward, Province
 from category.models import Category
-from user.models import User
-from studio.models import Studio
 from django.urls import reverse
 
 
@@ -18,13 +16,13 @@ class BaseTest(testcases.TestCase):
         ward = Ward.objects.create(code=1, name="Văn Quán", code_name="Văn Quán",
                                    type="Phường", name_with_type="Phường Văn Quán", district=dictrict)
 
-    
     @staticmethod
     def create_category():
-        category = Category.objects.create(type = "SERVICE", title = "category", description = "category")
-        category = Category.objects.create(type = "PRODUCT", title = "category2", description = "category2")
-        
-    
+        category = Category.objects.create(
+            type="SERVICE", title="category", description="category")
+        category = Category.objects.create(
+            type="PRODUCT", title="category2", description="category2")
+
     @classmethod
     def setUpClass(self):
         super().setUpClass()
@@ -47,30 +45,59 @@ class BaseTestWithCustomer(BaseTest):
         self.client = APIClient()
         role = Role.objects.get(code_name="customer")
         data = {
-            "username" : "test", "password" : "test13456", "email" : "email@email.com", "full_name": "full name"}
-        response = self.client.post(reverse('user-sign-up'), data= data, format="json")
+            "username": "test", "password": "test13456", "email": "email@email.com", "full_name": "full name"}
+        response = self.client.post(
+            reverse('user-sign-up'), data=data, format="json")
         assert response.status_code == 201
-        response = self.client.post(reverse('login'), data= {"username": data["username"], "password": data["password"]}, format="json")
-        
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + response.json()["access"])
+        response = self.client.post(reverse('login'), data={
+                                    "username": data["username"], "password": data["password"]}, format="json")
+
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + response.json()["access"])
+
 
 class BaseTestWithStudio(BaseTestWithCustomer):
 
     def _pre_setup(self):
         super()._pre_setup()
         data = {
-            "code_name" : "best_1234",
-            "friendly_name" : "studio 123",
-            "phone" : "0846621431",
-            "email" : "exmael2@email.com",
-            "description" : "no descr",
-            "address" : {
-                "province" : 1,
-                "district" : 1, 
-                "ward" : 1,
-                "street" : "name"
+            "code_name": "best_1234",
+            "friendly_name": "studio 123",
+            "phone": "0846621431",
+            "email": "exmael2@email.com",
+            "description": "no descr",
+            "address": {
+                "province": 1,
+                "district": 1,
+                "ward": 1,
+                "street": "name"
             }
         }
-        response = self.client.post(reverse('studio-list'), data= data, format="json")
+        response = self.client.post(
+            reverse('studio-list'), data=data, format="json")
         assert response.status_code == 201
-        
+
+
+class BaseTestWithItem(BaseTestWithStudio):
+
+    item_id = []
+    def _pre_setup(self):
+        super()._pre_setup()
+        self.item_id = []
+        category = Category.objects.filter(type="SERVICE").first()
+        data = {
+            "name": "name",
+            "description": "description",
+            "min_price": 1000,
+            "max_price": 2000,
+            "category": category.id
+        }
+        response = self.client.post(
+            reverse('item-service-list'), data=data, format="json")
+        assert response.status_code == 201
+        self.item_id.append(response.json().get('id'))
+        data["name"] = "name2"
+        response = self.client.post(
+            reverse('item-service-list'), data=data, format="json")
+        assert response.status_code == 201
+        self.item_id.append(response.json().get('id'))  
