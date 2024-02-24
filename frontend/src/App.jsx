@@ -16,7 +16,6 @@ import Register from "./studio/Register";
 import ItemMgmt from "./studio/ItemMgmt";
 import AddItem from "./studio/AddItem";
 import StudioHome from "./studio/Home";
-// import PersistLogin from "./user/PersistLogin";
 
 function App() {
   const theme = createTheme({
