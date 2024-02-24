@@ -7,7 +7,8 @@ from role.views import RoleViewSet, PermissionViewSet
 from studio.views import StudioViewSet
 from category.views import CategoryViewSet
 from cart.views import CartViewSet
-from order.views import OrderViewSet, OrderItemViewSet
+from order.views.order import OrderViewSet
+from order.views.order_item import OrderItemViewSet
 from item.views.service import ItemServicesViewset
 from item.views.item import ItemViewSet
 from item.views.product import ProductViewSet, VariationViewSet
@@ -24,10 +25,10 @@ router.register(r'role', RoleViewSet, 'role')
 router.register(r'permission', PermissionViewSet, 'permission')
 router.register(r'studio', StudioViewSet, 'studio')
 router.register(r'category', CategoryViewSet, 'category')
-router.register(r'item-service', ItemServicesViewset, 'item_services')
-router.register(r'item-product', ProductViewSet, 'item_product')    
-router.register(r'item-variation', VariationViewSet, 'variation')
-router.register(r'item-service-pack', ServicePackItemViewSet, 'item_service_pack')
+router.register(r'item-service', ItemServicesViewset, 'item-service')
+router.register(r'item-product', ProductViewSet, 'item-product')    
+router.register(r'item-variation', VariationViewSet, 'item-variation')
+router.register(r'item-service-pack', ServicePackItemViewSet, 'item-service-pack')
 router.register(r'item', ItemViewSet, 'item')
 router.register(r'cart', CartViewSet, 'cart')
 router.register(r'order', OrderViewSet, 'order')

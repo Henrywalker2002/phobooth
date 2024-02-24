@@ -1,4 +1,4 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet
 from item.models import Item, Option, OptionValue, Variation, ItemTypeChoices, ItemPicture
 from item.serializers.product import (ItemProductSerializer, ItemProductDetailSerializer, 
                                       VariationUpdateSerializer, ItemProductUpdateSerializer)
@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
 
 
-class ProductViewSet(CustomModelViewSetBase):
+class ProductViewSet(BaseModelViewSet):
 
     queryset = Item.objects.all()
     serializer_class = {'default': ItemProductSerializer, "retrieve": ItemProductDetailSerializer, 

@@ -21,7 +21,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'name', 'description', 'type', 'category', 'pictures', 'status', 
-                  'studio', 'min_price', 'max_price', "fixed_price", 'star' ]
+                  'studio', 'min_price', 'max_price', "fixed_price" ]
         
 
 class ItemSummarySerializer(serializers.ModelSerializer):
@@ -32,10 +32,20 @@ class ItemSummarySerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         if ret.get('pictures'):
-            ret['picture'] = ret['pictures'].pop(0)
-            ret.pop('pictures')
+            ret['picture'] = ret['pictures'].pop(0).get('picture')
+        else :
+            ret['picture'] = None
+        ret.pop('pictures')
         return ret 
     
     class Meta:
         model = Item
-        fields = ['id', 'name', 'pictures', 'type', 'studio', 'min_price', 'max_price', "fixed_price", "category", 'star']
+        fields = ['id', 'name', 'pictures', 'type', 'studio', 'min_price', 'max_price', "fixed_price", "category"]
+        
+
+class ItemShortSerializer(ItemSummarySerializer):
+    
+    
+    class Meta:
+        model = Item 
+        fields = ['id', 'name', 'pictures', 'type', 'category', ]

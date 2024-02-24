@@ -52,7 +52,7 @@ function Booking() {
   const showTotalPrice = (lst) => {
     let min_price = getTotalPrice(lst, "min_price");
     let max_price = getTotalPrice(lst, "max_price");
-    if (min_price === max_price) return min_price;
+    if (min_price === max_price) return formatter.format(min_price);
     else
       return formatter.format(min_price) + " - " + formatter.format(max_price);
   };
@@ -67,33 +67,34 @@ function Booking() {
   }
 
   const handleCreateOrder = () => {
-    let order_item;
-    itemLists.forEach((itemList) => {
-      order_item = itemList.itemList.map((item) => {
-        return {
-          item: item.item.id,
-          quantity: item.number,
+    console.log(itemLists);
+    try {
+      for (let itemLst of itemLists) {
+        let order_item = itemLst.items.map((item) => {
+          return { item: item.item.id, quantity: item.number };
+        });
+        let updateOrderLst = {
+          studio: itemLst.studio.id,
+          order_item: order_item,
         };
-      });
-      console.log(order_item);
-      axios
-        .post(
-          "/order/",
-          { note: "note", order_item: order_item, studio: 1 },
-          {
+        axios
+          .post("/order/", updateOrderLst, {
             headers: {
               Authorization: `Bearer ${auth.access}`,
             },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-    navigate("/orders");
+          })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+      navigate("/orders");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -148,9 +149,9 @@ function Booking() {
       </div>
 
       {/* Tables */}
-      {itemLists?.map((itemList, index) => (
+      {itemLists?.map((itemList) => (
         <TableContainer
-          key={index}
+          key={itemList.studio.id}
           component={Paper}
           sx={{
             width: "1200px",
@@ -180,7 +181,7 @@ function Booking() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {itemList.itemList?.map((row, index) => (
+              {itemList.items?.map((row, index) => (
                 <TableRow
                   key={index}
                   // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -241,55 +242,53 @@ function Booking() {
           </Table>
 
           {/* More Info */}
-          {itemList.itemList?.length > 0 ? (
-            <div className="self-center flex w-full max-w-6xl items-stretch justify-between gap-5 my-5">
-              <div className="ml-[50px] flex flex-col items-start">
-                <div className="flex items-stretch justify-between gap-4">
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/6fa50a05989caa3ba29862834f44435ae27b25c493ce115cb332a0688e26b02c?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                    className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
-                  />
-                  <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
-                    {itemList.studio}
-                  </div>
-                </div>
-                <TextField
-                  id="outlined-multiline-static"
-                  label="Lời nhắn"
-                  multiline
-                  rows={3}
-                  placeholder="Để lại ghi chú thêm về dịch vụ..."
-                  sx={{
-                    borderColor: "#E6E6E6",
-                    fontSize: "10px",
-                    width: "450px",
-                    marginTop: "20px",
-                  }}
+          <div className="self-center flex w-full max-w-6xl items-stretch justify-between gap-5 my-5">
+            <div className="ml-[50px] flex flex-col items-start">
+              <div className="flex items-stretch justify-between gap-4">
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/6fa50a05989caa3ba29862834f44435ae27b25c493ce115cb332a0688e26b02c?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                  className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
                 />
+                <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
+                  {itemList.studio.friendly_name}
+                </div>
               </div>
-              <div className="max-w-[450px] mr-7 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
-                <TextField
-                  id="outlined-basic"
-                  label="Khuyến mãi"
-                  variant="outlined"
-                  placeholder="Nhập mã khuyến mãi"
-                />
-                <div className="justify-between bg-white flex mt-4">
-                  <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
-                    Tổng giá tham khảo :
-                  </div>
-                  <div className="text-indigo-800 text-lg font-semibold leading-6 self-center whitespace-nowrap">
-                    {showTotalPrice(itemList.itemList)}
-                  </div>
+              <TextField
+                id="outlined-multiline-static"
+                label="Lời nhắn"
+                multiline
+                rows={3}
+                placeholder="Để lại ghi chú thêm về dịch vụ..."
+                sx={{
+                  borderColor: "#E6E6E6",
+                  fontSize: "10px",
+                  width: "450px",
+                  marginTop: "20px",
+                }}
+              />
+            </div>
+            <div className="max-w-[450px] mr-7 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
+              <TextField
+                id="outlined-basic"
+                label="Khuyến mãi"
+                variant="outlined"
+                placeholder="Nhập mã khuyến mãi"
+              />
+              <div className="justify-between bg-white flex mt-4">
+                <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
+                  Tổng giá tham khảo :
                 </div>
-                <div className="text-stone-500 text-base leading-6 mt-2">
-                  Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
-                  Studio cập nhật và thông báo sau khi đặt dịch vụ.
+                <div className="text-indigo-800 text-lg font-semibold leading-6 self-center whitespace-nowrap">
+                  {showTotalPrice(itemList.items)}
                 </div>
+              </div>
+              <div className="text-stone-500 text-base leading-6 mt-2">
+                Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
+                Studio cập nhật và thông báo sau khi đặt dịch vụ.
               </div>
             </div>
-          ) : null}
+          </div>
         </TableContainer>
       ))}
 

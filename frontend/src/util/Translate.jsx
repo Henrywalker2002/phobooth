@@ -1,3 +1,4 @@
+// Studio Register
 export const translateErr = (err) => {
   if (err.code_name && err.code_name[0].includes("already exists")) {
     err.code_name[0] = "Studio có tên này đã tồn tại.";

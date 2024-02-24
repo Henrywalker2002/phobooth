@@ -21,20 +21,50 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Breadcrumbs,
+  Link,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ColoredStep } from "../styles/Styles";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 
 function OrderDetail() {
   // selection
   const { auth } = useAuth();
+  const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
   let { id } = useParams();
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  function getPrice(item) {
+    if (item.price) {
+      return formatter.format(item.price);
+    } else if (item.min_price && item.max_price) {
+      return (
+        formatter.format(item.min_price) +
+        " - " +
+        formatter.format(item.max_price)
+      );
+    }
+    return "Chưa cập nhật";
+  }
+
+  const getActiveStep = (orderInfo) => {
+    if (orderInfo.status === "ORDERED") return 0;
+    else if (orderInfo.status === "IN_PROCESS") return 1;
+    else if (orderInfo.status === "SHIPPPING") return 2;
+    else if (orderInfo.status === "COMPLETED") return 3;
+    else return null;
+  };
 
   useEffect(() => {
     axios
@@ -63,7 +93,7 @@ function OrderDetail() {
 
     return (
       <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow sx={{ borderBottom: "unset" }}>
           <TableCell sx={{ maxWidth: "50px" }}>
             <IconButton
               aria-label="expand row"
@@ -100,9 +130,7 @@ function OrderDetail() {
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
-          <TableCell align="left">
-            {row.min_price} - {row.max_price}
-          </TableCell>
+          <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
             <Button
               variant="text"
@@ -144,6 +172,49 @@ function OrderDetail() {
     <div>
       <Navbar />
 
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080", cursor: "pointer" }}
+          // href="/"
+          onClick={() => navigate("/")}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Link
+          underline="hover"
+          key="2"
+          color="inherit"
+          // href="/orders"
+          onClick={() => navigate("/orders")}
+        >
+          Quản lý đơn hàng
+        </Link>
+
+        <Typography
+          key="3"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          #{order?.id}
+        </Typography>
+      </Breadcrumbs>
+
       <TableContainer
         component={Paper}
         sx={{
@@ -154,10 +225,10 @@ function OrderDetail() {
       >
         <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-20 py-4 rounded-lg">
           <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
-            Studio Demo
+            {order?.studio?.friendly_name}
           </div>
           <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
-            {order?.order_item?.length} hàng hóa
+            {order?.order_item?.length} sản phẩm
           </div>
         </div>
         <Table aria-label="collapsible table">
@@ -177,7 +248,7 @@ function OrderDetail() {
                 SỐ LƯỢNG
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                GIÁ (VNĐ)
+                GIÁ ĐƠN VỊ
               </TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -195,7 +266,7 @@ function OrderDetail() {
 
         {/* Status bar */}
         <Box sx={{ width: "100%", marginY: "50px" }}>
-          <Stepper activeStep={2} alternativeLabel>
+          <Stepper activeStep={getActiveStep(order)} alternativeLabel>
             {steps.map((label) => (
               <ColoredStep key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -222,8 +293,8 @@ function OrderDetail() {
           </Stepper>
         </Box>
 
-        {/* payment request + invoice */}
-        <div className="w-full max-w-[1200px] mt-8 mb-7">
+        {/* payment request + invoice - currently hidden */}
+        <div className="w-full max-w-[1200px] mt-8 mb-7 hidden">
           <div className="flex justify-around">
             {/* payment request */}
             <div className="flex flex-col w-[437px]">
@@ -435,12 +506,10 @@ function OrderDetail() {
               <TextField
                 id="outlined-basic"
                 variant="outlined"
-                placeholder="Dainne Russell"
+                value={order?.customer?.full_name}
+                defaultValue={order?.customer?.full_name}
                 sx={{ marginTop: "10px" }}
               />
-              {/* <div className="text-indigo-800 text-base leading-6 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white justify-center mt-1 pl-4 pr-16 py-5 rounded-md border-solid items-start max-md:pr-5">
-                Dainne Russell
-              </div> */}
             </div>
             <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
@@ -452,9 +521,6 @@ function OrderDetail() {
                 placeholder="(671) 555-0110"
                 sx={{ marginTop: "10px" }}
               />
-              {/* <div className="text-stone-500 text-sm leading-5 whitespace-nowrap border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white justify-center mt-1 pl-4 pr-16 py-4 rounded-md border-solid items-start max-md:pr-5">
-                (671) 555-0110
-              </div> */}
             </div>
           </div>
           <div className="flex items-stretch justify-between gap-5 mt-6 ">
@@ -481,16 +547,7 @@ function OrderDetail() {
                   </MenuItem>
                 </Select>
               </FormControl>
-              {/* <div className="items-stretch border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex justify-between gap-5 mt-1 pl-4 pr-6 py-3.5 rounded-md border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                <div className="text-stone-500 text-sm leading-5 grow whitespace-nowrap max-md:max-w-full">
-                  4140 Parker Rd. Allentown, New Mexico 31134
-                </div>
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/1079895c4c83422a5a55b4b22fa60622da1f8000ab15b7e422b82a119dbc09c2?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="aspect-square object-contain object-center w-4 justify-center items-center overflow-hidden self-center shrink-0 max-w-full my-auto"
-                />
-              </div> */}
+
               <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
                 <img
                   loading="lazy"

@@ -15,6 +15,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username", "password", "email", "full_name", "role", "avatar", "studio"]
         
 
+class UserSummarySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User 
+        fields = ["id", "username", "email", "full_name", "avatar"]
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
     role = RoleDetailSerializer(many=True, read_only=True)
     studio = StudioSummarySerializer(read_only=True)

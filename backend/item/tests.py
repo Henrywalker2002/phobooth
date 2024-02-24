@@ -6,7 +6,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import io
 from studio.models import Studio
 from unittest.mock import patch
-from item.views.product import ProductViewSet
 from category.models import Category
 
 

@@ -105,8 +105,8 @@ function ItemMgmt() {
           underline="hover"
           key="1"
           sx={{ color: "#808080" }}
-          href="/studio"
-          // onClick={handleClick}
+          // href="/studio"
+          onClick={() => navigate("/studio")}
         >
           <HomeOutlinedIcon />
         </Link>

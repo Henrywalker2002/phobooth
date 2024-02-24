@@ -1,4 +1,4 @@
-from base.views import CustomModelViewSetBase
+from base.views import BaseModelViewSet
 from studio.models import Studio
 from studio.serializers import StudioSerializer, StudioUpdateSerializer, StudioSummarySerializer, StudioDetailSerializer
 from rest_framework import status
@@ -10,7 +10,7 @@ import json
 from address.models import Address
 
 
-class StudioViewSet(CustomModelViewSetBase):
+class StudioViewSet(BaseModelViewSet):
     queryset = Studio.objects.all()
     serializer_class = {'default': StudioSerializer, 'update': StudioUpdateSerializer,
                         'partial_update': StudioUpdateSerializer, "retrieve": StudioDetailSerializer, "list": StudioSummarySerializer}

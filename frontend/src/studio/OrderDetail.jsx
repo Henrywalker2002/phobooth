@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import {
   Box,
   Collapse,
@@ -12,36 +11,56 @@ import {
   TableRow,
   Paper,
   Button,
-  TextField,
   Checkbox,
-  FormControl,
-  Select,
   MenuItem,
-  Dialog,
+  Breadcrumbs,
+  Link,
+  Typography,
+  Snackbar,
+  TextField,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import AddIcon from "@mui/icons-material/Add";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
-import { RiSubtractFill } from "react-icons/ri";
-import { IoIosAdd } from "react-icons/io";
-import { FaXmark } from "react-icons/fa6";
 import axios from "../api/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import StudioNavbar from "../components/StudioNavbar";
+import AddOrderItem from "./AddOrderItem";
+import EditOrderItem from "./EditOrderItem";
+import DeleteOrderItem from "./DeleteOrderItem";
 
 function OrderDetail(props) {
-  // Edit
+  // global
   let { id } = useParams(props, "id");
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+  // Dialog
+  const [openAddItem, setOpenAddItem] = useState(false);
+  const [openEditItem, setOpenEditItem] = useState(false);
+  const [openDelItem, setOpenDelItem] = useState(false);
+  // Snackbar
+  const [openStatusSBar, setOpenStatusSbar] = useState(false);
+  const [statusMsg, setStatusMsg] = useState(false);
+  // local
   const [order, setOrder] = useState({});
-  const [orderItem, setOrderItem] = useState([]);
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [status, setStatus] = useState("OREDERD"); // [1, 2, 3
 
-  useEffect(() => {
+  const [selectedItem, setSelectedItem] = useState({});
+  const [delivery, setDelivery] = useState(false);
+  const [status, setStatus] = useState("ORDERED"); // [1, 2, 3]
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  const getOrderDetail = () => {
     axios
       .get(`/order/${id}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {
@@ -51,66 +70,84 @@ function OrderDetail(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-
-  const [open, setOpen] = useState(false);
-
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  //   setOrderItem
-  // };
-
-  function handleClickOpen(orderItem) {
-    setOpen(true);
-    setOrderItem(orderItem);
-    console.log(orderItem);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
-  // selection
-  const [value, setValue] = useState("");
-  const handleChange = (event) => {
-    let value = event.target.value;
+  useEffect(() => {
+    getOrderDetail();
+  }, []);
+
+  // Open Status SnackBar Success/Err
+  const handleOpenStatusSBar = (msg) => {
+    setStatusMsg(msg);
+    setOpenStatusSbar(true);
+  };
+
+  // Close Status SnackBar Success/Err
+  const handleCloseStatusSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenStatusSbar(false);
+  };
+
+  // status selector
+  const handleUpdateStatus = (event) => {
+    let newStatus = event.target.value;
     axios
       .patch(
-        `/order/${order.id}/`,
+        `/order/${id}/`,
         {
-          status: value,
+          status: newStatus,
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${auth.access}`,
           },
         }
       )
       .then((res) => {
         console.log(res.data); // TODO: notify for user
-        setStatus(value);
+        handleOpenStatusSBar("Cập nhật trạng thái thành công !");
+        setStatus(res.data.status);
       })
       .catch((err) => {
         console.log(err);
+        handleOpenStatusSBar(err.response.data.status[0]);
       });
   };
 
-  // Collapsible table
-  function createData(item, type, category, quantity, price) {
-    return {
-      item,
-      type,
-      category,
-      quantity,
-      price,
-    };
-  }
+  // Edit Order Item Dialog
+  const handleOpenEditItem = (item) => {
+    console.log(item);
+    setSelectedItem(item);
+    setOpenEditItem(true);
+  };
 
+  // Delete Order Item Dialog
+  const handleOpenDelItem = (item) => {
+    setSelectedItem(item);
+    setOpenDelItem(true);
+  };
+
+  // Need Delivery
+  const handleNeedDelivery = (e) => {
+    console.log(delivery);
+    if (e.target.checked) setDelivery(true);
+    else setDelivery(false);
+  };
+
+  // Collapsible table
   function getPrice(item) {
     if (item.price) {
-      return item.price;
+      return formatter.format(item.price);
+    } else if (item.min_price && item.max_price) {
+      return (
+        formatter.format(item.min_price) +
+        " - " +
+        formatter.format(item.max_price)
+      );
     }
-    return item.item.min_price + " - " + item.item.max_price;
+    return "Chưa cập nhật";
   }
 
   function Row(props) {
@@ -119,14 +156,18 @@ function OrderDetail(props) {
 
     return (
       <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow sx={{ borderBottom: "unset" }}>
           <TableCell sx={{ maxWidth: "50px" }}>
             <IconButton
               aria-label="expand row"
               size="small"
               onClick={() => setOpen(!open)}
             >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              {open ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightOutlinedIcon />
+              )}
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
@@ -143,13 +184,12 @@ function OrderDetail(props) {
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.type === "service" ? "Dịch vụ" : "Sản phẩm"}
+              {row.item.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {/* {row.item.category.name} */}
-              Chụp ảnh gia đình
+              {row.item.category.title}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
@@ -157,11 +197,11 @@ function OrderDetail(props) {
           <TableCell align="left">
             <IconButton>
               <MdEdit
-                onClick={() => handleClickOpen(row.id)}
+                onClick={() => handleOpenEditItem(row)}
                 style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
               />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => handleOpenDelItem(row)}>
               <MdDeleteOutline
                 style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
               />
@@ -186,32 +226,91 @@ function OrderDetail(props) {
     );
   }
 
-  const rows = [
-    createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 200000),
-    createData("Khung ảnh trắng", "Sản phẩm", "Khung ảnh", 1, 100000),
-    createData("Chụp hình gia đình", "Gói dịch vụ", "Gia đình", 1, 240000),
-  ];
   return (
     <div>
-      <Navbar />
+      <StudioNavbar />
+
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080", cursor: "pointer" }}
+          // href="/"
+          onClick={() => navigate("/")}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Link
+          underline="hover"
+          key="2"
+          color="inherit"
+          sx={{ cursor: "pointer" }}
+          // href="/orders"
+          onClick={() => navigate("/studio/orders")}
+        >
+          Quản lý đơn hàng
+        </Link>
+
+        <Typography
+          key="3"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          #{order?.id}
+        </Typography>
+      </Breadcrumbs>
+
       <TableContainer
         component={Paper}
-        sx={{ width: "1200px", margin: "50px auto" }}
+        sx={{
+          width: "1200px",
+          margin: "30px auto",
+          marginBottom: "200px",
+          border: "0.5px solid #d6d3d1",
+        }}
       >
-        <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-20 py-4 rounded-lg">
+        <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-12 py-4 rounded-lg">
           <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
-            {order.id}
+            {order?.order_item?.length} sản phẩm
           </div>
-          {/* <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
-            3 hàng hóa
-          </div> */}
+
+          <Button
+            variant="text"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setOpenAddItem(true);
+            }}
+            sx={{
+              textTransform: "none",
+              color: "#3F41A6",
+              "&:hover": {
+                bgcolor: "#E2E5FF",
+              },
+            }}
+          >
+            Thêm sản phẩm
+          </Button>
         </div>
         <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
               <TableCell sx={{ maxWidth: "50px" }} />
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                HÀNG HÓA
+                SẢN PHẨM
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 PHÂN LOẠI
@@ -223,9 +322,9 @@ function OrderDetail(props) {
                 SỐ LƯỢNG
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                GIÁ (VNĐ)
+                GIÁ ĐƠN VỊ
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -236,42 +335,60 @@ function OrderDetail(props) {
         </Table>
 
         <div className="self-center w-full max-w-[1200px] mt-5 mb-7">
-          <div className="flex justify-between px-16">
+          <div className="flex justify-start gap-[440px] px-16">
             <div className="flex flex-col items-stretch w-[200px]">
               <div className="flex grow flex-col items-stretch px-5">
                 <div className="items-center flex justify-between gap-4 pr-20">
                   <div className="text-indigo-950 text-sm font-medium leading-4 tracking-wide uppercase grow whitespace-nowrap my-auto">
-                    vận chuyển
+                    Vận chuyển
                   </div>
-                  <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} />
+                  <Checkbox
+                    sx={{
+                      "&.Mui-checked": {
+                        color: "#3F41A6",
+                      },
+                    }}
+                    onChange={handleNeedDelivery}
+                    inputProps={{ "aria-label": "Checkbox demo" }}
+                  />
                 </div>
                 <div className="text-indigo-950 text-sm font-medium leading-4 tracking-wide uppercase whitespace-nowrap mt-4">
-                  trạng thái Đơn hàng
+                  Trạng thái đơn hàng
                 </div>
-                <FormControl fullWidth>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={value}
-                    onChange={handleChange}
-                    sx={{ marginTop: "10px", height: "33px" }}
-                    defaultValue={status} // NOT WORKING ?
-                  >
-                    <MenuItem value={"ORDERED"}>ORDERED</MenuItem>
-                    <MenuItem value={"IN_PROCESS"}>IN_PROCESS</MenuItem>
-                    <MenuItem value={"SHIPPING"}>SHIPPING</MenuItem>
-                    <MenuItem value={"COMPLETED"}>COMPLETED</MenuItem>
-                  </Select>
-                </FormControl>
+                {/* Selector */}
+                <TextField
+                  id="outlined-status"
+                  select
+                  value={status}
+                  onChange={handleUpdateStatus}
+                  sx={{
+                    marginTop: "10px",
+                    "& .MuiOutlinedInput-root": {
+                      height: "35px",
+                    },
+                    "& fieldset": {
+                      height: "40px",
+                    },
+                  }}
+                >
+                  <MenuItem value={"ORDERED"}>Đã đặt</MenuItem>
+                  <MenuItem value={"IN_PROCESS"}>Đang tiến hành</MenuItem>
+                  {delivery ? (
+                    <MenuItem value={"SHIPPING"}>Vận chuyển</MenuItem>
+                  ) : null}
+                  <MenuItem value={"COMPLETED"}>Hoàn thành</MenuItem>
+                </TextField>
               </div>
             </div>
-            <div className="flex flex-col items-stretch w-[300px] ml-5">
+            <div className="flex flex-col items-stretch w-[300px]">
               <div className="items-stretch flex justify-between gap-5 px-5 max-md:mt-10">
                 <div className="text-indigo-950 text-lg leading-7 whitespace-nowrap">
                   Tổng cộng
                 </div>
                 <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                  {order.total_price || 0} VNĐ
+                  {order.total_price
+                    ? formatter.format(order.total_price)
+                    : "Chưa cập nhật"}
                 </div>
               </div>
             </div>
@@ -279,130 +396,36 @@ function OrderDetail(props) {
         </div>
       </TableContainer>
 
+      {/* Update Status successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openStatusSBar}
+        autoHideDuration={3000}
+        onClose={handleCloseStatusSBar}
+        message={statusMsg}
+      />
+
       {/* Dialog Edit */}
-      <Dialog open={open} onClose={handleClose}>
-        <div className="max-w-[400px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-10 rounded-lg border-solid">
-          <div className="shadow-sm bg-white flex items-center justify-end w-full gap-16 pl-20 pr-2 py-4 rounded-lg ">
-            <div className="text-indigo-800 text-2xl font-semibold leading-9 whitespace-nowrap">
-              Tùy chỉnh
-            </div>
-            <IconButton onClick={handleClose}>
-              <FaXmark />
-            </IconButton>
-          </div>
-          <div className="flex w-full justify-start gap-4 mt-3 pl-5">
-            <img
-              loading="lazy"
-              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/dd7e23482da9be4fe42570372d7f1c5c8f20adafcb759e4ea962934e54566ac9?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-              className="aspect-square object-contain object-center w-[60px] overflow-hidden shrink-0 max-w-full"
-            />
-            <div className=" flex grow basis-[0%] flex-col py-1">
-              <div className="justify-center text-yellow-950 text-lg font-semibold">
-                Chụp ảnh gia đình
-              </div>
-              <div className="z-[1] flex justify-start gap-5 mt-2.5 -mb-1.5 pr-20 items-start max-md:pr-5">
-                <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                  Dịch vụ
-                </div>
-                <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                  Gia đình
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex w-full flex-col mt-5 pl-5">
-            <div className="flex items-center gap-6">
-              <div className="justify-center flex flex-col">
-                <div className="text-zinc-900 text-sm leading-5">Giá (VNĐ)</div>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  placeholder="500000"
-                  sx={{
-                    marginTop: "5px",
-                    width: "100px",
-                    boxSizing: "border-box",
-                  }}
-                  onChange={(e) => {
-                    setPrice(e.target.value);
-                  }}
-                />
-                {/* <div className="text-stone-500 text-xs font-light tracking-wide whitespace-nowrap justify-center items-stretch border-[color:var(--Border,#EAEAEA)] mt-1.5 px-14 py-4 rounded-md border-2 border-solid max-md:px-5">
-                  500,000
-                </div> */}
-              </div>
-              <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-end">
-                <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                  <IconButton color="primary">
-                    <RiSubtractFill
-                      style={{
-                        color: "#666666",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </IconButton>
-                </div>
-                <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
-                  1
-                </div>
-                <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                  <IconButton color="primary">
-                    <IoIosAdd
-                      style={{
-                        color: "#666666",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </IconButton>
-                </div>
-              </div>
-            </div>
-            <Button
-              variant="contained"
-              sx={{
-                marginTop: "50px",
-                marginX: "auto",
-                textTransform: "none",
-                borderRadius: "43px",
-                color: "#F6F5FB",
-                bgcolor: "#3F41A6",
-                width: "130px",
-                "&:hover": {
-                  bgcolor: "#3F41A6B2",
-                },
-              }}
-              onClick={() => {
-                axios
-                  .patch(
-                    `/order-item/${orderItem}/`,
-                    {
-                      price: price,
-                      quantity: quantity,
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(
-                          "accessToken"
-                        )}`,
-                      },
-                    }
-                  )
-                  .then((res) => {
-                    setOrder(res.data);
-                    setOpen(false);
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }}
-            >
-              Lưu thay đổi
-            </Button>
-          </div>
-        </div>
-      </Dialog>
+      <EditOrderItem
+        open={openEditItem}
+        setOpen={setOpenEditItem}
+        orderItem={selectedItem}
+        setOrder={setOrder}
+      />
+      {/* Dialog Add */}
+      <AddOrderItem
+        open={openAddItem}
+        setOpen={setOpenAddItem}
+        getOrderDetail={getOrderDetail}
+        orderId={Number(id)}
+      />
+      {/* Dialog Delete */}
+      <DeleteOrderItem
+        open={openDelItem}
+        setOpen={setOpenDelItem}
+        orderItem={selectedItem}
+        setOrder={setOrder}
+      />
     </div>
   );
 }
