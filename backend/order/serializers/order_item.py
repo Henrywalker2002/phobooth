@@ -78,9 +78,9 @@ class ReadOrderItemSerializer(serializers.ModelSerializer):
 class UpdateOrderItemSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
-        if attrs.order.status == OrderStatusChoice.COMPLETED:
+        attrs = super().validate(attrs)
+        if self.instance.order.status == OrderStatusChoice.COMPLETED:
             raise UpdateCompletedOrderException()
-
         return attrs
     
     class Meta:

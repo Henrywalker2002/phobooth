@@ -6,6 +6,7 @@ import {
   Button,
   IconButton,
   Link,
+  Snackbar,
   Typography,
 } from "@mui/material";
 import { GoHome } from "react-icons/go";
@@ -19,15 +20,21 @@ import { MdStorefront } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import Err401Dialog from "../components/Err401Dialog";
 
 function ItemDetail(props) {
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
   let { id } = useParams(props, "id");
   const [item, setItem] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [openErr401, setOpenErr401] = useState(false);
+  const [openSBar, setOpenSBar] = useState(false);
+
   useEffect(() => {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
+        console.log(res.data);
         setItem(res.data);
       })
       .catch((err) => {
@@ -35,12 +42,43 @@ function ItemDetail(props) {
       });
   }, []);
 
+  // Add to cart
+  const handleAddToCart = (id) => {
+    axios
+      .post(
+        "/cart/",
+        { item: id, number: quantity },
+        {
+          headers: {
+            Authorization: `Bearer ${auth.access}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        setOpenSBar(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // Close SnackBar Success
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSBar(false);
+  };
+
   const list0 = ["Hàng hóa khác của Studio", "Tương tự"];
   const list1 = [1, 2, 3, 4];
   return (
     <div>
       <Navbar />
-      <div className="introItem">
+      <div className="introItem mt-5">
         {/* Link */}
         <Breadcrumbs aria-label="breadcrumb" sx={{ marginLeft: "130px" }}>
           <Link underline="hover" color="inherit" href="/">
@@ -166,15 +204,21 @@ function ItemDetail(props) {
               <div className="justify-start items-stretch self-stretch flex gap-5 mt-5 px-px py-5 ">
                 <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
                   <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => setQuantity(quantity - 1)}
+                    >
                       <RiSubtractFill style={{ color: "#666666" }} />
                     </IconButton>
                   </div>
                   <div className="text-zinc-900 text-center text-base leading-6 my-auto mx-2">
-                    5
+                    {quantity}
                   </div>
                   <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
                       <IoIosAdd style={{ color: "#666666" }} />
                     </IconButton>
                   </div>
@@ -197,23 +241,8 @@ function ItemDetail(props) {
                     },
                   }}
                   onClick={() => {
-                    axios
-                      .post(
-                        "/cart/",
-                        { item: id, number: 1 },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${auth.access}`,
-                            "Content-Type": "application/json",
-                          },
-                        }
-                      )
-                      .then((res) => {
-                        console.log(res); // TODO: show success message
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
+                    if (auth.username) handleAddToCart(item.id);
+                    else setOpenErr401(true);
                   }}
                 >
                   Thêm vào giỏ hàng
@@ -418,6 +447,18 @@ function ItemDetail(props) {
           </div>
         ))}
       </div>
+
+      {/* Add to cart successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={3000}
+        onClose={handleCloseSBar}
+        message="Đã thêm vào giỏ hàng !"
+      />
+
+      {/* Err 401 Dialog */}
+      <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
 
       <Footer />
     </div>

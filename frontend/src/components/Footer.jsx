@@ -1,5 +1,15 @@
 import React from "react";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { styled } from "@mui/material";
 
+const Logo = styled(PhotoCameraIcon)(({ theme }) => ({
+  width: "40px",
+  height: "40px",
+  [theme.breakpoints.down("sm")]: {
+    width: "35px",
+    height: "35px",
+  },
+}));
 function Footer() {
   return (
     <div className=" bg-violet-50 mt-10 flex flex-col px-5 justify-center items-center">
@@ -8,21 +18,13 @@ function Footer() {
           <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
             <div className="flex flex-col items-stretch w-[31%] max-md:w-full max-md:ml-0">
               <div className="items-stretch flex flex-col mt-1.5 max-md:mt-10">
-                <div className="flex items-stretch justify-between gap-1.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-11 h-11"
-                  >
-                    <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
-                    <path
-                      fillRule="evenodd"
-                      d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <div className="text-indigo-800 text-3xl leading-[54px] tracking-tighter self-center grow whitespace-nowrap my-auto">
+                <div className="logo flex items-center w-[180px] cursor-pointer max-sm:w-fit">
+                  <Logo
+                    sx={{
+                      color: "rgba(0, 0, 0, 0.87)",
+                    }}
+                  />
+                  <div className="text-indigo-800 text-3xl leading-[54px] tracking-tighter self-center grow whitespace-nowrap my-auto max-sm:text-2xl max-sm:w-[100px]">
                     PhoBooth
                   </div>
                 </div>
@@ -34,8 +36,8 @@ function Footer() {
               </div>
             </div>
             <div className="flex flex-col items-stretch w-[69%] ml-5 max-md:w-full max-md:ml-0">
-              <div className="flex grow items-start justify-between gap-5 pr-1.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center max-md:mt-10">
-                <div className="items-stretch self-stretch flex grow basis-[0%] flex-col">
+              <div className="flex grow items-start justify-between gap-5 pr-1.5 max-sm:p-0 max-md:max-w-full max-md:flex-wrap max-md:justify-center max-md:mt-10">
+                <div className="items-stretch self-stretch flex grow basis-[0%] flex-col flex-wrap">
                   <div className="text-indigo-950 text-base font-medium leading-6 whitespace-nowrap">
                     Chăm sóc khách hàng
                   </div>

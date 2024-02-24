@@ -16,58 +16,85 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { CiCircleRemove } from "react-icons/ci";
 import CartContext from "../context/CartProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import ClearIcon from "@mui/icons-material/Clear";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-
-function createData(item, type, category, quantity, min_price, max_price) {
-  return { item, type, category, quantity, min_price, max_price };
-}
-
-const rows = [
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-  createData("Chụp hình gia đình", "Dịch vụ", "Gia đình", 1, 100000, 200000),
-];
 
 function Booking() {
   const navigate = useNavigate();
   const { auth } = useAuth();
   const { itemLists } = useContext(CartContext);
   console.log(itemLists);
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  const getTotalPrice = (lst, typ) => {
+    if (lst.length) {
+      let result = lst.reduce((total, row) => {
+        if (row?.item?.fixed_price) {
+          return total + row?.number * row?.item?.fixed_price;
+        } else {
+          return total + row?.number * row?.item[typ];
+        }
+      }, 0);
+      console.log(result);
+      return result;
+    }
+    return 0;
+  };
+
+  const showTotalPrice = (lst) => {
+    let min_price = getTotalPrice(lst, "min_price");
+    let max_price = getTotalPrice(lst, "max_price");
+    if (min_price === max_price) return formatter.format(min_price);
+    else
+      return formatter.format(min_price) + " - " + formatter.format(max_price);
+  };
+
+  function getPrice(row) {
+    if (row?.item?.fixed_price) {
+      return formatter.format(row?.item?.fixed_price * row?.number);
+    }
+    let min_price = row?.item?.min_price * row?.number;
+    let max_price = row?.item?.max_price * row?.number;
+    return formatter.format(min_price) + " - " + formatter.format(max_price);
+  }
+
   const handleCreateOrder = () => {
-    let order_item;
-    itemLists.forEach((itemList) => {
-      order_item = itemList.itemList.map((item) => {
-        return {
-          item: item.item.id,
-          number: item.number,
+    console.log(itemLists);
+    try {
+      for (let itemLst of itemLists) {
+        let order_item = itemLst.items.map((item) => {
+          return { item: item.item.id, quantity: item.number };
+        });
+        let updateOrderLst = {
+          studio: itemLst.studio.id,
+          order_item: order_item,
         };
-      });
-      axios
-        .post(
-          "/order/",
-          { order_item: order_item },
-          {
+        axios
+          .post("/order/", updateOrderLst, {
             headers: {
               Authorization: `Bearer ${auth.access}`,
             },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-    navigate("/orders");
+          })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+      navigate("/orders");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -122,14 +149,18 @@ function Booking() {
       </div>
 
       {/* Tables */}
-      {itemLists?.map((itemList, index) => (
+      {itemLists?.map((itemList) => (
         <TableContainer
-          key={index}
+          key={itemList.studio.id}
           component={Paper}
-          sx={{ width: "1200px", margin: "20px auto" }}
+          sx={{
+            width: "1200px",
+            margin: "20px auto",
+            border: "0.5px solid #d6d3d1",
+          }}
         >
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+            <TableHead sx={{ bgcolor: "#E2E5FF" }}>
               <TableRow>
                 <TableCell sx={{ color: "#3F41A6", paddingLeft: "40px" }}>
                   SẢN PHẨM
@@ -150,7 +181,7 @@ function Booking() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {itemList.itemList?.map((row, index) => (
+              {itemList.items?.map((row, index) => (
                 <TableRow
                   key={index}
                   // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -173,27 +204,44 @@ function Booking() {
                   </TableCell>
                   <TableCell align="left">
                     <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {row?.item.category?.type == "SERVICE" ? "Dịch vụ" : ""}
+                      {row?.item?.type}
                     </div>
                   </TableCell>
                   <TableCell align="left">
                     <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {row?.item.category?.title == "family" ? "Gia đình" : ""}
+                      {row?.item.category?.title}
                     </div>
                   </TableCell>
-                  <TableCell align="left">{row.number}</TableCell>
-                  <TableCell align="left">
-                    {row.item.min_price} - {row.item.max_price}
+                  <TableCell align="left" sx={{ width: "150px" }}>
+                    {row.number}
+                  </TableCell>
+                  <TableCell align="left" sx={{ width: "200px" }}>
+                    {getPrice(row)}
                   </TableCell>
                   <TableCell>
-                    <IconButton aria-label="delete">
-                      <CiCircleRemove style={{ color: "#666666" }} />
+                    <IconButton
+                      sx={{
+                        padding: 0,
+                        border: "0.5px solid #d6d3d1",
+                        borderRadius: "50%",
+                        width: "20px",
+                        height: "20px",
+                      }}
+                    >
+                      <ClearIcon
+                        sx={{
+                          width: "15px",
+                          height: "15px",
+                        }}
+                      />
                     </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          {/* More Info */}
           <div className="self-center flex w-full max-w-6xl items-stretch justify-between gap-5 my-5">
             <div className="ml-[50px] flex flex-col items-start">
               <div className="flex items-stretch justify-between gap-4">
@@ -203,7 +251,7 @@ function Booking() {
                   className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
                 />
                 <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
-                  Studio Chuyên nghiệp
+                  {itemList.studio.friendly_name}
                 </div>
               </div>
               <TextField
@@ -220,25 +268,19 @@ function Booking() {
                 }}
               />
             </div>
-            <div className="max-w-[450px] mr-5 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
+            <div className="max-w-[450px] mr-7 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
               <TextField
                 id="outlined-basic"
                 label="Khuyến mãi"
                 variant="outlined"
                 placeholder="Nhập mã khuyến mãi"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "50px",
-                    boxSizing: "border-box",
-                  },
-                }}
               />
               <div className="justify-between bg-white flex mt-4">
                 <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
                   Tổng giá tham khảo :
                 </div>
                 <div className="text-indigo-800 text-lg font-semibold leading-6 self-center whitespace-nowrap">
-                  200,000 - 400,000
+                  {showTotalPrice(itemList.items)}
                 </div>
               </div>
               <div className="text-stone-500 text-base leading-6 mt-2">

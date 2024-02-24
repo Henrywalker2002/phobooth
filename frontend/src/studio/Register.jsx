@@ -18,10 +18,12 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import useAuth from "../hooks/useAuth";
-import { isTokenExpired } from "../util/Token";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import OtherErrDialog from "../components/OtherErrDialog";
+import Err401Dialog from "../components/Err401Dialog";
+import { translateErr } from "../util/Translate";
 
 function Register() {
   // global
@@ -36,8 +38,13 @@ function Register() {
     friendly_name: "",
     code_name: "",
     email: "",
+    phone: "",
     description: "",
   };
+  // error
+  const [errMsg, setErrMsg] = useState({});
+  const [openErr401, setOpenErr401] = useState(false);
+  const [openOtherErr, setOpenOtherErr] = useState(false);
 
   useEffect(() => {
     axios
@@ -135,10 +142,11 @@ function Register() {
     };
     console.log(JSON.stringify(registerInfo), avt.avt_file);
     let formData = new FormData();
-    formData.append("avatar", avt.avt_file, avt.avt_file.name);
+    if (avt.avt_file) {
+      formData.append("avatar", avt.avt_file, avt.avt_file.name);
+    }
     formData.append("data", JSON.stringify(registerInfo));
 
-    console.log(isTokenExpired(auth.access));
     let url = "http://127.0.0.1:8000/studio/";
     axios
       .post(url, formData, {
@@ -153,7 +161,17 @@ function Register() {
         setAuth({ ...auth, studio: res.data });
         navigate("/studio/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        if (err.response?.status === 400) {
+          let newErr = translateErr(err.response.data);
+          setErrMsg(newErr);
+        } else if (err.response?.status === 401) {
+          setOpenErr401(true);
+        } else {
+          setOpenOtherErr(true);
+        }
+      });
   };
 
   console.log(studioInfo);
@@ -205,216 +223,324 @@ function Register() {
           Đăng kí Studio
         </div>
         <Divider />
-        <div className="self-stretch flex items-stretch  gap-[130px] mt-5">
-          <div className="flex basis-[0%] flex-col items-stretch ml-4">
-            <div className="text-zinc-900 text-sm leading-5">Tên Studio</div>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              name="friendly_name"
-              value={studioInfo.friendly_name}
-              onChange={updateStudioInfo}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "350px",
-                marginY: "10px",
-              }}
-            />
-
-            <div className="text-zinc-900 text-sm leading-5">
-              Tên người dùng
-            </div>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              name="code_name"
-              value={studioInfo.code_name}
-              onChange={updateStudioInfo}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "350px",
-                marginY: "10px",
-              }}
-            />
-
-            <div className="text-zinc-900 text-sm leading-5 mt-4">
-              Email (Studio)
-            </div>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              name="email"
-              value={studioInfo.email}
-              onChange={updateStudioInfo}
-              InputProps={{
-                type: "email",
-              }}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "350px",
-                marginY: "10px",
-              }}
-            />
-
-            <div className="text-zinc-900 text-sm leading-5 mt-4 ">
-              Số điện thoại (Studio)
-            </div>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              name="phone"
-              value={studioInfo.phone}
-              onChange={updateStudioInfo}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "350px",
-                marginY: "10px",
-              }}
-            />
-          </div>
-
-          <div className="flex basis-[0%] flex-col items-stretch mt-9 ml-5 self-start">
-            <Avatar
-              alt="studio-logo"
-              src={
-                avt.avt_preview
-                  ? avt.avt_preview
-                  : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-              }
-              sx={{ width: 140, height: 140 }}
-            />
-
-            <Button
-              component="label"
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                border: "2px solid #3F41A6",
-                color: "#3F41A6",
-                width: "140px",
-                marginTop: "10px",
-                borderRadius: "20px",
-                "&:hover": {
-                  border: "2px solid #3949AB",
-                },
-              }}
-            >
-              Chọn hình ảnh
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleUpdateAvt}
+        <form onSubmit={handleRegister}>
+          <div className="self-stretch flex items-stretch  gap-[130px] mt-5">
+            <div className="flex basis-[0%] flex-col items-stretch ml-4">
+              <div className="text-zinc-900 text-sm leading-5">
+                Tên Studio *
+              </div>
+              <TextField
+                required
+                variant="outlined"
+                name="friendly_name"
+                value={studioInfo.friendly_name}
+                onChange={updateStudioInfo}
+                error={errMsg.friendly_name ? true : false}
+                helperText={errMsg.friendly_name ? errMsg.friendly_name[0] : ""}
                 sx={{
-                  clip: "rect(0 0 0 0)",
-                  clipPath: "inset(50%)",
-                  height: 1,
-                  overflow: "hidden",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  width: 1,
+                  "& .MuiInputBase-input": {
+                    height: "45px",
+                    boxSizing: "border-box",
+                  },
+                  width: "350px",
+                  marginY: "10px",
                 }}
               />
-            </Button>
-          </div>
-        </div>
 
-        <div className="flex flex-col ml-4">
-          <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
-            Địa chỉ Studio
-            <IconButton onClick={handleAddAddress}>
-              <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
-            </IconButton>
-          </div>
-          {addresses.length > 1 ? (
-            addresses.map((address, index) => (
-              <div className="flex items-center gap-5" key={index}>
-                <TextField
-                  id="outlined-basic"
-                  label="Số nhà, đường"
-                  variant="outlined"
-                  name="street"
-                  value={address.street ? address.street : ""}
-                  onChange={(e) => handleUpdateAddress(e, address.id)}
+              <div className="text-zinc-900 text-sm leading-5">
+                Tên người dùng *
+              </div>
+              <TextField
+                required
+                variant="outlined"
+                name="code_name"
+                value={studioInfo.code_name}
+                onChange={updateStudioInfo}
+                error={errMsg.code_name ? true : false}
+                helperText={errMsg.code_name ? errMsg.code_name[0] : ""}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    height: "45px",
+                    boxSizing: "border-box",
+                  },
+                  width: "350px",
+                  marginY: "10px",
+                }}
+              />
+
+              <div className="text-zinc-900 text-sm leading-5 mt-4">
+                Email (Studio) *
+              </div>
+              <TextField
+                required
+                variant="outlined"
+                name="email"
+                value={studioInfo.email}
+                onChange={updateStudioInfo}
+                InputProps={{
+                  type: "email",
+                }}
+                error={errMsg.email ? true : false}
+                helperText={errMsg.email ? errMsg.email[0] : ""}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    height: "45px",
+                    boxSizing: "border-box",
+                  },
+                  width: "350px",
+                  marginY: "10px",
+                }}
+              />
+
+              <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+                Số điện thoại (Studio) *
+              </div>
+              <TextField
+                required
+                variant="outlined"
+                name="phone"
+                value={studioInfo.phone}
+                onChange={updateStudioInfo}
+                error={errMsg.phone ? true : false}
+                helperText={errMsg.phone ? errMsg.phone[0] : ""}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    height: "45px",
+                    boxSizing: "border-box",
+                  },
+                  width: "350px",
+                  marginY: "10px",
+                }}
+              />
+            </div>
+
+            <div className="flex basis-[0%] flex-col items-stretch mt-9 ml-5 self-start">
+              <Avatar
+                alt="studio-logo"
+                src={
+                  avt.avt_preview
+                    ? avt.avt_preview
+                    : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
+                }
+                sx={{ width: 140, height: 140 }}
+              />
+
+              <Button
+                component="label"
+                variant="outlined"
+                sx={{
+                  textTransform: "none",
+                  border: "2px solid #3F41A6",
+                  color: "#3F41A6",
+                  width: "140px",
+                  marginTop: "10px",
+                  borderRadius: "20px",
+                  "&:hover": {
+                    border: "2px solid #3949AB",
+                  },
+                }}
+              >
+                Chọn hình ảnh
+                <Input
+                  required
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUpdateAvt}
                   sx={{
-                    "& .MuiInputBase-input": {
-                      // height: "45px",
-                      // boxSizing: "border-box",
-                    },
-                    "& .MuiInputLabel-root": {
-                      // lineHeight: "0.95em",
-                    },
-                    width: "200px",
-                    marginY: "10px",
+                    clip: "rect(0 0 0 0)",
+                    clipPath: "inset(50%)",
+                    height: 1,
+                    overflow: "hidden",
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    width: 1,
                   }}
                 />
+              </Button>
+            </div>
+          </div>
 
+          <div className="flex flex-col ml-4">
+            <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
+              Địa chỉ Studio *
+              <IconButton onClick={handleAddAddress}>
+                <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
+              </IconButton>
+            </div>
+            {addresses.length > 1 ? (
+              addresses.map((address, index) => (
+                <div className="flex items-center gap-5" key={index}>
+                  <TextField
+                    required
+                    id="outlined-select-provinces"
+                    label="Tỉnh thành"
+                    value={address.province ? address.province : ""}
+                    defaultValue=""
+                    select
+                    error={errMsg.address?.province ? true : false}
+                    helperText={
+                      errMsg.address?.province ? errMsg.address.province[0] : ""
+                    }
+                    sx={{
+                      width: "150px",
+                      marginY: "10px",
+                    }}
+                  >
+                    <MenuItem value="">--Chọn tỉnh thành--</MenuItem>
+                    {provinces?.map((prov, index) => (
+                      <MenuItem
+                        key={index}
+                        value={prov.code}
+                        onClick={() => handleUpdateProv(address.id, prov)}
+                      >
+                        {prov.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    required
+                    id="outlined-select-districts"
+                    label="Quận huyện"
+                    variant="outlined"
+                    value={address.district ? address.district : ""}
+                    defaultValue=""
+                    select
+                    error={errMsg.address?.district ? true : false}
+                    helperText={
+                      errMsg.address?.district ? errMsg.address.district[0] : ""
+                    }
+                    sx={{
+                      width: "150px",
+                      marginY: "10px",
+                    }}
+                  >
+                    <MenuItem value="">--Chọn quận huyện--</MenuItem>
+                    {address.distlist?.map((dist, index) => (
+                      <MenuItem
+                        key={index}
+                        value={dist.code}
+                        onClick={() => handleUpdateDist(address.id, dist.code)}
+                      >
+                        {dist.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    required
+                    label="Phường xã"
+                    variant="outlined"
+                    name="ward"
+                    value={address.ward ? address.ward : ""}
+                    onChange={(e) => handleUpdateAddress(e, address.id)}
+                    defaultValue=""
+                    select
+                    error={errMsg.address?.ward ? true : false}
+                    helperText={
+                      errMsg.address?.ward ? errMsg.address.ward[0] : ""
+                    }
+                    sx={{
+                      width: "150px",
+                      marginY: "10px",
+                    }}
+                  >
+                    <MenuItem value="">--Chọn phường xã--</MenuItem>
+                    {address.wardlist?.map((ward, index) => (
+                      <MenuItem key={index} value={ward.code}>
+                        {ward.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    required
+                    id="outlined-basic"
+                    label="Số nhà, đường"
+                    variant="outlined"
+                    name="street"
+                    value={address.street ? address.street : ""}
+                    onChange={(e) => handleUpdateAddress(e, address.id)}
+                    error={errMsg.address?.street ? true : false}
+                    helperText={
+                      errMsg.address?.street ? errMsg.address.street[0] : ""
+                    }
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        // height: "45px",
+                        // boxSizing: "border-box",
+                      },
+                      "& .MuiInputLabel-root": {
+                        // lineHeight: "0.95em",
+                      },
+                      width: "200px",
+                      marginY: "10px",
+                    }}
+                  />
+
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    onClick={() => handleDeleteAddress(address.id)}
+                  >
+                    <DeleteOutlineIcon sx={{ color: "#3F41A6" }} />
+                  </IconButton>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center gap-5">
                 <TextField
-                  label="Phường xã"
-                  variant="outlined"
-                  name="ward"
-                  value={address.ward ? address.ward : ""}
-                  onChange={(e) => handleUpdateAddress(e, address.id)}
+                  required
+                  label="Tỉnh thành"
+                  value={addresses[0]?.province ? addresses[0].province : ""}
                   defaultValue=""
                   select
+                  error={errMsg.address?.province ? true : false}
+                  helperText={
+                    errMsg.address?.province ? errMsg.address.province[0] : ""
+                  }
                   sx={{
-                    "& .MuiInputBase-input": {
-                      height: "45px",
-                      boxSizing: "border-box",
-                    },
-                    "& .MuiInputLabel-root": {
-                      // lineHeight: "0.95em",
-                    },
                     width: "150px",
                     marginY: "10px",
                   }}
                 >
-                  <MenuItem value="">--Chọn phường xã--</MenuItem>
-                  {address.wardlist?.map((ward, index) => (
-                    <MenuItem key={index} value={ward.code}>
-                      {ward.name}
+                  <MenuItem value="">-- Chọn tỉnh thành --</MenuItem>
+                  {provinces?.map((prov, index) => (
+                    <MenuItem
+                      key={index}
+                      value={prov.code}
+                      onClick={() => handleUpdateProv(addresses[0].id, prov)}
+                    >
+                      {prov.name}
                     </MenuItem>
                   ))}
                 </TextField>
 
                 <TextField
-                  id="outlined-select-districts"
+                  required
                   label="Quận huyện"
                   variant="outlined"
-                  value={address.district ? address.district : ""}
+                  value={addresses[0]?.district ? addresses[0].district : ""}
                   defaultValue=""
                   select
+                  error={errMsg.address?.district ? true : false}
+                  helperText={
+                    errMsg.address?.district ? errMsg.address.district[0] : ""
+                  }
                   sx={{
-                    "& .MuiInputBase-input": {
-                      height: "45px",
-                      boxSizing: "border-box",
-                    },
-                    "& .MuiInputLabel-root": {
-                      // lineHeight: "0.95em",
-                    },
                     width: "150px",
                     marginY: "10px",
                   }}
                 >
                   <MenuItem value="">--Chọn quận huyện--</MenuItem>
-                  {address.distlist?.map((dist, index) => (
+                  {addresses[0].distlist?.map((dist, index) => (
                     <MenuItem
                       key={index}
                       value={dist.code}
-                      onClick={() => handleUpdateDist(address.id, dist.code)}
+                      onClick={() =>
+                        handleUpdateDist(addresses[0].id, dist.code)
+                      }
                     >
                       {dist.name}
                     </MenuItem>
@@ -422,207 +548,113 @@ function Register() {
                 </TextField>
 
                 <TextField
-                  id="outlined-select-provinces"
-                  label="Tỉnh thành phố"
-                  value={address.province ? address.province : ""}
+                  required
+                  label="Phường xã"
+                  variant="outlined"
+                  name="ward"
+                  value={addresses[0]?.ward ? addresses[0].ward : ""}
+                  onChange={(e) => handleUpdateAddress(e, addresses[0].id)}
                   defaultValue=""
                   select
+                  error={errMsg.address?.ward ? true : false}
+                  helperText={
+                    errMsg.address?.ward ? errMsg.address.ward[0] : ""
+                  }
                   sx={{
-                    "& .MuiInputBase-input": {
-                      height: "45px",
-                      boxSizing: "border-box",
-                    },
-                    "& .MuiInputLabel-root": {
-                      // lineHeight: "0.99em",
-                    },
                     width: "150px",
                     marginY: "10px",
                   }}
                 >
-                  <MenuItem value="">--Chọn tỉnh thành--</MenuItem>
-                  {provinces?.map((prov, index) => (
-                    <MenuItem
-                      key={index}
-                      value={prov.code}
-                      onClick={() => handleUpdateProv(address.id, prov)}
-                    >
-                      {prov.name}
+                  <MenuItem value="">--Chọn phường xã--</MenuItem>
+                  {addresses[0].wardlist?.map((ward, index) => (
+                    <MenuItem key={index} value={ward.code}>
+                      {ward.name}
                     </MenuItem>
                   ))}
                 </TextField>
-                <IconButton
-                  sx={{ padding: 0 }}
-                  onClick={() => handleDeleteAddress(address.id)}
-                >
-                  <DeleteOutlineIcon sx={{ color: "#3F41A6" }} />
-                </IconButton>
+
+                <TextField
+                  required
+                  id="outlined-basic"
+                  label="Số nhà, đường"
+                  variant="outlined"
+                  name="street"
+                  value={addresses[0]?.street ? addresses[0].street : ""}
+                  onChange={(e) => handleUpdateAddress(e, addresses[0].id)}
+                  error={errMsg.address?.street ? true : false}
+                  helperText={
+                    errMsg.address?.street ? errMsg.address.street[0] : ""
+                  }
+                  sx={{
+                    width: "200px",
+                    marginY: "10px",
+                  }}
+                />
               </div>
-            ))
-          ) : (
-            <div className="flex items-center gap-5">
-              <TextField
-                id="outlined-basic"
-                label="Số nhà, đường"
-                variant="outlined"
-                name="street"
-                value={addresses[0]?.street ? addresses[0].street : ""}
-                onChange={(e) => handleUpdateAddress(e, addresses[0].id)}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    // height: "45px",
-                    // boxSizing: "border-box",
-                  },
-                  "& .MuiInputLabel-root": {
-                    // lineHeight: "0.99em",
-                  },
-                  width: "200px",
-                  marginY: "10px",
-                }}
-              />
+            )}
+            <div className="text-zinc-900 text-sm leading-5 mt-4">Mô tả *</div>
+            <TextField
+              required
+              name="description"
+              value={studioInfo.description}
+              onChange={updateStudioInfo}
+              multiline
+              rows={3}
+              error={errMsg.description ? true : false}
+              helperText={errMsg.description ? errMsg.description[0] : ""}
+              sx={{
+                width: "750px",
+              }}
+            />
+          </div>
 
-              <TextField
-                label="Phường xã"
-                variant="outlined"
-                name="ward"
-                value={addresses[0]?.ward ? addresses[0].ward : ""}
-                onChange={(e) => handleUpdateAddress(e, addresses[0].id)}
-                defaultValue=""
-                select
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  "& .MuiInputLabel-root": {
-                    // lineHeight: "0.95em",
-                  },
-                  width: "150px",
-                  marginY: "10px",
-                }}
-              >
-                <MenuItem value="">--Chọn phường xã--</MenuItem>
-                {addresses[0].wardlist?.map((ward, index) => (
-                  <MenuItem key={index} value={ward.code}>
-                    {ward.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+          <div className="flex  gap-5 ml-4 my-5 self-start">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setStudioInfo(resetInfo);
+                setAddresses([{ id: uuidv4() }]);
+                setAvt({});
+              }}
+              sx={{
+                textTransform: "none",
+                border: "1px solid #3F41A6",
+                color: "#3F41A6",
+                width: "80px",
 
-              <TextField
-                label="Quận huyện"
-                variant="outlined"
-                value={addresses[0]?.district ? addresses[0].district : ""}
-                defaultValue=""
-                select
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  "& .MuiInputLabel-root": {
-                    // lineHeight: "0.99em",
-                  },
-                  width: "150px",
-                  marginY: "10px",
-                }}
-              >
-                <MenuItem value="">--Chọn quận huyện--</MenuItem>
-                {addresses[0].distlist?.map((dist, index) => (
-                  <MenuItem
-                    key={index}
-                    value={dist.code}
-                    onClick={() => handleUpdateDist(addresses[0].id, dist.code)}
-                  >
-                    {dist.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+                borderRadius: "20px",
+                "&:hover": {
+                  border: "1px solid #3949AB",
+                },
+              }}
+            >
+              Hủy
+            </Button>
 
-              <TextField
-                label="Tỉnh thành"
-                value={addresses[0]?.province ? addresses[0].province : ""}
-                defaultValue=""
-                select
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  "& .MuiInputLabel-root": {
-                    // lineHeight: "0.99em",
-                  },
-                  width: "150px",
-                  marginY: "10px",
-                }}
-              >
-                <MenuItem value="">-- Chọn tỉnh thành --</MenuItem>
-                {provinces?.map((prov, index) => (
-                  <MenuItem
-                    key={index}
-                    value={prov.code}
-                    onClick={() => handleUpdateProv(addresses[0].id, prov)}
-                  >
-                    {prov.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </div>
-          )}
-          <div className="text-zinc-900 text-sm leading-5 mt-4">Mô tả</div>
-          <TextField
-            id="outlined-multiline-static"
-            name="description"
-            value={studioInfo.description}
-            onChange={updateStudioInfo}
-            multiline
-            rows={3}
-            sx={{
-              width: "750px",
-            }}
-          />
-        </div>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "100px",
 
-        <div className="flex  gap-5 ml-4 my-5 self-start">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setStudioInfo(resetInfo);
-              setAddresses([{ id: uuidv4() }]);
-              setAvt({});
-            }}
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "80px",
-
-              borderRadius: "20px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            Hủy
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={handleRegister}
-            sx={{
-              textTransform: "none",
-              bgcolor: "#3F41A6",
-              width: "100px",
-
-              borderRadius: "20px",
-              "&:hover": {
-                bgcolor: "#3949AB",
-              },
-            }}
-          >
-            Đăng kí
-          </Button>
-        </div>
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Đăng kí
+            </Button>
+          </div>
+        </form>
       </Paper>
+
+      {/* Error 401 */}
+      <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
+      {/* Other errors */}
+      <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
     </div>
   );
 }

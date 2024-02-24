@@ -11,65 +11,57 @@ import {
   TableRow,
   Paper,
   Button,
+  Breadcrumbs,
+  Link,
+  Typography,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Navbar from "../components/Navbar";
+import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import StudioNavbar from "../components/StudioNavbar";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 function Orders() {
   // Collapsible table
   const { auth } = useAuth();
+  const navigate = useNavigate();
   console.log(auth);
-  const [items, setItems] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
 
   useEffect(() => {
     axios
-      .get("order/list_order_of_studio/", {
+      .get("order/studio/", {
         headers: {
           Authorization: `Bearer ${auth.access}`,
         },
       })
       .then((res) => {
-        setItems(res.data);
+        console.log(res.data);
+        setOrders(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  function createData(id, createdDate, quantity, status, price) {
-    return {
-      id,
-      createdDate,
-      quantity,
-      status,
-      price,
-      details: [
-        {
-          name: "Chụp ảnh gia đình",
-          type: "Dịch vụ",
-          category: "Gia đình",
-          quantity: 1,
-          price: "200000-400000",
-        },
-        {
-          name: "Chụp ảnh gia đình",
-          type: "Dịch vụ",
-          category: "Gia đình",
-          quantity: 1,
-          price: "200000-400000",
-        },
-      ],
-    };
-  }
-
   function getPrice(item) {
     if (item.price) {
-      return item.price;
+      return formatter.format(item.price);
+    } else if (item.min_price && item.max_price) {
+      return (
+        formatter.format(item.min_price) +
+        " - " +
+        formatter.format(item.max_price)
+      );
     }
-    return item.item.min_price + " - " + item.item.max_price;
+    return "Chưa cập nhật";
   }
 
   function Row(props) {
@@ -78,14 +70,25 @@ function Orders() {
 
     return (
       <React.Fragment>
-        <TableRow hover={true} sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow
+          hover={true}
+          onClick={() => navigate("/studio/order/detail/" + row.id)}
+          sx={{ borderBottom: "unset", cursor: "pointer" }}
+        >
           <TableCell>
             <IconButton
               aria-label="expand row"
               size="small"
-              onClick={() => setOpen(!open)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(!open);
+              }}
             >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              {open ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightOutlinedIcon />
+              )}
             </IconButton>
           </TableCell>
           <TableCell component="th" scope="row">
@@ -99,7 +102,9 @@ function Orders() {
             </div>
           </TableCell>
           <TableCell align="left">
-            {row.total_price || "Chưa cập nhật"}
+            {row.total_price
+              ? formatter.format(row.total_price)
+              : "Chưa cập nhật"}
           </TableCell>
           <TableCell align="left">
             <Button
@@ -128,12 +133,20 @@ function Orders() {
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
-                {/* <Typography variant="h6" gutterBottom component="div">
-                  Chi tiết
-                </Typography> */}
-                <Table size="small" aria-label="purchases">
+                <div className="mt-5 text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
+                  Danh sách sản phẩm
+                </div>
+                <Table
+                  size="small"
+                  sx={{
+                    marginTop: "20px",
+                    border: "0.5px solid #d6d3d1",
+                    borderRadius: "10px",
+                  }}
+                >
                   <TableHead>
                     <TableRow>
+                      <TableCell />
                       <TableCell sx={{ color: "#808080" }}>
                         TÊN HÀNG HÓA
                       </TableCell>
@@ -151,13 +164,14 @@ function Orders() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.order_item.map((detailedRow, index) => (
+                    {row.order_item?.map((detailedRow, index) => (
                       <TableRow
                         key={index}
                         sx={{
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
+                        <TableCell />
                         <TableCell component="th" scope="row">
                           <div className="items-stretch flex gap-5">
                             <img
@@ -170,9 +184,9 @@ function Orders() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{detailedRow.type}</TableCell>
+                        <TableCell>{detailedRow.item.type}</TableCell>
                         <TableCell align="left">
-                          {detailedRow.category}
+                          {detailedRow.item.category.title}
                         </TableCell>
                         <TableCell align="left">
                           {detailedRow.quantity}
@@ -207,14 +221,44 @@ function Orders() {
     );
   }
 
-  const rows = [
-    createData("ANUW482NUENQ", "20-10-2023", "2", "Đã đặt", "200000 - 400000"),
-    createData("ANUW482NUENQ", "20-10-2023", "2", "Đã chấp nhận", "800000"),
-    createData("ANUW482NUENQ", "20-10-2023", "2", "Vận chuyển", "800000"),
-  ];
   return (
     <div>
-      <Navbar />
+      <StudioNavbar />
+
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+          cursor: "pointer",
+        }}
+      >
+        <Link
+          underline="hover"
+          key="1"
+          sx={{ color: "#808080", cursor: "pointer" }}
+          // href="/"
+          onClick={() => navigate("/studio")}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          Quản lý đơn hàng
+        </Typography>
+      </Breadcrumbs>
+
       {/* Header */}
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
         Quản lý đơn hàng
@@ -223,10 +267,14 @@ function Orders() {
       {/* Table */}
       <TableContainer
         component={Paper}
-        sx={{ width: "1250px", margin: "20px auto" }}
+        sx={{
+          width: "1250px",
+          margin: "20px auto",
+          border: "0.5px solid #d6d3d1",
+        }}
       >
         <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#F6F5FB", color: "#3F41A6" }}>
+          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
               <TableCell />
               <TableCell sx={{ color: "#3F41A6" }}>MÃ ĐƠN HÀNG</TableCell>
@@ -240,7 +288,7 @@ function Orders() {
                 TRẠNG THÁI
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                GIÁ (VNĐ)
+                TỔNG GIÁ
               </TableCell>
               <TableCell align="left" sx={{ color: "#3F41A6" }}>
                 HÀNH ĐỘNG
@@ -248,9 +296,14 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((row) => (
-              <Row key={row.id} row={row} />
-            ))}
+            {orders.length > 0 ? (
+              orders.map((row) => <Row key={row?.id} row={row} />)
+            ) : (
+              <TableRow>
+                <TableCell />
+                <TableCell>Chưa có đơn hàng</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

@@ -33,6 +33,9 @@ function AddPkg({
   setPicList,
   reset,
   setReset,
+  errMsg,
+  addImgFlag,
+  setAddImgFlag,
 }) {
   // global
   const { auth } = useAuth();
@@ -196,11 +199,13 @@ function AddPkg({
                 Tên gói dịch vụ
               </div>
               <TextField
-                id="outlined-basic"
+                required
                 variant="outlined"
                 name="name"
                 value={pkgInfo.name ? pkgInfo.name : ""}
                 onChange={updatePkgInfo}
+                error={errMsg.pkg?.name ? true : false}
+                helperText={errMsg.pkg?.name ? errMsg.pkg.name[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -213,12 +218,15 @@ function AddPkg({
 
               <div className="text-sm leading-5 text-zinc-900">Danh mục</div>
               <TextField
+                required
                 id="outlined-select-categories"
                 name="category"
                 value={pkgInfo.category ? pkgInfo.category : ""}
                 onChange={updatePkgInfo}
                 defaultValue=""
                 select
+                error={errMsg.pkg?.category ? true : false}
+                helperText={errMsg.pkg?.category ? errMsg.pkg.category[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -262,10 +270,11 @@ function AddPkg({
                   <div className="flex flex-col items-center">
                     <RiImageAddFill className="w-11 h-11" />
                     <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                    <div className="text-[10px]">({imgList.length}/5)</div>
+                    <div className="text-[10px]">({imgList.length}/10)</div>
                   </div>
 
                   <Input
+                    required
                     type="file"
                     accept="image/*"
                     multiple
@@ -323,8 +332,11 @@ function AddPkg({
 
                 {/* Dialog Album */}
                 <Dialog
-                  open={open}
-                  onClose={() => setOpen(false)}
+                  open={addImgFlag ? addImgFlag : open}
+                  onClose={() => {
+                    setOpen(false);
+                    setAddImgFlag(false);
+                  }}
                   sx={{
                     "& .MuiDialog-paper": {
                       width: "800px",
@@ -406,10 +418,13 @@ function AddPkg({
                   <DialogActions>
                     <Button
                       sx={{
-                        textTransform: "none",
+                        // textTransform: "none",
                         color: "#3F41A6",
                       }}
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        setAddImgFlag(false);
+                      }}
                     >
                       Đóng
                     </Button>
@@ -423,12 +438,15 @@ function AddPkg({
           Mô tả gói dịch vụ
         </div>
         <TextField
+          required
           id="outlined-multiline-static"
           name="description"
           value={pkgInfo.description ? pkgInfo.description : ""}
           onChange={updatePkgInfo}
           multiline
           rows={3}
+          error={errMsg.pkg?.description ? true : false}
+          helperText={errMsg.pkg?.description ? errMsg.pkg.description[0] : ""}
           sx={{
             width: "750px",
             marginTop: "10px",
@@ -692,12 +710,16 @@ function AddPkg({
             </div>
             <div className="justify-start items-stretch flex gap-5">
               <TextField
-                id="outlined-basic"
+                required
                 variant="outlined"
                 name="min_price"
                 value={pkgInfo.min_price ? pkgInfo.min_price : ""}
                 placeholder={totalPrice.min_price ? totalPrice.min_price : 0}
                 onChange={updatePkgInfo}
+                error={errMsg.pkg?.min_price ? true : false}
+                helperText={
+                  errMsg.pkg?.min_price ? errMsg.pkg.min_price[0] : ""
+                }
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "40px",
@@ -709,12 +731,16 @@ function AddPkg({
               />
               <div className="text-black text-sm leading-5 my-auto">-</div>
               <TextField
-                id="outlined-basic"
+                required
                 variant="outlined"
                 name="max_price"
                 value={pkgInfo.max_price ? pkgInfo.max_price : ""}
                 placeholder={totalPrice.max_price ? totalPrice.max_price : 0}
                 onChange={updatePkgInfo}
+                error={errMsg.pkg?.max_price ? true : false}
+                helperText={
+                  errMsg.pkg?.max_price ? errMsg.pkg.max_price[0] : ""
+                }
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "40px",
