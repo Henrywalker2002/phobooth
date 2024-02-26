@@ -1,13 +1,12 @@
 from rest_framework import serializers
-from order.models import Order, OrderItem, OrderStatusChoice
-from item.models import Item
-from item.serializers.item import ItemDetailSerializer
+from order.models import Order, OrderStatusChoice
 from user.models import User
 from studio.models import Studio
 from studio.serializers import StudioSummarySerializer
-from order.serializers.order_item import CreateOrderItemSerializer, ReadOrderItemSerializer, UpdateOrderItemSerializer
+from order.serializers.order_item import CreateOrderItemSerializer, ReadOrderItemSerializer
 from user.serializers import UserSummarySerializer
 from order.exceptions import UpdateCompletedOrderException
+from payment.serializers import ReadPaymentSerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -41,6 +40,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     order_item = ReadOrderItemSerializer(many=True, read_only=True)
     studio = StudioSummarySerializer(read_only=True)
     customer = UserSummarySerializer(read_only=True)
+    payment = ReadPaymentSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -50,12 +50,14 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "total_price",
             "discount_price",
             "amount_paid",
+            "amount_created",
             "finish_date",
             "customer",
             "status",
             "note",
             "order_item",
-            "studio"
+            "studio",
+            "payment",
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):

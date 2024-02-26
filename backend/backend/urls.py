@@ -14,6 +14,7 @@ from item.views.item import ItemViewSet
 from item.views.product import ProductViewSet, VariationViewSet
 from item.views.service_pack import ServicePackItemViewSet
 from address.views import ProvinceViewSet
+from payment.views import PaymentViewSet
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -34,7 +35,7 @@ router.register(r'cart', CartViewSet, 'cart')
 router.register(r'order', OrderViewSet, 'order')
 router.register(r'order-item', OrderItemViewSet, 'order-item')
 router.register(r'province', ProvinceViewSet, 'province')
-
+router.register(r'payment', PaymentViewSet, 'payment')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

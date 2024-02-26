@@ -1,0 +1,76 @@
+from rest_framework import serializers
+from order.models import Order, OrderStatusChoice
+from payment.models import Payment, PaymentStatusChoices
+from payment.exceptions import (UpdatePaidPaymentException, AmountExceedException,
+                                PaymentExpiredException, PaymentPaidException, PaymentExceedTimeException)
+from order.exceptions import UpdateCompletedOrderException
+import datetime
+
+
+class CreatePaymentSerializer(serializers.ModelSerializer):
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+
+    def validate_amount(self, value):
+        if value < 10000:
+            raise serializers.ValidationError("Amount must be greater than 10000")
+        return value
+    
+    def validate_expiration_date(self, value):
+        if value < datetime.date.today():
+            raise serializers.ValidationError("Expiration date must be greater than today")
+        return value
+    
+    def validate(self, attrs):
+        order = attrs.get("order")
+        if order.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
+        if attrs.get("amount") > order.total_price - order.amount_created:
+            raise AmountExceedException()
+        return attrs
+
+    class Meta:
+        model = Payment
+        fields = ["expiration_date", "order", "amount"]
+
+
+class UpdatePaymentSerializer(serializers.ModelSerializer):
+
+    def validate(self, attrs):
+        order = self.instance.__getattribute__("order", None)
+        if not order:
+            pass
+        elif order.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
+        if self.instance.status == PaymentStatusChoices.PAID:
+            raise UpdatePaidPaymentException()
+
+        if "amount" in attrs:
+            if attrs.get("amount") > order.total_price - order.amount_created + self.instance.amount:
+                raise AmountExceedException()
+
+        return attrs
+
+    class Meta:
+        model = Payment
+        fields = ["amount", "expiration_date"]
+
+
+class ReadPaymentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Payment
+        fields = ["id", "no", "amount", "status",
+                  "expiration_date", "payment_date", "payment_method"]
+
+
+class GetPaymentURLSerializer(serializers.Serializer):
+
+    def validate(self, attrs):
+        instance = self.instance
+        if instance.expiration_date < datetime.date.today():
+            raise PaymentExpiredException()
+        if instance.status == PaymentStatusChoices.PAID:
+            raise PaymentPaidException()
+        if instance.number_attemp_in_day > 10 and instance.payment_attemp_date == datetime.date.today():
+            raise PaymentExceedTimeException()
+        return attrs

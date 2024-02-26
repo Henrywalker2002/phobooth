@@ -14,6 +14,8 @@ class OrderStatusChoice(models.TextChoices):
 class Order(BaseModel):
     total_price =  models.IntegerField(null=True, default= None)
     discount_price = models.IntegerField(null=True, default= 0)
+    transportation_price = models.IntegerField(null=True, default= 0)
+    amount_created = models.IntegerField(null = True, default = 0)
     amount_paid = models.IntegerField(null=False, default=0)
     finish_date = models.DateField(null=True, default=None)
     customer = models.ForeignKey(
@@ -34,6 +36,10 @@ class Order(BaseModel):
         default=OrderStatusChoice.ORDERED,
     )
     note = models.TextField(null=True, default=None)
+    
+    @property
+    def remaining_amount(self):
+        return self.total_price - self.amount_paid
         
 
 class OrderItemStatusChoice(models.TextChoices):
