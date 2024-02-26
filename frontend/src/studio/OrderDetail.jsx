@@ -25,19 +25,18 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddIcon from "@mui/icons-material/Add";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
-import axios from "../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
 import StudioNavbar from "../components/StudioNavbar";
 import AddOrderItem from "./AddOrderItem";
 import EditOrderItem from "./EditOrderItem";
 import DeleteOrderItem from "./DeleteOrderItem";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function OrderDetail(props) {
   // global
   let { id } = useParams(props, "id");
-  const { auth } = useAuth();
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   // Dialog
   const [openAddItem, setOpenAddItem] = useState(false);
   const [openEditItem, setOpenEditItem] = useState(false);
@@ -57,12 +56,8 @@ function OrderDetail(props) {
   });
 
   const getOrderDetail = () => {
-    axios
-      .get(`/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/order/${id}`)
       .then((res) => {
         setOrder(res.data);
         setStatus(res.data.status);
@@ -93,20 +88,11 @@ function OrderDetail(props) {
   // status selector
   const handleUpdateStatus = (event) => {
     let newStatus = event.target.value;
-    axios
-      .patch(
-        `/order/${id}/`,
-        {
-          status: newStatus,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-          },
-        }
-      )
+    axiosPrivate
+      .patch(`/order/${id}/`, {
+        status: newStatus,
+      })
       .then((res) => {
-        console.log(res.data); // TODO: notify for user
         handleOpenStatusSBar("Cập nhật trạng thái thành công !");
         setStatus(res.data.status);
       })
@@ -118,7 +104,7 @@ function OrderDetail(props) {
 
   // Edit Order Item Dialog
   const handleOpenEditItem = (item) => {
-    console.log(item);
+    // console.log(item);
     setSelectedItem(item);
     setOpenEditItem(true);
   };
@@ -131,7 +117,6 @@ function OrderDetail(props) {
 
   // Need Delivery
   const handleNeedDelivery = (e) => {
-    console.log(delivery);
     if (e.target.checked) setDelivery(true);
     else setDelivery(false);
   };
@@ -174,22 +159,26 @@ function OrderDetail(props) {
             <div className="items-stretch flex gap-5">
               <img
                 loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                src={
+                  row.item?.picture
+                    ? row.item?.picture
+                    : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                }
+                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row.item.name}
+                {row.item?.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.type}
+              {row.item?.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.category.title}
+              {row.item?.category?.title}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
@@ -242,22 +231,23 @@ function OrderDetail(props) {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
-          sx={{ color: "#808080", cursor: "pointer" }}
+          sx={{ color: "#808080" }}
           // href="/"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/studio", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
 
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="2"
           color="inherit"
-          sx={{ cursor: "pointer" }}
           // href="/orders"
-          onClick={() => navigate("/studio/orders")}
+          onClick={() => navigate("/studio/orders", { replace: true })}
         >
           Quản lý đơn hàng
         </Link>

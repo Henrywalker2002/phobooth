@@ -22,9 +22,9 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+
 import AddItemForPkg from "./AddItemForPkg";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function AddPkg({
   pkgInfo,
@@ -38,7 +38,7 @@ function AddPkg({
   setAddImgFlag,
 }) {
   // global
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   // navigation
   const [open, setOpen] = useState(false);
@@ -72,7 +72,7 @@ function AddPkg({
   }, [imgList]);
 
   const handleUpdateImgList = (e) => {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
       let newList = [...imgList];
       newList.push({
@@ -90,14 +90,10 @@ function AddPkg({
 
   // selection list
   useEffect(() => {
-    axios
-      .get("/item-service/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-service/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setServiceList({
           ...serviceList,
           selectList: res.data.results.filter(
@@ -115,14 +111,10 @@ function AddPkg({
   }, []);
 
   useEffect(() => {
-    axios
-      .get("/item-product/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-product/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setProductList({ ...productList, selectList: res.data.results });
       })
       .catch((err) => console.log(err));
@@ -148,7 +140,7 @@ function AddPkg({
       list1.reduce((total, item) => total + Number(item.max_price), 0) +
       list2.reduce((total, item) => total + Number(item.max_price), 0) +
       fixed_price;
-    console.log(fixed_price, min_price, max_price);
+    // console.log(fixed_price, min_price, max_price);
     setTotalPrice({ min_price, max_price });
   };
 
@@ -176,7 +168,7 @@ function AddPkg({
     }
   };
 
-  console.log(pkgInfo, productList);
+  // console.log(pkgInfo, productList);
 
   return (
     <Paper

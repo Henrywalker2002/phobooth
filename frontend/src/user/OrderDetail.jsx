@@ -30,13 +30,12 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ColoredStep } from "../styles/Styles";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function OrderDetail() {
   // selection
-  const { auth } = useAuth();
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
   let { id } = useParams();
@@ -67,14 +66,10 @@ function OrderDetail() {
   };
 
   useEffect(() => {
-    axios
-      .get(`/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/order/${id}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setOrder(res.data);
       })
       .catch((err) => {
@@ -111,22 +106,26 @@ function OrderDetail() {
             <div className="items-stretch flex gap-5">
               <img
                 loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                src={
+                  row.item?.picture
+                    ? row.item?.picture
+                    : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                }
+                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
-              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row?.item.name}
+              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto rounded-lg">
+                {row.item?.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row?.item.type}
+              {row.item?.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.category.title}
+              {row.item?.category?.title}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
@@ -167,7 +166,7 @@ function OrderDetail() {
 
   //   status process
   const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
-  console.log(order?.order_item);
+  // console.log(order?.order_item);
   return (
     <div>
       <Navbar />
@@ -184,21 +183,23 @@ function OrderDetail() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
-          sx={{ color: "#808080", cursor: "pointer" }}
+          sx={{ color: "#808080" }}
           // href="/"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
 
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="2"
           color="inherit"
           // href="/orders"
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/orders", { replace: true })}
         >
           Quản lý đơn hàng
         </Link>

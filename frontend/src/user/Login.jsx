@@ -7,10 +7,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Alert, Button, Checkbox, Dialog, TextField } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Alert, Button, Checkbox, TextField } from "@mui/material";
 import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
 import { FaArrowLeft } from "react-icons/fa6";
 
@@ -18,15 +17,17 @@ const LOGIN_URL = "/login/";
 
 function Login() {
   const navigate = useNavigate();
-  const { persist, setPersist, auth, setAuth } = useAuth();
-  const [cookies, setCookie] = useCookies(["userInfo"]);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const [cookies, setCookie] = useCookies(["accInfo"]);
+  const [persist, setPersist] = useState(cookies?.persist || false);
   const userRef = useRef();
   const errRef = useRef();
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -34,13 +35,6 @@ function Login() {
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd]);
-
-  useEffect(() => {
-    console.log(auth);
-    if (auth.user !== undefined) {
-      navigate("/");
-    }
   }, [user, pwd]);
 
   const handleLogin = async (e) => {
@@ -54,21 +48,18 @@ function Login() {
       const response = await axios.post(LOGIN_URL, loginInfo, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(response?.data);
-      setAuth({ ...response?.data });
-      if (persist) {
-        // luu token vao cookie
-        setCookie("userInfo", {
-          user,
-          pwd,
-          access: response?.data?.access,
-          refresh: response?.data?.refresh,
-        });
-      }
-      console.log(cookies.Token);
+      // console.log(response?.data);
+      setCookie(
+        "userInfo",
+        {
+          ...response?.data,
+        },
+        { path: "/" }
+      );
+
       setUser("");
       setPwd("");
-      setSuccess(true);
+      navigate(from, { replace: true });
     } catch (err) {
       setErrMsg(err.response.data.messsage);
       // errRef.current.focus();
@@ -81,7 +72,7 @@ function Login() {
   };
 
   useEffect(() => {
-    localStorage.setItem("persist", persist);
+    setCookie("persist", persist, { path: "/" });
   }, [persist]);
 
   // pwd behavior
@@ -122,6 +113,7 @@ function Login() {
                   bgcolor: "transparent",
                 },
               }}
+              // onClick={() => navigate(-1)}
               onClick={() => navigate("/")}
               startIcon={<FaArrowLeft />}
             >
@@ -240,6 +232,7 @@ function Login() {
                 <span className="flex items-stretch gap-1.5 my-auto">
                   <Checkbox
                     onChange={togglePersist}
+                    checked={persist}
                     inputProps={{ "aria-label": "Checkbox demo" }}
                     sx={{
                       "&.Mui-checked": {
@@ -285,10 +278,6 @@ function Login() {
           </div>
         </div>
       </div>
-      {/* Khi login thành công */}
-      <Dialog open={success}>
-        <Navigate to="/" />
-      </Dialog>
     </div>
   );
 }

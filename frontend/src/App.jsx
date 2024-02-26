@@ -16,7 +16,9 @@ import Register from "./studio/Register";
 import ItemMgmt from "./studio/ItemMgmt";
 import AddItem from "./studio/AddItem";
 import StudioHome from "./studio/Home";
-// import PersistLogin from "./user/PersistLogin";
+import Unauthorized from "./components/Unauthorized";
+import RequireAuth from "./context/RequireAuth";
+import PersistLogin from "./context/PersistLogin";
 
 function App() {
   const theme = createTheme({
@@ -62,31 +64,35 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* <Route element={<PersistLogin />}>
-          
-        </Route> */}
+        <Route element={<PersistLogin />}>
+          {/* User */}
+          <Route element={<RequireAuth allowedRoles={"customer"} />}>
+            <Route element={<CartContextLayout />}>
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/booking" element={<Booking />} />
+            </Route>
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/order/detail/:id" element={<OrderDetail />} />
 
-        <Route element={<CartContextLayout />}>
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/booking" element={<Booking />} />
+            {/* Studio */}
+            {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
+            <Route path="/studio/items/add" element={<AddItem />} />
+            <Route path="/studio/items" element={<ItemMgmt />} />
+            <Route path="/studio/register" element={<Register />} />
+            <Route
+              path="/studio/order/detail/:id"
+              element={<StudioOrderDetail />}
+            />
+            <Route path="/studio/orders" element={<StudioOrders />} />
+            <Route path="/studio/" element={<StudioHome />} />
+          </Route>
+
+          {/* Everyone */}
+          <Route path="/item/detail/:id" element={<ItemDetail />} />
+          <Route path="/" element={<Home />} />
         </Route>
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/order/detail/:id" element={<OrderDetail />} />
-        <Route path="/item/detail/:id" element={<ItemDetail />} />
-
-        {/* Studio */}
-        <Route path="/studio/items/add" element={<AddItem />} />
-        <Route path="/studio/items" element={<ItemMgmt />} />
-        <Route path="/studio/register" element={<Register />} />
-        <Route
-          path="/studio/order/detail/:id"
-          element={<StudioOrderDetail />}
-        />
-        <Route path="/studio/orders" element={<StudioOrders />} />
-        <Route path="/studio/" element={<StudioHome />} />
-
-        <Route path="/" element={<Home />} />
       </Routes>
     </ThemeProvider>
   );

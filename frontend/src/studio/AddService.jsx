@@ -55,7 +55,7 @@ function AddService({
   }, [imgList]);
 
   const handleUpdateImgList = (e) => {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
       let newList = [...imgList];
       newList.push({
@@ -75,7 +75,7 @@ function AddService({
   const updateServiceInfo = (e) => {
     setServiceInfo({ ...serviceInfo, [e.target.name]: e.target.value });
   };
-  console.log(serviceInfo);
+  // console.log(serviceInfo);
   return (
     <Paper
       sx={{

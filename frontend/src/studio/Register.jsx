@@ -17,18 +17,20 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import useAuth from "../hooks/useAuth";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import OtherErrDialog from "../components/OtherErrDialog";
 import Err401Dialog from "../components/Err401Dialog";
 import { translateErr } from "../util/Translate";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import axios from "../api/axios";
+import { useCookies } from "react-cookie";
 
 function Register() {
   // global
-  const { auth, setAuth } = useAuth();
+  const [setCookie] = useCookies(["accInfo"]);
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   // local
   const [addresses, setAddresses] = useState([{ id: uuidv4() }]);
   const [provinces, setProvinces] = useState([]);
@@ -48,16 +50,16 @@ function Register() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/province/")
+      .get("province/")
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setProvinces(res.data.results);
       })
       .catch((err) => console.log(err));
   }, []);
 
   const handleUpdateAvt = (e) => {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
       setAvt({
         avt_preview: URL.createObjectURL(e.target.files[0]),
@@ -77,10 +79,8 @@ function Register() {
 
   const handleUpdateProv = async (id, prov) => {
     try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/province/${prov.code_name}/`
-      );
-      console.log(res);
+      const res = await axios.get(`province/${prov.code_name}/`);
+      // console.log(res);
       const newList = addresses.map((address) =>
         address.id === id
           ? {
@@ -119,7 +119,7 @@ function Register() {
           }
         : address
     );
-    console.log(newList);
+    // console.log(newList);
     setAddresses(newList);
   };
 
@@ -130,7 +130,6 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log(studioInfo, auth.access);
     const registerInfo = {
       ...studioInfo,
       address: {
@@ -140,25 +139,31 @@ function Register() {
         street: addresses[0].street,
       },
     };
-    console.log(JSON.stringify(registerInfo), avt.avt_file);
+    // console.log(JSON.stringify(registerInfo), avt.avt_file);
     let formData = new FormData();
     if (avt.avt_file) {
       formData.append("avatar", avt.avt_file, avt.avt_file.name);
     }
     formData.append("data", JSON.stringify(registerInfo));
 
-    let url = "http://127.0.0.1:8000/studio/";
-    axios
-      .post(url, formData, {
+    axiosPrivate
+      .post("studio/", formData, {
         headers: {
-          Authorization: `Bearer ${auth.access}`,
+          ...axiosPrivate.defaults.headers,
           "content-type": "multipart/form-data",
-          // "Content-Type": "application/json",
         },
       })
       .then((res) => {
-        console.log(res.data);
-        setAuth({ ...auth, studio: res.data });
+        // console.log(res.data);
+
+        setCookie(
+          "userInfo",
+          {
+            ...response?.data,
+            studio: res.data,
+          },
+          { path: "/" }
+        );
         navigate("/studio/");
       })
       .catch((err) => {
@@ -174,7 +179,7 @@ function Register() {
       });
   };
 
-  console.log(studioInfo);
+  // console.log(studioInfo);
   return (
     <div>
       <Navbar />
@@ -191,11 +196,12 @@ function Register() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          // href="/studio"
-          // onClick={handleClick}
+          // href="/"
+          onClick={() => navigate("/", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>

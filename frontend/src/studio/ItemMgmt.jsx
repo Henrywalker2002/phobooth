@@ -26,13 +26,12 @@ import AddIcon from "@mui/icons-material/Add";
 import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import StudioNavbar from "../components/StudioNavbar";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function ItemMgmt() {
   // global
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   // console.log(auth.access);
 
   // local
@@ -42,42 +41,30 @@ function ItemMgmt() {
   const [pkgList, setPkgList] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("/item-service/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-service/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setServiceList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    axios
-      .get("/item-product/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-product/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setProductList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    axios
-      .get("/item-service-pack/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-service-pack/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setPkgList(res.data.results);
       })
       .catch((err) => console.log(err));
@@ -102,11 +89,12 @@ function ItemMgmt() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          // href="/studio"
-          onClick={() => navigate("/studio")}
+          // href="/"
+          onClick={() => navigate("/studio", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>

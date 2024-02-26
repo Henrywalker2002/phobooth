@@ -17,15 +17,15 @@ import AddProduct from "./AddProduct";
 import AddService from "./AddService";
 import AddPkg from "./AddPkg";
 import StudioNavbar from "../components/StudioNavbar";
-import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
 import OtherErrDialog from "../components/OtherErrDialog";
 import Err401Dialog from "../components/Err401Dialog";
 import ImgAlert from "../components/ImgAlert";
 import { validFixedPrice, validRangePrice } from "../util/Validation";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function AddItem() {
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   // local
   const [openSBar, setOpenSBar] = useState(false);
   const item_typ = ["Dịch vụ", "Hàng hóa", "Gói dịch vụ"];
@@ -47,7 +47,7 @@ function AddItem() {
     axios
       .get("/category")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setCategories(res.data.results);
       })
       .catch((err) => console.log(err));
@@ -125,7 +125,7 @@ function AddItem() {
   // Add Item
   const handleAddItem = async (e) => {
     e.preventDefault();
-    console.log(itemInfo);
+    // console.log(itemInfo);
     // check price for item
     checkPrice(itemInfo, optionTyp);
     // check imgs are existed
@@ -140,7 +140,7 @@ function AddItem() {
 
       // form-data
       let formData = new FormData();
-      console.log(picList);
+      // console.log(picList);
       for (const pic of picList) {
         formData.append("pictures", pic, pic.name);
       }
@@ -150,7 +150,7 @@ function AddItem() {
         setItemInfo({ ...itemInfo, type: "SERVICE" });
       }
       const info = { ...itemInfo, ...transInfo };
-      console.log(info);
+      // console.log(info);
 
       Object.entries(info).forEach(([key, value]) => {
         if (key !== "item") {
@@ -161,17 +161,17 @@ function AddItem() {
           }
         }
       });
-      console.log(formData.get("item"));
+      // console.log(formData.get("item"));
 
-      axios
+      axiosPrivate
         .post(slug, formData, {
           headers: {
-            Authorization: `Bearer ${auth.access}`,
+            ...axiosPrivate.defaults.headers,
             "content-type": "multipart/form-data",
           },
         })
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setItemInfo({});
           setTransInfo({});
           setPicList([]);
@@ -212,7 +212,7 @@ function AddItem() {
     setOpenSBar(false);
   };
 
-  console.log(optionTyp, itemInfo, transInfo);
+  // console.log(optionTyp, itemInfo, transInfo);
   return (
     <div>
       <StudioNavbar />
@@ -229,21 +229,22 @@ function AddItem() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          href="/studio"
-          // onClick={handleClick}
+          // href="/"
+          onClick={() => navigate("/studio", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
 
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="2"
           color="inherit"
-          href="/studio/items"
-          // onClick={handleClick}
+          onClick={() => navigate("/studio/items", { replace: true })}
         >
           Quản lý sản phẩm
         </Link>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import {
   Table,
@@ -14,6 +14,11 @@ import {
   Breadcrumbs,
   Link,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
@@ -22,16 +27,16 @@ import { IoIosAdd } from "react-icons/io";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ClearIcon from "@mui/icons-material/Clear";
-import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../context/CartProvider";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function Cart() {
-  const { auth } = useAuth();
-  const [items, setItems] = React.useState([]);
-  const [order_item, set_order_item] = React.useState([]);
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const [openNoItemAlert, setOpenNoItemALert] = useState(false);
+  const [items, setItems] = React.useState([]);
+  const [order_item, set_order_item] = useState([]);
   const { setItemLists } = useContext(CartContext);
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -47,7 +52,7 @@ function Cart() {
           return total + row?.number * row?.item[typ];
         }
       }, 0);
-      console.log(result);
+      // console.log(result);
       return result;
     }
     return 0;
@@ -71,18 +76,14 @@ function Cart() {
   }
 
   useEffect(() => {
-    axios
-      .get("/cart/?limit=10&offset=0", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/cart/?limit=10&offset=0")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
         });
-        console.log(initialOrderList);
+        // console.log(initialOrderList);
         setItems(res.data.results);
         set_order_item(initialOrderList);
       })
@@ -91,11 +92,19 @@ function Cart() {
       });
   }, []);
 
-  const handleBooking = () => {
-    let updateOrderLst = order_item.filter((lst) => lst.items.length > 0);
+  const checkOrderItemExisted = () => {
+    for (let lst of order_item) {
+      if (lst.items.length > 0) return true;
+    }
+    return false;
+  };
 
-    setItemLists(updateOrderLst);
-    navigate("/booking");
+  const handleBooking = () => {
+    if (checkOrderItemExisted()) {
+      let updateOrderLst = order_item.filter((lst) => lst.items.length > 0);
+      setItemLists(updateOrderLst);
+      navigate("/booking");
+    } else setOpenNoItemALert(true);
   };
 
   const handleSelectItem = (e, row, studioId) => {
@@ -117,17 +126,16 @@ function Cart() {
     else number++;
 
     let updateData = { ...row, number: number };
-    console.log(updateData);
 
-    axios
+    axiosPrivate
       .put(`/cart/${row.id}/`, updateData, {
         headers: {
-          Authorization: `Bearer ${auth.access}`,
+          ...axiosPrivate.defaults.headers,
           "Content-Type": "application/json",
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         // setItems(res.data.results);
       })
       .catch((err) => {
@@ -151,11 +159,12 @@ function Cart() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          href="/"
-          // onClick={handleClick}
+          // href="/"
+          onClick={() => navigate("/", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
@@ -235,30 +244,29 @@ function Cart() {
                           <div className="items-stretch flex gap-5">
                             <img
                               loading="lazy"
-                              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                              src={
+                                row.item?.picture
+                                  ? row.item?.picture
+                                  : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                              }
+                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
                             />
                             <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {row?.item?.name}
-                              {/* {row.item} */}
+                              {row.item?.name}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell align="left">
                           <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                            {/* {row?.item.category?.type == "SERVICE" ? "Dịch vụ" : ""} */}
                             {row.item?.type}
                           </div>
                         </TableCell>
                         <TableCell align="left">
                           <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                             {row?.item?.category?.title}
-                            {/* {row.category} */}
                           </div>
                         </TableCell>
                         <TableCell align="left">
-                          {/* {row?.number} */}
-
                           <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
                             <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                               <IconButton
@@ -411,7 +419,6 @@ function Cart() {
         <Button
           variant="contained"
           sx={{
-            display: items?.length > 0 ? "button" : "none",
             marginRight: "50px",
             textTransform: "none",
             borderRadius: "43px",
@@ -427,6 +434,25 @@ function Cart() {
           Đặt dịch vụ
         </Button>
       </div>
+
+      {/* No Item Alert */}
+      <Dialog open={openNoItemAlert} onClose={() => setOpenNoItemALert(false)}>
+        <DialogTitle id="alert-dialog-title">Chọn sản phẩm</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Vui lòng chọn sản phẩm trước khi đặt hàng.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            sx={{ color: "#3F41A6" }}
+            onClick={() => setOpenNoItemALert(false)}
+            autoFocus
+          >
+            Đóng lại
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

@@ -24,10 +24,12 @@ import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../api/axios";
 import Err401Dialog from "../components/Err401Dialog";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useCookies } from "react-cookie";
 
 function Home() {
-  const { auth } = useAuth();
+  const [cookies] = useCookies(["accInfo"]);
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
 
@@ -41,7 +43,7 @@ function Home() {
   const handleGetItems = async (slug) => {
     try {
       const res = await axios.get(slug);
-      console.log(res.data);
+      // console.log(res.data);
       setPgnList(res.data);
       // Set Number of Indicators
       let currCount = res.data.count;
@@ -54,7 +56,7 @@ function Home() {
           let arr = Array.from(Array(currCount / 6).keys());
           setNumOfIndic(arr);
         }
-        console.log(numOfIndic);
+        // console.log(numOfIndic);
       }
 
       // List Item
@@ -85,19 +87,19 @@ function Home() {
 
   // Add to cart
   const handleAddToCart = (id) => {
-    axios
+    axiosPrivate
       .post(
         "/cart/",
         { item: id, number: 1 },
         {
           headers: {
-            Authorization: `Bearer ${auth.access}`,
+            ...axiosPrivate.defaults.headers,
             "Content-Type": "application/json",
           },
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setOpenSBar(true);
       })
       .catch((err) => {
@@ -221,13 +223,13 @@ function Home() {
                                     <img
                                       loading="lazy"
                                       src={
-                                        item?.picture?.picture
-                                          ? item?.picture?.picture
+                                        item?.picture
+                                          ? item?.picture
                                           : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
                                       }
                                       className="h-[115px] w-[216px] object-cover object-center inset-0"
                                     />
-                                    <div className="absolute top-2 left-3 w-[52px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
+                                    <div className="absolute top-2 left-3 w-[52px] h-fit backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                                       <div className="items-center justify-center bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                                         <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide mx-[1px]">
                                           {item?.star}
@@ -258,7 +260,7 @@ function Home() {
                                       // Add to cart
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        if (auth.username)
+                                        if (cookies?.userInfo?.username)
                                           handleAddToCart(item.id);
                                         else setOpenErr401(true);
                                       }}

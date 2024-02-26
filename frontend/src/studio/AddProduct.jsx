@@ -67,7 +67,7 @@ function AddProduct({
   }, [imgList]);
 
   const handleUpdateImgList = (e) => {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     if (e.target.files.length > 0) {
       let newList = [...imgList];
       newList.push({
@@ -122,7 +122,7 @@ function AddProduct({
       });
     }
 
-    console.log(mergedList);
+    // console.log(mergedList);
     return mergedList;
   };
 
@@ -157,7 +157,7 @@ function AddProduct({
 
   const handleDeleteVariation2 = (delValue) => {
     let newList = [];
-    console.log(getNumberOfValues(optList2) > 1);
+    // console.log(getNumberOfValues(optList2) > 1);
     if (getNumberOfValues(optList2) > 1) {
       newList = optValueList.filter(
         (values) => !values.option_values.includes(delValue)
@@ -168,7 +168,7 @@ function AddProduct({
           if (!values.option_values.includes("")) {
             let newValues = { ...values };
             newValues.option_values[1] = "";
-            console.log(newValues);
+            // console.log(newValues);
             newList.push(newValues);
           }
         } else {
@@ -235,13 +235,13 @@ function AddProduct({
         ? { ...optValue, [e.target.name]: e.target.value }
         : optValue
     );
-    console.log(newList);
+    // console.log(newList);
     setOptValueList(newList);
   };
 
   // console.log(optList1, optList2);
   // console.log(optValueList);
-  console.log(productInfo);
+  // console.log(productInfo);
   return (
     <Paper
       sx={{
