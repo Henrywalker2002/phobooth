@@ -9,6 +9,7 @@ class OrderStatusChoice(models.TextChoices):
     IN_PROCESS = "IN_PROCESS", "IN_PROCESS"
     SHIPPPING = "SHIPPPING", "SHIPPPING"
     COMPLETED = "COMPLETED", "COMPLETED"
+    CANCELED = "CANCELED", "CANCELED"
     
 
 class Order(BaseModel):

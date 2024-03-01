@@ -5,8 +5,9 @@ from studio.models import Studio
 from studio.serializers import StudioSummarySerializer
 from order.serializers.order_item import CreateOrderItemSerializer, ReadOrderItemSerializer
 from user.serializers import UserSummarySerializer
-from order.exceptions import UpdateCompletedOrderException
+from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrderPaidException, UpdateCompletedOrderOrderItemException
 from payment.serializers import ReadPaymentSerializer
+from payment.models import PaymentStatusChoices
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -67,6 +68,36 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         if instance.status == OrderStatusChoice.COMPLETED:
             raise UpdateCompletedOrderException()
         return attrs
+    
+    def validate_status(self, value):
+        instance = self.instance
+        user = self.context.get("request").user
+        if value == OrderStatusChoice.COMPLETED:
+            if instance.total_price != instance.amount_paid:
+                raise UpdateCompletedOrderPaidException()
+            if instance.payment.filter(status = PaymentStatusChoices.PENDING).exists():
+                raise UpdateCompletedOrderPaidException()
+            if instance.order_item.filter(price = None).exists():
+                raise UpdateCompletedOrderOrderItemException()
+        elif value == OrderStatusChoice.ORDERED:
+            raise serializers.ValidationError(
+                f"You cannot update order to {OrderStatusChoice.ORDERED} status")
+        elif value == OrderStatusChoice.CANCELED:
+            if instance.status != OrderStatusChoice.ORDERED and instance.customer != user:
+                raise serializers.ValidationError(
+                    "You cannot cancel this order"
+                )
+        elif value == OrderStatusChoice.IN_PROCESS:
+            if instance.status != OrderStatusChoice.ORDERED:
+                raise serializers.ValidationError(
+                    "You cannot update this order to in process"
+                )
+            else:
+                if instance.order_item.filter(price = None).exists():
+                    raise serializers.ValidationError(
+                        "You cannot update this order to in process, please update all price of order item first"
+                    )
+        return value 
         
     class Meta:
         model = Order

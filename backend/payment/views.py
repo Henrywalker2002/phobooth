@@ -5,7 +5,7 @@ from payment.serializers import (CreatePaymentSerializer, ReadPaymentSerializer,
 from order.serializers.order import ReadOrderSerializer
 from payment.permission import PaymentPermission
 from payment.filters import PaymentFilter
-from payment.exceptions import PassOrderIdException
+from payment.exceptions import PassOrderIdException, DeletePaidPaymentException
 from rest_framework import status
 from rest_framework.response import Response
 from django.db import transaction
@@ -43,20 +43,21 @@ class PaymentViewSet(BaseModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        order = serializer.validated_data.get("order")
-        order.amount_created = order.amount_created + serializer.validated_data.get("amount")
-        order.save()
-
+        order = serializer.validated_data["order"]
         no = self.queryset.filter(order=order).count() + 1
         serializer.validated_data["no"] = no
         self.perform_create(serializer)
+        order = serializer.instance.order
+        order = self.update_amount_created_order(order)
 
         headers = self.get_success_headers(serializer.data)
-        data = self.get_serializer(serializer.instance.order, is_order=True).data
+        data = self.get_serializer(order, is_order=True).data
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def update_amout_paid_order(self, order, amount_paid):
-        order.amount_paid = order.amount_paid + amount_paid
+    def update_amout_paid_order(self, order):
+        amount_paid = order.payment.filter(status = PaymentStatusChoices.PAID).aggregate(
+            amount_paid = Sum("amount"))["amount_paid"]
+        order.amount_paid = amount_paid 
         order.save()
         return order
     
@@ -64,7 +65,7 @@ class PaymentViewSet(BaseModelViewSet):
         queryset = self.get_queryset()
         amount_created = queryset.filter(order=order).aggregate(
             amount_created = Sum("amount"))["amount_created"]
-        order.amount_created = amount_created
+        order.amount_created = amount_created if amount_created else 0
         order.save()
         return order
         
@@ -84,12 +85,13 @@ class PaymentViewSet(BaseModelViewSet):
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
+
         instance = self.get_object()
+        if instance.status == PaymentStatusChoices.PAID:
+            raise DeletePaidPaymentException()
         order = instance.order
-        amount_paid = order.amount_paid - instance.amount
-        order.amount_paid = amount_paid
-        order.save()
         self.perform_destroy(instance)
+        order = self.update_amount_created_order(order)
         
         data = self.get_serializer(order, is_order=True).data
         return Response(data=data)
@@ -152,5 +154,5 @@ class PaymentViewSet(BaseModelViewSet):
             payment_instance.vn_pay_tran = data.get("vnp_TransactionNo", None)
             payment_instance.vn_order_infor = data.get("vnp_OrderInfo", None)
             payment_instance.save() 
-            self.update_amout_paid_order(payment_instance.order, payment_instance.amount)
+            self.update_amout_paid_order(payment_instance.order)
         return Response(data=data)

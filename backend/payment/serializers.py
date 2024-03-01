@@ -2,7 +2,8 @@ from rest_framework import serializers
 from order.models import Order, OrderStatusChoice
 from payment.models import Payment, PaymentStatusChoices
 from payment.exceptions import (UpdatePaidPaymentException, AmountExceedException,
-                                PaymentExpiredException, PaymentPaidException, PaymentExceedTimeException)
+                                PaymentExpiredException, PaymentPaidException, 
+                                PaymentExceedTimeException, AddPaymentOrderedOrderException)
 from order.exceptions import UpdateCompletedOrderException
 import datetime
 
@@ -24,7 +25,9 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
         order = attrs.get("order")
         if order.status == OrderStatusChoice.COMPLETED:
             raise UpdateCompletedOrderException()
-        if attrs.get("amount") > order.total_price - order.amount_created:
+        elif order.status == OrderStatusChoice.ORDERED:
+            raise AddPaymentOrderedOrderException()
+        if not order.total_price or attrs.get("amount") > order.total_price - order.amount_created:
             raise AmountExceedException()
         return attrs
 
@@ -33,10 +36,15 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
         fields = ["expiration_date", "order", "amount"]
 
 
-class UpdatePaymentSerializer(serializers.ModelSerializer):
-
+class UpdatePaymentSerializer(CreatePaymentSerializer):
+    
     def validate(self, attrs):
-        order = self.instance.__getattribute__("order", None)
+        order = self.instance.order
+        if order.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
+        elif order.status == OrderStatusChoice.ORDERED:
+            raise AddPaymentOrderedOrderException()
+        
         if not order:
             pass
         elif order.status == OrderStatusChoice.COMPLETED:

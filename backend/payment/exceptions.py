@@ -41,3 +41,9 @@ class PaymentExceedTimeException(APIException):
     status_code = 400
     default_detail = 'The payment is exceed the time in day - max 10 times in day'
     default_code = 'payment_exceed_time'
+
+
+class AddPaymentOrderedOrderException(APIException):
+    status_code = 400
+    default_detail = 'You cannot add payment to ordered order'
+    default_code = 'add_payment_ordered_order'
