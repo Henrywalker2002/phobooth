@@ -21,7 +21,7 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'name', 'description', 'type', 'category', 'pictures', 'status', 
-                  'studio', 'min_price', 'max_price', "fixed_price" ]
+                  'studio', 'min_price', 'max_price', "fixed_price", "star" ]
         
 
 class ItemSummarySerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class ItemSummarySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Item
-        fields = ['id', 'name', 'pictures', 'type', 'studio', 'min_price', 'max_price', "fixed_price", "category"]
+        fields = ['id', 'name', 'pictures', 'type', 'studio', 'min_price', 'max_price', "fixed_price", "category", "star"]
         
 
 class ItemShortSerializer(ItemSummarySerializer):
@@ -48,4 +48,4 @@ class ItemShortSerializer(ItemSummarySerializer):
     
     class Meta:
         model = Item 
-        fields = ['id', 'name', 'pictures', 'type', 'category', ]
+        fields = ['id', 'name', 'pictures', 'type', 'category', "star"]

@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'cart',
     'order',
     'address',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -132,9 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Saigon'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
@@ -167,9 +170,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 
-
-SECRET_KEY = "random_some_key"
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
@@ -181,3 +181,9 @@ SIMPLE_JWT = {
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_URL = '/assets/'
+
+VNPAY_RETURN_URL = 'http://localhost:8000/payment/return/'  # get from config
+VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  # get from config
+VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+VNPAY_TMN_CODE = os.getenv("VNPAY_TMN_CODE") # Website ID in VNPAY System, get from config
+VNPAY_HASH_SECRET_KEY = os.getenv("VNPAY_HASH_SECRET_KEY")  # Secret key for create checksum,get from config

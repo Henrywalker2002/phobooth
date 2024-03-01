@@ -2,7 +2,7 @@ from rest_framework import serializers
 from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item, Variation
 from item.serializers.item import ItemShortSerializer
-from order.exceptions import UpdateCompletedOrderException
+from order.exceptions import UpdateCompletedOrderException, UpdateOrderItemException
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
@@ -79,8 +79,8 @@ class UpdateOrderItemSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        if self.instance.order.status == OrderStatusChoice.COMPLETED:
-            raise UpdateCompletedOrderException()
+        if self.instance.order.status != OrderStatusChoice.ORDERED:
+            raise UpdateOrderItemException()
         return attrs
     
     class Meta:
