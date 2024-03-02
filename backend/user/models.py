@@ -7,6 +7,8 @@ class User(AbstractBaseUser):
     username = models.CharField(unique=True, max_length=128)
 
     email = models.EmailField(unique=True, max_length=128)
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     password = models.CharField(max_length=128, null=False)
     full_name = models.CharField(max_length=128, null=False)
     is_active = models.BooleanField(default=True)
