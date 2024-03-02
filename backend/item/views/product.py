@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from django.db import transaction   
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
+import json
+from django.http.request import QueryDict
 
 
 class ProductViewSet(BaseModelViewSet):
@@ -24,8 +26,19 @@ class ProductViewSet(BaseModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-
-        serializer = self.get_serializer(data=request.data)
+        if isinstance(request.data, QueryDict):
+            data = request.data.dict()
+        else:
+            data = request.data
+        option = data.get("option", None)
+        if isinstance(option, str):
+            try:
+                option = json.loads(option)
+                data['option'] = option
+            except Exception as e:
+                return Response(data = {"error": "Invalid option format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         pictures = serializer.validated_data.pop('pictures', [])
