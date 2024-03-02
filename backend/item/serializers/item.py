@@ -10,7 +10,7 @@ class ItemPictureSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ItemPicture
-        fields = ['picture']
+        fields = ['id', 'picture']
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
@@ -49,3 +49,13 @@ class ItemShortSerializer(ItemSummarySerializer):
     class Meta:
         model = Item 
         fields = ['id', 'name', 'pictures', 'type', 'category', "star"]
+        
+
+class CreateItemPictureSerializer(serializers.ModelSerializer):
+
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), required=True)
+    picture = serializers.ImageField(use_url = True)
+    
+    class Meta:
+        model = ItemPicture
+        fields = ['item', 'picture']
