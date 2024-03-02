@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
-from user.views import AuthenticationViewSet, UserViewSet
+from user.views import AuthenticationViewSet, UserViewSet, StaffViewSet
 from role.views import RoleViewSet, PermissionViewSet
 from studio.views import StudioViewSet
 from category.views import CategoryViewSet
@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 router = DefaultRouter() 
 
 router.register(r'user', UserViewSet, 'user')
+router.register(r'staff', StaffViewSet, 'staff')
 router.register(r'role', RoleViewSet, 'role')
 router.register(r'permission', PermissionViewSet, 'permission')
 router.register(r'studio', StudioViewSet, 'studio')
