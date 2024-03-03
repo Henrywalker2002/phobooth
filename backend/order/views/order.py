@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from order.permission import OrderPermission
 from base.exceptions import MethodNotAllowed
+import datetime
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -41,6 +42,18 @@ class OrderViewSet(BaseModelViewSet):
         data = self.get_serializer(order, is_get=True).data
         return Response(data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data = request.data, partial =partial)
+        serializer.is_valid(raise_exception = True)
+        if serializer.validated_data.get('status') == 'COMPLETED':
+            serializer.validated_data['finish_date'] = datetime.date.today().strftime("%Y-%m-%d")
+        self.perform_update(serializer)
+        
+        serializer_return = self.get_serializer(instance = instance, is_get = True)
+        return Response(data = serializer_return.data)
+    
     @action(detail=False, methods=['get'], url_path="studio")
     def list_order_of_studio(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)

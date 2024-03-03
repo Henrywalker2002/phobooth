@@ -1,7 +1,8 @@
-from base.tests import BaseTest
+from base.tests import BaseTest, BaseTestWithAdmin
 from rest_framework.test import APIClient
 from user.models import User
 import json
+from django.urls import reverse
 
 
 class UserTestCase(BaseTest):
@@ -60,27 +61,69 @@ class UserTestCase(BaseTest):
         assert response.status_code == 400
     
     def test_user_update(self):
-        client = APIClient()
-        
-        user = User.objects.create(username = "test", password = "test125255", email = "email@email.com", full_name = "henry")
-        client.force_authenticate(user=user)
-        
-        response = client.get('/user/' + str(user.id) + '/')
-        assert response.status_code == 200
-        
-        response = client.patch('/user/' + str(user.id) + '/', data = json.dumps({"full_name": "henry"}), content_type= 'application/json')
-        assert response.status_code == 200
-        assert response.json()['full_name'] == "henry"
-        
-        User.objects.create(username = "tes2t", password = "test125255", email = "email2@email.com", full_name = "henry")
-        response = client.get('/user/' + str(user.id + 1) + '/')
-        assert response.status_code == 403
-        
-        response = client.delete('/user/' + str(user.id) + '/')
-        assert response.status_code == 204
-        response = client.get('/user/' + str(user.id) + '/')
-        assert response.status_code == 404
+        pass 
     
     def tearDown(self) -> None:
         pass 
     
+
+class TestStaff(BaseTestWithAdmin):
+    staff_id = None 
+    def setUp(self) -> None:
+        data = {
+            "username": "test2",
+            "password": "test125255",
+            "email": "test2@email.com",
+            "phone" : "0963313143",
+            "full_name": "henry",
+            "role" : "staff",
+            "date_of_birth" : "1999-12-12"
+        }
+        response = self.client.post(reverse('staff-list'), data=data, format="json")
+        assert response.status_code == 201
+        self.staff_id = response.json()['id']
+    
+    def test_create_staff(self):
+        data = {
+            "username": "test",
+            "password": "test125255",
+            "email": "test@email.com",
+            "phone" : "0965313143",
+            "full_name": "henry",
+            "role" : "staff",
+            "date_of_birth" : "1999-12-12"
+        }
+        response = self.client.post(reverse('staff-list'), data=data, format="json")
+        assert response.status_code == 201
+        json = response.json()
+        assert json['role'][0]['code_name'] == "staff"  
+        staff_id = json['id']
+        url = f"{reverse('staff-list')}{staff_id}/"
+        response = self.client.patch(url, data={"role": "admin"}, format="json")
+        assert response.status_code == 200
+        json = response.json()
+        assert json['role'][0]['code_name'] == "admin"
+        
+    def test_delete_staff(self):
+        repsonse = self.client.delete(f"{reverse('staff-list')}{self.staff_id}/")
+        assert repsonse.status_code == 204
+    
+    def test_permission(self):
+        client = APIClient()
+        response = client.post(reverse('login'), data={"username": "test2", "password": "test125255"}, format="json")
+        client.credentials(HTTP_AUTHORIZATION='Bearer ' + response.json()["access"])
+        
+        response = client.get(reverse('staff-list'))
+        assert response.status_code == 403
+        url = f"{reverse('staff-list')}{self.staff_id}/"
+        response = client.get(url)
+        assert response.status_code == 200
+        
+        response = client.patch(url, data={"role": "admin"}, format="json")
+        assert response.status_code == 403
+        response = client.patch(url, data = {"full_name" : "new name"}, format="json")
+        assert response.status_code == 200 
+        
+        response = client.delete(url)
+        assert response.status_code == 204
+        

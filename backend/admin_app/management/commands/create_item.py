@@ -23,6 +23,7 @@ class Command(BaseCommand):
                 first_user = User.objects.create(
                     username="first user", email="first@email.com", password="password", full_name="First User")
                 first_user.set_password("password")
+                first_user.save()
                 first_user.role.set(role)
                 first_studio = Studio.objects.create(
                     friendly_name="first studio", code_name="first_studio", description="first studio description",
@@ -36,6 +37,7 @@ class Command(BaseCommand):
                 sencond_user = User.objects.create(
                     username="second user", email="second@email.com", password="password", full_name="Second User")
                 sencond_user.set_password("password")
+                sencond_user.save()
                 sencond_user.role.set(role)
                 second_studio = Studio.objects.create(friendly_name="second studio", code_name="second_studio",
                                                       description="second studio description", email="second@email.com",

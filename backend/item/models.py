@@ -40,6 +40,7 @@ class ItemStatusChoices(models.TextChoices):
 
 
 class ItemPicture(models.Model):
+    id = models.AutoField(primary_key = True, editable = False)
     item = models.ForeignKey(to="Item", on_delete=models.CASCADE, null=False, related_name="pictures")
     picture = models.ImageField(upload_to="item", null=False)
 

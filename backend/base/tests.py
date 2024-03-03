@@ -3,6 +3,7 @@ from role.models import Role, Permission
 from address.models import District, Ward, Province
 from category.models import Category
 from django.urls import reverse
+from user.models import User
 
 
 class BaseTest(testcases.TestCase):
@@ -37,6 +38,30 @@ class BaseTest(testcases.TestCase):
         self.create_address()
         self.create_category()
 
+
+class BaseTestWithAdmin(BaseTest):
+    
+    def _pre_setup(self):
+        super()._pre_setup()
+        self.client = APIClient()
+        data = {
+            "username" : "admin",
+            "full_name" : "admin",
+            "email" : "admin@email.com",
+            "password" : "admin1234"
+        }
+        user = User(**data)
+        user.set_password(data["password"])
+        role = Role.objects.get(code_name="admin")
+        user.save()
+        user.role.set([role])
+        response = self.client.post(
+            reverse('login'), data={"username": data["username"], 
+                                    "password": data["password"]}, format="json")
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + response.json()["access"])
+        
+        
 
 class BaseTestWithCustomer(BaseTest):
 
