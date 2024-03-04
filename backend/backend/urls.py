@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 from user.views import AuthenticationViewSet, UserViewSet, StaffViewSet
 from role.views import RoleViewSet, PermissionViewSet
 from studio.views import StudioViewSet
+from studio_document.views import StudioDocumentViewSet
 from category.views import CategoryViewSet
 from cart.views import CartViewSet
 from order.views.order import OrderViewSet
@@ -26,6 +27,7 @@ router.register(r'staff', StaffViewSet, 'staff')
 router.register(r'role', RoleViewSet, 'role')
 router.register(r'permission', PermissionViewSet, 'permission')
 router.register(r'studio', StudioViewSet, 'studio')
+router.register(r'studio-document', StudioDocumentViewSet, 'studio-document')
 router.register(r'category', CategoryViewSet, 'category')
 router.register(r'item-service', ItemServicesViewset, 'item-service')
 router.register(r'item-product', ProductViewSet, 'item-product')    

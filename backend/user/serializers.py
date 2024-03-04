@@ -58,7 +58,7 @@ class CreateStaffSerilizer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices = [("staff", "staff"), ("admin", "admin")])
     
     def validate_phone(self, value):
-        regex = re.compile(r"^0\d{9}")
+        regex = re.compile(r"^0\d{9}$")
         if not regex.match(value):
             raise serializers.ValidationError("Invalid phone number")
         return value
