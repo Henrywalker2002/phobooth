@@ -27,9 +27,9 @@ export const isTokenExpired = (accessToken) => {
   const decodedToken = decodeJwt(accessToken);
 
   // Check if the expiration time is in the past
-  console.log(
-    formatExpirationTime(decodedToken.exp),
-    formatExpirationTime(Date.now() / 1000)
-  );
+  // console.log(
+  //   formatExpirationTime(decodedToken.exp),
+  //   formatExpirationTime(Date.now() / 1000)
+  // );
   return decodedToken.exp < Date.now() / 1000;
 };

@@ -40,7 +40,7 @@ function EditItemForPkg({ open, setOpen, type, itemList, setItemList }) {
     axiosPrivate
       .get(slug)
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         if (type == "PRODUCT") setSelectList(res.data.results);
         else if (type == "SERVICE")
           setSelectList(

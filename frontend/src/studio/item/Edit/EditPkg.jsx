@@ -5,13 +5,28 @@ import {
   MenuItem,
   Paper,
   TextField,
+  ImageListItem,
+  ImageListItemBar,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Badge,
 } from "@mui/material";
+import { RiImageAddFill } from "react-icons/ri";
+import { FaRegArrowAltCircleRight } from "react-icons/fa";
+import { IoMdImages } from "react-icons/io";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import EditItemForPkg from "./EditItemForPkg";
+import { v4 as uuidv4 } from "uuid";
+import ImgAlert from "../../../components/ImgAlert";
+import { validFixedPrice, validRangePrice } from "../../../util/Validation";
+import ErrDialog from "../ErrDialog";
 
 function EditPkg({ id, setOpenSBar, categories }) {
   const axiosPrivate = useAxiosPrivate();
@@ -20,6 +35,13 @@ function EditPkg({ id, setOpenSBar, categories }) {
   const [openDialog1, setOpenDialog1] = useState(false);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [openDialog3, setOpenDialog3] = useState(false);
+  const [openImg, setOpenImg] = useState(false);
+  const [openImgAlert, setOpenImgAlert] = useState(false);
+  const [openErr, setOpenErr] = useState(false);
+  // img
+  const [imgList, setImgList] = useState([]);
+  const [newImgList, setNewImgList] = useState([]);
+  const [delImgList, setDelImgList] = useState([]);
   // local
   const [pkg, setPkg] = useState({});
   const [newInfo, setNewInfo] = useState({});
@@ -27,6 +49,8 @@ function EditPkg({ id, setOpenSBar, categories }) {
   const [accsList, setAccsList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [totalPrice, setTotalPrice] = useState({});
+  // err
+  const [errMsg, setErrMsg] = useState({});
 
   // get detail item
   useEffect(() => {
@@ -35,6 +59,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
       .then((res) => {
         console.log(res.data);
         setPkg(res.data);
+        setImgList(res.data.pictures);
         setServiceList(res.data.item.filter((item) => item.type === "SERVICE"));
         setAccsList(res.data.item.filter((item) => item.type === "ACCESSORY"));
         setProductList(res.data.item.filter((item) => item.type === "PRODUCT"));
@@ -44,6 +69,38 @@ function EditPkg({ id, setOpenSBar, categories }) {
         console.log(err);
       });
   }, [id]);
+
+  // ImgList
+  // Add img into new img list
+  const handleAddImgList = (e) => {
+    let imgFiles = e.target.files;
+    if (imgFiles.length > 0) {
+      let newList = [...newImgList];
+      for (let imgFile of imgFiles) {
+        newList.push({
+          id: uuidv4(),
+          img_preview: URL.createObjectURL(imgFile),
+          img_file: imgFile,
+        });
+      }
+      setNewImgList(newList);
+    }
+  };
+
+  // delete img in new list
+  const handleDeleteNewImg = (id) => {
+    const newList = newImgList.filter((img) => img.id !== id);
+    setNewImgList(newList);
+  };
+
+  // delete img in old list
+  const handleDeleteImg = (id) => {
+    const newList = imgList.filter((img) => img.id !== id);
+    let delIdList = [...delImgList];
+    delIdList.push(id);
+    setImgList(newList);
+    setDelImgList(delIdList);
+  };
 
   // get total price
   const getPrice = (services, accs, products) => {
@@ -96,29 +153,138 @@ function EditPkg({ id, setOpenSBar, categories }) {
     }
   };
 
+  // Check price for pkg
+  const checkPrice = (item) => {
+    if (item.min_price && item.max_price) {
+      if (validFixedPrice(item.min_price) && validFixedPrice(item.max_price)) {
+        if (!validRangePrice(item.min_price, item.max_price)) {
+          setErrMsg({
+            ...errMsg,
+            min_price: ["Khoảng giá trị không phù hợp!"],
+            max_price: ["Khoảng giá trị không phù hợp!"],
+          });
+          return false;
+        }
+      } else {
+        if (!validFixedPrice(item.min_price))
+          setErrMsg({
+            ...errMsg,
+            min_price: ["Giá trị không hợp lệ!"],
+          });
+        if (!validFixedPrice(item.max_price))
+          setErrMsg({
+            ...errMsg,
+            max_price: ["Giá trị không hợp lệ!"],
+          });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   //Edit item
   const handleEditItem = async (e) => {
     e.preventDefault();
 
-    console.log(newInfo);
+    console.log(imgList, newImgList, delImgList);
 
-    axiosPrivate
-      .patch(`/item-service-pack/${id}/`, newInfo)
-      .then((res) => {
-        // console.log(res.data);
-        setPkg(res.data);
-        setServiceList(res.data.item.filter((item) => item.type === "SERVICE"));
-        setAccsList(res.data.item.filter((item) => item.type === "ACCESSORY"));
-        setProductList(res.data.item.filter((item) => item.type === "PRODUCT"));
-        setNewInfo({});
-        // navigate("/studio/items", { replace: true });
-      })
-      .then(() => {
-        setOpenSBar(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let imgCount = imgList.length + newImgList.length;
+    if (imgCount < 4 || imgCount > 10) setOpenImgAlert(true);
+    else if (checkPrice(newInfo)) {
+      let updatedFlag = false;
+      // add new img list
+      if (newImgList.length > 0) {
+        for await (const img of newImgList) {
+          // form-data
+          let formData = new FormData();
+          formData.append(`picture`, img.img_file, img.img_file.name);
+          formData.append("item", id);
+
+          await axiosPrivate
+            .post("/item-picture/", formData, {
+              headers: {
+                ...axiosPrivate.defaults.headers,
+                "content-type": "multipart/form-data",
+              },
+            })
+            .then((res) => {
+              console.log(res.data);
+              updatedFlag = true;
+            })
+            .catch((err) => {
+              updatedFlag = false;
+              setOpenErr(true);
+              console.log(err);
+            });
+        }
+      }
+
+      // delete img list
+      if (delImgList.length > 0) {
+        for await (let delId of delImgList) {
+          await axiosPrivate
+            .delete(`/item-picture/${delId}/`, { item: id })
+            .then((res) => {
+              console.log(res.data);
+              updatedFlag = true;
+            })
+            .catch((err) => {
+              updatedFlag = false;
+              setOpenErr(true);
+              console.log(err);
+            });
+        }
+      }
+
+      // update other infos
+      if (Object.keys(newInfo).length > 0) {
+        await axiosPrivate
+          .patch(`/item-service-pack/${id}/`, newInfo)
+          .then((res) => {
+            // console.log(res.data);
+            updatedFlag = true;
+          })
+          .catch((err) => {
+            console.log(err);
+            updatedFlag = false;
+            if (err.response?.status === 400) {
+              setErrMsg({ ...errMsg, ...err.response.data });
+            } else {
+              setOpenErr(true);
+            }
+          });
+      }
+
+      // Successful Notice
+      if (updatedFlag) {
+        await axiosPrivate
+          .get(`/item-service-pack/${id}/`)
+          .then((res) => {
+            console.log(res.data);
+            setPkg(res.data);
+
+            setServiceList(
+              res.data.item.filter((item) => item.type === "SERVICE")
+            );
+            setAccsList(
+              res.data.item.filter((item) => item.type === "ACCESSORY")
+            );
+            setProductList(
+              res.data.item.filter((item) => item.type === "PRODUCT")
+            );
+            setNewInfo({});
+            setImgList(res.data.pictures);
+            setDelImgList([]);
+            setNewImgList([]);
+            setErrMsg({});
+            setOpenSBar(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
   };
   return (
     <form
@@ -150,8 +316,8 @@ function EditPkg({ id, setOpenSBar, categories }) {
                   name="name"
                   value={newInfo?.name ? newInfo?.name : pkg?.name}
                   onChange={updatePkg}
-                  // error={errMsg.pkg?.name ? true : false}
-                  // helperText={errMsg.pkg?.name ? errMsg.pkg.name[0] : ""}
+                  error={errMsg?.name ? true : false}
+                  helperText={errMsg?.name ? errMsg.name[0] : ""}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "45px",
@@ -168,15 +334,13 @@ function EditPkg({ id, setOpenSBar, categories }) {
                   id="outlined-select-categories"
                   name="category"
                   value={
-                    newInfo.category ? newInfo.category : pkg.category ?? ""
+                    newInfo.category ? newInfo.category : pkg.category ?? null
                   }
                   onChange={updatePkg}
-                  defaultValue=""
+                  defaultValue={null}
                   select
-                  // error={errMsg.pkg?.category ? true : false}
-                  // helperText={
-                  //   errMsg.pkg?.category ? errMsg.pkg.category[0] : ""
-                  // }
+                  error={errMsg?.category ? true : false}
+                  helperText={errMsg?.category ? errMsg.category[0] : ""}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "45px",
@@ -187,7 +351,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
                     marginY: "10px",
                   }}
                 >
-                  <MenuItem value="">--Chọn danh mục--</MenuItem>
+                  <MenuItem value={null}>--Chọn danh mục--</MenuItem>
                   {categories.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.title}
@@ -198,6 +362,220 @@ function EditPkg({ id, setOpenSBar, categories }) {
             </div>
             <div className="flex flex-col items-stretch ml-5 w-[40%] max-md:ml-0 max-md:w-full">
               {/* Hinh anh lien quan */}
+              <div className="flex flex-col items-stretch text-sm text-zinc-900 max-md:mt-10">
+                <div className="justify-center">Hình ảnh liên quan</div>
+                <div className="flex gap-4">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    sx={{
+                      textTransform: "none",
+                      border: "1px solid #E0E0E0",
+                      color: "#3F41A6",
+                      width: "98px",
+                      height: "105px",
+                      marginTop: "10px",
+                      borderRadius: "5px",
+                      paddingX: "10px",
+                      "&:hover": {
+                        border: "2px solid #3949AB",
+                      },
+                    }}
+                  >
+                    <div className="flex flex-col items-center">
+                      <RiImageAddFill className="w-11 h-11" />
+                      <div className="text-[10px] mt-1">Thêm hình ảnh</div>
+                      <div className="text-[10px]">
+                        ({imgList.length + newImgList.length}/10)
+                      </div>
+                    </div>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleAddImgList}
+                      style={{
+                        clip: "rect(0 0 0 0)",
+                        clipPath: "inset(50%)",
+                        height: 1,
+                        overflow: "hidden",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        whiteSpace: "nowrap",
+                        width: 1,
+                      }}
+                    />
+                  </Button>
+
+                  <ImageListItem
+                    sx={{
+                      display:
+                        imgList.length > 0 || newImgList.length > 0
+                          ? "block"
+                          : "none",
+                      marginTop: "10px",
+                      width: "98px",
+                      height: "105px",
+                      border: "1px solid #E0E0E0",
+                      borderRadius: "5px",
+                      "& .MuiImageListItem-img": {
+                        height: "105px",
+                      },
+                    }}
+                  >
+                    <img
+                      width="98"
+                      height="105"
+                      className="rounded-[5px]"
+                      src={imgList[0]?.img_preview}
+                      // alt={item.title}
+                      loading="lazy"
+                    />
+                    <ImageListItemBar
+                      // title="Xem thêm"
+                      subtitle="Xem thêm"
+                      sx={{ height: "40px", borderRadius: "5px" }}
+                      actionIcon={
+                        <IconButton
+                          sx={{ color: "rgba(255, 255, 255, 0.54)" }}
+                          // aria-label={`info about ${item.title}`}
+                          onClick={() => setOpenImg(true)}
+                        >
+                          <FaRegArrowAltCircleRight />
+                        </IconButton>
+                      }
+                    />
+                  </ImageListItem>
+
+                  {/* Dialog Album */}
+                  <Dialog
+                    open={openImg}
+                    onClose={() => setOpenImg(false)}
+                    sx={{
+                      "& .MuiDialog-paper": {
+                        width: "800px",
+                        height: "500px",
+                      },
+                    }}
+                  >
+                    <DialogTitle>Danh sách hình ảnh liên quan</DialogTitle>
+                    <DialogContent dividers={true}>
+                      <div className="flex flex-col gap-5 w-full">
+                        <Button
+                          variant="outlined"
+                          component="label"
+                          startIcon={<IoMdImages />}
+                          sx={{
+                            textTransform: "none",
+                            border: "1px solid #3F41A6",
+                            color: "#3F41A6",
+                            width: "160px",
+                            marginBottom: "20px",
+                            borderRadius: "20px",
+                            alignSelf: "center",
+                            "&:hover": {
+                              border: "1px solid #3949AB",
+                            },
+                          }}
+                        >
+                          Thêm hình ảnh
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleAddImgList}
+                            style={{
+                              clip: "rect(0 0 0 0)",
+                              clipPath: "inset(50%)",
+                              height: 1,
+                              overflow: "hidden",
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              whiteSpace: "nowrap",
+                              width: 1,
+                            }}
+                          />
+                        </Button>
+
+                        {imgList?.length > 0 || newImgList?.length > 0 ? (
+                          <div className="flex flex-wrap gap-6">
+                            {/* Old list */}
+                            {imgList?.map((img, i) => (
+                              <Badge
+                                key={i}
+                                badgeContent={
+                                  <IconButton
+                                    onClick={() => handleDeleteImg(img.id)}
+                                  >
+                                    <HighlightOffIcon
+                                      sx={{
+                                        color: "#1A1a1a",
+                                      }}
+                                    />
+                                  </IconButton>
+                                }
+                                sx={{
+                                  bgcolor: "transparent",
+                                }}
+                              >
+                                <img
+                                  className="w-[112px] h-[110px]"
+                                  src={img.picture}
+                                  // alt={item.title}
+                                  loading="lazy"
+                                />
+                              </Badge>
+                            ))}
+                            {/* New List */}
+                            {newImgList?.map((img, i) => (
+                              <Badge
+                                key={i}
+                                badgeContent={
+                                  <IconButton
+                                    onClick={() => handleDeleteNewImg(img.id)}
+                                  >
+                                    <HighlightOffIcon
+                                      sx={{
+                                        color: "#1A1a1a",
+                                      }}
+                                    />
+                                  </IconButton>
+                                }
+                                sx={{
+                                  bgcolor: "transparent",
+                                }}
+                              >
+                                <img
+                                  className="w-[112px] h-[110px]"
+                                  src={img.img_preview}
+                                  // alt={item.title}
+                                  loading="lazy"
+                                />
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          "No image"
+                        )}
+                      </div>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        sx={{
+                          // textTransform: "none",
+                          color: "#3F41A6",
+                        }}
+                        onClick={() => setOpenImg(false)}
+                      >
+                        Đóng
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-6 text-sm leading-5 text-zinc-900 max-md:max-w-full">
@@ -213,10 +591,8 @@ function EditPkg({ id, setOpenSBar, categories }) {
             onChange={updatePkg}
             multiline
             rows={3}
-            // error={errMsg.pkg?.description ? true : false}
-            // helperText={
-            //   errMsg.pkg?.description ? errMsg.pkg.description[0] : ""
-            // }
+            error={errMsg?.description ? true : false}
+            helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
               width: "750px",
               marginTop: "10px",
@@ -489,12 +865,10 @@ function EditPkg({ id, setOpenSBar, categories }) {
                   variant="outlined"
                   name="min_price"
                   value={newInfo?.min_price ?? pkg?.min_price}
-                  placeholder={totalPrice.min_price ?? 0}
+                  placeholder={totalPrice.min_price ?? ""}
                   onChange={updatePkg}
-                  // error={errMsg.pkg?.min_price ? true : false}
-                  // helperText={
-                  //   errMsg.pkg?.min_price ? errMsg.pkg.min_price[0] : ""
-                  // }
+                  error={errMsg?.min_price ? true : false}
+                  helperText={errMsg?.min_price ? errMsg.min_price[0] : ""}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "40px",
@@ -510,12 +884,10 @@ function EditPkg({ id, setOpenSBar, categories }) {
                   variant="outlined"
                   name="max_price"
                   value={newInfo?.max_price ?? pkg?.max_price}
-                  placeholder={totalPrice.max_price ?? 0}
+                  placeholder={totalPrice.max_price ?? ""}
                   onChange={updatePkg}
-                  // error={errMsg.pkg?.max_price ? true : false}
-                  // helperText={
-                  //   errMsg.pkg?.max_price ? errMsg.pkg.max_price[0] : ""
-                  // }
+                  error={errMsg?.max_price ? true : false}
+                  helperText={errMsg?.max_price ? errMsg.max_price[0] : ""}
                   sx={{
                     "& .MuiInputBase-input": {
                       height: "40px",
@@ -530,6 +902,16 @@ function EditPkg({ id, setOpenSBar, categories }) {
           </div>
         </div>
       </Paper>
+
+      {/* Img Alert Dialog */}
+      <ImgAlert
+        open={openImgAlert}
+        setOpen={setOpenImgAlert}
+        setAddImg={setOpenImg}
+      />
+
+      {/* Other errors */}
+      <ErrDialog open={openErr} setOpen={setOpenErr} />
 
       {/* Action Btn */}
       <div className="flex  gap-5 ml-4  self-center">

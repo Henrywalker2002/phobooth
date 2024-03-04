@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Badge,
   Button,
@@ -10,7 +10,6 @@ import {
   IconButton,
   ImageListItem,
   ImageListItemBar,
-  Input,
   MenuItem,
   Paper,
   Table,
@@ -33,7 +32,7 @@ import ImgAlert from "../../../components/ImgAlert";
 import { validFixedPrice } from "../../../util/Validation";
 import VariationAlert from "./VariationAlert";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import OtherErrDialog from "../../../components/OtherErrDialog";
+import ErrDialog from "../ErrDialog";
 
 function AddProduct({ categories, setOpenSBar }) {
   // global
@@ -51,7 +50,7 @@ function AddProduct({ categories, setOpenSBar }) {
   const [imgList, setImgList] = useState([]);
   // error
   const [errMsg, setErrMsg] = useState({});
-  const [openOtherErr, setOpenOtherErr] = useState(false);
+  const [openErr, setOpenErr] = useState(false);
 
   // reset
   const resetData = () => {
@@ -65,14 +64,16 @@ function AddProduct({ categories, setOpenSBar }) {
   };
 
   const handleUpdateImgList = (e) => {
-    // console.log(e.target.files[0]);
-    if (e.target.files.length > 0) {
+    let imgFiles = e.target.files;
+    if (imgFiles.length > 0) {
       let newList = [...imgList];
-      newList.push({
-        id: uuidv4(),
-        img_preview: URL.createObjectURL(e.target.files[0]),
-        img_file: e.target.files[0],
-      });
+      for (let imgFile of imgFiles) {
+        newList.push({
+          id: uuidv4(),
+          img_preview: URL.createObjectURL(imgFile),
+          img_file: imgFile,
+        });
+      }
       setImgList(newList);
     }
   };
@@ -178,7 +179,7 @@ function AddProduct({ categories, setOpenSBar }) {
   };
 
   // Check price for product
-  const checkPrice = (item) => {
+  const checkFixedPrice = (item) => {
     if (!validFixedPrice(item.fixed_price)) {
       setErrMsg({
         ...errMsg,
@@ -186,6 +187,18 @@ function AddProduct({ categories, setOpenSBar }) {
       });
       return false;
     }
+    return true;
+  };
+
+  // Check Stock for variation
+  const checkStock = (stock) => {
+    if (stock && (isNaN(stock) || stock === "")) return false;
+    return true;
+  };
+
+  // Check price for variation
+  const checkPrice = (price) => {
+    if (price && (isNaN(price) || price == 0 || price === "")) return false;
     return true;
   };
 
@@ -244,7 +257,7 @@ function AddProduct({ categories, setOpenSBar }) {
     e.preventDefault();
     // check imgs are existed
     if (imgList.length < 4 || imgList.length > 10) setOpenImgAlert(true);
-    else if (checkPrice(product)) {
+    else if (checkFixedPrice(product)) {
       // format Variation
       let variationInfo = variationFormatter();
       let newProduct = { ...product, ...variationInfo };
@@ -254,12 +267,8 @@ function AddProduct({ categories, setOpenSBar }) {
       let formData = new FormData();
       // pictures into formdata
       let picList = imgList?.map((img) => img.img_file);
-      for (const picKey in picList) {
-        formData.append(
-          `pictures[${picKey}]`,
-          picList[picKey],
-          picList[picKey].name
-        );
+      for (const pic of picList) {
+        formData.append(`pictures`, pic, pic.name);
       }
 
       // product info into formdata
@@ -320,7 +329,7 @@ function AddProduct({ categories, setOpenSBar }) {
           if (err.response?.status === 400) {
             setErrMsg({ ...errMsg, ...err.response.data });
           } else {
-            setOpenOtherErr(true);
+            setOpenErr(true);
           }
         });
     }
@@ -457,13 +466,12 @@ function AddProduct({ categories, setOpenSBar }) {
                       <div className="text-[10px]">({imgList.length}/10)</div>
                     </div>
 
-                    <Input
-                      required
+                    <input
                       type="file"
                       accept="image/*"
                       multiple
                       onChange={handleUpdateImgList}
-                      sx={{
+                      style={{
                         clip: "rect(0 0 0 0)",
                         clipPath: "inset(50%)",
                         height: 1,
@@ -546,12 +554,12 @@ function AddProduct({ categories, setOpenSBar }) {
                           }}
                         >
                           Thêm hình ảnh
-                          <Input
+                          <input
                             type="file"
                             accept="image/*"
                             multiple
                             onChange={handleUpdateImgList}
-                            sx={{
+                            style={{
                               clip: "rect(0 0 0 0)",
                               clipPath: "inset(50%)",
                               height: 1,
@@ -846,6 +854,12 @@ function AddProduct({ categories, setOpenSBar }) {
                             onChange={(e) =>
                               handleUpdateVariation(e, values.id)
                             }
+                            error={!checkPrice(values.price) ? true : false}
+                            helperText={
+                              checkPrice(values.price)
+                                ? ""
+                                : "Nhập giá hợp lệ !"
+                            }
                             sx={{
                               "& .MuiInputBase-input": {
                                 height: "40px",
@@ -863,6 +877,12 @@ function AddProduct({ categories, setOpenSBar }) {
                             name="stock"
                             onChange={(e) =>
                               handleUpdateVariation(e, values.id)
+                            }
+                            error={!checkStock(values.stock) ? true : false}
+                            helperText={
+                              checkStock(values.stock)
+                                ? ""
+                                : "Nhập số lượng hợp lệ !"
                             }
                             sx={{
                               "& .MuiInputBase-input": {
@@ -1013,7 +1033,7 @@ function AddProduct({ categories, setOpenSBar }) {
       <VariationAlert open={openVarAlert} setOpen={setOpenVarAlert} />
 
       {/* Other errors */}
-      <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
+      <ErrDialog open={openErr} setOpen={setOpenErr} />
 
       {/* Action Btn */}
       <div className="flex  gap-5 ml-4 my-5 self-center">

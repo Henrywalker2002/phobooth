@@ -1,13 +1,13 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 
-function ImgAlert({ open, setOpen, setAddImgFlag }) {
+function ImgAlert({ open, setOpen, setAddImg }) {
   return (
     <Dialog
       open={open}
       sx={{
         "& .MuiDialog-paper": {
-          width: "500px",
+          width: "900px",
         },
       }}
     >
@@ -31,7 +31,7 @@ function ImgAlert({ open, setOpen, setAddImgFlag }) {
           variant="contained"
           onClick={() => {
             setOpen(false);
-            setAddImgFlag(true);
+            setAddImg(true);
           }}
           sx={{
             // textTransform: "none",

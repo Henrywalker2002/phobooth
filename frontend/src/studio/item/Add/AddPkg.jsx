@@ -10,7 +10,6 @@ import {
   IconButton,
   ImageListItem,
   ImageListItemBar,
-  Input,
   Paper,
   TextField,
   MenuItem,
@@ -28,7 +27,7 @@ import AddItemForPkg from "./AddItemForPkg";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import ImgAlert from "../../../components/ImgAlert";
 import { validFixedPrice, validRangePrice } from "../../../util/Validation";
-import OtherErrDialog from "../../../components/OtherErrDialog";
+import ErrDialog from "../ErrDialog";
 
 function AddPkg({ categories, setOpenSBar }) {
   // global
@@ -50,7 +49,7 @@ function AddPkg({ categories, setOpenSBar }) {
   const [totalPrice, setTotalPrice] = useState([]);
   // error
   const [errMsg, setErrMsg] = useState({});
-  const [openOtherErr, setOpenOtherErr] = useState(false);
+  const [openErr, setOpenErr] = useState(false);
 
   // reset
   const resetData = () => {
@@ -64,14 +63,16 @@ function AddPkg({ categories, setOpenSBar }) {
   };
 
   const handleUpdateImgList = (e) => {
-    // console.log(e.target.files[0]);
-    if (e.target.files.length > 0) {
+    let imgFiles = e.target.files;
+    if (imgFiles.length > 0) {
       let newList = [...imgList];
-      newList.push({
-        id: uuidv4(),
-        img_preview: URL.createObjectURL(e.target.files[0]),
-        img_file: e.target.files[0],
-      });
+      for (let imgFile of imgFiles) {
+        newList.push({
+          id: uuidv4(),
+          img_preview: URL.createObjectURL(imgFile),
+          img_file: imgFile,
+        });
+      }
       setImgList(newList);
     }
   };
@@ -170,12 +171,8 @@ function AddPkg({ categories, setOpenSBar }) {
 
       // pictures into formdata
       let picList = imgList?.map((img) => img.img_file);
-      for (const picKey in picList) {
-        formData.append(
-          `pictures[${picKey}]`,
-          picList[picKey],
-          picList[picKey].name
-        );
+      for (const pic of picList) {
+        formData.append(`pictures`, pic, pic.name);
       }
 
       // Pkg info into formdata
@@ -312,13 +309,12 @@ function AddPkg({ categories, setOpenSBar }) {
                       <div className="text-[10px]">({imgList.length}/10)</div>
                     </div>
 
-                    <Input
-                      required
+                    <input
                       type="file"
                       accept="image/*"
                       multiple
                       onChange={handleUpdateImgList}
-                      sx={{
+                      style={{
                         clip: "rect(0 0 0 0)",
                         clipPath: "inset(50%)",
                         height: 1,
@@ -401,12 +397,12 @@ function AddPkg({ categories, setOpenSBar }) {
                           }}
                         >
                           Thêm hình ảnh
-                          <Input
+                          <input
                             type="file"
                             accept="image/*"
                             multiple
                             onChange={handleUpdateImgList}
-                            sx={{
+                            style={{
                               clip: "rect(0 0 0 0)",
                               clipPath: "inset(50%)",
                               height: 1,
@@ -907,8 +903,8 @@ function AddPkg({ categories, setOpenSBar }) {
         setAddImg={setOpen}
       />
 
-      {/* Other errors */}
-      <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
+      {/* system errors */}
+      <ErrDialog open={openErr} setOpen={setOpenErr} />
 
       {/* Action Btn */}
       <div className="flex  gap-5 ml-4 my-5 self-center">

@@ -9,16 +9,17 @@ import Booking from "./user/Booking";
 import { ThemeProvider, createTheme } from "@mui/material";
 import Orders from "./user/Orders";
 import OrderDetail from "./user/OrderDetail";
-import StudioOrderDetail from "./studio/OrderDetail";
-import StudioOrders from "./studio/Orders";
+import StudioOrderDetail from "./studio/order/OrderDetail";
+import StudioOrders from "./studio/order/Orders";
 import CartContextLayout from "./context/CartContextLayout";
 import Register from "./studio/Register";
-import ItemMgmt from "./studio/ItemMgmt";
-import AddItem from "./studio/AddItem";
 import StudioHome from "./studio/Home";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./context/RequireAuth";
 import PersistLogin from "./context/PersistLogin";
+import AddItem from "./studio/item/Add/AddItem";
+import ItemMgmt from "./studio/item/ItemMgmt";
+import EditItem from "./studio/item/Edit/EditItem";
 
 function App() {
   const theme = createTheme({
@@ -78,6 +79,7 @@ function App() {
 
             {/* Studio */}
             {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
+            <Route path="/studio/items/edit/:id" element={<EditItem />} />
             <Route path="/studio/items/add" element={<AddItem />} />
             <Route path="/studio/items" element={<ItemMgmt />} />
             <Route path="/studio/register" element={<Register />} />

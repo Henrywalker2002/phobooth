@@ -7,6 +7,7 @@ import {
   InputAdornment,
   Link,
   Paper,
+  Snackbar,
   Tab,
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import StudioNavbar from "../../components/StudioNavbar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import DelItem from "./DelItem";
 
 function ItemMgmt() {
   // global
@@ -39,26 +41,30 @@ function ItemMgmt() {
   const [serviceList, setServiceList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [pkgList, setPkgList] = useState([]);
+  const [openDelSBar, setOpenDelSBar] = useState(false);
+  const [openDelDialog, setOpenDelDialog] = useState(false);
+  const [delItem, setDelItem] = useState({});
+  const [reset, setReset] = useState(false);
 
   useEffect(() => {
     axiosPrivate
       .get("/item-service/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setServiceList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
 
   useEffect(() => {
     axiosPrivate
-      .get("/item-product/")
+      .get("/item-product/?limit=15&offset=0")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setProductList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
 
   useEffect(() => {
     axiosPrivate
@@ -68,10 +74,24 @@ function ItemMgmt() {
         setPkgList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  // delete item
+  const handleDelItem = (item) => {
+    setDelItem(item);
+    setOpenDelDialog(true);
+  };
+
+  // Close SnackBar delete successfully
+  const handleCloseDelSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenDelSBar(false);
   };
   return (
     <div>
@@ -282,7 +302,7 @@ function ItemMgmt() {
                           >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(service)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -358,7 +378,7 @@ function ItemMgmt() {
                           >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(product)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -437,7 +457,7 @@ function ItemMgmt() {
                           >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(pkg)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -454,6 +474,25 @@ function ItemMgmt() {
           </TableContainer>
         </TabPanel>
       </TabContext>
+
+      {/* Delete Dialog */}
+      <DelItem
+        open={openDelDialog}
+        setOpen={setOpenDelDialog}
+        item={delItem}
+        setOpenDelSBar={setOpenDelSBar}
+        reset={reset}
+        setReset={setReset}
+      />
+
+      {/* Delete successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openDelSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseDelSBar}
+        message="Xóa sản phẩm thành công !"
+      />
     </div>
   );
 }
