@@ -14,6 +14,7 @@ import {
   Breadcrumbs,
   Link,
   Typography,
+  Pagination,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
@@ -27,6 +28,7 @@ function Orders() {
   // Collapsible table
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const [pageCount, setPageCount] = useState(1);
   const [orders, setOrders] = useState([]);
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -35,15 +37,34 @@ function Orders() {
 
   useEffect(() => {
     axiosPrivate
-      .get("order/studio/")
+      .get("order/studio/?limit=5&offset=0")
       .then((res) => {
         console.log(res.data);
+        let count = res.data.count;
+        setPageCount(Math.ceil(count / 5));
         setOrders(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  // get Orders For Each Page
+  const getOrdersForPage = (e, page) => {
+    console.log(page);
+    let offset = 5 * (page - 1);
+    axiosPrivate
+      .get(`/order/studio/?limit=5&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== pageCount) setPageCount(currCount);
+        setOrders(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   function getPrice(item) {
     if (item.price) {
@@ -60,7 +81,7 @@ function Orders() {
 
   function Row(props) {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
       <React.Fragment>
@@ -306,6 +327,20 @@ function Orders() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      <Pagination
+        count={pageCount}
+        onChange={getOrdersForPage}
+        sx={{
+          margin: "0 auto",
+          width: "fit-content",
+          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+            {
+              bgcolor: "#E2E5FF",
+            },
+        }}
+      />
     </div>
   );
 }

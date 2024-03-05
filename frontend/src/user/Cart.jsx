@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Pagination,
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
@@ -77,9 +78,9 @@ function Cart() {
 
   useEffect(() => {
     axiosPrivate
-      .get("/cart/?limit=10&offset=0")
+      .get("/cart/")
       .then((res) => {
-        // console.log(res.data.results);
+        console.log(res);
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
         });
@@ -186,8 +187,8 @@ function Cart() {
         Quản lý giỏ hàng
       </div>
       {/* Tables */}
-      <div className="flex flex-col gap-5">
-        {items.length > 0 ? (
+      <div className="flex flex-col gap-5 items-center">
+        {items?.length > 0 ? (
           items.map((lst) => (
             <TableContainer
               component={Paper}

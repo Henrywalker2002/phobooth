@@ -6,6 +6,7 @@ import {
   IconButton,
   InputAdornment,
   Link,
+  Pagination,
   Paper,
   Snackbar,
   Tab,
@@ -46,35 +47,95 @@ function ItemMgmt() {
   const [delItem, setDelItem] = useState({});
   const [reset, setReset] = useState(false);
 
+  // pagination
+  const itemsPage = 5;
+  const [serPageCount, setSerPageCount] = useState(1);
+  const [proPageCount, setProPageCount] = useState(1);
+  const [pkgPageCount, setPkgPageCount] = useState(1);
+
   useEffect(() => {
     axiosPrivate
-      .get("/item-service/")
+      .get(`/item-service/?limit=${itemsPage}&offset=0`)
       .then((res) => {
         // console.log(res.data.results);
+        setSerPageCount(Math.ceil(res.data.count / itemsPage));
         setServiceList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [reset]);
 
+  // get services for each page
+  const getServiceForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-service/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setSerPageCount(currCount);
+        setServiceList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     axiosPrivate
-      .get("/item-product/?limit=15&offset=0")
+      .get(`/item-product/?limit=${itemsPage}&offset=0`)
       .then((res) => {
         // console.log(res.data.results);
+        setProPageCount(Math.ceil(res.data.count / itemsPage));
         setProductList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [reset]);
 
+  // get product for each page
+  const getProductForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-product/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setProPageCount(currCount);
+        setProductList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     axiosPrivate
-      .get("/item-service-pack/")
+      .get(`/item-service-pack/?limit=${itemsPage}&offset=0`)
       .then((res) => {
         // console.log(res.data.results);
+        setPkgPageCount(Math.ceil(res.data.count / itemsPage));
         setPkgList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [reset]);
+
+  // get pkg for each page
+  const getPkgForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-service-pack/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setPkgPageCount(currCount);
+        setPkgList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -317,6 +378,20 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Service */}
+          <Pagination
+            count={serPageCount}
+            onChange={getServiceForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
         <TabPanel value="product">
           {/* Product Table */}
@@ -393,6 +468,20 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Product */}
+          <Pagination
+            count={proPageCount}
+            onChange={getProductForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
         <TabPanel value="pkg">
           {/* Package Table */}
@@ -472,6 +561,20 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Pkg */}
+          <Pagination
+            count={pkgPageCount}
+            onChange={getPkgForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
       </TabContext>
 
