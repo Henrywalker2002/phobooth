@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'address',
     'payment',
     'studio_document',
+    'order_history',
 ]
 
 MIDDLEWARE = [

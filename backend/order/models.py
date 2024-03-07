@@ -57,3 +57,4 @@ class OrderItem(BaseModel):
     price = models.IntegerField(null=True, default=None)
     additional_information = models.JSONField(null=True, default=None)
     status = models.CharField(choices= OrderItemStatusChoice.choices, default= OrderItemStatusChoice.PENDING, max_length= 255)
+    denied_reason = models.TextField(null=True, default=None)

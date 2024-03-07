@@ -8,6 +8,7 @@ from user.serializers import UserSummarySerializer
 from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrderPaidException, UpdateCompletedOrderOrderItemException
 from payment.serializers import ReadPaymentSerializer
 from payment.models import PaymentStatusChoices
+from order_history.serializers import OrderHistorySummarySerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -42,9 +43,36 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     studio = StudioSummarySerializer(read_only=True)
     customer = UserSummarySerializer(read_only=True)
     payment = ReadPaymentSerializer(many=True, read_only=True)
+    order_history = OrderHistorySummarySerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = [
+            "id",
+            "created_at",
+            "modified_at",
+            "total_price",
+            "discount_price",
+            "amount_paid",
+            "amount_created",
+            "finish_date",
+            "customer",
+            "status",
+            "note",
+            "order_item",
+            "studio",
+            "payment",
+            "order_history",
+        ]
+
+class OrderSummarySerializer(serializers.ModelSerializer):
+    order_item = ReadOrderItemSerializer(many=True, read_only=True)
+    studio = StudioSummarySerializer(read_only=True)
+    customer = UserSummarySerializer(read_only=True)
+    payment = ReadPaymentSerializer(many = True, read_only=True)
+    
+    class Meta:
+        model = Order
+        fields = [            
             "id",
             "created_at",
             "modified_at",
