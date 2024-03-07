@@ -10,6 +10,7 @@ from category.views import CategoryViewSet
 from cart.views import CartViewSet
 from order.views.order import OrderViewSet
 from order.views.order_item import OrderItemViewSet
+from order_history.views import OrderHistoryViewSet
 from item.views.service import ItemServicesViewset
 from item.views.item import ItemViewSet, ItemImageViewSet
 from item.views.product import ProductViewSet, VariationViewSet
@@ -38,6 +39,7 @@ router.register(r'item', ItemViewSet, 'item')
 router.register(r'cart', CartViewSet, 'cart')
 router.register(r'order', OrderViewSet, 'order')
 router.register(r'order-item', OrderItemViewSet, 'order-item')
+router.register(r'order-history', OrderHistoryViewSet, 'order-history')
 router.register(r'province', ProvinceViewSet, 'province')
 router.register(r'payment', PaymentViewSet, 'payment')
 

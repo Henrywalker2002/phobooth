@@ -1,6 +1,8 @@
 from base.views import BaseModelViewSet
 from order.models import Order, OrderItem
-from order.serializers.order import CreateOrderSerializer, ReadOrderSerializer, UpdateOrderSerializer
+from order.serializers.order import (
+    CreateOrderSerializer, ReadOrderSerializer, 
+    UpdateOrderSerializer, OrderSummarySerializer)
 from django.db import transaction
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,8 +14,8 @@ import datetime
 
 class OrderViewSet(BaseModelViewSet):
     queryset = Order.objects.all()
-    serializer_class = {"create": CreateOrderSerializer, "list": ReadOrderSerializer, "update": UpdateOrderSerializer, "default": ReadOrderSerializer, "partial_update": UpdateOrderSerializer,
-                        "list_order_of_studio": ReadOrderSerializer, "retrieve": ReadOrderSerializer}
+    serializer_class = {"create": CreateOrderSerializer, "list": OrderSummarySerializer, "update": UpdateOrderSerializer, "default": ReadOrderSerializer, "partial_update": UpdateOrderSerializer,
+                        "list_order_of_studio": OrderSummarySerializer, "retrieve": ReadOrderSerializer}
     permission_classes = [OrderPermission]
 
     def get_queryset(self):

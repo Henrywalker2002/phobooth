@@ -2,7 +2,7 @@ from rest_framework import serializers
 from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item, Variation
 from item.serializers.item import ItemShortSerializer
-from order.exceptions import UpdateCompletedOrderException, UpdateOrderItemException
+from order.exceptions import UpdateOrderItemException
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
@@ -65,6 +65,7 @@ class ReadOrderItemSerializer(serializers.ModelSerializer):
             "price",
             "additional_information",
             "status",
+            "denied_reason"
         ]
 
     def to_representation(self, instance):
