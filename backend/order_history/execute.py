@@ -1,4 +1,6 @@
 from order_history.models import OrderHistory
+from media.execute import MediaService
+from order.models import OrderStatusChoice
 
 class OrderItemChange:
     
@@ -18,6 +20,10 @@ class OrderItemChange:
         return dict
     
 def create_order_price_history(order, old_price, new_price):
+
+    if order.status == OrderStatusChoice.ORDERED:
+        return
+    
     OrderHistory.objects.create(
         order = order,
         fields = "total_price",
@@ -28,6 +34,9 @@ def create_order_price_history(order, old_price, new_price):
     
 def create_order_item_history(new_instance, type, old_instance=None):
     
+    order_history = None
+    if new_instance.order.status == OrderStatusChoice.ORDERED:
+        return
     if type == "add": 
         new_value = OrderItemChange()
         if new_instance.item:
@@ -43,7 +52,7 @@ def create_order_item_history(new_instance, type, old_instance=None):
     else:
         old_value = OrderItemChange()
         new_value = OrderItemChange()
-        change_fields = ['quanlity', 'price']
+        change_fields = ['quantity', 'price']
         for field in change_fields:
             if getattr(new_instance, field) != getattr(old_instance, field):
                 setattr(old_value, field, getattr(old_instance, field))
@@ -51,4 +60,6 @@ def create_order_item_history(new_instance, type, old_instance=None):
         if old_value.__dict__():
             order_history = OrderHistory.objects.create(order = new_instance.order, order_item = new_instance, 
                                     fields = "order_item", old_value = old_value.__dict__(), new_value = new_value.__dict__())
-    # send mail and add notification                    
+    if order_history:
+        MediaService.create_email_for_order_change(order_history)
+                       

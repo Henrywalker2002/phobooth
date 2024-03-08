@@ -1,5 +1,5 @@
 from base.views import BaseModelViewSet
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem, OrderStatusChoice
 from order.serializers.order import (
     CreateOrderSerializer, ReadOrderSerializer, 
     UpdateOrderSerializer, OrderSummarySerializer)
@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from order.permission import OrderPermission
 from base.exceptions import MethodNotAllowed
 import datetime
+from notification.execute import NotificationService
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -41,6 +42,8 @@ class OrderViewSet(BaseModelViewSet):
         OrderItem.objects.bulk_create(
             [OrderItem(order=order, **item) for item in order_item])
 
+        # create notification
+        NotificationService.user_create_order(order)
         data = self.get_serializer(order, is_get=True).data
         return Response(data, status=status.HTTP_201_CREATED)
 
@@ -49,9 +52,20 @@ class OrderViewSet(BaseModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data = request.data, partial =partial)
         serializer.is_valid(raise_exception = True)
-        if serializer.validated_data.get('status') == 'COMPLETED':
+        if serializer.validated_data.get('status') == OrderStatusChoice.COMPLETED:
             serializer.validated_data['finish_date'] = datetime.date.today().strftime("%Y-%m-%d")
-        self.perform_update(serializer)
+            # create notification
+            NotificationService.studio_completed_order(instance)
+        
+        if serializer.validated_data.get('status') == OrderStatusChoice.IN_PROCESS:
+            NotificationService.studio_accept_order(instance)
+        elif serializer.validated_data.get('status') == OrderStatusChoice.CANCELED:
+            if request.user == instance.customer:
+                NotificationService.user_cancel_order(instance)
+            else :
+                NotificationService.studio_deny_order(instance)
+            
+        self.perform_update(serializer)    
         
         serializer_return = self.get_serializer(instance = instance, is_get = True)
         return Response(data = serializer_return.data)

@@ -1,0 +1,19 @@
+{% load dict_key %}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1> History change </h1>
+    <table>
+        <tr>
+            <th>Fields</th>
+            <th>Value</th>
+        </tr>
+        {% for key in new_value %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ new_value|dict_key:key }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

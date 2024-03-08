@@ -17,6 +17,8 @@ from item.views.product import ProductViewSet, VariationViewSet
 from item.views.service_pack import ServicePackItemViewSet
 from address.views import ProvinceViewSet
 from payment.views import PaymentViewSet
+from media.views import MediaViewSet
+from notification.views import NotificationViewSet
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -42,6 +44,8 @@ router.register(r'order-item', OrderItemViewSet, 'order-item')
 router.register(r'order-history', OrderHistoryViewSet, 'order-history')
 router.register(r'province', ProvinceViewSet, 'province')
 router.register(r'payment', PaymentViewSet, 'payment')
+router.register(r'media', MediaViewSet, 'media')
+router.register(r'notification', NotificationViewSet, 'notification')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

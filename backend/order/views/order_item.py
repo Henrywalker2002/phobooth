@@ -8,8 +8,9 @@ from rest_framework.response import Response
 from django.db.models import Sum, F
 from rest_framework import status
 from base.exceptions import MethodNotAllowed
-from order_history.excute import create_order_item_history, create_order_price_history
+from order_history.execute import create_order_item_history, create_order_price_history
 from copy import deepcopy
+from notification.execute import NotificationService
 
 
 class OrderItemViewSet(BaseModelViewSet):
@@ -58,8 +59,9 @@ class OrderItemViewSet(BaseModelViewSet):
         self.perform_create(serializer)
         order = serializer.instance.order
         self.update_order_price(order)
-        # update history
+        # update history and add notification
         create_order_item_history(serializer.instance, "add")
+        NotificationService.studio_add_item_to_order(serializer.instance)
         
         data = self.get_serializer(order, is_order=True).data   
         headers = self.get_success_headers(data)

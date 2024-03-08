@@ -15,6 +15,7 @@ from payment.vnpay import VnPay
 from django.conf import settings
 from base.helper import get_client_ip
 import datetime
+from notification.execute import NotificationService
 
 
 class PaymentViewSet(BaseModelViewSet):
@@ -50,6 +51,9 @@ class PaymentViewSet(BaseModelViewSet):
         order = serializer.instance.order
         order = self.update_amount_created_order(order)
 
+        # create notification
+        NotificationService.studio_create_payment(serializer.instance)
+        
         headers = self.get_success_headers(serializer.data)
         data = self.get_serializer(order, is_order=True).data
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
@@ -154,5 +158,7 @@ class PaymentViewSet(BaseModelViewSet):
             payment_instance.vn_pay_tran = data.get("vnp_TransactionNo", None)
             payment_instance.vn_order_infor = data.get("vnp_OrderInfo", None)
             payment_instance.save() 
+            # create notification
+            NotificationService.user_pay(payment_instance)
             self.update_amout_paid_order(payment_instance.order)
         return Response(data=data)
