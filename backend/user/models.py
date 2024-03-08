@@ -17,7 +17,7 @@ class User(AbstractBaseUser):
     google_id = models.IntegerField(null=True)
     facebook_id = models.IntegerField(null=True)
     studio = models.OneToOneField(
-        to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None
+        to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None, related_name="owner"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
