@@ -11,6 +11,6 @@ class NotificationViewSet(BaseGenericViewSet, ListModelMixin):
     permission_classes = [NotificationPermission]
     
     
-    # def get_queryset(self):
-    #     return super().get_queryset().filter(user=self.request.user).order_by("-created_at")
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user).order_by("-created_at")
     
