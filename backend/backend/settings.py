@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'order_history',
     'media',
     'notification',
+    'complain',
+    'complain_forum',
 ]
 
 MIDDLEWARE = [

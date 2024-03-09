@@ -19,6 +19,8 @@ from address.views import ProvinceViewSet
 from payment.views import PaymentViewSet
 from media.views import MediaViewSet
 from notification.views import NotificationViewSet
+from complain.views import ComplainViewSet
+from complain_forum.views import ReplyViewSet
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -46,6 +48,8 @@ router.register(r'province', ProvinceViewSet, 'province')
 router.register(r'payment', PaymentViewSet, 'payment')
 router.register(r'media', MediaViewSet, 'media')
 router.register(r'notification', NotificationViewSet, 'notification')
+router.register(r'complain', ComplainViewSet, 'complain')
+router.register(r'complain-reply', ReplyViewSet, 'complain-reply')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
