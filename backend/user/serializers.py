@@ -3,7 +3,8 @@ from user.models import User
 from role.serializers import RoleDetailSerializer
 from studio.serializers import StudioSummarySerializer
 import re
-import datetime
+from address.serializers import AddressSerializer
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -13,6 +14,29 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "password", "email", "full_name", "role", "avatar", "studio"]
+        
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    
+    password = serializers.CharField(write_only=True)
+    avatar = serializers.ImageField(required=False, use_url=True)
+    address = AddressSerializer(required=False, allow_null=True)
+    
+    def validate_phone(self, value):
+        regex = re.compile(r"^0\d{9}$")
+        if not regex.match(value):
+            raise serializers.ValidationError("Invalid phone number")
+        return value
+    
+    def validate_password(self, password):
+        if len(password) < 8:
+            raise serializers.ValidationError(
+                "Password must be at least 8 characters long")
+        return password
+    
+    class Meta:
+        model = User
+        fields = ["full_name", "username", "password", "phone", "address", "date_of_birth", "avatar", ]
         
 
 class UserSummarySerializer(serializers.ModelSerializer):
@@ -74,7 +98,7 @@ class CreateStaffSerilizer(serializers.ModelSerializer):
         fields = ['username', 'full_name', 'email', 'password', 'role', 'phone', 'date_of_birth']
 
 
-class UpdateUserSerializer(CreateStaffSerilizer):
+class UpdateStaffSerializer(CreateStaffSerilizer):
     
     class Meta:
         model = User
