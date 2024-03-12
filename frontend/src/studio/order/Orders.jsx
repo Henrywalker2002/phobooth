@@ -39,7 +39,7 @@ function Orders() {
     axiosPrivate
       .get("order/studio/?limit=5&offset=0")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
         setOrders(res.data.results);
@@ -51,12 +51,11 @@ function Orders() {
 
   // get Orders For Each Page
   const getOrdersForPage = (e, page) => {
-    console.log(page);
     let offset = 5 * (page - 1);
     axiosPrivate
       .get(`/order/studio/?limit=5&offset=${offset}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
         setOrders(res.data.results);
@@ -122,26 +121,43 @@ function Orders() {
               : "Chưa cập nhật"}
           </TableCell>
           <TableCell align="left">
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "43px",
-                borderColor: "#3F41A6",
-                color: "#3F41A6",
-                padding: "0 5px",
-                textTransform: "none",
-                width: "100px",
-                "&:hover": {
-                  bgcolor: "#F6F5FB",
+            {row.status === "ORDERED" ? (
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "43px",
                   borderColor: "#3F41A6",
-                },
-              }}
-              onClick={(event) => {
-                window.location.href = `/studio/order/detail/${row.id}`;
-              }}
-            >
-              Chỉnh sửa
-            </Button>
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hủy đơn
+              </Button>
+            ) : row.status === "CANCELED" ? null : (
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "43px",
+                  borderColor: "#3F41A6",
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hoàn thành
+              </Button>
+            )}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -213,21 +229,7 @@ function Orders() {
                         <TableCell align="left">
                           {getPrice(detailedRow)}
                         </TableCell>
-                        <TableCell align="left">
-                          {/* <Button
-                            variant="text"
-                            sx={{
-                              color: "#3F41A6",
-                              textTransform: "none",
-                              "&:hover": {
-                                bgcolor: "#F6F5FB",
-                                borderRadius: "43px",
-                              },
-                            }}
-                          >
-                            Đánh giá
-                          </Button> */}
-                        </TableCell>
+                        <TableCell align="left"></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

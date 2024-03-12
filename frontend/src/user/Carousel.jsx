@@ -113,7 +113,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
         <div className="gap-5 flex">
           <div className="flex flex-col items-stretch w-[18%] h-fit">
             <Paper>
-              <MenuList dense>
+              <MenuList dense sx={{ padding: 0 }}>
                 {categories.length > 0
                   ? categories.map((category) => (
                       <MenuItem
@@ -172,7 +172,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
               {isLoading ? (
                 <CircularProgress color="inherit" />
               ) : (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col  gap-5">
                   <Box
                     sx={{
                       display: "flex",
@@ -184,7 +184,12 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                     }}
                   >
                     <IconButton
-                      sx={{ margin: 5 }}
+                      sx={{
+                        margin: 3,
+                        "&:hover": {
+                          bgcolor: "#E6E6E6",
+                        },
+                      }}
                       onClick={handleBack}
                       disabled={activeStep === 0}
                     >
@@ -199,7 +204,12 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                     />
 
                     <IconButton
-                      sx={{ margin: 5 }}
+                      sx={{
+                        margin: 3,
+                        "&:hover": {
+                          bgcolor: "#E6E6E6",
+                        },
+                      }}
                       onClick={handleNext}
                       disabled={activeStep === countStep - 1}
                     >
@@ -218,7 +228,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                       width: "fit-content",
                       margin: "0 auto",
                       color: "#3F41A6",
-                      "&.css-26w9jf-MuiMobileStepper-dot": {
+                      "&.MuiMobileStepper-dotActive": {
                         bgcolor: "#3F41A6",
                       },
                     }}

@@ -18,7 +18,10 @@ import {
   Typography,
   Snackbar,
   TextField,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
+import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -31,6 +34,8 @@ import AddOrderItem from "./AddOrderItem";
 import EditOrderItem from "./EditOrderItem";
 import DeleteOrderItem from "./DeleteOrderItem";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Payment from "./Payment";
+import { translateErrStatusOrder } from "../../util/Translate";
 
 function OrderDetail(props) {
   // global
@@ -43,6 +48,7 @@ function OrderDetail(props) {
   const [openDelItem, setOpenDelItem] = useState(false);
   // Snackbar
   const [openStatusSBar, setOpenStatusSbar] = useState(false);
+  const [openSBar, setOpenSbar] = useState(false);
   const [statusMsg, setStatusMsg] = useState(false);
   // local
   const [order, setOrder] = useState({});
@@ -59,6 +65,7 @@ function OrderDetail(props) {
     axiosPrivate
       .get(`/order/${id}`)
       .then((res) => {
+        // console.log(res.data);
         setOrder(res.data);
         setStatus(res.data.status);
       })
@@ -73,7 +80,7 @@ function OrderDetail(props) {
 
   // Open Status SnackBar Success/Err
   const handleOpenStatusSBar = (msg) => {
-    setStatusMsg(msg);
+    setStatusMsg(translateErrStatusOrder(msg));
     setOpenStatusSbar(true);
   };
 
@@ -98,8 +105,20 @@ function OrderDetail(props) {
       })
       .catch((err) => {
         console.log(err);
-        handleOpenStatusSBar(err.response.data.status[0]);
+        if (err.response.data.status) {
+          handleOpenStatusSBar(err.response.data.status[0]);
+        } else {
+          handleOpenStatusSBar(err.response.data.detail);
+        }
       });
+  };
+
+  // Close Status SnackBar Success/Err
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSbar(false);
   };
 
   // Edit Order Item Dialog
@@ -184,15 +203,30 @@ function OrderDetail(props) {
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
-            <IconButton>
+            <IconButton
+              disabled={
+                status === "CANCELED" || status === "IN_PROCESS" ? true : false
+              }
+              onClick={() => handleOpenEditItem(row)}
+            >
               <MdEdit
-                onClick={() => handleOpenEditItem(row)}
-                style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
+                style={{
+                  width: "22px",
+                  height: "22px",
+                }}
               />
             </IconButton>
-            <IconButton onClick={() => handleOpenDelItem(row)}>
+            <IconButton
+              disabled={
+                status === "CANCELED" || status === "IN_PROCESS" ? true : false
+              }
+              onClick={() => handleOpenDelItem(row)}
+            >
               <MdDeleteOutline
-                style={{ width: "22px", height: "22px", color: "#C5CEE0" }}
+                style={{
+                  width: "22px",
+                  height: "22px",
+                }}
               />
             </IconButton>
           </TableCell>
@@ -264,12 +298,13 @@ function OrderDetail(props) {
         </Typography>
       </Breadcrumbs>
 
+      {/* Detail Order */}
       <TableContainer
         component={Paper}
         sx={{
           width: "1200px",
           margin: "30px auto",
-          marginBottom: "200px",
+          marginBottom: "50px",
           border: "0.5px solid #d6d3d1",
         }}
       >
@@ -325,72 +360,111 @@ function OrderDetail(props) {
         </Table>
 
         <div className="self-center w-full max-w-[1200px] mt-5 mb-7">
-          <div className="flex justify-start gap-[440px] px-16">
-            <div className="flex flex-col items-stretch w-[200px]">
-              <div className="flex grow flex-col items-stretch px-5">
-                <div className="items-center flex justify-between gap-4 pr-20">
-                  <div className="text-indigo-950 text-sm font-medium leading-4 tracking-wide uppercase grow whitespace-nowrap my-auto">
-                    Vận chuyển
+          {status === "CANCELED" ? (
+            <Alert
+              sx={{ maxWidth: "1100px", marginX: "auto" }}
+              severity="error"
+              color="warning"
+            >
+              Đơn hàng này đã được hủy.
+            </Alert>
+          ) : (
+            <div className="flex justify-start gap-[350px] px-16">
+              <div className="flex flex-col items-stretch w-[200px]">
+                <div className="flex grow flex-col items-stretch px-5">
+                  <div className="items-center flex justify-between gap-4 pr-20">
+                    <div className="text-indigo-800 text-sm font-medium leading-4 tracking-wide uppercase grow whitespace-nowrap my-auto">
+                      Vận chuyển
+                    </div>
+                    <Checkbox
+                      sx={{
+                        "&.Mui-checked": {
+                          color: "#3F41A6",
+                        },
+                      }}
+                      onChange={handleNeedDelivery}
+                      inputProps={{ "aria-label": "Checkbox demo" }}
+                    />
                   </div>
-                  <Checkbox
+                  <div className="text-indigo-800 text-sm font-medium leading-4 tracking-wide uppercase whitespace-nowrap mt-4">
+                    Trạng thái đơn hàng
+                  </div>
+                  {/* Selector */}
+                  <TextField
+                    id="outlined-status"
+                    select
+                    value={status}
+                    onChange={handleUpdateStatus}
                     sx={{
-                      "&.Mui-checked": {
-                        color: "#3F41A6",
+                      marginTop: "10px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                      },
+                      "& fieldset": {
+                        height: "40px",
                       },
                     }}
-                    onChange={handleNeedDelivery}
-                    inputProps={{ "aria-label": "Checkbox demo" }}
-                  />
-                </div>
-                <div className="text-indigo-950 text-sm font-medium leading-4 tracking-wide uppercase whitespace-nowrap mt-4">
-                  Trạng thái đơn hàng
-                </div>
-                {/* Selector */}
-                <TextField
-                  id="outlined-status"
-                  select
-                  value={status}
-                  onChange={handleUpdateStatus}
-                  sx={{
-                    marginTop: "10px",
-                    "& .MuiOutlinedInput-root": {
-                      height: "35px",
-                    },
-                    "& fieldset": {
-                      height: "40px",
-                    },
-                  }}
-                >
-                  <MenuItem value={"ORDERED"}>Đã đặt</MenuItem>
-                  <MenuItem value={"IN_PROCESS"}>Đang tiến hành</MenuItem>
-                  {delivery ? (
-                    <MenuItem value={"SHIPPING"}>Vận chuyển</MenuItem>
-                  ) : null}
-                  <MenuItem value={"COMPLETED"}>Hoàn thành</MenuItem>
-                </TextField>
-              </div>
-            </div>
-            <div className="flex flex-col items-stretch w-[300px]">
-              <div className="items-stretch flex justify-between gap-5 px-5 max-md:mt-10">
-                <div className="text-indigo-950 text-lg leading-7 whitespace-nowrap">
-                  Tổng cộng
-                </div>
-                <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                  {order.total_price
-                    ? formatter.format(order.total_price)
-                    : "Chưa cập nhật"}
+                  >
+                    <MenuItem value={"ORDERED"}>Đã đặt</MenuItem>
+                    <MenuItem value={"IN_PROCESS"}>Đang tiến hành</MenuItem>
+                    {delivery ? (
+                      <MenuItem value={"SHIPPING"}>Vận chuyển</MenuItem>
+                    ) : null}
+                    <MenuItem value={"COMPLETED"}>Hoàn thành</MenuItem>
+                    {status == "ORDERED" ? (
+                      <MenuItem value={"CANCELED"}>Hủy đơn</MenuItem>
+                    ) : null}
+                  </TextField>
                 </div>
               </div>
+              <div className="flex flex-col items-stretch gap-5 w-[450px]">
+                <div className="items-stretch flex justify-between gap-5 px-5 max-md:mt-10">
+                  <div className="text-indigo-950 text-lg leading-7 whitespace-nowrap">
+                    Tổng cộng
+                  </div>
+                  <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
+                    {order.total_price
+                      ? formatter.format(order.total_price)
+                      : "Chưa cập nhật"}
+                  </div>
+                </div>
+                {order.note == null ? null : (
+                  <Alert
+                    sx={{
+                      bgcolor: "#E7EAFF",
+                      color: "#3F41A6",
+                    }}
+                    icon={
+                      <StickyNote2OutlinedIcon
+                        sx={{ color: "#3F41A6" }}
+                        fontSize="inherit"
+                      />
+                    }
+                    severity="info"
+                  >
+                    <AlertTitle>Ghi chú</AlertTitle>
+                    {order.note}
+                  </Alert>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </TableContainer>
+
+      {/* Payment Request */}
+      <Payment
+        orderId={id}
+        total_price={order.total_price}
+        amount_paid={order.amount_paid}
+        amount_created={order.amount_created}
+      />
 
       {/* Update Status successfully */}
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openStatusSBar}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseStatusSBar}
         message={statusMsg}
       />
@@ -401,6 +475,7 @@ function OrderDetail(props) {
         setOpen={setOpenEditItem}
         orderItem={selectedItem}
         setOrder={setOrder}
+        // setOpenSbar={setOpenSbar}
       />
       {/* Dialog Add */}
       <AddOrderItem
@@ -415,6 +490,15 @@ function OrderDetail(props) {
         setOpen={setOpenDelItem}
         orderItem={selectedItem}
         setOrder={setOrder}
+      />
+
+      {/* Update order-item successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={3000}
+        onClose={handleCloseSBar}
+        message={"Đã cập nhật sản phẩm đơn hàng !"}
       />
     </div>
   );

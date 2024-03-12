@@ -28,8 +28,9 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
       axiosPrivate
         .patch(`/order-item/${orderItem.id}/`, updateData)
         .then((res) => {
+          console.log(res.data);
           setOrder(res.data);
-          setOpen(false);
+          setOpenSBar(true);
         })
         .catch((err) => {
           console.log(err);
@@ -78,88 +79,7 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
             </div>
           </div>
         </div>
-        {/* <div className="flex w-full flex-col mt-5 pl-5">
-          <div className="flex items-start gap-8">
-            <div className="justify-center flex flex-col">
-              <div className="text-zinc-900 text-sm leading-5">Giá đơn vị</div>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                sx={{
-                  marginTop: "5px",
-                  width: "100px",
-                  boxSizing: "border-box",
-                }}
-                value={price === null ? orderItem.price : price}
-                onChange={(e) => {
-                  setPrice(e.target.value);
-                }}
-                error={errMsg.price ? true : false}
-                helperText={errMsg.price ? errMsg.price[0] : ""}
-              />
-            </div>
-            <div className="flex flex-col gap-1 items-start pt-8">
-              <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid">
-                <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                  <IconButton
-                    color="primary"
-                    onClick={() => setQuantity(quantity - 1)}
-                  >
-                    <RiSubtractFill
-                      style={{
-                        color: "#666666",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </IconButton>
-                </div>
-                <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
-                  {quantity === null ? orderItem.quantity : quantity}
-                </div>
-                <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                  <IconButton
-                    color="primary"
-                    onClick={() => setQuantity(quantity + 1)}
-                  >
-                    <IoIosAdd
-                      style={{
-                        color: "#666666",
-                        width: "15px",
-                        height: "15px",
-                      }}
-                    />
-                  </IconButton>
-                </div>
-              </div>
-              {quantity <= 0 ? (
-                <div className="text-xs text-red-600">
-                  Số lượng phải lớn hơn 0
-                </div>
-              ) : (
-                <div className="text-xs text-red-600"></div>
-              )}
-            </div>
-          </div>
-          <Button
-            variant="contained"
-            sx={{
-              marginTop: "50px",
-              marginX: "auto",
-              textTransform: "none",
-              borderRadius: "43px",
-              color: "#F6F5FB",
-              bgcolor: "#3F41A6",
-              width: "130px",
-              "&:hover": {
-                bgcolor: "#3F41A6B2",
-              },
-            }}
-            onClick={updateOrderItem}
-          >
-            Lưu thay đổi
-          </Button>
-        </div> */}
+
         <div className="flex gap-5 justify-between mt-2.5 text-base leading-6 text-zinc-900 px-6">
           <div className="flex-auto my-auto">Giá đơn vị :</div>
           <TextField
@@ -174,10 +94,10 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
               width: "100px",
               boxSizing: "border-box",
             }}
-            value={price === null ? orderItem.price : price}
             onChange={(e) => {
               setPrice(e.target.value);
             }}
+            defaultValue={orderItem?.price}
             error={errMsg.price ? true : false}
             helperText={errMsg.price ? errMsg.price[0] : ""}
           />

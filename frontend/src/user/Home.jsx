@@ -33,7 +33,7 @@ function Home() {
       .get("/item/?limit=4&offset=0")
       .then((res) => setItemList(res.data.results))
       .catch((err) => console.log(err));
-  });
+  }, []);
 
   // Add to cart
   const handleAddToCart = (id) => {

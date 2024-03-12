@@ -79,7 +79,9 @@ function Booking() {
         let updateOrderLst = {
           studio: itemLst.studio.id,
           order_item: order_item,
+          note: itemLst.note,
         };
+
         axiosPrivate
           .post("/order/", updateOrderLst)
           .then((res) => {
@@ -90,7 +92,7 @@ function Booking() {
           });
       }
 
-      navigate("/orders");
+      navigate("/orders", { replace: true });
     } catch (error) {
       console.log(error);
     }

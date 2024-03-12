@@ -1,6 +1,6 @@
 // Validate fixed price
 export const validFixedPrice = (price) => {
-  if (!price || isNaN(price) || price == 0 || price == "") return false;
+  if (!price || isNaN(price) || price <= 0 || price == "") return false;
   return true;
 };
 

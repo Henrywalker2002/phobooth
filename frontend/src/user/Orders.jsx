@@ -16,6 +16,7 @@ import {
   Breadcrumbs,
   Link,
   Pagination,
+  Snackbar,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
@@ -23,13 +24,22 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { daysleftCount, isBefore } from "../util/Compare";
+import dayjs from "dayjs";
+import CancelInOrders from "./CancelInOrders";
 
 function Orders() {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
+  // dialog + Snackbar
+  const [openCancel, setOpenCancel] = useState(false);
+  const [openCancelSBar, setOpenCancelSBar] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
   // Collapsible table
+  const [cancelId, setCancelId] = useState();
   const [pageCount, setPageCount] = useState(1);
   const [orders, setOrders] = useState([]);
+
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -39,7 +49,7 @@ function Orders() {
     axiosPrivate
       .get("/order/?limit=5&offset=0")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
         setOrders(res?.data.results);
@@ -50,12 +60,11 @@ function Orders() {
   }, []);
 
   const getOrdersForPage = (e, page) => {
-    console.log(page);
     let offset = 5 * (page - 1);
     axiosPrivate
       .get(`/order/?limit=5&offset=${offset}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
         setOrders(res.data.results);
@@ -63,6 +72,19 @@ function Orders() {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const handleOpenCancel = (id) => {
+    setCancelId(id);
+    setOpenCancel(true);
+  };
+
+  // Close Cancel Order SnackBar Success/Err
+  const handleCloseCancelSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenStatusSbar(false);
   };
 
   function Row(props) {
@@ -81,6 +103,22 @@ function Orders() {
       }
       return "Chưa cập nhật";
     }
+
+    const getRecentRequest = () => {
+      if (row.payment.length > 0) {
+        let pendingReqs = row.payment.filter((req) => req.status === "PENDING");
+        if (pendingReqs.length > 0) {
+          let recentReq = pendingReqs[0];
+          pendingReqs.forEach((req) => {
+            if (isBefore(req.expiration_date, recentReq.expiration_date))
+              recentReq = req;
+          });
+          return recentReq;
+        } else return undefined;
+      } else return undefined;
+    };
+
+    let recentRequest = getRecentRequest();
 
     return (
       <React.Fragment>
@@ -124,23 +162,47 @@ function Orders() {
               : "Chưa cập nhật"}
           </TableCell>
           <TableCell align="left">
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "43px",
-                borderColor: "#3F41A6",
-                color: "#3F41A6",
-                padding: "0 5px",
-                textTransform: "none",
-                width: "100px",
-                "&:hover": {
-                  bgcolor: "#F6F5FB",
+            {row.status === "ORDERED" || row.status === "IN_PROCESS" ? (
+              <Button
+                variant="outlined"
+                onClick={(e) => {
+                  e.stopImmediatePropagation();
+                  handleOpenCancel(row.id);
+                }}
+                sx={{
+                  borderRadius: "43px",
                   borderColor: "#3F41A6",
-                },
-              }}
-            >
-              Hủy đơn
-            </Button>
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hủy đơn
+              </Button>
+            ) : row.status === "CANCELED" ? null : (
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "43px",
+                  borderColor: "#3F41A6",
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hoàn thành
+              </Button>
+            )}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -207,19 +269,21 @@ function Orders() {
                           {getPrice(detailedRow)}
                         </TableCell>
                         <TableCell align="left">
-                          <Button
-                            variant="text"
-                            sx={{
-                              color: "#3F41A6",
-                              textTransform: "none",
-                              "&:hover": {
-                                bgcolor: "#F6F5FB",
-                                borderRadius: "43px",
-                              },
-                            }}
-                          >
-                            Đánh giá
-                          </Button>
+                          {row.status === "COMPLETED" ? (
+                            <Button
+                              variant="text"
+                              sx={{
+                                color: "#3F41A6",
+                                textTransform: "none",
+                                "&:hover": {
+                                  bgcolor: "#F6F5FB",
+                                  borderRadius: "43px",
+                                },
+                              }}
+                            >
+                              Đánh giá
+                            </Button>
+                          ) : null}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -229,47 +293,66 @@ function Orders() {
                 {/* yêu cầu thanh toán */}
                 <div className="flex flex-col gap-3 my-5">
                   <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
-                    Yêu cầu thanh toán mới nhất
+                    Yêu cầu thanh toán gần nhất
                   </div>
-                  <div className="max-w-[430px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-5 p-2.5 rounded-lg border-solid">
-                    <div className=" flex grow basis-[0%] flex-col pr-2 py-px">
-                      <div className="text-[#808080] text-base font-medium leading-6">
-                        Thanh toán lần 3
-                      </div>
-                      <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                        200,000
-                      </div>
-                      <div className="flex justify-start gap-4 mt-2.5">
-                        <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
-                          Thời hạn :
-                        </div>
-                        <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                          30-10-2023
-                        </div>
-                        <div className="w-[90px] max-h-5 text-red-500 text-xs leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 px-3">
-                          Còn 3 ngày
-                        </div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="contained"
+                  {recentRequest ? (
+                    <Paper
                       sx={{
-                        justifyContent: "center",
-                        alignSelf: "center",
-                        textTransform: "none",
-                        borderRadius: "43px",
-                        color: "#F6F5FB",
-                        bgcolor: "#3F41A6",
-                        width: "110px",
-                        height: "28px",
-                        "&:hover": {
-                          bgcolor: "#3F41A6B2",
-                        },
+                        width: "430px",
+                        border: "0.5px solid #d6d3d1",
+                        alignItems: "stretch",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "30px",
+                        borderRadius: "8px",
+                        padding: "15px",
                       }}
                     >
-                      Thanh toán
-                    </Button>
-                  </div>
+                      <div className="items-stretch flex grow  flex-col py-px gap-2.5">
+                        <div className="text-zinc-500 text-base font-medium leading-6">
+                          Thanh toán lần {recentRequest.no}
+                        </div>
+                        <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
+                          {formatter.format(recentRequest.amount)}
+                        </div>
+                        <div className="flex  gap-3 ">
+                          <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
+                            Thời hạn :
+                          </div>
+                          <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
+                            {dayjs(recentRequest.expiration_date).format(
+                              "DD-MM-YYYY"
+                            )}
+                          </div>
+                          <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
+                            Còn {daysleftCount(recentRequest.expiration_date)}{" "}
+                            ngày
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          justifyContent: "center",
+                          alignSelf: "center",
+                          fontSize: "13px",
+                          textTransform: "none",
+                          borderRadius: "43px",
+                          color: "#F6F5FB",
+                          bgcolor: "#3F41A6",
+                          width: "102px",
+                          height: "32px",
+                          "&:hover": {
+                            bgcolor: "#3F41A6B2",
+                          },
+                        }}
+                      >
+                        Thanh toán
+                      </Button>
+                    </Paper>
+                  ) : (
+                    "Chưa có yêu cầu cần thanh toán!"
+                  )}
                 </div>
               </Box>
             </Collapse>
@@ -379,6 +462,25 @@ function Orders() {
               bgcolor: "#E2E5FF",
             },
         }}
+      />
+
+      {/* Cancel Order */}
+      <CancelInOrders
+        open={openCancel}
+        setOpen={setOpenCancel}
+        id={cancelId}
+        setOrders={setOrders}
+        setStatusMsg={setStatusMsg}
+        setOpenCancelSBar={setOpenCancelSBar}
+      />
+
+      {/* Cancel successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openCancelSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseCancelSBar}
+        message={statusMsg}
       />
     </div>
   );
