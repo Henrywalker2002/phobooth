@@ -20,6 +20,7 @@ import PersistLogin from "./context/PersistLogin";
 import AddItem from "./studio/item/Add/AddItem";
 import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
+import Profile from "./user/Profile";
 
 function App() {
   const theme = createTheme({
@@ -76,6 +77,7 @@ function App() {
             </Route>
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
+            <Route path="/profile" element={<Profile />} />
 
             {/* Studio */}
             {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
