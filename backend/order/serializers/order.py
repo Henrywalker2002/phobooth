@@ -9,11 +9,13 @@ from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrder
 from payment.serializers import ReadPaymentSerializer
 from payment.models import PaymentStatusChoices
 from order_history.serializers import OrderHistorySummarySerializer
+from address.serializers import AddressSerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     order_item = CreateOrderItemSerializer(many=True)
     studio = serializers.PrimaryKeyRelatedField(queryset=Studio.objects.all(), required=False)
+    address = AddressSerializer(required = False,)
     
     class Meta:
         model = Order
@@ -24,6 +26,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             "note",
             "order_item",
             "studio",
+            "address",
         ]
     
     def validate_order_item(self, value):
@@ -44,6 +47,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     customer = UserSummarySerializer(read_only=True)
     payment = ReadPaymentSerializer(many=True, read_only=True)
     order_history = OrderHistorySummarySerializer(many=True, read_only=True)
+    address = AddressSerializer(read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -62,6 +66,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "studio",
             "payment",
             "order_history",
+            "address"
         ]
 
 class OrderSummarySerializer(serializers.ModelSerializer):
@@ -90,6 +95,8 @@ class OrderSummarySerializer(serializers.ModelSerializer):
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):
+    
+    address = AddressSerializer(required = False, allow_null = True)
     
     def validate(self, attrs):
         instance = self.instance
@@ -129,5 +136,5 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Order
-        fields = ["status"]
+        fields = ["status", "address"]
         

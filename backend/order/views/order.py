@@ -11,6 +11,7 @@ from order.permission import OrderPermission
 from base.exceptions import MethodNotAllowed
 import datetime
 from notification.execute import NotificationService
+from address.models import Address
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -32,13 +33,30 @@ class OrderViewSet(BaseModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order_item = serializer.validated_data.pop('order_item')
+        address = serializer.validated_data.pop('address')
         studio = order_item[0]['item'].studio
         # create order
         serializer.validated_data['studio'] = studio
         self.perform_create(serializer)
-
-        # create order item
         order = serializer.instance
+        # create address 
+        if address:
+            address = Address(**address)
+            if address != request.user.address:
+                address.save()
+                order.address = address
+                order.save()        
+                if not request.user.address:
+                    user = request.user 
+                    user.address = address
+                    user.save()
+        else :
+            if request.user.address:
+                order.address = request.user.address
+                order.save()
+        
+        # create order item
+
         OrderItem.objects.bulk_create(
             [OrderItem(order=order, **item) for item in order_item])
 
@@ -64,8 +82,24 @@ class OrderViewSet(BaseModelViewSet):
                 NotificationService.user_cancel_order(instance)
             else :
                 NotificationService.studio_deny_order(instance)
-            
+        
+        address = serializer.validated_data.pop('address', None)
         self.perform_update(serializer)    
+        order = serializer.instance
+        if address:
+            address = Address(**address)
+            if address != request.user.address:
+                address.save()
+                order.address = address
+                order.save()        
+                if not request.user.address:
+                    user = request.user 
+                    user.address = address
+                    user.save()
+        else :
+            if request.user.address:
+                order.address = request.user.address
+                order.save()
         
         serializer_return = self.get_serializer(instance = instance, is_get = True)
         return Response(data = serializer_return.data)
