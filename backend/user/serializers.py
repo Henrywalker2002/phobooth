@@ -49,10 +49,11 @@ class UserSummarySerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     role = RoleDetailSerializer(many=True, read_only=True)
     studio = StudioSummarySerializer(read_only=True)
+    address = AddressSerializer(read_only=True)
     
     class Meta:
         model = User
-        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio"]
+        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio", "date_of_birth", "phone", "address"]
 
 
 class UserSignUpSerializer(serializers.ModelSerializer):
