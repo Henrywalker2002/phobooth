@@ -9,7 +9,7 @@ from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrder
 from payment.serializers import ReadPaymentSerializer
 from payment.models import PaymentStatusChoices
 from order_history.serializers import OrderHistorySummarySerializer
-from address.serializers import AddressSerializer
+from address.serializers import AddressSerializer, ReadAddressSerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -47,7 +47,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     customer = UserSummarySerializer(read_only=True)
     payment = ReadPaymentSerializer(many=True, read_only=True)
     order_history = OrderHistorySummarySerializer(many=True, read_only=True)
-    address = AddressSerializer(read_only=True)
+    address = ReadAddressSerializer(read_only=True)
     class Meta:
         model = Order
         fields = [
