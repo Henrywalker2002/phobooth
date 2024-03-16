@@ -58,4 +58,35 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ['id', 'street', 'ward', 'district', 'province']
+
+
+class ReadWardSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Ward
+        fields = ['id', 'name', 'code_name', 'type', 'name_with_type']
+
+
+class ReadDistrictSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = District
+        fields = ['id', 'name', 'code_name', 'type', 'name_with_type']
+
+class ReadProvinceSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Province
+        fields = ['code', 'name', 'code_name', 'type', 'name_with_type']
+        
+
+class ReadAddressSerializer(serializers.ModelSerializer):
+    
+    ward = ReadWardSerializer()
+    district = ReadDistrictSerializer()
+    province = ReadProvinceSerializer()
+    
+    class Meta:
+        model = Address
+        fields = ['id', 'street', 'ward', 'district', 'province']
         
