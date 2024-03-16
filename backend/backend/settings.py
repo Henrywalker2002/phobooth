@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'notification',
     'complain',
     'complain_forum',
+    'versatileimagefield',
+    'demo',
 ]
 
 MIDDLEWARE = [
@@ -202,3 +204,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'demo_image': [
+        ('full_size', 'url'),
+        ('thumbnail', 'thumbnail__400x400'),
+        ('medium_square_crop', 'crop__400x400'),
+        ('small_square_crop', 'crop__200x200')
+    ]
+}
