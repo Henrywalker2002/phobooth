@@ -3,7 +3,7 @@ from user.models import User
 from role.serializers import RoleDetailSerializer
 from studio.serializers import StudioSummarySerializer
 import re
-from address.serializers import AddressSerializer
+from address.serializers import AddressSerializer, ReadAddressSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     role = RoleDetailSerializer(many=True, read_only=True)
     studio = StudioSummarySerializer(read_only=True)
-    address = AddressSerializer(read_only=True)
+    address = ReadAddressSerializer(read_only=True)
     
     class Meta:
         model = User
