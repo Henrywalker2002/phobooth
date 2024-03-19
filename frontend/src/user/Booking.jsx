@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../components/Navbar";
 import {
   Table,
@@ -15,18 +15,27 @@ import {
   Breadcrumbs,
   Link,
   Typography,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import CartContext from "../context/CartProvider";
 import { useNavigate } from "react-router-dom";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 import ClearIcon from "@mui/icons-material/Clear";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useCookies } from "react-cookie";
+import EditAddress from "./EditAddress";
 
 function Booking() {
   const navigate = useNavigate();
+  const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
   const { itemLists, setItemLists } = useContext(CartContext);
+  const [newAddress, setNewAddress] = useState({});
+  const [openEditAddr, setOpenEditAddr] = useState(false);
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -80,11 +89,11 @@ function Booking() {
           order_item: order_item,
           note: itemLst.note,
           address: {
-            id: 21,
-            street: "name2",
-            ward: 29542,
-            district: 855,
-            province: 86,
+            id: cookies.userInfo.address.id,
+            street: cookies.userInfo.address.street,
+            ward: cookies.userInfo.address.ward.code,
+            district: cookies.userInfo.address.district.code,
+            province: cookies.userInfo.address.province.code,
           },
         };
 
@@ -261,7 +270,7 @@ function Booking() {
           </Table>
 
           {/* More Info */}
-          <div className="self-center flex w-full max-w-6xl items-stretch justify-between gap-5 my-5">
+          <div className="self-center flex w-full max-w-6xl items-stretch  gap-28 my-5">
             <div className="ml-[50px] flex flex-col items-start">
               <div className="flex items-stretch justify-between gap-4">
                 <img
@@ -273,6 +282,20 @@ function Booking() {
                   {itemList.studio?.friendly_name}
                 </div>
               </div>
+
+              <TextField
+                id="outlined-basic"
+                label="Khuyến mãi"
+                variant="outlined"
+                placeholder="Nhập mã khuyến mãi"
+                sx={{
+                  borderColor: "#E6E6E6",
+                  fontSize: "10px",
+                  width: "450px",
+                  marginTop: "20px",
+                }}
+              />
+
               <TextField
                 id="outlined-multiline-static"
                 label="Lời nhắn"
@@ -289,14 +312,35 @@ function Booking() {
                 }}
               />
             </div>
-            <div className="max-w-[450px] mr-7 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
-              <TextField
-                id="outlined-basic"
-                label="Khuyến mãi"
-                variant="outlined"
-                placeholder="Nhập mã khuyến mãi"
-              />
-              <div className="justify-between bg-white flex mt-4">
+            <div className="max-w-[600px] mt-2 self-start flex flex-col items-stretch ">
+              <Alert
+                sx={{ bgcolor: "transparent", color: "#78716C", padding: "0" }}
+                icon={
+                  <LocationOnOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ color: "#3F41A6" }}
+                  />
+                }
+              >
+                <AlertTitle sx={{ color: "#18181B" }}>
+                  Địa chỉ nhận hàng
+                </AlertTitle>
+                <div className="flex items-start gap-2">
+                  <div className=" text-stone-500 text-base leading-6">
+                    {cookies.userInfo.address.street},{" "}
+                    {cookies.userInfo.address.ward.name_with_type},{" "}
+                    {cookies.userInfo.address.district.name_with_type},{" "}
+                    {cookies.userInfo.address.province.name_with_type}
+                  </div>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    // onClick={() => setOpenEditAddr(true)}
+                  >
+                    <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                  </IconButton>
+                </div>
+              </Alert>
+              <div className="ml-8 mt-5 gap-36 bg-white flex">
                 <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
                   Tổng giá tham khảo :
                 </div>
@@ -304,7 +348,7 @@ function Booking() {
                   {showTotalPrice(itemList.items)}
                 </div>
               </div>
-              <div className="text-stone-500 text-base leading-6 mt-2">
+              <div className="ml-8 w-[450px] text-stone-500 text-base leading-6 mt-3">
                 Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
                 Studio cập nhật và thông báo sau khi đặt dịch vụ.
               </div>
@@ -352,6 +396,13 @@ function Booking() {
           Đặt dịch vụ
         </Button>
       </div>
+
+      {/* Edit Address */}
+      <EditAddress
+        open={openEditAddr}
+        setOpen={setOpenEditAddr}
+        setNewAddress={setNewAddress}
+      />
     </div>
   );
 }
