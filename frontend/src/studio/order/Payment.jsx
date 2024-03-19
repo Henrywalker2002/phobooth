@@ -21,7 +21,7 @@ import DelRequest from "./DelRequest";
 import DeltailRequest from "./DeltailRequest";
 import { isBeforeToday } from "../../util/Compare";
 
-function Payment({ orderId }) {
+function Payment({ order, setOrder }) {
   // global
   const axiosPrivate = useAxiosPrivate();
   // dialog
@@ -32,7 +32,6 @@ function Payment({ orderId }) {
   const [openDetailReq, setOpenDetailReq] = useState(false);
 
   // local
-  const [order, setOrder] = useState({});
   const [requestList, setRequestList] = useState([]);
   const [deltailReq, setDetailReq] = useState({});
   const [editReq, setEditReq] = useState({});
@@ -44,16 +43,16 @@ function Payment({ orderId }) {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/order/${orderId}`)
+      .get(`/order/${order.id}`)
       .then((res) => {
         console.log(res.data);
         setOrder(res.data);
         setRequestList(res.data.payment);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
-  }, [openSBar]);
+  }, [order.id, openSBar]);
 
   const handleOpenDeltailReq = (reqId) => {
     axiosPrivate
@@ -150,6 +149,8 @@ function Payment({ orderId }) {
           <Button
             disabled={
               order.status === "CANCELED" ||
+              order.status === "ORDERED" ||
+              order.status === "COMPLETED" ||
               order.total_price === order.amount_created
                 ? true
                 : false
@@ -231,13 +232,15 @@ function Payment({ orderId }) {
                   </div>
                 </TableCell>
                 <TableCell align="left" sx={{ width: "170px" }}>
-                  <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 px-2 py-1">
-                    {row.status === "PENDING"
-                      ? "Chưa thanh toán"
-                      : row.status === "PAID"
-                      ? "Đã thanh toán"
-                      : ""}
-                  </div>
+                  {row.status === "PENDING" ? (
+                    <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 px-2 py-1">
+                      Chưa thanh toán
+                    </div>
+                  ) : row.status === "PAID" ? (
+                    <div className="w-fit text-green-600 text-xs leading-5 whitespace-nowrap rounded bg-green-600 bg-opacity-20 px-2 py-1">
+                      Đã thanh toán
+                    </div>
+                  ) : null}
                 </TableCell>
 
                 <TableCell align="left" sx={{ width: "130px" }}>
@@ -288,9 +291,11 @@ function Payment({ orderId }) {
       <CreateRequest
         open={openCreateReq}
         setOpen={setOpenCreateReq}
-        orderId={orderId}
+        orderId={order.id}
         setOpenSbar={setOpenSbar}
-        total_count={requestList[requestList.length - 1]?.no}
+        total_count={
+          requestList.length > 0 ? requestList[requestList.length - 1]?.no : 0
+        }
         total_price={order.total_price}
         amount_created={order.amount_created}
       />

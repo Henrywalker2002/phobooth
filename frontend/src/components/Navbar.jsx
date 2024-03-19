@@ -365,7 +365,7 @@ function Navbar() {
               }}
             >
               <MenuItem
-                onClick={handleClose}
+                onClick={() => navigate("/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",

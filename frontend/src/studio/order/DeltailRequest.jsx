@@ -10,11 +10,11 @@ function DeltailRequest({ open, setOpen, req }) {
   });
   return (
     <Dialog
-      sx={{ minWidth: "500px" }}
+      sx={{ minWidth: "400px" }}
       open={open}
       onClose={() => setOpen(false)}
     >
-      <div className="w-[500px] shadow-sm bg-white flex items-center justify-between gap-16 px-4 py-2 rounded-lg ">
+      <div className="w-[450px] shadow-sm bg-white flex items-center justify-between gap-16 px-4 py-2 rounded-lg ">
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
           Yêu cầu thanh toán
         </div>
@@ -75,7 +75,7 @@ function DeltailRequest({ open, setOpen, req }) {
               Chưa thanh toán
             </div>
           ) : req?.status === "PAID" ? (
-            <div className="w-fit text-green-600 text-xs leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 px-2 py-1">
+            <div className="w-fit text-green-600 text-xs leading-5 whitespace-nowrap rounded bg-green-600 bg-opacity-20 px-2 py-1">
               Đã thanh toán
             </div>
           ) : null}

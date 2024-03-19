@@ -39,3 +39,48 @@ export const translateErrStatusOrder = (err) => {
     return "Bạn không thể hủy đơn hàng này!";
   return err;
 };
+
+export const translateErrUserInfo = (err) => {
+  if (
+    err.username &&
+    err.username[0] == "user with this username already exists."
+  ) {
+    err.code_name[0] = "Tên này đã tồn tại.";
+  }
+
+  if (err.phone && err.phone[0] == "Invalid phone number")
+    err.phone[0] = "Số điện thoại không hợp lệ!";
+
+  if (
+    err.password &&
+    err.password[0] == "Password must be at least 8 characters long"
+  )
+    err.password[0] = "Mật khẩu phải có ít nhất 8 kí tự!";
+
+  return err;
+};
+
+export const translateErrSignUp = (err) => {
+  if (
+    err.username &&
+    err.username[0] == "user with this username already exists."
+  ) {
+    err.username[0] = "Tên này đã tồn tại.";
+  }
+
+  if (
+    err.password &&
+    err.password[0] == "Password must be at least 8 characters long"
+  ) {
+    err.password[0] = "Mật khẩu phải có ít nhất 8 kí tự.";
+  }
+
+  if (err.email) {
+    if (err.email[0] == "user with this email already exists.") {
+      err.email[0] = "Người dùng có email này đã tồn tại.";
+    } else if (err.email[0] == "Enter a valid email address.") {
+      err.email[0] = "Email chưa đúng định dạng.";
+    }
+  }
+  return err;
+};

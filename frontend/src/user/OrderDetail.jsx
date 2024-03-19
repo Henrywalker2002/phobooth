@@ -38,6 +38,8 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import dayjs from "dayjs";
 import { daysleftCount } from "../util/Compare";
 import CancelOrder from "./CancelOrder";
+import ReqPaying from "./ReqPaying";
+import DeltailRequest from "../studio/order/DeltailRequest";
 
 function OrderDetail() {
   // global
@@ -47,12 +49,16 @@ function OrderDetail() {
   // dialog + Snackbar
   const [openCancel, setOpenCancel] = useState(false);
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
+  const [openDetailReq, setOpenDetailReq] = useState(false);
+  const [openPayingReq, setOpenPayingReq] = useState(false);
   // local
+  const [reload, setReload] = useState(false);
   const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
   const [requestList, setRequestList] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [statusMsg, setStatusMsg] = useState("");
+  const [selectedReq, setSelectedReq] = useState({});
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -89,7 +95,7 @@ function OrderDetail() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [reload]);
 
   useEffect(() => {
     axiosPrivate
@@ -114,17 +120,6 @@ function OrderDetail() {
         let currCount = Math.ceil(res.data.count / 3);
         if (currCount !== pageCount) setPageCount(currCount);
         setRequestList(res.data.results);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const getPaymentUrl = (reqId) => {
-    axiosPrivate
-      .get(`/payment/${reqId}/payment-url/`)
-      .then((res) => {
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -421,14 +416,20 @@ function OrderDetail() {
                                     )}
                                   </div>
                                   <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                                    Còn {daysleftCount(req.expiration_date)}{" "}
-                                    ngày
+                                    {daysleftCount(req.expiration_date) > 0
+                                      ? `Còn ${daysleftCount(
+                                          req.expiration_date
+                                        )} ngày`
+                                      : "Quá hạn"}
                                   </div>
                                 </div>
                               </div>
                               <Button
                                 variant="contained"
-                                onClick={() => getPaymentUrl(req.id)}
+                                onClick={() => {
+                                  setSelectedReq(req);
+                                  setOpenPayingReq(true);
+                                }}
                                 sx={{
                                   justifyContent: "center",
                                   alignSelf: "center",
@@ -451,8 +452,13 @@ function OrderDetail() {
                         else if (req.status === "PAID")
                           return (
                             <Paper
+                              onClick={() => {
+                                setSelectedReq(req);
+                                setOpenDetailReq(true);
+                              }}
                               key={req.id}
                               sx={{
+                                width: "430px",
                                 border: "0.5px solid #d6d3d1",
                                 alignItems: "stretch",
                                 display: "flex",
@@ -460,6 +466,7 @@ function OrderDetail() {
                                 gap: "20px",
                                 borderRadius: "8px",
                                 padding: "10px",
+                                cursor: "pointer",
                               }}
                             >
                               <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
@@ -469,7 +476,7 @@ function OrderDetail() {
                                 <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
                                   {formatter.format(req.amount)}
                                 </div>
-                                <div className="flex items-stretch justify-between gap-2.5 mt-3">
+                                <div className="flex items-stretch gap-2.5 mt-3">
                                   <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
                                     Ngày thanh toán :
                                   </div>
@@ -769,6 +776,21 @@ function OrderDetail() {
           </Button>
         </div>
       </div>
+
+      {/* Paying */}
+      <ReqPaying
+        open={openPayingReq}
+        setOpen={setOpenPayingReq}
+        req={selectedReq}
+        setReload={setReload}
+      />
+
+      {/* Detail Request */}
+      <DeltailRequest
+        open={openDetailReq}
+        setOpen={setOpenDetailReq}
+        req={selectedReq}
+      />
 
       {/* Cancel Order */}
       <CancelOrder

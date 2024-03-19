@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-=$wu+id&np4afm-k61gbod=6^&m2ae)(&b20&lxts)w9ua7)!e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -57,6 +57,14 @@ INSTALLED_APPS = [
     'order',
     'address',
     'payment',
+    'studio_document',
+    'order_history',
+    'media',
+    'notification',
+    'complain',
+    'complain_forum',
+    'versatileimagefield',
+    'demo',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +86,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -187,3 +195,21 @@ VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  # get 
 VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
 VNPAY_TMN_CODE = os.getenv("VNPAY_TMN_CODE") # Website ID in VNPAY System, get from config
 VNPAY_HASH_SECRET_KEY = os.getenv("VNPAY_HASH_SECRET_KEY")  # Secret key for create checksum,get from config
+
+#mail config
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'demo_image': [
+        ('full_size', 'url'),
+        ('thumbnail', 'thumbnail__400x400'),
+        ('medium_square_crop', 'crop__400x400'),
+        ('small_square_crop', 'crop__200x200')
+    ]
+}

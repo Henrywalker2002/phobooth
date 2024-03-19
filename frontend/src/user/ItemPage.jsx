@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
+  ButtonBase,
   Card,
   CardActionArea,
   CardContent,
@@ -65,35 +66,39 @@ function ItemPage({ itemList, handleAddToCart, setOpenErr401 }) {
                       Studio: {item?.studio?.friendly_name}
                     </div>
                   </div>
-                  <Button
-                    variant="contained"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (cookies?.userInfo?.username) handleAddToCart(item.id);
-                      else setOpenErr401(true);
-                    }}
-                    sx={{
-                      alignSelf: "center",
-                      borderRadius: "50%",
-                      color: "#F6F5FB",
-                      bgcolor: "#3F41A6",
-                      width: "30px",
-                      height: "30px",
-                      minWidth: 0,
-                      padding: "0",
-                      // transform: "rotate(-90deg)",
-                      "&:hover": {
-                        bgcolor: "#3F41A6B2",
-                      },
-                    }}
-                  >
-                    <PiShoppingCartSimpleFill
-                      style={{
-                        width: "16px",
-                        height: "16px",
+                  <div>
+                    <Button
+                      variant="contained"
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        if (cookies?.userInfo?.username)
+                          handleAddToCart(item.id);
+                        else setOpenErr401(true);
                       }}
-                    />
-                  </Button>
+                      sx={{
+                        alignSelf: "center",
+                        borderRadius: "50%",
+                        color: "#F6F5FB",
+                        bgcolor: "#3F41A6",
+                        width: "30px",
+                        height: "30px",
+                        minWidth: 0,
+                        padding: "0",
+                        // transform: "rotate(-90deg)",
+                        "&:hover": {
+                          bgcolor: "#3F41A6B2",
+                        },
+                      }}
+                    >
+                      <PiShoppingCartSimpleFill
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                        }}
+                      />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </CardActionArea>

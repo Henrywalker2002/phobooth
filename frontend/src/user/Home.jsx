@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
   Button,
+  ButtonBase,
   Card,
   CardActionArea,
   CardContent,
@@ -110,7 +111,9 @@ function Home() {
               <div className="flex justify-between">
                 {itemList.map((item, index) => (
                   <Card sx={{ maxWidth: 345 }} key={index}>
-                    <CardActionArea>
+                    <CardActionArea
+                      onClick={() => navigate("/item/detail/" + item.id)}
+                    >
                       <CardMedia
                         component="div"
                         style={{
@@ -119,7 +122,6 @@ function Home() {
                           padding: "15px 15px 0 15px",
                         }}
                       >
-                        {/* Star + Img */}
                         <div className="flex-col relative overflow-hidden flex">
                           <img
                             loading="lazy"
@@ -152,31 +154,35 @@ function Home() {
                               Studio: {item?.studio?.friendly_name}
                             </div>
                           </div>
-                          <Button
-                            variant="contained"
-                            onClick={() => navigate(`/item/detail/${item.id}`)}
-                            sx={{
-                              alignSelf: "center",
-                              borderRadius: "50%",
-                              color: "#F6F5FB",
-                              bgcolor: "#3F41A6",
-                              width: "30px",
-                              height: "30px",
-                              minWidth: 0,
-                              padding: "0",
-                              // transform: "rotate(-90deg)",
-                              "&:hover": {
-                                bgcolor: "#3F41A6B2",
-                              },
-                            }}
-                          >
-                            <PiShoppingCartSimpleFill
-                              style={{
-                                width: "16px",
-                                height: "16px",
+                          <ButtonBase>
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                navigate(`/item/detail/${item.id}`)
+                              }
+                              sx={{
+                                alignSelf: "center",
+                                borderRadius: "50%",
+                                color: "#F6F5FB",
+                                bgcolor: "#3F41A6",
+                                width: "30px",
+                                height: "30px",
+                                minWidth: 0,
+                                padding: "0",
+
+                                "&:hover": {
+                                  bgcolor: "#3F41A6B2",
+                                },
                               }}
-                            />
-                          </Button>
+                            >
+                              <PiShoppingCartSimpleFill
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                }}
+                              />
+                            </Button>
+                          </ButtonBase>
                         </div>
                       </CardContent>
                     </CardActionArea>

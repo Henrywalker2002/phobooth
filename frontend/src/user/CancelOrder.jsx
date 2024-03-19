@@ -27,6 +27,7 @@ function CancelOrder({
       .then((res) => {
         console.log(res.data);
         setOrder(res.data);
+        setStatusMsg("Hủy đơn hàng thành công!");
       })
       .then(() => {
         setOpen(false);

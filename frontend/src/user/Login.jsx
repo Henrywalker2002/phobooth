@@ -53,6 +53,7 @@ function Login() {
         "userInfo",
         {
           ...response?.data,
+          password: pwd,
         },
         { path: "/" }
       );

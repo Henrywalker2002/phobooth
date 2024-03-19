@@ -42,7 +42,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
           : Math.floor(res.data.count / 6) > 3
           ? 3
           : Math.floor(res.data.count / 6);
-      console.log(count, activeStep);
+      // console.log(count, activeStep);
       setCountStep(count);
 
       setItemList(res.data);

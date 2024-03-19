@@ -12,6 +12,7 @@ import { Button, Checkbox, FormHelperText, TextField } from "@mui/material";
 import { FaArrowLeft } from "react-icons/fa6";
 import axios from "../api/axios";
 import { useCookies } from "react-cookie";
+import { translateErrSignUp } from "../util/Translate";
 
 function Signup() {
   const userRef = useRef();
@@ -48,6 +49,7 @@ function Signup() {
         "userInfo",
         {
           ...response?.data,
+          password: pwd,
         },
         { path: "/" }
       );
@@ -59,7 +61,8 @@ function Signup() {
       navigate(from, { replace: true });
     } catch (err) {
       console.log(err);
-      setErrMsg(err.response.data);
+      let newErr = translateErrSignUp(err.response.data);
+      setErrMsg(newErr);
     }
   };
   // show/hide pwd
@@ -180,6 +183,8 @@ function Signup() {
                 inputRef={userRef}
                 onChange={(e) => setFullName(e.target.value)}
                 value={fullname}
+                error={errMsg.full_name ? true : false}
+                helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
               />
 
               <TextField
@@ -189,7 +194,7 @@ function Signup() {
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
                 error={errMsg.username ? true : false}
-                helperText={errMsg.username ? "Tên người dùng đã tồn tại" : ""}
+                helperText={errMsg.username ? errMsg.username[0] : ""}
               />
 
               <FormControl
@@ -210,7 +215,7 @@ function Signup() {
                     display: errMsg.email ? "block" : "none",
                   }}
                 >
-                  Email này đã được đăng kí
+                  {errMsg.email ? errMsg.email[0] : ""}
                 </FormHelperText>
               </FormControl>
 

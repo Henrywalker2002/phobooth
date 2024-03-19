@@ -77,10 +77,18 @@ function Booking() {
           return { item: item.item.id, quantity: item.number };
         });
         let updateOrderLst = {
-          studio: itemLst.studio.id,
           order_item: order_item,
           note: itemLst.note,
+          address: {
+            id: 21,
+            street: "name2",
+            ward: 29542,
+            district: 855,
+            province: 86,
+          },
         };
+
+        console.log(updateOrderLst);
 
         axiosPrivate
           .post("/order/", updateOrderLst)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from address.models import Address
 
 
 class User(AbstractBaseUser):
@@ -11,13 +12,14 @@ class User(AbstractBaseUser):
     date_of_birth = models.DateField(null=True, blank=True)
     password = models.CharField(max_length=128, null=False)
     full_name = models.CharField(max_length=128, null=False)
+    address = models.ForeignKey(to=Address, on_delete=models.SET_NULL, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     role = models.ManyToManyField(to="role.Role")
     avatar = models.ImageField(upload_to="avatars/", null=True)
     google_id = models.IntegerField(null=True)
     facebook_id = models.IntegerField(null=True)
     studio = models.OneToOneField(
-        to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None
+        to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None, related_name="owner"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,3 +31,6 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.username
+    
+    def __eq__(self, other):
+        return self.id == other.id

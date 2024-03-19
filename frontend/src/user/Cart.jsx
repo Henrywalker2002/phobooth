@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Pagination,
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
@@ -189,10 +188,10 @@ function Cart() {
       {/* Tables */}
       <div className="flex flex-col gap-5 items-center">
         {items?.length > 0 ? (
-          items.map((lst) => (
+          items.map((lst, index) => (
             <TableContainer
               component={Paper}
-              key={lst.studio.id}
+              key={index}
               sx={{
                 width: "1200px",
                 margin: "20px auto",

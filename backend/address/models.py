@@ -43,6 +43,14 @@ class Address(models.Model):
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     
+    def __eq__(self, other):
+        if not isinstance(other, Address):
+            return False
+        return self.street == other.street and self.ward == other.ward \
+            and self.district == other.district and self.province == other.province
+    
+    def __ne__(self, other):
+        return not self.__eq__(other)
     
     def __str__(self):
         return f"{self.street}, {self.ward.name_with_type}, {self.district.name_with_type}, {self.province.name_with_type}"

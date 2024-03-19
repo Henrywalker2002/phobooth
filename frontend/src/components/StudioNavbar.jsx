@@ -193,7 +193,7 @@ function StudioNavbar() {
               }}
             >
               <MenuItem
-                onClick={handleClose}
+                onClick={() => navigate("/studio/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",

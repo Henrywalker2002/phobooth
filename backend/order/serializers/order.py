@@ -8,11 +8,14 @@ from user.serializers import UserSummarySerializer
 from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrderPaidException, UpdateCompletedOrderOrderItemException
 from payment.serializers import ReadPaymentSerializer
 from payment.models import PaymentStatusChoices
+from order_history.serializers import OrderHistorySummarySerializer
+from address.serializers import AddressSerializer, ReadAddressSerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     order_item = CreateOrderItemSerializer(many=True)
     studio = serializers.PrimaryKeyRelatedField(queryset=Studio.objects.all(), required=False)
+    address = AddressSerializer(required = False,)
     
     class Meta:
         model = Order
@@ -23,6 +26,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             "note",
             "order_item",
             "studio",
+            "address",
         ]
     
     def validate_order_item(self, value):
@@ -42,6 +46,8 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     studio = StudioSummarySerializer(read_only=True)
     customer = UserSummarySerializer(read_only=True)
     payment = ReadPaymentSerializer(many=True, read_only=True)
+    order_history = OrderHistorySummarySerializer(many=True, read_only=True)
+    address = ReadAddressSerializer(read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -59,9 +65,38 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "order_item",
             "studio",
             "payment",
+            "order_history",
+            "address"
+        ]
+
+class OrderSummarySerializer(serializers.ModelSerializer):
+    order_item = ReadOrderItemSerializer(many=True, read_only=True)
+    studio = StudioSummarySerializer(read_only=True)
+    customer = UserSummarySerializer(read_only=True)
+    payment = ReadPaymentSerializer(many = True, read_only=True)
+    
+    class Meta:
+        model = Order
+        fields = [            
+            "id",
+            "created_at",
+            "modified_at",
+            "total_price",
+            "discount_price",
+            "amount_paid",
+            "amount_created",
+            "finish_date",
+            "customer",
+            "status",
+            "note",
+            "order_item",
+            "studio",
+            "payment",
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):
+    
+    address = AddressSerializer(required = False, allow_null = True)
     
     def validate(self, attrs):
         instance = self.instance
@@ -101,5 +136,5 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Order
-        fields = ["status"]
+        fields = ["status", "address"]
         

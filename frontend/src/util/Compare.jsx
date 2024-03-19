@@ -26,7 +26,7 @@ export const daysleftCount = (date) => {
   const today = new Date().toISOString().slice(0, 10);
   const secondDate = new Date(today);
 
-  return Math.round(Math.abs((firstDate - secondDate) / oneDay));
+  return Math.round((firstDate - secondDate) / oneDay);
 };
 
 // Compare with today

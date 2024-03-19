@@ -274,33 +274,6 @@ function AddProduct({ categories, setOpenSBar }) {
       // product info into formdata
       Object.entries(newProduct).forEach(([key, value]) => {
         if (key == "option") {
-          // Object.entries(newProduct.option).forEach(([key, value]) => {
-          //   if (key == "option_names") {
-          //     for (const opt of value) {
-          //       formData.append(`option.${key}`, opt);
-          //     }
-          //   } else {
-          //     for (const varKey in value) {
-          //       Object.entries(value[varKey]).forEach(
-          //         ([childKey, childValue]) => {
-          //           if (childKey == "option_values") {
-          //             for (const valKey in childValue) {
-          //               formData.append(
-          //                 `option.variation[${varKey}].${childKey}[${valKey}]`,
-          //                 childValue[valKey]
-          //               );
-          //             }
-          //           } else {
-          //             formData.append(
-          //               `option.variation[${varKey}].${childKey}`,
-          //               childValue
-          //             );
-          //           }
-          //         }
-          //       );
-          //     }
-          //   }
-          // });
           formData.append(key, JSON.stringify(value));
         } else {
           formData.append(key, value);

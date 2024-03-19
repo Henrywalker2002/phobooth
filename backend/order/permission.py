@@ -8,12 +8,10 @@ class OrderPermission(permissions.BasePermission):
         if view.action == "create":
             return is_customer
         if view.action in ["update", "partial_update"]:
-            return is_studio
+            return is_studio or is_customer
         return is_customer or is_studio
     
     def has_object_permission(self, request, view, obj):
-        if view.action in ["update", "partial_update"]:
-            return obj.studio == request.user.studio
         return obj.customer == request.user or obj.studio == request.user.studio
 
 

@@ -48,7 +48,7 @@ function OrderDetail(props) {
   const [openDelItem, setOpenDelItem] = useState(false);
   // Snackbar
   const [openStatusSBar, setOpenStatusSbar] = useState(false);
-  const [openSBar, setOpenSbar] = useState(false);
+
   const [statusMsg, setStatusMsg] = useState(false);
   // local
   const [order, setOrder] = useState({});
@@ -100,8 +100,10 @@ function OrderDetail(props) {
         status: newStatus,
       })
       .then((res) => {
+        console.log(res.data);
         handleOpenStatusSBar("Cập nhật trạng thái thành công !");
         setStatus(res.data.status);
+        setOrder(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -111,14 +113,6 @@ function OrderDetail(props) {
           handleOpenStatusSBar(err.response.data.detail);
         }
       });
-  };
-
-  // Close Status SnackBar Success/Err
-  const handleCloseSBar = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSbar(false);
   };
 
   // Edit Order Item Dialog
@@ -453,12 +447,7 @@ function OrderDetail(props) {
       </TableContainer>
 
       {/* Payment Request */}
-      <Payment
-        orderId={id}
-        total_price={order.total_price}
-        amount_paid={order.amount_paid}
-        amount_created={order.amount_created}
-      />
+      <Payment order={order} setOrder={setOrder} />
 
       {/* Update Status successfully */}
       <Snackbar
@@ -475,7 +464,6 @@ function OrderDetail(props) {
         setOpen={setOpenEditItem}
         orderItem={selectedItem}
         setOrder={setOrder}
-        // setOpenSbar={setOpenSbar}
       />
       {/* Dialog Add */}
       <AddOrderItem
@@ -490,15 +478,6 @@ function OrderDetail(props) {
         setOpen={setOpenDelItem}
         orderItem={selectedItem}
         setOrder={setOrder}
-      />
-
-      {/* Update order-item successfully */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={openSBar}
-        autoHideDuration={3000}
-        onClose={handleCloseSBar}
-        message={"Đã cập nhật sản phẩm đơn hàng !"}
       />
     </div>
   );

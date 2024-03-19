@@ -1,5 +1,5 @@
 from base.views import BaseModelViewSet
-from order.models import OrderItem, OrderItemStatusChoice
+from order.models import OrderItem
 from order.serializers.order import ReadOrderSerializer
 from order.serializers.order_item import AppendOrderItemSerializer, UpdateOrderItemSerializer, ReadOrderItemSerializer
 from django.db import transaction
@@ -7,8 +7,10 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from django.db.models import Sum, F
 from rest_framework import status
-from order.exceptions import DeleteLastOrderItemException, UpdateCompletedOrderException
 from base.exceptions import MethodNotAllowed
+from order_history.execute import create_order_item_history, create_order_price_history
+from copy import deepcopy
+from notification.execute import NotificationService
 
 
 class OrderItemViewSet(BaseModelViewSet):
@@ -28,18 +30,22 @@ class OrderItemViewSet(BaseModelViewSet):
 
     def update_order_price(self, order):
         queryset = self.get_queryset()
+        old_price = order.total_price
         order.total_price = queryset.filter(order=order).aggregate(
             total_price=Sum(F('price') * F('quantity')))['total_price']
         order.save()
+        create_order_price_history(order, old_price, order.total_price)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        old_instance = deepcopy(instance)
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        create_order_item_history(serializer.instance, "update", old_instance)
         order = instance.order
         self.update_order_price(order)
 
@@ -53,6 +59,9 @@ class OrderItemViewSet(BaseModelViewSet):
         self.perform_create(serializer)
         order = serializer.instance.order
         self.update_order_price(order)
+        # update history and add notification
+        create_order_item_history(serializer.instance, "add")
+        NotificationService.studio_add_item_to_order(serializer.instance)
         
         data = self.get_serializer(order, is_order=True).data   
         headers = self.get_success_headers(data)

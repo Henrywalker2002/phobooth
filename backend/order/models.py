@@ -19,6 +19,11 @@ class Order(BaseModel):
     amount_created = models.IntegerField(null = True, default = 0)
     amount_paid = models.IntegerField(null=False, default=0)
     finish_date = models.DateField(null=True, default=None)
+    address = models.ForeignKey(
+        "address.Address",
+        on_delete=models.SET_NULL,
+        null = True,
+    )
     customer = models.ForeignKey(
         "user.User",
         on_delete=models.CASCADE,
@@ -57,3 +62,4 @@ class OrderItem(BaseModel):
     price = models.IntegerField(null=True, default=None)
     additional_information = models.JSONField(null=True, default=None)
     status = models.CharField(choices= OrderItemStatusChoice.choices, default= OrderItemStatusChoice.PENDING, max_length= 255)
+    denied_reason = models.TextField(null=True, default=None)

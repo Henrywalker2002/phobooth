@@ -28,7 +28,7 @@ import { useCookies } from "react-cookie";
 
 function Register() {
   // global
-  const [setCookie] = useCookies(["accInfo"]);
+  const [cookies, setCookie] = useCookies(["accInfo"]);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   // local
@@ -159,7 +159,7 @@ function Register() {
         setCookie(
           "userInfo",
           {
-            ...response?.data,
+            ...cookies.userInfo,
             studio: res.data,
           },
           { path: "/" }

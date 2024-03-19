@@ -21,6 +21,7 @@ import AddItem from "./studio/item/Add/AddItem";
 import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
+import StudioProfile from "./studio/Profile";
 
 function App() {
   const theme = createTheme({
@@ -90,10 +91,12 @@ function App() {
               element={<StudioOrderDetail />}
             />
             <Route path="/studio/orders" element={<StudioOrders />} />
+            <Route path="/studio/profile" element={<StudioProfile />} />
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
           {/* Everyone */}
+
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/" element={<Home />} />
         </Route>
