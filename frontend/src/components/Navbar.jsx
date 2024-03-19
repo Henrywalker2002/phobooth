@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { BiStore } from "react-icons/bi";
 import { CgFileDocument } from "react-icons/cg";
@@ -30,7 +30,6 @@ import {
 } from "react-icons/md";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
-import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
 // import logo from "../assets/logo1.png";
 
@@ -52,17 +51,14 @@ const Logo = styled(PhotoCameraIcon)(({ theme }) => ({
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
-  const { auth, setAuth, setPersist } = useAuth();
-  const [, , removeCookie] = useCookies(["userInfo"]);
-
-  // console.log(auth);
+  const [cookies, , removeCookie] = useCookies(["accInfo"]);
 
   useEffect(() => {
-    if (auth.username !== undefined) {
-      setUserInfo(auth.username);
-      // console.log(auth.username);
+    if (cookies?.userInfo?.username !== undefined) {
+      setUserInfo(cookies?.userInfo?.username);
     } else setUserInfo("");
   }, []);
 
@@ -76,11 +72,9 @@ function Navbar() {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    setAuth({});
-    setPersist(false);
-    localStorage.setItem("persist", false);
-    removeCookie("userInfo");
-    navigate("/login");
+    removeCookie("userInfo", { path: "/" });
+    removeCookie("persist", { path: "/" });
+    navigate("/login", { state: { from: location }, replace: true });
   };
 
   // Open Menu
@@ -113,7 +107,10 @@ function Navbar() {
                 <Button
                   variant="text"
                   onClick={() => {
-                    navigate("/signup");
+                    navigate("/signup", {
+                      state: { from: location },
+                      replace: true,
+                    });
                   }}
                   sx={{
                     textTransform: "none",
@@ -135,7 +132,10 @@ function Navbar() {
                 <Button
                   variant="text"
                   onClick={() => {
-                    navigate("/login");
+                    navigate("/login", {
+                      state: { from: location },
+                      replace: true,
+                    });
                   }}
                   sx={{
                     textTransform: "none",
@@ -160,7 +160,7 @@ function Navbar() {
               onClick={() => {
                 // kiểm tra đã có tài khoản studio chưa
 
-                if (!auth.studio) {
+                if (!cookies?.userInfo?.studio?.id) {
                   navigate("/studio/register");
                 } else {
                   navigate("/studio");
@@ -292,7 +292,10 @@ function Navbar() {
             <Button
               variant="text"
               onClick={() => {
-                navigate("/signup");
+                navigate("/signup", {
+                  state: { from: location },
+                  replace: true,
+                });
               }}
               sx={{
                 textTransform: "none",
@@ -311,7 +314,10 @@ function Navbar() {
             <Button
               variant="contained"
               onClick={() => {
-                navigate("/login");
+                navigate("/login", {
+                  state: { from: location },
+                  replace: true,
+                });
               }}
               sx={{
                 textTransform: "none",
@@ -359,7 +365,7 @@ function Navbar() {
               }}
             >
               <MenuItem
-                onClick={handleClose}
+                onClick={() => navigate("/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",
@@ -375,7 +381,7 @@ function Navbar() {
                 onClick={() => {
                   // kiểm tra đã có tài khoản studio chưa
 
-                  if (!auth.studio) {
+                  if (!cookies?.userInfo?.studio?.id) {
                     navigate("/studio/register");
                   } else {
                     navigate("/studio");

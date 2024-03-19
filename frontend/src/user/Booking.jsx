@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../components/Navbar";
 import {
   Table,
@@ -15,20 +15,28 @@ import {
   Breadcrumbs,
   Link,
   Typography,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import CartContext from "../context/CartProvider";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 import ClearIcon from "@mui/icons-material/Clear";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useCookies } from "react-cookie";
+import EditAddress from "./EditAddress";
 
 function Booking() {
   const navigate = useNavigate();
-  const { auth } = useAuth();
-  const { itemLists } = useContext(CartContext);
-  console.log(itemLists);
+  const [cookies] = useCookies(["accInfo"]);
+  const axiosPrivate = useAxiosPrivate();
+  const { itemLists, setItemLists } = useContext(CartContext);
+  const [newAddress, setNewAddress] = useState({});
+  const [openEditAddr, setOpenEditAddr] = useState(false);
+
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -43,7 +51,7 @@ function Booking() {
           return total + row?.number * row?.item[typ];
         }
       }, 0);
-      console.log(result);
+
       return result;
     }
     return 0;
@@ -66,23 +74,33 @@ function Booking() {
     return formatter.format(min_price) + " - " + formatter.format(max_price);
   }
 
+  const handleUpdateNote = (e, studioId) => {
+    let selectedLst = itemLists.find((lst) => lst.studio.id === studioId);
+    selectedLst.note = e.target.value;
+  };
+
   const handleCreateOrder = () => {
-    console.log(itemLists);
     try {
       for (let itemLst of itemLists) {
         let order_item = itemLst.items.map((item) => {
           return { item: item.item.id, quantity: item.number };
         });
         let updateOrderLst = {
-          studio: itemLst.studio.id,
           order_item: order_item,
+          note: itemLst.note,
+          address: {
+            id: cookies.userInfo.address.id,
+            street: cookies.userInfo.address.street,
+            ward: cookies.userInfo.address.ward.code,
+            district: cookies.userInfo.address.district.code,
+            province: cookies.userInfo.address.province.code,
+          },
         };
-        axios
-          .post("/order/", updateOrderLst, {
-            headers: {
-              Authorization: `Bearer ${auth.access}`,
-            },
-          })
+
+        console.log(updateOrderLst);
+
+        axiosPrivate
+          .post("/order/", updateOrderLst)
           .then((res) => {
             console.log(res);
           })
@@ -91,10 +109,15 @@ function Booking() {
           });
       }
 
-      navigate("/orders");
+      navigate("/orders", { replace: true });
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleCancelOrder = () => {
+    setItemLists([]);
+    navigate("/cart");
   };
   return (
     <div>
@@ -112,21 +135,22 @@ function Booking() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          href="/"
-          // onClick={handleClick}
+          // href="/"
+          onClick={() => navigate("/", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
 
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="2"
           color="inherit"
-          href="/cart"
-          // onClick={handleClick}
+          onClick={() => navigate("/cart", { replace: true })}
         >
           Quản lý giỏ hàng
         </Link>
@@ -194,22 +218,26 @@ function Booking() {
                     <div className="items-stretch flex gap-5">
                       <img
                         loading="lazy"
-                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                        className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                        src={
+                          row.item?.picture
+                            ? row.item?.picture
+                            : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                        }
+                        className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
                       />
                       <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                        {row.item.name}
+                        {row.item?.name}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell align="left">
                     <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {row?.item?.type}
+                      {row.item?.type}
                     </div>
                   </TableCell>
                   <TableCell align="left">
                     <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {row?.item.category?.title}
+                      {row.item?.category?.title}
                     </div>
                   </TableCell>
                   <TableCell align="left" sx={{ width: "150px" }}>
@@ -242,7 +270,7 @@ function Booking() {
           </Table>
 
           {/* More Info */}
-          <div className="self-center flex w-full max-w-6xl items-stretch justify-between gap-5 my-5">
+          <div className="self-center flex w-full max-w-6xl items-stretch  gap-28 my-5">
             <div className="ml-[50px] flex flex-col items-start">
               <div className="flex items-stretch justify-between gap-4">
                 <img
@@ -251,13 +279,29 @@ function Booking() {
                   className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
                 />
                 <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
-                  {itemList.studio.friendly_name}
+                  {itemList.studio?.friendly_name}
                 </div>
               </div>
+
+              <TextField
+                id="outlined-basic"
+                label="Khuyến mãi"
+                variant="outlined"
+                placeholder="Nhập mã khuyến mãi"
+                sx={{
+                  borderColor: "#E6E6E6",
+                  fontSize: "10px",
+                  width: "450px",
+                  marginTop: "20px",
+                }}
+              />
+
               <TextField
                 id="outlined-multiline-static"
                 label="Lời nhắn"
                 multiline
+                name="note"
+                onChange={(e) => handleUpdateNote(e, itemList.studio.id)}
                 rows={3}
                 placeholder="Để lại ghi chú thêm về dịch vụ..."
                 sx={{
@@ -268,14 +312,35 @@ function Booking() {
                 }}
               />
             </div>
-            <div className="max-w-[450px] mr-7 self-center flex grow basis-[0%] flex-col items-stretch my-auto">
-              <TextField
-                id="outlined-basic"
-                label="Khuyến mãi"
-                variant="outlined"
-                placeholder="Nhập mã khuyến mãi"
-              />
-              <div className="justify-between bg-white flex mt-4">
+            <div className="max-w-[600px] mt-2 self-start flex flex-col items-stretch ">
+              <Alert
+                sx={{ bgcolor: "transparent", color: "#78716C", padding: "0" }}
+                icon={
+                  <LocationOnOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ color: "#3F41A6" }}
+                  />
+                }
+              >
+                <AlertTitle sx={{ color: "#18181B" }}>
+                  Địa chỉ nhận hàng
+                </AlertTitle>
+                <div className="flex items-start gap-2">
+                  <div className=" text-stone-500 text-base leading-6">
+                    {cookies.userInfo.address.street},{" "}
+                    {cookies.userInfo.address.ward.name_with_type},{" "}
+                    {cookies.userInfo.address.district.name_with_type},{" "}
+                    {cookies.userInfo.address.province.name_with_type}
+                  </div>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    // onClick={() => setOpenEditAddr(true)}
+                  >
+                    <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                  </IconButton>
+                </div>
+              </Alert>
+              <div className="ml-8 mt-5 gap-36 bg-white flex">
                 <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
                   Tổng giá tham khảo :
                 </div>
@@ -283,7 +348,7 @@ function Booking() {
                   {showTotalPrice(itemList.items)}
                 </div>
               </div>
-              <div className="text-stone-500 text-base leading-6 mt-2">
+              <div className="ml-8 w-[450px] text-stone-500 text-base leading-6 mt-3">
                 Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
                 Studio cập nhật và thông báo sau khi đặt dịch vụ.
               </div>
@@ -296,6 +361,7 @@ function Booking() {
       <div className="max-w-[1200px] mx-auto my-6 flex justify-end">
         <Button
           variant="outlined"
+          onClick={handleCancelOrder}
           sx={{
             marginRight: "20px",
             borderRadius: "43px",
@@ -330,6 +396,13 @@ function Booking() {
           Đặt dịch vụ
         </Button>
       </div>
+
+      {/* Edit Address */}
+      <EditAddress
+        open={openEditAddr}
+        setOpen={setOpenEditAddr}
+        setNewAddress={setNewAddress}
+      />
     </div>
   );
 }

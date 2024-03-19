@@ -14,21 +14,21 @@ import {
   Breadcrumbs,
   Link,
   Typography,
+  Pagination,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import StudioNavbar from "../components/StudioNavbar";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import StudioNavbar from "../../components/StudioNavbar";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function Orders() {
   // Collapsible table
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
-  console.log(auth);
+  const [pageCount, setPageCount] = useState(1);
   const [orders, setOrders] = useState([]);
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -36,20 +36,34 @@ function Orders() {
   });
 
   useEffect(() => {
-    axios
-      .get("order/studio/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("order/studio/?limit=5&offset=0")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
+        let count = res.data.count;
+        setPageCount(Math.ceil(count / 5));
         setOrders(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  // get Orders For Each Page
+  const getOrdersForPage = (e, page) => {
+    let offset = 5 * (page - 1);
+    axiosPrivate
+      .get(`/order/studio/?limit=5&offset=${offset}`)
+      .then((res) => {
+        // console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== pageCount) setPageCount(currCount);
+        setOrders(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   function getPrice(item) {
     if (item.price) {
@@ -66,7 +80,7 @@ function Orders() {
 
   function Row(props) {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
       <React.Fragment>
@@ -107,26 +121,43 @@ function Orders() {
               : "Chưa cập nhật"}
           </TableCell>
           <TableCell align="left">
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "43px",
-                borderColor: "#3F41A6",
-                color: "#3F41A6",
-                padding: "0 5px",
-                textTransform: "none",
-                width: "100px",
-                "&:hover": {
-                  bgcolor: "#F6F5FB",
+            {row.status === "ORDERED" ? (
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "43px",
                   borderColor: "#3F41A6",
-                },
-              }}
-              onClick={(event) => {
-                window.location.href = `/studio/order/detail/${row.id}`;
-              }}
-            >
-              Chỉnh sửa
-            </Button>
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hủy đơn
+              </Button>
+            ) : row.status === "CANCELED" ? null : (
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "43px",
+                  borderColor: "#3F41A6",
+                  color: "#3F41A6",
+                  padding: "0 5px",
+                  textTransform: "none",
+                  width: "100px",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderColor: "#3F41A6",
+                  },
+                }}
+              >
+                Hoàn thành
+              </Button>
+            )}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -176,17 +207,21 @@ function Orders() {
                           <div className="items-stretch flex gap-5">
                             <img
                               loading="lazy"
-                              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                              src={
+                                detailedRow.item?.picture
+                                  ? detailedRow.item?.picture
+                                  : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                              }
+                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
                             />
                             <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {detailedRow.item.name}
+                              {detailedRow.item?.name}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{detailedRow.item.type}</TableCell>
+                        <TableCell>{detailedRow.item?.type}</TableCell>
                         <TableCell align="left">
-                          {detailedRow.item.category.title}
+                          {detailedRow.item?.category?.title}
                         </TableCell>
                         <TableCell align="left">
                           {detailedRow.quantity}
@@ -194,21 +229,7 @@ function Orders() {
                         <TableCell align="left">
                           {getPrice(detailedRow)}
                         </TableCell>
-                        <TableCell align="left">
-                          {/* <Button
-                            variant="text"
-                            sx={{
-                              color: "#3F41A6",
-                              textTransform: "none",
-                              "&:hover": {
-                                bgcolor: "#F6F5FB",
-                                borderRadius: "43px",
-                              },
-                            }}
-                          >
-                            Đánh giá
-                          </Button> */}
-                        </TableCell>
+                        <TableCell align="left"></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -238,11 +259,12 @@ function Orders() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
-          sx={{ color: "#808080", cursor: "pointer" }}
+          sx={{ color: "#808080" }}
           // href="/"
-          onClick={() => navigate("/studio")}
+          onClick={() => navigate("/studio", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
@@ -307,6 +329,20 @@ function Orders() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      <Pagination
+        count={pageCount}
+        onChange={getOrdersForPage}
+        sx={{
+          margin: "0 auto",
+          width: "fit-content",
+          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+            {
+              bgcolor: "#E2E5FF",
+            },
+        }}
+      />
     </div>
   );
 }

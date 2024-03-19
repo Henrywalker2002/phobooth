@@ -3,50 +3,30 @@ import axios from "../api/axios";
 import useAuth from "./useAuth";
 
 const useRefreshToken = () => {
-  const { setAuth } = useAuth();
-  const [cookies] = useCookies(["userInfo"]);
+  // const { auth, setAuth } = useAuth();
+  const [cookies, setCookie] = useCookies(["accInfo"]);
 
   const refresh = async () => {
-    try {
-      const response = await axios.post(
-        "/api/token/refresh",
-        {
-          refresh: cookies.refresh,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      setAuth((prev) => {
-        console.log(JSON.stringify(prev));
-        console.log(response.data.access);
-        return {
-          ...prev,
-          access: response.data.access,
-        };
-      });
-      // return response.data.access;
-    } catch (err) {
-      console.log(err);
-      const response = await axios.post(
-        "/api/token/",
-        {
-          username: cookies.user,
-          password: cookies.pwd,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      setAuth((prev) => {
-        console.log(JSON.stringify(prev));
-        return {
-          ...prev,
-          access: response.data.access,
-          refresh: response.data.refresh,
-        };
-      });
-    }
+    // console.log(cookies?.userInfo?.refresh);
+    const response = await axios.post(
+      "/api/token/refresh/",
+      {
+        refresh: cookies?.userInfo?.refresh,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    setCookie(
+      "userInfo",
+      {
+        ...cookies.userInfo,
+        access: response.data.access,
+      },
+      { path: "/" }
+    );
+    // setAuth({ ...auth, access: response.data.access });
+    return response.data.access;
   };
   return refresh;
 };

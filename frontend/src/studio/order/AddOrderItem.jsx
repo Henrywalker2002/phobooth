@@ -18,40 +18,31 @@ import {
   MenuItem,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
+  const axiosPrivate = useAxiosPrivate();
   const item_types = ["Dịch vụ", "Hàng hóa"];
   const [itemTyp, setItemTyp] = useState("");
-  const { auth } = useAuth();
   const [serviceList, setServiceList] = useState({});
   const [productList, setProductList] = useState([]);
   const [selectedList, setSelectedList] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("/item-service/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-service/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setServiceList(res.data.results);
       })
       .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    axios
-      .get("/item-product/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get("/item-product/")
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
         setProductList(res.data.results);
       })
       .catch((err) => console.log(err));
@@ -69,17 +60,13 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
   };
 
   const handleAddItem = () => {
-    console.log(selectedList);
+    // console.log(selectedList);
     for (let item of selectedList) {
-      console.log(item);
-      axios
-        .post("/order-item/", item, {
-          headers: {
-            Authorization: `Bearer ${auth.access}`,
-          },
-        })
+      // console.log(item);
+      axiosPrivate
+        .post("/order-item/", item)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           getOrderDetail();
         })
         .catch((err) => {

@@ -11,6 +11,9 @@ export const ColoredInput = styled(TextField)({
 });
 
 export const ColoredStep = styled(Step)({
+  "& .css-1rwiq4e-MuiStep-root": {
+    width: "300px",
+  },
   "& .MuiStepLabel-root .Mui-completed": {
     color: "#3F41A6", // circle color (COMPLETED)
   },

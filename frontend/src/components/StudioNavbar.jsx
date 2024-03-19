@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { BiStore } from "react-icons/bi";
 import { CgFileDocument } from "react-icons/cg";
@@ -22,21 +22,17 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import InsertChartOutlinedRoundedIcon from "@mui/icons-material/InsertChartOutlinedRounded";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import useAuth from "../hooks/useAuth";
 import { useCookies } from "react-cookie";
 
 function StudioNavbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [studioInfo, setStudioInfo] = useState({});
-  const { auth, setAuth, setPersist } = useAuth();
-  const [, , removeCookie] = useCookies(["userInfo"]);
-
-  console.log(auth);
+  const [cookies, , removeCookie] = useCookies(["accInfo"]);
 
   useEffect(() => {
-    if (auth.studio !== undefined) {
-      setStudioInfo(auth.studio);
-      console.log(auth.studio);
+    if (cookies?.userInfo?.studio !== undefined) {
+      setStudioInfo(cookies?.userInfo?.studio);
     }
   }, []);
 
@@ -50,11 +46,9 @@ function StudioNavbar() {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    setAuth({});
-    setPersist(false);
-    localStorage.setItem("persist", false);
-    removeCookie("userInfo");
-    navigate("/login");
+    removeCookie("userInfo", { path: "/" });
+    removeCookie("persist", { path: "/" });
+    navigate("/login", { state: { from: location }, replace: true });
   };
   return (
     <AppBar
@@ -130,7 +124,10 @@ function StudioNavbar() {
             <Button
               variant="text"
               onClick={() => {
-                navigate("/signup");
+                navigate("/signup", {
+                  state: { from: location },
+                  replace: true,
+                });
               }}
               sx={{
                 textTransform: "none",
@@ -149,7 +146,10 @@ function StudioNavbar() {
             <Button
               variant="contained"
               onClick={() => {
-                navigate("/login");
+                navigate("/login", {
+                  state: { from: location },
+                  replace: true,
+                });
               }}
               sx={{
                 textTransform: "none",
@@ -193,7 +193,7 @@ function StudioNavbar() {
               }}
             >
               <MenuItem
-                onClick={handleClose}
+                onClick={() => navigate("/studio/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",

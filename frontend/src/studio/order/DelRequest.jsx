@@ -1,7 +1,25 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function ImgAlert({ open, setOpen, setAddImg }) {
+function DelRequest({ open, setOpen, delReq, setOrder, setRequestList }) {
+  const axiosPrivate = useAxiosPrivate();
+
+  const handleDelReq = async () => {
+    await axiosPrivate
+      .delete(`/payment/${delReq.id}/`)
+      .then((res) => {
+        console.log(res.data);
+        setOrder(res.data);
+        setRequestList(res.data.payment);
+
+        // setOpenDelSBar(true);
+      })
+      .then(() => setOpen(false))
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <Dialog
       open={open}
@@ -12,8 +30,7 @@ function ImgAlert({ open, setOpen, setAddImg }) {
       }}
     >
       <DialogContent>
-        Bạn cần cập nhật đủ hình ảnh minh họa cho sản phẩm (tối thiểu 4 hình,
-        tối đa 10 hình).
+        Bạn có muốn xóa yêu cầu thanh toán lần {delReq.no} không?
       </DialogContent>
       <DialogActions>
         <Button
@@ -25,14 +42,11 @@ function ImgAlert({ open, setOpen, setAddImg }) {
             marginRight: "10px",
           }}
         >
-          Quay lại
+          Hủy
         </Button>
         <Button
           variant="contained"
-          onClick={() => {
-            setOpen(false);
-            setAddImg(true);
-          }}
+          onClick={() => handleDelReq()}
           sx={{
             // textTransform: "none",
             bgcolor: "#3F41A6",
@@ -43,11 +57,11 @@ function ImgAlert({ open, setOpen, setAddImg }) {
             },
           }}
         >
-          Danh sách hình ảnh
+          Xóa
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default ImgAlert;
+export default DelRequest;

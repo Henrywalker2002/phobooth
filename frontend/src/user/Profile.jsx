@@ -5,52 +5,54 @@ import {
   Breadcrumbs,
   Button,
   Divider,
+  FormControl,
   IconButton,
-  Input,
+  InputAdornment,
   Link,
   MenuItem,
+  OutlinedInput,
   Paper,
+  Snackbar,
   TextField,
   Typography,
+  FormHelperText,
 } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { v4 as uuidv4 } from "uuid";
-import { useNavigate } from "react-router-dom";
-import OtherErrDialog from "../components/OtherErrDialog";
-import Err401Dialog from "../components/Err401Dialog";
-import { translateErr } from "../util/Translate";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import axios from "../api/axios";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import axios from "../api/axios";
+import dayjs from "dayjs";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { translateErrUserInfo } from "../util/Translate";
+import OtherErrDialog from "../components/OtherErrDialog";
 
-function Register() {
-  // global
+function Profile() {
   const [cookies, setCookie] = useCookies(["accInfo"]);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
-  // local
-  const [addresses, setAddresses] = useState([{ id: uuidv4() }]);
+  const [openSBar, setOpenSbar] = useState(false);
+  const [addresses, setAddresses] = useState([]);
   const [provinces, setProvinces] = useState([]);
-  const [studioInfo, setStudioInfo] = useState({});
+  const [newInfo, setNewInfo] = useState({});
   const [avt, setAvt] = useState({});
-  const resetInfo = {
-    friendly_name: "",
-    code_name: "",
-    email: "",
-    phone: "",
-    description: "",
-  };
   // error
   const [errMsg, setErrMsg] = useState({});
-  const [openErr401, setOpenErr401] = useState(false);
   const [openOtherErr, setOpenOtherErr] = useState(false);
 
+  // get province list
   useEffect(() => {
+    // console.log(cookies);
     axios
-      .get("province/")
+      .get("province/?limit=63&offset=0")
       .then((res) => {
         // console.log(res);
         setProvinces(res.data.results);
@@ -58,20 +60,44 @@ function Register() {
       .catch((err) => console.log(err));
   }, []);
 
-  const handleUpdateAvt = (e) => {
-    // console.log(e.target.files[0]);
-    if (e.target.files.length > 0) {
-      setAvt({
-        avt_preview: URL.createObjectURL(e.target.files[0]),
-        avt_file: e.target.files[0],
-      });
+  // setup address
+  const setUpInitialAddress = () => {
+    if (cookies.userInfo.address !== null) {
+      let distlist = [];
+      let wardlist = [];
+      axios
+        .get(`province/${cookies.userInfo.address.province.code_name}/`)
+        .then((res) => {
+          // console.log(res);
+          distlist = res.data.districts;
+          return distlist;
+        })
+        .then((distlist) => {
+          wardlist = distlist?.find(
+            (dist) => dist.code === cookies.userInfo.address.district.code
+          )?.wards;
+        })
+        .then(() => {
+          setAddresses([
+            {
+              id: cookies.userInfo.address.id,
+              street: cookies.userInfo.address.street,
+              ward: cookies.userInfo.address.ward.code,
+              district: cookies.userInfo.address.district.code,
+              province: cookies.userInfo.address.province.code,
+              distlist: distlist,
+              wardlist: wardlist,
+            },
+          ]);
+        })
+        .catch((err) => console.log(err));
     }
   };
+  useEffect(() => {
+    setUpInitialAddress();
+  }, []);
 
-  const updateStudioInfo = (e) => {
-    setStudioInfo({ ...studioInfo, [e.target.name]: e.target.value });
-  };
-
+  // address
   const handleAddAddress = () => {
     const newList = [...addresses, { id: uuidv4() }];
     setAddresses(newList);
@@ -128,26 +154,47 @@ function Register() {
     setAddresses(newList);
   };
 
-  const handleRegister = async (e) => {
+  // update avt
+  const handleUpdateAvt = (e) => {
+    if (e.target.files.length > 0) {
+      setAvt({
+        avt_preview: URL.createObjectURL(e.target.files[0]),
+        avt_file: e.target.files[0],
+      });
+    }
+  };
+
+  // update basic info
+  const updateUserInfo = (e) => {
+    setNewInfo({ ...newInfo, [e.target.name]: e.target.value });
+  };
+
+  // Update all info -> patch
+  const handleUpdateProfile = (e) => {
     e.preventDefault();
-    const registerInfo = {
-      ...studioInfo,
-      address: {
+    // console.log(newInfo);
+    let formData = new FormData();
+    Object.entries(newInfo).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    if (avt.avt_file) {
+      formData.append("avatar", avt.avt_file, avt.avt_file.name);
+    }
+
+    if (addresses.length > 0) {
+      // console.log(addresses);
+      let addressInfo = {
         province: addresses[0].province,
         district: addresses[0].district,
         ward: addresses[0].ward,
         street: addresses[0].street,
-      },
-    };
-    // console.log(JSON.stringify(registerInfo), avt.avt_file);
-    let formData = new FormData();
-    if (avt.avt_file) {
-      formData.append("avatar", avt.avt_file, avt.avt_file.name);
+      };
+      formData.append("address", JSON.stringify(addressInfo));
     }
-    formData.append("data", JSON.stringify(registerInfo));
 
     axiosPrivate
-      .post("studio/", formData, {
+      .patch(`/user/${cookies.userInfo.id}/`, formData, {
         headers: {
           ...axiosPrivate.defaults.headers,
           "content-type": "multipart/form-data",
@@ -155,31 +202,45 @@ function Register() {
       })
       .then((res) => {
         // console.log(res.data);
-
         setCookie(
           "userInfo",
           {
-            ...cookies.userInfo,
-            studio: res.data,
+            ...res.data,
           },
           { path: "/" }
         );
-        navigate("/studio/");
+
+        setNewInfo({});
+        setErrMsg({});
       })
+      .then(() => setOpenSbar(true))
       .catch((err) => {
         console.log(err);
         if (err.response?.status === 400) {
-          let newErr = translateErr(err.response.data);
+          let newErr = translateErrUserInfo(err.response.data);
           setErrMsg(newErr);
-        } else if (err.response?.status === 401) {
-          setOpenErr401(true);
         } else {
           setOpenOtherErr(true);
         }
       });
   };
 
-  // console.log(studioInfo);
+  // Close Snackbar
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSbar(false);
+  };
+
+  // pwd behavior
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   return (
     <div>
       <Navbar />
@@ -214,7 +275,7 @@ function Register() {
             fontWeight: "500",
           }}
         >
-          Đăng kí Studio
+          Hồ sơ cá nhân
         </Typography>
       </Breadcrumbs>
 
@@ -226,23 +287,22 @@ function Register() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Đăng kí Studio
+          Hồ sơ cá nhân
         </div>
         <Divider />
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleUpdateProfile}>
           <div className="self-stretch flex items-stretch  gap-[130px] mt-5">
             <div className="flex basis-[0%] flex-col items-stretch ml-4">
-              <div className="text-zinc-900 text-sm leading-5">
-                Tên Studio *
-              </div>
+              <div className="text-zinc-900 text-sm leading-5">Họ và tên *</div>
               <TextField
                 required
                 variant="outlined"
-                name="friendly_name"
-                value={studioInfo.friendly_name}
-                onChange={updateStudioInfo}
-                error={errMsg.friendly_name ? true : false}
-                helperText={errMsg.friendly_name ? errMsg.friendly_name[0] : ""}
+                name="full_name"
+                value={newInfo.full_name ?? cookies.userInfo.full_name ?? ""}
+                // defaultValue={cookies.userInfo.full_name}
+                onChange={updateUserInfo}
+                error={errMsg.full_name ? true : false}
+                helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -259,11 +319,12 @@ function Register() {
               <TextField
                 required
                 variant="outlined"
-                name="code_name"
-                value={studioInfo.code_name}
-                onChange={updateStudioInfo}
-                error={errMsg.code_name ? true : false}
-                helperText={errMsg.code_name ? errMsg.code_name[0] : ""}
+                name="username"
+                value={newInfo.username ?? cookies.userInfo.username ?? ""}
+                // defaultValue={cookies.userInfo.username}
+                onChange={updateUserInfo}
+                error={errMsg.username ? true : false}
+                helperText={errMsg.username ? errMsg.username[0] : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -274,15 +335,78 @@ function Register() {
                 }}
               />
 
+              <div className="text-zinc-900 text-sm leading-5">Mật khẩu *</div>
+              <FormControl variant="standard">
+                <OutlinedInput
+                  required
+                  name="password"
+                  onChange={updateUserInfo}
+                  value={newInfo.password ?? cookies.userInfo.password ?? ""}
+                  // defaultValue={cookies.userInfo.password}
+                  error={errMsg.password ? true : false}
+                  sx={{ width: "350px", height: "45px", marginY: "10px" }}
+                  id="standard-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText id="component-helper-text">
+                  {errMsg.password ? errMsg.password[0] : ""}
+                </FormHelperText>
+              </FormControl>
+
               <div className="text-zinc-900 text-sm leading-5 mt-4">
-                Email (Studio) *
+                Ngày sinh
+              </div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  id="date_of_birth"
+                  name="date_of_birth"
+                  sx={{
+                    width: "350px",
+                    marginY: "10px",
+                    "& .MuiInputBase-input": {
+                      height: "45px",
+                      boxSizing: "border-box",
+                    },
+                  }}
+                  format="DD-MM-YYYY"
+                  onChange={(value) => {
+                    if (value)
+                      setNewInfo({
+                        ...newInfo,
+                        date_of_birth: value.format("YYYY-MM-DD"),
+                      });
+                  }}
+                  value={
+                    newInfo?.date_of_birth
+                      ? dayjs(newInfo?.date_of_birth)
+                      : dayjs(cookies?.userInfo.date_of_birth)
+                  }
+                  // defaultValue={dayjs(cookies?.userInfo.date_of_birth) ?? null}
+                />
+              </LocalizationProvider>
+
+              <div className="text-zinc-900 text-sm leading-5 mt-4">
+                Email *
               </div>
               <TextField
+                disabled
                 required
                 variant="outlined"
                 name="email"
-                value={studioInfo.email}
-                onChange={updateStudioInfo}
+                value={newInfo.email ?? cookies.userInfo.email ?? ""}
+                // defaultValue={cookies.userInfo.email}
+                onChange={updateUserInfo}
                 InputProps={{
                   type: "email",
                 }}
@@ -299,14 +423,14 @@ function Register() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
-                Số điện thoại (Studio) *
+                Số điện thoại
               </div>
               <TextField
-                required
                 variant="outlined"
                 name="phone"
-                value={studioInfo.phone}
-                onChange={updateStudioInfo}
+                onChange={updateUserInfo}
+                value={newInfo.phone ?? cookies.userInfo.phone ?? ""}
+                // defaultValue={cookies.userInfo.phone}
                 error={errMsg.phone ? true : false}
                 helperText={errMsg.phone ? errMsg.phone[0] : ""}
                 sx={{
@@ -326,6 +450,8 @@ function Register() {
                 src={
                   avt.avt_preview
                     ? avt.avt_preview
+                    : cookies.userInfo.avatar
+                    ? cookies.userInfo.avatar
                     : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
                 }
                 sx={{ width: 140, height: 140 }}
@@ -347,12 +473,11 @@ function Register() {
                 }}
               >
                 Chọn hình ảnh
-                <Input
-                  required
+                <input
                   type="file"
                   accept="image/*"
                   onChange={handleUpdateAvt}
-                  sx={{
+                  style={{
                     clip: "rect(0 0 0 0)",
                     clipPath: "inset(50%)",
                     height: 1,
@@ -370,7 +495,7 @@ function Register() {
 
           <div className="flex flex-col ml-4">
             <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
-              Địa chỉ Studio *
+              Địa chỉ
               <IconButton onClick={handleAddAddress}>
                 <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
               </IconButton>
@@ -379,11 +504,10 @@ function Register() {
               addresses.map((address, index) => (
                 <div className="flex items-center gap-5" key={index}>
                   <TextField
-                    required
                     id="outlined-select-provinces"
                     label="Tỉnh thành"
                     value={address.province ? address.province : ""}
-                    defaultValue=""
+                    // defaultValue=""
                     select
                     error={errMsg.address?.province ? true : false}
                     helperText={
@@ -407,12 +531,17 @@ function Register() {
                   </TextField>
 
                   <TextField
-                    required
                     id="outlined-select-districts"
                     label="Quận huyện"
                     variant="outlined"
-                    value={address.district ? address.district : ""}
-                    defaultValue=""
+                    value={
+                      address?.distlist?.find(
+                        (dist) => dist.code == address.district
+                      )
+                        ? address.district
+                        : ""
+                    }
+                    // defaultValue=""
                     select
                     error={errMsg.address?.district ? true : false}
                     helperText={
@@ -424,7 +553,7 @@ function Register() {
                     }}
                   >
                     <MenuItem value="">--Chọn quận huyện--</MenuItem>
-                    {address.distlist?.map((dist, index) => (
+                    {address?.distlist?.map((dist, index) => (
                       <MenuItem
                         key={index}
                         value={dist.code}
@@ -436,13 +565,18 @@ function Register() {
                   </TextField>
 
                   <TextField
-                    required
                     label="Phường xã"
                     variant="outlined"
                     name="ward"
-                    value={address.ward ? address.ward : ""}
+                    value={
+                      address?.wardlist?.find(
+                        (ward) => ward.code == address.ward
+                      )
+                        ? address.ward
+                        : ""
+                    }
                     onChange={(e) => handleUpdateAddress(e, address.id)}
-                    defaultValue=""
+                    // defaultValue=""
                     select
                     error={errMsg.address?.ward ? true : false}
                     helperText={
@@ -454,7 +588,7 @@ function Register() {
                     }}
                   >
                     <MenuItem value="">--Chọn phường xã--</MenuItem>
-                    {address.wardlist?.map((ward, index) => (
+                    {address?.wardlist?.map((ward, index) => (
                       <MenuItem key={index} value={ward.code}>
                         {ward.name}
                       </MenuItem>
@@ -462,7 +596,6 @@ function Register() {
                   </TextField>
 
                   <TextField
-                    required
                     id="outlined-basic"
                     label="Số nhà, đường"
                     variant="outlined"
@@ -497,10 +630,9 @@ function Register() {
             ) : (
               <div className="flex items-center gap-5">
                 <TextField
-                  required
                   label="Tỉnh thành"
                   value={addresses[0]?.province ? addresses[0].province : ""}
-                  defaultValue=""
+                  // defaultValue=""
                   select
                   error={errMsg.address?.province ? true : false}
                   helperText={
@@ -524,11 +656,16 @@ function Register() {
                 </TextField>
 
                 <TextField
-                  required
                   label="Quận huyện"
                   variant="outlined"
-                  value={addresses[0]?.district ? addresses[0].district : ""}
-                  defaultValue=""
+                  value={
+                    addresses[0]?.distlist?.find(
+                      (dist) => dist.code == addresses[0].district
+                    )
+                      ? addresses[0].district
+                      : ""
+                  }
+                  // defaultValue=""
                   select
                   error={errMsg.address?.district ? true : false}
                   helperText={
@@ -540,7 +677,7 @@ function Register() {
                   }}
                 >
                   <MenuItem value="">--Chọn quận huyện--</MenuItem>
-                  {addresses[0].distlist?.map((dist, index) => (
+                  {addresses[0]?.distlist?.map((dist, index) => (
                     <MenuItem
                       key={index}
                       value={dist.code}
@@ -554,13 +691,18 @@ function Register() {
                 </TextField>
 
                 <TextField
-                  required
                   label="Phường xã"
                   variant="outlined"
                   name="ward"
-                  value={addresses[0]?.ward ? addresses[0].ward : ""}
+                  value={
+                    addresses[0]?.wardlist?.find(
+                      (ward) => ward.code == addresses[0].ward
+                    )
+                      ? addresses[0].ward
+                      : ""
+                  }
                   onChange={(e) => handleUpdateAddress(e, addresses[0].id)}
-                  defaultValue=""
+                  // defaultValue=""
                   select
                   error={errMsg.address?.ward ? true : false}
                   helperText={
@@ -572,7 +714,7 @@ function Register() {
                   }}
                 >
                   <MenuItem value="">--Chọn phường xã--</MenuItem>
-                  {addresses[0].wardlist?.map((ward, index) => (
+                  {addresses[0]?.wardlist?.map((ward, index) => (
                     <MenuItem key={index} value={ward.code}>
                       {ward.name}
                     </MenuItem>
@@ -580,7 +722,6 @@ function Register() {
                 </TextField>
 
                 <TextField
-                  required
                   id="outlined-basic"
                   label="Số nhà, đường"
                   variant="outlined"
@@ -598,18 +739,60 @@ function Register() {
                 />
               </div>
             )}
-            <div className="text-zinc-900 text-sm leading-5 mt-4">Mô tả *</div>
+          </div>
+
+          <div className="flex flex-col ml-4 mr-10">
+            <div className="flex justify-between w-full">
+              <div className="flex flex-col">
+                <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+                  Số tài khoản
+                </div>
+                <TextField
+                  variant="outlined"
+                  name="acc_number"
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      height: "45px",
+                      boxSizing: "border-box",
+                    },
+                    width: "350px",
+                    marginY: "10px",
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+                  Chọn ngân hàng
+                </div>
+                <TextField
+                  variant="outlined"
+                  name="bank"
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      height: "45px",
+                      boxSizing: "border-box",
+                    },
+                    width: "350px",
+                    marginY: "10px",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+              Tên chủ tài khoản
+            </div>
             <TextField
-              required
-              name="description"
-              value={studioInfo.description}
-              onChange={updateStudioInfo}
-              multiline
-              rows={3}
-              error={errMsg.description ? true : false}
-              helperText={errMsg.description ? errMsg.description[0] : ""}
+              variant="outlined"
+              name="acc_name"
               sx={{
-                width: "750px",
+                "& .MuiInputBase-input": {
+                  height: "45px",
+                  boxSizing: "border-box",
+                },
+                width: "350px",
+                marginY: "10px",
               }}
             />
           </div>
@@ -618,15 +801,16 @@ function Register() {
             <Button
               variant="outlined"
               onClick={() => {
-                setStudioInfo(resetInfo);
-                setAddresses([{ id: uuidv4() }]);
+                setNewInfo({});
+                setUpInitialAddress();
                 setAvt({});
               }}
               sx={{
                 textTransform: "none",
                 border: "1px solid #3F41A6",
                 color: "#3F41A6",
-                width: "80px",
+                width: "fit-content",
+                padding: "5px 20px",
 
                 borderRadius: "20px",
                 "&:hover": {
@@ -643,26 +827,33 @@ function Register() {
               sx={{
                 textTransform: "none",
                 bgcolor: "#3F41A6",
-                width: "100px",
-
+                width: "fit-content",
+                padding: "5px 20px",
                 borderRadius: "20px",
                 "&:hover": {
                   bgcolor: "#3949AB",
                 },
               }}
             >
-              Đăng kí
+              Lưu thông tin
             </Button>
           </div>
         </form>
       </Paper>
 
-      {/* Error 401 */}
-      <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
       {/* Other errors */}
       <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
+
+      {/* Update profile successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseSBar}
+        message="Cập nhật thông tin thành công"
+      />
     </div>
   );
 }
 
-export default Register;
+export default Profile;

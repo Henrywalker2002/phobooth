@@ -14,7 +14,6 @@ import {
   Paper,
   Button,
   Stepper,
-  Step,
   StepLabel,
   Divider,
   TextField,
@@ -23,23 +22,43 @@ import {
   MenuItem,
   Breadcrumbs,
   Link,
+  Pagination,
+  Snackbar,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
+import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ColoredStep } from "../styles/Styles";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import dayjs from "dayjs";
+import { daysleftCount } from "../util/Compare";
+import CancelOrder from "./CancelOrder";
+import ReqPaying from "./ReqPaying";
+import DeltailRequest from "../studio/order/DeltailRequest";
 
 function OrderDetail() {
-  // selection
-  const { auth } = useAuth();
+  // global
+  let { id } = useParams();
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+  // dialog + Snackbar
+  const [openCancel, setOpenCancel] = useState(false);
+  const [openCancelSBar, setOpenCancelSBar] = useState(false);
+  const [openDetailReq, setOpenDetailReq] = useState(false);
+  const [openPayingReq, setOpenPayingReq] = useState(false);
+  // local
+  const [reload, setReload] = useState(false);
   const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
-  let { id } = useParams();
+  const [requestList, setRequestList] = useState([]);
+  const [pageCount, setPageCount] = useState(1);
+  const [statusMsg, setStatusMsg] = useState("");
+  const [selectedReq, setSelectedReq] = useState({});
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -63,27 +82,60 @@ function OrderDetail() {
     else if (orderInfo.status === "IN_PROCESS") return 1;
     else if (orderInfo.status === "SHIPPPING") return 2;
     else if (orderInfo.status === "COMPLETED") return 3;
-    else return null;
+    else return 0;
   };
 
   useEffect(() => {
-    axios
-      .get(`/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/order/${id}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setOrder(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [reload]);
+
+  useEffect(() => {
+    axiosPrivate
+      .get(`/payment/?order=${id}&limit=3&offset=0`)
+      .then((res) => {
+        // console.log(res.data);
+        let count = res.data.count;
+        setPageCount(Math.ceil(count / 3));
+        setRequestList(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
+  const getReqsForPage = (e, page) => {
+    let offset = 3 * (page - 1);
+    axiosPrivate
+      .get(`/order/?limit=3&offset=${offset}`)
+      .then((res) => {
+        // console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 3);
+        if (currCount !== pageCount) setPageCount(currCount);
+        setRequestList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleChange = (event) => {
     setValue(event.target.value);
+  };
+
+  // Close Cancel Order SnackBar Success/Err
+  const handleCloseCancelSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenStatusSbar(false);
   };
 
   // Collapsible table
@@ -111,40 +163,46 @@ function OrderDetail() {
             <div className="items-stretch flex gap-5">
               <img
                 loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                src={
+                  row.item?.picture
+                    ? row.item?.picture
+                    : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                }
+                className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
-              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row?.item.name}
+              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto rounded-lg">
+                {row.item?.name}
               </div>
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row?.item.type}
+              {row.item?.type}
             </div>
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item.category.title}
+              {row.item?.category?.title}
             </div>
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
-            <Button
-              variant="text"
-              sx={{
-                color: "#3F41A6",
-                textTransform: "none",
-                "&:hover": {
-                  bgcolor: "#F6F5FB",
-                  borderRadius: "43px",
-                },
-              }}
-            >
-              Đánh giá
-            </Button>
+            {order.status === "COMPLETED" ? (
+              <Button
+                variant="text"
+                sx={{
+                  color: "#3F41A6",
+                  textTransform: "none",
+                  "&:hover": {
+                    bgcolor: "#F6F5FB",
+                    borderRadius: "43px",
+                  },
+                }}
+              >
+                Đánh giá
+              </Button>
+            ) : null}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -167,7 +225,7 @@ function OrderDetail() {
 
   //   status process
   const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
-  console.log(order?.order_item);
+  // console.log(order?.order_item);
   return (
     <div>
       <Navbar />
@@ -184,21 +242,23 @@ function OrderDetail() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
-          sx={{ color: "#808080", cursor: "pointer" }}
+          sx={{ color: "#808080" }}
           // href="/"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
 
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="2"
           color="inherit"
           // href="/orders"
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/orders", { replace: true })}
         >
           Quản lý đơn hàng
         </Link>
@@ -263,38 +323,56 @@ function OrderDetail() {
             )}
           </TableBody>
         </Table>
+        {/* Note from customer */}
+        {order.note == null ? null : (
+          <Alert
+            sx={{
+              width: "950px",
+              marginX: "auto",
+              marginY: "30px",
+              bgcolor: "#E7EAFF",
+              color: "#3F41A6",
+            }}
+            icon={
+              <StickyNote2OutlinedIcon
+                sx={{ color: "#3F41A6" }}
+                fontSize="inherit"
+              />
+            }
+            severity="info"
+          >
+            <AlertTitle>Ghi chú</AlertTitle>
+            {order.note}
+          </Alert>
+        )}
 
         {/* Status bar */}
-        <Box sx={{ width: "100%", marginY: "50px" }}>
-          <Stepper activeStep={getActiveStep(order)} alternativeLabel>
-            {steps.map((label) => (
-              <ColoredStep key={label}>
-                <StepLabel>{label}</StepLabel>
-                {/* <Button
-                  variant="outlined"
-                  sx={{
-                    marginRight: "20px",
-                    borderRadius: "43px",
-                    borderColor: "#3F41A6",
-                    color: "#3F41A6",
-                    padding: "0 30px",
-                    textTransform: "none",
-                    width: "120px",
-                    "&:hover": {
-                      bgcolor: "#F6F5FB",
-                      borderColor: "#3F41A6",
-                    },
-                  }}
-                >
-                  Hủy đơn
-                </Button> */}
-              </ColoredStep>
-            ))}
-          </Stepper>
+        <Box
+          sx={{
+            width: "100%",
+            marginY: "50px",
+          }}
+        >
+          {order.status !== "CANCELED" ? (
+            <Stepper activeStep={getActiveStep(order)} alternativeLabel>
+              {steps.map((label, i) => (
+                <ColoredStep key={i}>
+                  <StepLabel>{label}</StepLabel>
+                </ColoredStep>
+              ))}
+            </Stepper>
+          ) : (
+            <Alert
+              sx={{ maxWidth: "1000px", marginX: "auto" }}
+              severity="error"
+              color="warning"
+            >
+              Đơn hàng này đã được hủy.
+            </Alert>
+          )}
         </Box>
-
         {/* payment request + invoice - currently hidden */}
-        <div className="w-full max-w-[1200px] mt-8 mb-7 hidden">
+        <div className="w-full max-w-[1200px] mt-8 mb-7">
           <div className="flex justify-around">
             {/* payment request */}
             <div className="flex flex-col w-[437px]">
@@ -302,88 +380,137 @@ function OrderDetail() {
                 <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                   Yêu cầu thanh toán mới nhất
                 </div>
-                <div className="items-stretch border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex justify-between gap-5 mt-5 p-2.5 rounded-lg border-solid">
-                  <div className="items-stretch flex grow basis-[0%] flex-col pr-2 py-px">
-                    <div className="text-zinc-500 text-base font-medium leading-6">
-                      Thanh toán lần 3
-                    </div>
-                    <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                      148,000
-                    </div>
-                    <div className="flex items-stretch justify-between gap-2 mt-2.5 max-md:justify-center">
-                      <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
-                        Thời hạn :
-                      </div>
-                      <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                        30-10-2023
-                      </div>
-                      <div className="text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 grow px-3">
-                        Còn 3 ngày
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="contained"
+
+                <div className="flex flex-col mt-5 gap-5">
+                  {requestList.length > 0
+                    ? requestList?.map((req) => {
+                        if (req.status === "PENDING")
+                          return (
+                            <Paper
+                              key={req.id}
+                              sx={{
+                                width: "430px",
+                                border: "0.5px solid #d6d3d1",
+                                alignItems: "stretch",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                gap: "30px",
+                                borderRadius: "8px",
+                                padding: "15px",
+                              }}
+                            >
+                              <div className="items-stretch flex grow  flex-col py-px gap-2.5">
+                                <div className="text-zinc-500 text-base font-medium leading-6">
+                                  Thanh toán lần {req.no}
+                                </div>
+                                <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
+                                  {formatter.format(req.amount)}
+                                </div>
+                                <div className="flex  gap-3 ">
+                                  <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
+                                    Thời hạn :
+                                  </div>
+                                  <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
+                                    {dayjs(req.expiration_date).format(
+                                      "DD-MM-YYYY"
+                                    )}
+                                  </div>
+                                  <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
+                                    {daysleftCount(req.expiration_date) > 0
+                                      ? `Còn ${daysleftCount(
+                                          req.expiration_date
+                                        )} ngày`
+                                      : "Quá hạn"}
+                                  </div>
+                                </div>
+                              </div>
+                              <Button
+                                variant="contained"
+                                onClick={() => {
+                                  setSelectedReq(req);
+                                  setOpenPayingReq(true);
+                                }}
+                                sx={{
+                                  justifyContent: "center",
+                                  alignSelf: "center",
+                                  fontSize: "13px",
+                                  textTransform: "none",
+                                  borderRadius: "43px",
+                                  color: "#F6F5FB",
+                                  bgcolor: "#3F41A6",
+                                  width: "102px",
+                                  height: "32px",
+                                  "&:hover": {
+                                    bgcolor: "#3F41A6B2",
+                                  },
+                                }}
+                              >
+                                Thanh toán
+                              </Button>
+                            </Paper>
+                          );
+                        else if (req.status === "PAID")
+                          return (
+                            <Paper
+                              onClick={() => {
+                                setSelectedReq(req);
+                                setOpenDetailReq(true);
+                              }}
+                              key={req.id}
+                              sx={{
+                                width: "430px",
+                                border: "0.5px solid #d6d3d1",
+                                alignItems: "stretch",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                gap: "20px",
+                                borderRadius: "8px",
+                                padding: "10px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                                <div className="text-zinc-500 text-base font-medium leading-6">
+                                  Thanh toán lần {req.no}
+                                </div>
+                                <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
+                                  {formatter.format(req.amount)}
+                                </div>
+                                <div className="flex items-stretch gap-2.5 mt-3">
+                                  <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                                    Ngày thanh toán :
+                                  </div>
+                                  <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
+                                    {dayjs(req.payment_date).format(
+                                      "DD-MM-YYYY"
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-green-800 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-green-600 bg-opacity-20 self-center my-auto px-3 py-1">
+                                Đã thanh toán
+                              </div>
+                            </Paper>
+                          );
+                      })
+                    : "Chưa có yêu cầu thanh toán!"}
+                </div>
+
+                {/* Pagination */}
+                {requestList.length > 0 ? (
+                  <Pagination
+                    count={pageCount}
+                    onChange={getReqsForPage}
                     sx={{
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      fontSize: "12px",
-                      textTransform: "none",
-                      borderRadius: "43px",
-                      color: "#F6F5FB",
-                      bgcolor: "#3F41A6",
-                      width: "102px",
-                      height: "32px",
-                      "&:hover": {
-                        bgcolor: "#3F41A6B2",
-                      },
+                      margin: "20px auto",
+                      width: "fit-content",
+                      "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                        {
+                          bgcolor: "#E2E5FF",
+                        },
                     }}
-                  >
-                    Thanh toán
-                  </Button>
-                </div>
-                <div className="items-stretch border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex justify-between gap-5 mt-8 p-2.5 rounded-lg border-solid">
-                  <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
-                    <div className="text-zinc-500 text-base font-medium leading-6">
-                      Thanh toán lần 2
-                    </div>
-                    <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                      200,000
-                    </div>
-                    <div className="flex items-stretch justify-between gap-2.5 mt-3">
-                      <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                        Ngày thanh toán :
-                      </div>
-                      <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
-                        20-10-2023
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-green-800 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-green-600 bg-opacity-20 self-center my-auto px-3 py-1">
-                    Đã thanh toán
-                  </div>
-                </div>
-                <div className="items-stretch border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex justify-between gap-5 mt-8 p-2.5 rounded-lg border-solid">
-                  <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
-                    <div className="text-zinc-500 text-base font-medium leading-6">
-                      Thanh toán lần 1
-                    </div>
-                    <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                      100,000
-                    </div>
-                    <div className="flex items-stretch justify-between gap-2.5 mt-3">
-                      <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                        Ngày thanh toán :
-                      </div>
-                      <div className="text-zinc-900 text-sm leading-5 self-start">
-                        10-10-2023
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-green-800 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-green-600 bg-opacity-20 self-center my-auto px-3 py-1">
-                    Đã thanh toán
-                  </div>
-                </div>
+                  />
+                ) : null}
               </div>
             </div>
 
@@ -400,11 +527,7 @@ function OrderDetail() {
                     </div>
                   </div>
                   <Divider orientation="vertical" flexItem></Divider>
-                  {/* <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/af45067e654c08993f9de515ad13ec344a2c5642faf4f98a8da5c6d66fd47be1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                    className="aspect-[0.03] object-contain object-center w-px stroke-[1px] stroke-neutral-200 overflow-hidden shrink-0 max-w-full"
-                  /> */}
+
                   <div className="items-stretch z-[1] flex grow basis-[0%] flex-col pr-8 self-start max-md:pr-5">
                     <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                       hóa đơn :
@@ -421,7 +544,9 @@ function OrderDetail() {
                       Tổng thành phần :
                     </div>
                     <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      540,000
+                      {order.total_price == null
+                        ? "Chưa cập nhật"
+                        : order.total_price}
                     </div>
                   </div>
                   <div className="justify-between items-stretch flex gap-5 py-3">
@@ -429,7 +554,7 @@ function OrderDetail() {
                       Phí vận chuyển :
                     </div>
                     <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      20,000
+                      Chưa có
                     </div>
                   </div>
                   <div className="bg-neutral-200 shrink-0 h-px" />
@@ -438,7 +563,9 @@ function OrderDetail() {
                       Khuyến mãi từ PhoBooth:
                     </div>
                     <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      -20%
+                      {order.discount_price == null
+                        ? "Chưa có"
+                        : order.discount_price}
                     </div>
                   </div>
                   <div className="justify-between items-stretch flex gap-5 py-3">
@@ -446,7 +573,9 @@ function OrderDetail() {
                       Khuyến mãi từ Studio Demo:
                     </div>
                     <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      -20%
+                      {order.discount_price == null
+                        ? "Chưa có"
+                        : order.discount_price}
                     </div>
                   </div>
                   <div className="bg-neutral-200 shrink-0 h-px" />
@@ -456,35 +585,69 @@ function OrderDetail() {
                       Tổng cộng
                     </div>
                     <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                      448,000
+                      {order.total_price == null
+                        ? "Chưa cập nhật"
+                        : order.total_price}
                     </div>
                   </div>
                   <div className="bg-neutral-200 shrink-0 h-0.5" />
                   <div className="justify-between items-stretch flex gap-5 py-3">
                     <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Đã thanh toán lần 1
+                      Đã thanh toán
                     </div>
                     <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
-                      -100,000
+                      -{order.amount_paid}
                     </div>
                   </div>
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Đã thanh toán lần 2
-                    </div>
-                    <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
-                      -200,000
-                    </div>
-                  </div>
+
                   <div className="bg-neutral-200 z-[1] shrink-0 h-0.5" />
                   <div className="justify-between items-stretch flex gap-5 pt-3">
                     <div className="text-zinc-900 text-lg leading-7 whitespace-nowrap">
                       Còn lại
                     </div>
                     <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                      148,000
+                      {order.total_price - order.amount_paid}
                     </div>
                   </div>
+                </div>
+
+                {/* Btn */}
+                <div className=" mx-auto my-2 flex justify-center gap-5">
+                  <Button
+                    disabled={order.status === "CANCELED" ? true : false}
+                    onClick={() => setOpenCancel(true)}
+                    variant="outlined"
+                    sx={{
+                      borderRadius: "43px",
+                      borderColor: "#3F41A6",
+                      color: "#3F41A6",
+                      padding: "5px 25px",
+                      textTransform: "none",
+                      width: "fit-content",
+                      "&:hover": {
+                        bgcolor: "#F6F5FB",
+                        borderColor: "#3F41A6",
+                      },
+                    }}
+                  >
+                    Hủy đơn
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: "43px",
+                      color: "#F6F5FB",
+                      bgcolor: "#3F41A6",
+                      width: "fit-content",
+                      padding: "5px 25px",
+                      "&:hover": {
+                        bgcolor: "#3F41A6B2",
+                      },
+                    }}
+                  >
+                    Khiếu nại
+                  </Button>
                 </div>
               </div>
             </div>
@@ -506,7 +669,7 @@ function OrderDetail() {
               <TextField
                 id="outlined-basic"
                 variant="outlined"
-                value={order?.customer?.full_name}
+                value={order?.customer?.full_name ?? ""}
                 defaultValue={order?.customer?.full_name}
                 sx={{ marginTop: "10px" }}
               />
@@ -595,6 +758,7 @@ function OrderDetail() {
             Chưa vận chuyển
           </div>
           <Button
+            disabled={order.status === "CANCELED" ? true : false}
             variant="contained"
             sx={{
               marginTop: "30px",
@@ -610,48 +774,42 @@ function OrderDetail() {
           >
             Lưu thông tin
           </Button>
-          {/* <div className="text-white text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch bg-indigo-800 mt-6 px-8 py-2.5 rounded-[43px] self-start max-md:px-5">
-            Lưu thông tin
-          </div> */}
         </div>
       </div>
 
-      {/* Btn */}
-      <div className="max-w-[1200px] mx-auto my-6 flex justify-center">
-        <Button
-          variant="outlined"
-          sx={{
-            marginRight: "50px",
-            borderRadius: "43px",
-            borderColor: "#3F41A6",
-            color: "#3F41A6",
-            padding: "0 30px",
-            textTransform: "none",
-            width: "120px",
-            "&:hover": {
-              bgcolor: "#F6F5FB",
-              borderColor: "#3F41A6",
-            },
-          }}
-        >
-          Quay lại
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            textTransform: "none",
-            borderRadius: "43px",
-            color: "#F6F5FB",
-            bgcolor: "#3F41A6",
-            width: "130px",
-            "&:hover": {
-              bgcolor: "#3F41A6B2",
-            },
-          }}
-        >
-          Khiếu nại
-        </Button>
-      </div>
+      {/* Paying */}
+      <ReqPaying
+        open={openPayingReq}
+        setOpen={setOpenPayingReq}
+        req={selectedReq}
+        setReload={setReload}
+      />
+
+      {/* Detail Request */}
+      <DeltailRequest
+        open={openDetailReq}
+        setOpen={setOpenDetailReq}
+        req={selectedReq}
+      />
+
+      {/* Cancel Order */}
+      <CancelOrder
+        open={openCancel}
+        setOpen={setOpenCancel}
+        id={id}
+        setOrder={setOrder}
+        setStatusMsg={setStatusMsg}
+        setOpenCancelSBar={setOpenCancelSBar}
+      />
+
+      {/* Cancel successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openCancelSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseCancelSBar}
+        message={statusMsg}
+      />
     </div>
   );
 }
