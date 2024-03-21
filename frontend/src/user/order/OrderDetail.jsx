@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import {
   Box,
   Collapse,
@@ -32,14 +32,15 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { ColoredStep } from "../styles/Styles";
+import { ColoredStep } from "../../styles/Styles";
 import { useNavigate, useParams } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import dayjs from "dayjs";
-import { daysleftCount } from "../util/Compare";
+import { daysleftCount } from "../../util/Compare";
 import CancelOrder from "./CancelOrder";
 import ReqPaying from "./ReqPaying";
-import DeltailRequest from "../studio/order/DeltailRequest";
+import DeltailRequest from "../../studio/order/DeltailRequest";
+import CreateComplain from "./CreateComplain";
 
 function OrderDetail() {
   // global
@@ -51,6 +52,7 @@ function OrderDetail() {
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
   const [openDetailReq, setOpenDetailReq] = useState(false);
   const [openPayingReq, setOpenPayingReq] = useState(false);
+  const [openCreateComplain, setOpenCreateComplain] = useState(false);
   // local
   const [reload, setReload] = useState(false);
   const [value, setValue] = useState("");
@@ -374,8 +376,9 @@ function OrderDetail() {
         {/* payment request + invoice - currently hidden */}
         <div className="w-full max-w-[1200px] mt-8 mb-7">
           <div className="flex justify-around">
-            {/* payment request */}
+            {/* payment request + complain*/}
             <div className="flex flex-col w-[437px]">
+              {/* payment request */}
               <div className="items-stretch flex flex-col px-5">
                 <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                   Yêu cầu thanh toán mới nhất
@@ -634,6 +637,7 @@ function OrderDetail() {
                   </Button>
                   <Button
                     variant="contained"
+                    onClick={() => setOpenCreateComplain(true)}
                     sx={{
                       textTransform: "none",
                       borderRadius: "43px",
@@ -776,6 +780,12 @@ function OrderDetail() {
           </Button>
         </div>
       </div>
+
+      {/* Create Complain */}
+      <CreateComplain
+        open={openCreateComplain}
+        setOpen={setOpenCreateComplain}
+      />
 
       {/* Paying */}
       <ReqPaying

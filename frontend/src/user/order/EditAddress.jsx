@@ -8,68 +8,91 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useCookies } from "react-cookie";
-import axios from "../api/axios";
+import axios from "../../api/axios";
+import { useLayoutEffect } from "react";
 
-function EditAddress({ open, setOpen, setNewAddress }) {
+function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
   const [cookies] = useCookies(["accInfo"]);
   const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
   const [address, setAddress] = useState({});
 
-  // get province list
-  useEffect(() => {
+  // setup address
+  // const setUpInitialAddress = () => {
+  //   if (cookies.userInfo.address !== null) {
+  //     axios
+  //       .get(`province/${cookies.userInfo.address.province.code_name}/`)
+  //       .then((res) => {
+  //         // console.log(res);
+  //         setDistricts(res.data.districts);
+  //         return res.data.districts;
+  //       })
+  //       .then((distlist) => {
+  //         setWards(
+  //           distlist?.find(
+  //             (dist) => dist.code === cookies.userInfo.address.district.code
+  //           )?.wards
+  //         );
+  //       })
+  //       .then(() => {
+  //         axios
+  //           .get("province/?limit=63&offset=0")
+  //           .then((res) => {
+  //             // console.log(res);
+  //             setProvinces(res.data.results);
+  //           })
+  //           .catch((err) => console.log(err));
+  //       })
+  //       .then(() => {
+  //         setAddress({
+  //           street: cookies.userInfo.address.street,
+  //           ward: cookies.userInfo.address.ward.code,
+  //           district: cookies.userInfo.address.district.code,
+  //           province: cookies.userInfo.address.province.code,
+  //         });
+  //       })
+  //       .then(() => console.log(address))
+  //       .catch((err) => console.log(err));
+  //   }
+  // };
+  useLayoutEffect(() => {
     axios
       .get("province/?limit=63&offset=0")
       .then((res) => {
         // console.log(res);
         setProvinces(res.data.results);
       })
-      .catch((err) => console.log(err));
-  }, []);
 
-  // setup address
-  const setUpInitialAddress = () => {
-    if (cookies.userInfo.address !== null) {
-      let distlist = [];
-      let wardlist = [];
-      axios
-        .get(`province/${cookies.userInfo.address.province.code_name}/`)
-        .then((res) => {
-          // console.log(res);
-          distlist = res.data.districts;
-          return distlist;
-        })
-        .then((distlist) => {
-          wardlist = distlist?.find(
-            (dist) => dist.code === cookies.userInfo.address.district.code
-          )?.wards;
-        })
-        .then(() => {
-          setAddress([
-            {
-              street: cookies.userInfo.address.street,
-              ward: cookies.userInfo.address.ward,
-              district: cookies.userInfo.address.district,
-              province: cookies.userInfo.address.province,
-              distlist: distlist,
-              wardlist: wardlist,
-            },
-          ]);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-  useEffect(() => {
-    setUpInitialAddress();
-  }, []);
+      .then(() => {
+        axios
+          .get(`province/${newAdress?.province?.code_name}/`)
+          .then((res) => {
+            // console.log(res);
+            setDistricts(res.data.districts);
+            return res.data.districts;
+          })
+          .then((distlist) => {
+            setWards(
+              distlist?.find((dist) => dist.code === newAdress.district.code)
+                ?.wards
+            );
+          });
+      })
+      .catch((err) => console.log(err));
+    console.log(address);
+    console.log(districts);
+    console.log(wards);
+  }, [newAdress]);
 
   const handleUpdateProv = async (prov) => {
     try {
       const res = await axios.get(`province/${prov.code_name}/`);
       // console.log(res);
+      setDistricts(res.data.districts);
       setAddress({
         ...address,
-        province: prov,
-        distlist: res.data.districts,
+        province: prov.code,
       });
     } catch (error) {
       console.log(error);
@@ -77,24 +100,21 @@ function EditAddress({ open, setOpen, setNewAddress }) {
   };
 
   const handleUpdateDist = (district) => {
+    setWards(
+      address.distlist?.find((dist) => dist.code === district.code)?.wards
+    );
     setAddress({
       ...address,
-      district: district,
-      wardlist: address.distlist?.find((dist) => dist.code === district.code)
-        ?.wards,
+      district: district.code,
     });
   };
 
-  const handleUpdateOtherInfo = (e) => {
-    setAddress({
-      ...address,
-      [e.target.name]: e.target.value,
-    });
-  };
   return (
     <Dialog
       open={open}
       onClose={() => {
+        setDistricts([]);
+        setWards([]);
         setOpen(false);
       }}
       sx={{
@@ -111,14 +131,11 @@ function EditAddress({ open, setOpen, setNewAddress }) {
           <TextField
             id="outlined-select-provinces"
             label="Tỉnh thành"
-            value={
-              address.province
-                ? address.province?.code
-                : cookies.userInfo.address.province.code
-            }
+            defaultValue={newAdress?.province?.code}
             select
             sx={{
-              width: "150px",
+              width: "200px",
+
               marginY: "10px",
             }}
           >
@@ -138,15 +155,15 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             id="outlined-select-districts"
             label="Quận huyện"
             variant="outlined"
-            defaultValue={cookies.userInfo.address.district.code}
+            defaultValue={newAdress?.district?.code}
             select
             sx={{
-              width: "150px",
+              width: "200px",
               marginY: "10px",
             }}
           >
             <MenuItem value="">--Chọn quận huyện--</MenuItem>
-            {address?.distlist?.map((dist, index) => (
+            {districts?.map((dist, index) => (
               <MenuItem
                 key={index}
                 value={dist.code}
@@ -161,19 +178,19 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             label="Phường xã"
             variant="outlined"
             name="ward"
-            defaultValue={cookies.userInfo.address.ward.code}
             select
+            defaultValue={newAdress?.ward?.code}
             sx={{
-              width: "150px",
+              width: "200px",
               marginY: "10px",
             }}
           >
             <MenuItem value="">--Chọn phường xã--</MenuItem>
-            {address?.wardlist?.map((ward, index) => (
+            {wards?.map((ward, index) => (
               <MenuItem
                 key={index}
                 value={ward.code}
-                onClick={() => setAddress({ ...address, ward: ward })}
+                onClick={() => setAddress({ ...address, ward: ward.code })}
               >
                 {ward.name}
               </MenuItem>
@@ -185,9 +202,7 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             label="Số nhà, đường"
             variant="outlined"
             name="street"
-            value={
-              address.street ? address.street : cookies.userInfo.address.street
-            }
+            defaultValue={newAdress?.street}
             onChange={(e) => setAddress({ ...address, street: e.target.value })}
             sx={{
               width: "200px",
@@ -201,7 +216,7 @@ function EditAddress({ open, setOpen, setNewAddress }) {
           <Button
             variant="contained"
             onClick={() => {
-              setNewAddress({ ...address });
+              console.log(address);
             }}
             sx={{
               textTransform: "none",

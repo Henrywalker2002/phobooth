@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import {
   Box,
   Collapse,
@@ -23,8 +23,8 @@ import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRig
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useNavigate } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { daysleftCount, isBefore } from "../util/Compare";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { daysleftCount, isBefore } from "../../util/Compare";
 import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import {
   Table,
   TableBody,
@@ -28,8 +28,8 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
-import CartContext from "../context/CartProvider";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import CartContext from "../../context/CartProvider";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function Cart() {
   const axiosPrivate = useAxiosPrivate();

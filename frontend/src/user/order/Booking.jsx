@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import {
   Table,
   TableBody,
@@ -18,14 +18,14 @@ import {
   Alert,
   AlertTitle,
 } from "@mui/material";
-import CartContext from "../context/CartProvider";
+import CartContext from "../../context/CartProvider";
 import { useNavigate } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import ClearIcon from "@mui/icons-material/Clear";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 import EditAddress from "./EditAddress";
 
@@ -334,7 +334,17 @@ function Booking() {
                   </div>
                   <IconButton
                     sx={{ padding: 0 }}
-                    // onClick={() => setOpenEditAddr(true)}
+                    // onClick={() => {
+                    //   if (Object.keys(newAddress).length <= 0) {
+                    //     setNewAddress({
+                    //       street: cookies.userInfo.address.street,
+                    //       ward: cookies.userInfo.address.ward,
+                    //       district: cookies.userInfo.address.district,
+                    //       province: cookies.userInfo.address.province,
+                    //     });
+                    //   }
+                    //   setOpenEditAddr(true);
+                    // }}
                   >
                     <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
                   </IconButton>
@@ -401,6 +411,7 @@ function Booking() {
       <EditAddress
         open={openEditAddr}
         setOpen={setOpenEditAddr}
+        newAddress={newAddress}
         setNewAddress={setNewAddress}
       />
     </div>

@@ -4,11 +4,11 @@ import Home from "./user/Home";
 import Login from "./user/Login";
 import Signup from "./user/Signup";
 import ItemDetail from "./user/ItemDetail";
-import Cart from "./user/Cart";
-import Booking from "./user/Booking";
+import Cart from "./user/order/Cart";
+import Booking from "./user/order/Booking";
 import { ThemeProvider, createTheme } from "@mui/material";
-import Orders from "./user/Orders";
-import OrderDetail from "./user/OrderDetail";
+import Orders from "./user/order/Orders";
+import OrderDetail from "./user/order/OrderDetail";
 import StudioOrderDetail from "./studio/order/OrderDetail";
 import StudioOrders from "./studio/order/Orders";
 import CartContextLayout from "./context/CartContextLayout";
@@ -22,6 +22,9 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+import ComplainDetail from "./user/order/ComplainDetail";
+import ComplainDetailStaff from "./staff/ComplainDetail";
+import Complains from "./staff/Complains";
 
 function App() {
   const theme = createTheme({
@@ -78,6 +81,7 @@ function App() {
             </Route>
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
+            <Route path="/complain/detail/" element={<ComplainDetail />} />
             <Route path="/profile" element={<Profile />} />
 
             {/* Studio */}
@@ -95,8 +99,14 @@ function App() {
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
-          {/* Everyone */}
+          {/* Admin - Staff */}
+          <Route
+            path="/staff/complain/detail/"
+            element={<ComplainDetailStaff />}
+          />
+          <Route path="/staff/complains" element={<Complains />} />
 
+          {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/" element={<Home />} />
         </Route>

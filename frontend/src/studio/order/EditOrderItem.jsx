@@ -8,7 +8,6 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
   const axiosPrivate = useAxiosPrivate();
-  // const [openSBar, setOpenSbar] = useState(false);
   const [price, setPrice] = useState(orderItem.price);
   const [quantity, setQuantity] = useState(orderItem.quantity);
   const [errMsg, setErrMsg] = useState({});
@@ -44,14 +43,6 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
       setErrMsg({ ...errMsg, price: ["Nhập đúng định dạng"] });
     }
   };
-
-  // Close Status SnackBar Success/Err
-  // const handleCloseSBar = (e, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   setOpenSbar(false);
-  // };
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
@@ -171,15 +162,6 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
           Lưu thay đổi
         </Button>
       </div>
-
-      {/* Update order-item successfully */}
-      {/* <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={openSBar}
-        autoHideDuration={2000}
-        onClose={handleCloseSBar}
-        message={"Đã cập nhật sản phẩm đơn hàng !"}
-      /> */}
     </Dialog>
   );
 }
