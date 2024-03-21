@@ -1,6 +1,6 @@
 from base.views import BaseModelViewSet
 from studio.models import Studio
-from studio.serializers import StudioSerializer, StudioUpdateSerializer, StudioSummarySerializer, StudioDetailSerializer
+from studio.serializers import StudioSerializer, StudioUpdateSerializer, StudioSummarySerializer, StudioDetailSerializer, AddEmployeeSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from studio.permission import StudioPermission
@@ -8,12 +8,17 @@ from django.db import transaction
 from role.models import Role
 import json
 from address.models import Address
+from rest_framework.decorators import action
+from user.models import User
+from user.serializers import UserSummarySerializer
 
 
 class StudioViewSet(BaseModelViewSet):
     queryset = Studio.objects.all()
     serializer_class = {'default': StudioSerializer, 'update': StudioUpdateSerializer,
-                        'partial_update': StudioUpdateSerializer, "retrieve": StudioDetailSerializer, "list": StudioSummarySerializer}
+                        'partial_update': StudioUpdateSerializer, "retrieve": StudioDetailSerializer, 
+                        "list": StudioSummarySerializer, "add_employee": AddEmployeeSerializer,
+                        "remove_employee": AddEmployeeSerializer}
     permission_classes = [StudioPermission]
     lookup_field = 'code_name'
     
@@ -78,3 +83,45 @@ class StudioViewSet(BaseModelViewSet):
 
         data = self.get_serializer(instance, is_get=True).data
         return Response(data)
+
+    @action(detail = True, methods = ['POST'], url_path='employee')
+    def add_employee(self, request, *args, **kwargs):
+        studio = self.get_object()
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception=True)   
+        email = request.data.get('email')
+        user = User.objects.filter(email = email)
+        if user:
+            user = user.first()
+            if user.studio:
+                return Response(data = {"detail": "User already has a studio"}, status = status.HTTP_400_BAD_REQUEST)
+            user.word_for_studio = studio
+            user.role.add(Role.objects.get(code_name = "studio"))
+            user.save()
+            data = UserSummarySerializer(studio.employee.all(), many = True).data
+            return Response(data = data, status = status.HTTP_200_OK)
+        return Response(data = {"detail": "User not found"}, status = status.HTTP_404_NOT_FOUND)
+
+    @action(detail = True, methods = ['DELETE'], url_path='remove-employee')
+    def remove_employee(self, request, *args, **kwargs):
+        studio = self.get_object()
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        email = request.data.get('email')
+        user = User.objects.filter(email = email)
+        if user:
+            user = user.first()
+            if user.studio == studio:
+                user.word_for_studio = None
+                user.role.remove(Role.objects.get(code_name = "studio"))
+                user.save()
+                data = UserSummarySerializer(studio.employee.all(), many = True).data
+                return Response(data = data, status = status.HTTP_200_OK)
+            return Response(data = {"detail": "User is not in this studio"}, status = status.HTTP_400_BAD_REQUEST)
+        return Response(data = {"detail": "User not found"}, status = status.HTTP_404_NOT_FOUND)
+    
+    @action(detail = True, methods = ['GET'], url_path='get-employee')
+    def get_employee(self, request, *args, **kwargs):
+        studio = self.get_object()
+        data = UserSummarySerializer(studio.employee.all(), many = True).data
+        return Response(data = data, status = status.HTTP_200_OK)

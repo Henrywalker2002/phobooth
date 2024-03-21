@@ -18,9 +18,19 @@ class User(AbstractBaseUser):
     avatar = models.ImageField(upload_to="avatars/", null=True)
     google_id = models.IntegerField(null=True)
     facebook_id = models.IntegerField(null=True)
-    studio = models.OneToOneField(
+    own_studio = models.OneToOneField(
         to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None, related_name="owner"
     )
+    
+    word_for_studio = models.ForeignKey(
+        to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None, related_name="employee"
+    )
+    
+    @property
+    def studio(self):
+        if self.own_studio:
+            return self.own_studio
+        return self.word_for_studio if self.word_for_studio else None
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
