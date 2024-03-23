@@ -412,6 +412,7 @@ function Profile() {
                     border: "1px solid #3949AB",
                   },
                 }}
+                onClick={() => navigate("/studio/profile/verify", { state: { studioInfo } } )}
               >
                 Xác thực Studio
               </Button>
