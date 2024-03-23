@@ -31,6 +31,7 @@ import {
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
+import NotificationList from "../notification/Notification";
 // import logo from "../assets/logo1.png";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
@@ -55,6 +56,7 @@ function Navbar() {
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
   const [cookies, , removeCookie] = useCookies(["accInfo"]);
+  conse [openNotification, setOpenNotification] = useState(false);
 
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
@@ -81,6 +83,16 @@ function Navbar() {
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
   };
+
+  // notification handle
+  function handleNotificationClick(e) {
+    e.preventDefault();
+    setOpenNotification(true);
+  }
+
+  function handleNotificationClose() {
+    setOpenNotification(false);
+  }
 
   return (
     <AppBar
@@ -286,7 +298,7 @@ function Navbar() {
         <MenuBtn>
           <RiSearchLine style={{ color: "#666666", width: 20, height: 20 }} />
         </MenuBtn>
-
+        
         {userInfo == "" ? (
           <div className="btn-gr w-60 max-sm:hidden">
             <Button
@@ -335,7 +347,7 @@ function Navbar() {
           </div>
         ) : (
           <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
-            <IconButton>
+            <IconButton onClick={e => handleNotificationClick(e)}>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>
 
