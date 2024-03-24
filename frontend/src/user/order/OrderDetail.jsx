@@ -91,7 +91,7 @@ function OrderDetail() {
     axiosPrivate
       .get(`/order/${id}`)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         setOrder(res.data);
       })
       .catch((err) => {
@@ -617,7 +617,12 @@ function OrderDetail() {
                 {/* Btn */}
                 <div className=" mx-auto my-2 flex justify-center gap-5">
                   <Button
-                    disabled={order.status === "CANCELED" ? true : false}
+                    disabled={
+                      order.status === "CANCELED" ||
+                      order.status === "COMPLETED"
+                        ? true
+                        : false
+                    }
                     onClick={() => setOpenCancel(true)}
                     variant="outlined"
                     sx={{
@@ -695,7 +700,7 @@ function OrderDetail() {
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
                 Địa chỉ
               </div>
-              <FormControl fullWidth>
+              {/* <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -713,7 +718,20 @@ function OrderDetail() {
                     235 Parker Rd. Allentown, New Mexico
                   </MenuItem>
                 </Select>
-              </FormControl>
+              </FormControl> */}
+              <TextField
+                disabled
+                name="address"
+                value={`${order?.address?.street}, ${order?.address?.ward.name_with_type}, ${order?.address?.district.name_with_type}, ${order?.address?.province.name_with_type}`}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    height: "45px",
+                    boxSizing: "border-box",
+                  },
+                  // width: "350px",
+                  marginY: "10px",
+                }}
+              />
 
               <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
                 <img

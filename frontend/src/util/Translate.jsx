@@ -84,3 +84,12 @@ export const translateErrSignUp = (err) => {
   }
   return err;
 };
+
+export const translateOrderStatus = (status) => {
+  if (status === "ORDERED") return "Đã đặt";
+  else if (status === "IN_PROCESS") return "Đang tiến hành";
+  else if (status === "SHIPPING") return "Vận chuyển";
+  else if (status === "COMPLETED") return "Hoàn thành";
+  else if (status === "CANCELED") return "Hủy đơn";
+  return "";
+};

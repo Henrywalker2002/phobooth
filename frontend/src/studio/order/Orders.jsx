@@ -15,7 +15,11 @@ import {
   Link,
   Typography,
   Pagination,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import { RiSearchLine } from "react-icons/ri";
+import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -23,13 +27,19 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import StudioNavbar from "../../components/StudioNavbar";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Filter from "./Filter";
+import { translateOrderStatus } from "../../util/Translate";
 
 function Orders() {
   // Collapsible table
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  // dialog
+  const [openFilter, setOpenFilter] = useState(false);
+  // local
   const [pageCount, setPageCount] = useState(1);
   const [orders, setOrders] = useState([]);
+  const [filterOrders, setFilterOrders] = useState([]);
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -111,8 +121,8 @@ function Orders() {
           <TableCell align="left">{row.created_at}</TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.status}
+            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+              {translateOrderStatus(row.status)}
             </div>
           </TableCell>
           <TableCell align="left">
@@ -286,6 +296,53 @@ function Orders() {
         Quản lý đơn hàng
       </div>
 
+      <div className="flex gap-5 items-center w-fit mx-auto my-3">
+        {/* search */}
+        <TextField
+          id="input-with-icon-textfield"
+          placeholder="Tìm kiếm"
+          sx={{
+            "& .MuiInputBase-input": {
+              padding: "10px 12px",
+              width: "450px",
+              height: "40px",
+              boxSizing: "border-box",
+            },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "30px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton sx={{ padding: 0 }}>
+                  <RiSearchLine className="w-5 h-5" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
+
+        {/* filter */}
+        <Button
+          variant="text"
+          endIcon={<TuneOutlinedIcon />}
+          onClick={() => {
+            setOpenFilter(true);
+          }}
+          sx={{
+            textTransform: "none",
+            color: "#3F41A6",
+            "&:hover": {
+              bgcolor: "#E2E5FF",
+            },
+          }}
+        >
+          Bộ lọc
+        </Button>
+      </div>
+
       {/* Table */}
       <TableContainer
         component={Paper}
@@ -318,7 +375,9 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.length > 0 ? (
+            {filterOrders.length > 0 ? (
+              filterOrders.map((row) => <Row key={row?.id} row={row} />)
+            ) : orders.length > 0 ? (
               orders.map((row) => <Row key={row?.id} row={row} />)
             ) : (
               <TableRow>
@@ -329,6 +388,14 @@ function Orders() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Filter Dialog */}
+      <Filter
+        open={openFilter}
+        setOpen={setOpenFilter}
+        orders={orders}
+        setFilterOrders={setFilterOrders}
+      />
 
       {/* Pagination */}
       <Pagination

@@ -1,31 +1,52 @@
-import React, { useState } from "react";
-import StudioNavbar from "../components/StudioNavbar";
+import React, { useEffect, useState } from "react";
 import { IoChatboxEllipses } from "react-icons/io5";
 import AddBusinessOutlinedIcon from "@mui/icons-material/AddBusinessOutlined";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { Box, Button, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ItemList from "./ItemList";
+import Navbar from "../../components/Navbar";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useParams } from "react-router-dom";
 
-function Home() {
+function StudioDetail() {
+  // global
+  let { code_name } = useParams();
+  const axiosPrivate = useAxiosPrivate();
+
   // local
+  const [studio, setStudio] = useState({});
   const [type, setType] = useState("service");
+
+  useEffect(() => {
+    axiosPrivate
+      .get(`/studio/${code_name}`)
+      .then((res) => {
+        console.log(res.data);
+        setStudio(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleChange = (event, newValue) => {
     setType(newValue);
   };
   return (
     <div>
-      <StudioNavbar />
+      <Navbar />
 
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-violet-50 bg-opacity-50 flex flex-col px-[100px] py-11">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mb-10">
         <div className="flex justify-between border border-indigo-100 border-solid  rounded-md bg-white px-8 py-8  shadow shadow-indigo-100">
           <div className="flex gap-5 items-center px-8 py-8">
             <div className="flex flex-col items-center">
               <img
                 loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/a03459bc5fde60d2f75cb8b03f2ccbad49b23f0228eae68d9dde7986fe045e7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                src={
+                  studio?.avatar
+                    ? studio?.avatar
+                    : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
+                }
                 className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
               />
             </div>
@@ -33,7 +54,7 @@ function Home() {
               <div className="flex flex-col items-stretch gap-4 justify-center">
                 <div className="flex gap-3 items-center">
                   <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
-                    Studio Demo
+                    {studio?.friendly_name}
                   </div>
                   <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
                 </div>
@@ -188,19 +209,19 @@ function Home() {
 
         <TabPanel value="service">
           {/* Service List */}
-          <ItemList itemType={"service"} />
+          <ItemList code_name={code_name} itemType={"SERVICE"} />
         </TabPanel>
         <TabPanel value="product">
           {/* Product List */}
-          <ItemList itemType={"product"} />
+          <ItemList code_name={code_name} itemType={"PRODUCT"} />
         </TabPanel>
         <TabPanel value="service-pack">
           {/* Package List */}
-          <ItemList itemType={"service-pack"} />
+          <ItemList code_name={code_name} itemType={"SERVICE_PACK"} />
         </TabPanel>
       </TabContext>
     </div>
   );
 }
 
-export default Home;
+export default StudioDetail;

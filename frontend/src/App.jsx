@@ -25,6 +25,7 @@ import StudioProfile from "./studio/Profile";
 import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/ComplainDetail";
 import Complains from "./staff/Complains";
+import StudioDetail from "./user/studio_info/StudioDetail";
 
 function App() {
   const theme = createTheme({
@@ -96,6 +97,9 @@ function App() {
             />
             <Route path="/studio/orders" element={<StudioOrders />} />
             <Route path="/studio/profile" element={<StudioProfile />} />
+            {/* Studio Detail dành cho user xem */}
+            <Route path="/studio/:code_name" element={<StudioDetail />} />
+            {/* Studio Home trang chủ của Studio đăng nhập vào */}
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
@@ -107,6 +111,7 @@ function App() {
           <Route path="/staff/complains" element={<Complains />} />
 
           {/* Everyone */}
+
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/" element={<Home />} />
         </Route>
