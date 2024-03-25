@@ -7,6 +7,7 @@ from studio_document.exceptions import StudioDocumentAlreadyExistsException
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
+from studio_document.filter import StudioDocumentFilter
 
 
 class StudioDocumentViewSet(BaseGenericViewSet, CreateModelMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin):
@@ -14,6 +15,7 @@ class StudioDocumentViewSet(BaseGenericViewSet, CreateModelMixin, UpdateModelMix
     serializer_class = {"create": CreateStudioDocumentSerializer, "retrieve": StudioDocumentDetailSerializer, 
                         "list" : StudioDocumentSummarySerializer, "default": StudioDocumentUpdateSerializer}    
     permission_classes = (StudioDocumentPermission,)
+    filterset_class = StudioDocumentFilter
     
     def get_queryset(self):
         if self.action == 'list':

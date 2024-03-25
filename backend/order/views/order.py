@@ -12,6 +12,7 @@ from base.exceptions import MethodNotAllowed
 import datetime
 from notification.execute import NotificationService
 from address.models import Address
+from order.filter import OrderFilter
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -19,12 +20,14 @@ class OrderViewSet(BaseModelViewSet):
     serializer_class = {"create": CreateOrderSerializer, "list": OrderSummarySerializer, "update": UpdateOrderSerializer, "default": ReadOrderSerializer, "partial_update": UpdateOrderSerializer,
                         "list_order_of_studio": OrderSummarySerializer, "retrieve": ReadOrderSerializer}
     permission_classes = [OrderPermission]
+    filterset_class = OrderFilter   
+    search_fields = ["@studio__code_name", "@studio__friendly_name", "@order_item__item__name", "@order_item__item__description"]
 
     def get_queryset(self):
         if self.action == "list":
-            return self.queryset.filter(customer=self.request.user).order_by("-created_at")[:50]
+            return self.queryset.filter(customer=self.request.user).order_by("-created_at")
         elif self.action == "list_order_of_studio":
-            return self.queryset.filter(studio=self.request.user.studio).order_by("-created_at")[:50]
+            return self.queryset.filter(studio=self.request.user.studio).order_by("-created_at")
         return super().get_queryset()
 
     @transaction.atomic
