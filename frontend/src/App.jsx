@@ -16,6 +16,7 @@ import Register from "./studio/Register";
 import ItemMgmt from "./studio/ItemMgmt";
 import AddItem from "./studio/AddItem";
 import StudioHome from "./studio/Home";
+import AdminManageAccount from "./adminAccount/manageAccount";
 
 function App() {
   const theme = createTheme({
@@ -85,7 +86,7 @@ function App() {
         <Route path="/studio/orders" element={<StudioOrders />} />
         <Route path="/studio/" element={<StudioHome />} />
 
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<AdminManageAccount />} />
       </Routes>
     </ThemeProvider>
   );
