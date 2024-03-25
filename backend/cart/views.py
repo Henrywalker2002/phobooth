@@ -4,12 +4,15 @@ from cart.models import Cart
 from cart.serializers import CartSerializer, CartListSerializer
 from rest_framework import permissions
 from rest_framework.response import Response
+from cart.filters import CartFilter
 
 
 class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
     queryset = Cart.objects.all()
     serializer_class = {"default": CartSerializer, "list": CartListSerializer}
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = CartFilter
+    search_fields = ["@item__name", "@item__description"]
 
     def get_queryset(self):
         if self.action == "list":
@@ -21,7 +24,8 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().order_by("modified_at", "item__studio_id")
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.order_by("modified_at", "item__studio_id")
         
         page = self.paginate_queryset(queryset)
         if page:
@@ -41,4 +45,4 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
             else:
                 res.append({"studio": studio, "items": [item]})
         
-        return self.get_paginated_response(res) if page else Response(res)
+        return self.get_paginated_response(res)
