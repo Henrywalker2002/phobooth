@@ -40,7 +40,7 @@ function Profile() {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const [openSBar, setOpenSbar] = useState(false);
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState([{ id: uuidv4() }]);
   const [provinces, setProvinces] = useState([]);
   const [newInfo, setNewInfo] = useState({});
   const [avt, setAvt] = useState({});
@@ -648,7 +648,7 @@ function Profile() {
                     <MenuItem
                       key={index}
                       value={prov.code}
-                      onClick={() => handleUpdateProv(addresses[0].id, prov)}
+                      onClick={() => handleUpdateProv(addresses[0]?.id, prov)}
                     >
                       {prov.name}
                     </MenuItem>
@@ -682,7 +682,7 @@ function Profile() {
                       key={index}
                       value={dist.code}
                       onClick={() =>
-                        handleUpdateDist(addresses[0].id, dist.code)
+                        handleUpdateDist(addresses[0]?.id, dist.code)
                       }
                     >
                       {dist.name}

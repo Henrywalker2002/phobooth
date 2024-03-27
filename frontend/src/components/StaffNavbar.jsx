@@ -21,7 +21,6 @@ import { BiStore } from "react-icons/bi";
 import { CgFileDocument } from "react-icons/cg";
 import { LuTicket } from "react-icons/lu";
 import { RiSearchLine } from "react-icons/ri";
-import { HiOutlineMenu } from "react-icons/hi";
 import {
   MdNotificationsNone,
   MdOutlineChat,
@@ -31,7 +30,6 @@ import {
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
-import NotificationList from "./notification/Notification";
 // import logo from "../assets/logo1.png";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
@@ -50,13 +48,12 @@ const Logo = styled(PhotoCameraIcon)(({ theme }) => ({
   },
 }));
 
-function Navbar() {
+function StaffNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
   const [cookies, , removeCookie] = useCookies(["accInfo"]);
-  const [openNotification, setOpenNotification] = useState(false);
 
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
@@ -65,7 +62,7 @@ function Navbar() {
   }, []);
 
   // profile nav
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -73,7 +70,6 @@ function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const handleLogout = () => {
     removeCookie("userInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
@@ -83,16 +79,6 @@ function Navbar() {
   // Open Menu
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
-  };
-
-  // notification handle
-  const [anchorNoti, setAnchorNoti] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleNotificationClick = (event) => {
-    setAnchorNoti(event.currentTarget);
-  };
-  const handleNotificationClose = () => {
-    setAnchorNoti(null);
   };
 
   return (
@@ -243,22 +229,7 @@ function Navbar() {
             </div>
           </div>
           <div className="self-center max-sm:hidden">
-            <Button
-              startIcon={<HiOutlineMenu />}
-              sx={{
-                textTransform: "none",
-                color: "#787282",
-                width: "140px",
-                height: "35px",
-                borderRadius: "5px",
-                fontSize: "17.5px",
-                "&:hover": {
-                  color: "#3F41A6",
-                },
-              }}
-            >
-              Danh mục
-            </Button>
+            <div className="text-[#787282] text-[19px]">Quản trị viên</div>
           </div>
         </div>
 
@@ -299,7 +270,7 @@ function Navbar() {
         <MenuBtn>
           <RiSearchLine style={{ color: "#666666", width: 20, height: 20 }} />
         </MenuBtn>
-        
+
         {userInfo == "" ? (
           <div className="btn-gr w-60 max-sm:hidden">
             <Button
@@ -348,7 +319,7 @@ function Navbar() {
           </div>
         ) : (
           <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
-            <IconButton onClick={handleNotificationClick}>
+            <IconButton>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>
 
@@ -427,15 +398,9 @@ function Navbar() {
             </Menu>
           </div>
         )}
-
-        {/* Notification */}
-        <NotificationList
-          anchorNoti={anchorNoti}
-          handleClose={handleNotificationClose}
-        />
       </div>
     </AppBar>
   );
 }
 
-export default Navbar;
+export default StaffNavbar;

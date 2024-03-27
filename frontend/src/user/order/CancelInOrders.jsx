@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { translateErrStatusOrder } from "../util/Translate";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { translateErrStatusOrder } from "../../util/Translate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function CancelInOrders({
   open,

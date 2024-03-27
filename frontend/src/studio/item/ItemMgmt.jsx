@@ -101,7 +101,7 @@ function ItemMgmt() {
       .then((res) => {
         console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
-        if (currCount !== serPageCount) setProPageCount(currCount);
+        if (currCount !== proPageCount) setProPageCount(currCount);
         setProductList(res.data.results);
       })
       .catch((err) => {
@@ -129,7 +129,7 @@ function ItemMgmt() {
       .then((res) => {
         console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
-        if (currCount !== serPageCount) setPkgPageCount(currCount);
+        if (currCount !== pkgPageCount) setPkgPageCount(currCount);
         setPkgList(res.data.results);
       })
       .catch((err) => {
