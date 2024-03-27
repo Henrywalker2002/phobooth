@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Checkbox,
   Dialog,
   DialogActions,
   DialogTitle,
@@ -14,10 +13,14 @@ import {
   Button,
 } from "@mui/material";
 import { FaXmark } from "react-icons/fa6";
-import axios from "../../api/axios";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import { isBefore } from "../../util/Compare";
 
-function Filter({ open, setOpen, orders, setFilterOrders }) {
-  const [studioList, setStudioList] = useState([]);
+function Filter({ open, setOpen, filterVal, setFilterVal }) {
+  // local
   const statusList = [
     { label: "Đã đặt", value: "ORDERED" },
     { label: "Đang tiến hành", value: "IN_PROCESS" },
@@ -25,82 +28,62 @@ function Filter({ open, setOpen, orders, setFilterOrders }) {
     { label: "Hoàn thành", value: "COMPLETED" },
     { label: "Hủy đơn", value: "CANCELED" },
   ];
-  const [filterStatus, setFilterStatus] = useState([]);
-  const [filterStudio, setFilterStudio] = useState([]);
-  const [sortBy, setSortBy] = useState("");
+  const [newFilterVal, setNewFilterVal] = useState({});
 
-  useEffect(() => {
-    axios
-      .get("/studio/")
-      .then((res) => {
-        console.log(res.data);
-        setStudioList(res.data.results);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  const handleChangeStatus = (e, value) => {
-    if (e.target.checked) {
-      let newList = [...filterStatus];
-      newList.push(value);
-      setFilterStatus(newList);
-    } else {
-      let newList = filterStatus.filter((status) => status !== value);
-      setFilterStatus(newList);
+  const checkDateFrom = (date_from) => {
+    if (date_from !== undefined) {
+      console.log(date_from);
+      if (newFilterVal.date_end && isBefore(newFilterVal.date_end, date_from)) {
+        return "Giá trị không hợp lệ.";
+      } else if (
+        filterVal.date_end &&
+        isBefore(filterVal.date_end, date_from)
+      ) {
+        return "Giá trị không hợp lệ.";
+      }
     }
+    return "";
   };
 
-  const handleChangeStudio = (e, studioId) => {
-    if (e.target.checked) {
-      let newList = [...filterStudio];
-      newList.push(studioId);
-      setFilterStudio(newList);
-    } else {
-      let newList = filterStudio.filter((id) => id !== studioId);
-      setFilterStudio(newList);
+  const checkDateEnd = (date_end) => {
+    if (date_end) {
+      if (
+        newFilterVal.date_from &&
+        isBefore(date_end, newFilterVal.date_from)
+      ) {
+        return "Giá trị không hợp lệ.";
+      } else if (
+        filterVal.date_from &&
+        isBefore(date_end, filterVal.date_from)
+      ) {
+        return "Giá trị không hợp lệ.";
+      }
     }
+    return "";
+  };
+
+  const handleChangeFilter = (e) => {
+    setNewFilterVal({ ...newFilterVal, [e.target.name]: e.target.value });
   };
 
   // Filter List
-  const handleFilterOrders = () => {
-    let newOrderList = [...orders];
-
-    if (filterStatus?.length > 0) {
-      newOrderList = newOrderList.filter((order) =>
-        filterStatus.includes(order?.status)
-      );
-    }
-    if (filterStudio?.length > 0) {
-      console.log(newOrderList);
-      newOrderList = newOrderList.filter((order) =>
-        filterStudio.includes(order?.studio.id)
-      );
-    }
-    // if (filter.sort_by !== undefined) {
-
-    // }
-    console.log(newOrderList);
-    return newOrderList;
-  };
-
-  const handleSaveFilter = () => {
-    console.log("status", filterStatus);
-    console.log("studio", filterStudio);
-    console.log("sort by", sortBy);
-    setFilterOrders(handleFilterOrders());
+  const handleFilterOrder = () => {
+    console.log(filterVal);
+    console.log(newFilterVal);
+    if (Object.keys(newFilterVal).length > 0) setFilterVal(newFilterVal);
     setOpen(false);
   };
 
   return (
     <Dialog
-      sx={{ minWidth: "300px" }}
+      sx={{ minWidth: "400px" }}
       open={open}
       onClose={() => {
         setOpen(false);
       }}
     >
       <DialogTitle>
-        <div className="w-[350px] shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
+        <div className="shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
             Bộ lọc
           </div>
@@ -118,123 +101,127 @@ function Filter({ open, setOpen, orders, setFilterOrders }) {
         dividers={true}
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
-        <div className="flex flex-col gap-4 px-7">
+        <div className="min-w-[350px] flex flex-col gap-4 px-7">
           <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
             <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
               Trạng thái :
             </div>
             <FormGroup>
-              {statusList.map((status, i) => (
-                <FormControlLabel
-                  key={i}
-                  sx={{
-                    color: "#666",
-
-                    "& .MuiTypography-root": {
-                      fontSize: "14px",
-                    },
-                  }}
-                  control={
-                    <Checkbox
-                      onChange={(e) => handleChangeStatus(e, status.value)}
-                      sx={{
-                        "&.Mui-checked": {
-                          color: "#3F41A6",
-                        },
-                      }}
-                    />
-                  }
-                  label={status.label}
-                />
-              ))}
-            </FormGroup>
-          </div>
-
-          <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
-            <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
-              Nhà cung cấp (Studio) :
-            </div>
-            <FormGroup>
-              {studioList?.length > 0
-                ? studioList.map((studio, i) => (
-                    <FormControlLabel
-                      key={i}
-                      sx={{
-                        color: "#666",
-
-                        "& .MuiTypography-root": {
-                          fontSize: "14px",
-                        },
-                      }}
-                      control={
-                        <Checkbox
-                          onChange={(e) => handleChangeStudio(e, studio.id)}
-                          sx={{
-                            "&.Mui-checked": {
-                              color: "#3F41A6",
-                            },
-                          }}
-                        />
-                      }
-                      label={studio.friendly_name}
-                    />
-                  ))
-                : "Chưa có Studio nào!"}
-            </FormGroup>
-          </div>
-
-          <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
-            <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
-              Sắp xếp theo :
-            </div>
-            <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
-                name="sort-by"
-                onChange={(e) => setSortBy(e.target.value)}
+                name="status"
+                onChange={handleChangeFilter}
+                defaultValue={filterVal.status}
               >
-                <FormControlLabel
-                  value="newest"
-                  control={
-                    <Radio
-                      sx={{
-                        "&.Mui-checked": {
-                          color: "#3F41A6",
-                        },
-                      }}
-                    />
-                  }
-                  label="Mới nhất"
-                  sx={{
-                    color: "#666",
+                {statusList.map((status, i) => (
+                  <FormControlLabel
+                    key={i}
+                    value={status.value}
+                    control={
+                      <Radio
+                        sx={{
+                          "&.Mui-checked": {
+                            color: "#3F41A6",
+                          },
+                        }}
+                      />
+                    }
+                    label={status.label}
+                    sx={{
+                      color: "#666",
 
-                    "& .MuiTypography-root": {
-                      fontSize: "14px",
-                    },
-                  }}
-                />
-                <FormControlLabel
-                  value="oldest"
-                  control={
-                    <Radio
-                      sx={{
-                        "&.Mui-checked": {
-                          color: "#3F41A6",
-                        },
-                      }}
-                    />
-                  }
-                  label="Cũ nhất"
-                  sx={{
-                    color: "#666",
-
-                    "& .MuiTypography-root": {
-                      fontSize: "14px",
-                    },
-                  }}
-                />
+                      "& .MuiTypography-root": {
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                ))}
               </RadioGroup>
-            </FormControl>
+            </FormGroup>
+          </div>
+
+          <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
+            <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
+              Thời gian :
+            </div>
+            <div className="text-stone-500 text-[13px] leading-6 pl-2 ">
+              Lưu ý: Ngày bắt đầu phải trước ngày kết thúc.
+            </div>
+            <div className="flex flex-col pl-2 gap-5">
+              <div className="flex justify-between items-center ">
+                <div className="text-base leading-6 text-zinc-900">
+                  Từ ngày :
+                </div>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    name="date_from"
+                    sx={{
+                      width: "170px",
+                      "& .MuiInputBase-input": {
+                        height: "40px",
+                        boxSizing: "border-box",
+                      },
+                    }}
+                    format="DD-MM-YYYY"
+                    onChange={(value) => {
+                      if (value)
+                        setNewFilterVal({
+                          ...newFilterVal,
+                          date_from: value.format("YYYY-MM-DD"),
+                        });
+                    }}
+                    defaultValue={
+                      filterVal.date_from ? dayjs(filterVal.date_from) : null
+                    }
+                    slotProps={{
+                      textField: {
+                        helperText: `${checkDateFrom(
+                          newFilterVal.date_from ?? filterVal.date_from
+                        )}`,
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+
+              <div className="flex justify-between items-center ">
+                <div className="text-base leading-6 text-zinc-900">
+                  Đến ngày :
+                </div>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    name="date_end"
+                    sx={{
+                      width: "170px",
+                      "& .MuiInputBase-input": {
+                        height: "40px",
+                        boxSizing: "border-box",
+                      },
+                    }}
+                    format="DD-MM-YYYY"
+                    onChange={(value) => {
+                      if (value)
+                        setNewFilterVal({
+                          ...newFilterVal,
+                          date_end: value.format("YYYY-MM-DD"),
+                        });
+                    }}
+                    defaultValue={
+                      filterVal.date_end ? dayjs(filterVal.date_end) : null
+                    }
+                    slotProps={{
+                      textField: {
+                        helperText: `${checkDateEnd(
+                          newFilterVal.date_end ?? filterVal.date_end
+                        )}`,
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
@@ -244,10 +231,9 @@ function Filter({ open, setOpen, orders, setFilterOrders }) {
           <Button
             variant="outlined"
             onClick={() => {
-              setFilterOrders([]);
-              setFilterStatus([]);
-              setFilterStudio([]);
-              setSortBy("");
+              setFilterVal({});
+              setNewFilterVal({});
+              setOpen(false);
             }}
             sx={{
               textTransform: "none",
@@ -264,8 +250,12 @@ function Filter({ open, setOpen, orders, setFilterOrders }) {
             Hủy bộ lọc
           </Button>
           <Button
+            disabled={
+              checkDateFrom(newFilterVal.date_from ?? filterVal.date_from) !==
+              ""
+            }
             variant="contained"
-            onClick={handleSaveFilter}
+            onClick={handleFilterOrder}
             sx={{
               textTransform: "none",
               bgcolor: "#3F41A6",

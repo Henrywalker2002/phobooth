@@ -26,6 +26,8 @@ import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/ComplainDetail";
 import Complains from "./staff/Complains";
 import StudioDetail from "./user/studio_info/StudioDetail";
+import Categories from "./staff/Categories";
+import NotificationMgmt from "./user/NotificationMgmt";
 
 function App() {
   const theme = createTheme({
@@ -84,6 +86,7 @@ function App() {
             <Route path="/order/detail/:id" element={<OrderDetail />} />
             <Route path="/complain/detail/" element={<ComplainDetail />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/notification" element={<NotificationMgmt />} />
 
             {/* Studio */}
             {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
@@ -109,6 +112,7 @@ function App() {
             element={<ComplainDetailStaff />}
           />
           <Route path="/staff/complains" element={<Complains />} />
+          <Route path="/staff/categories" element={<Categories />} />
 
           {/* Everyone */}
 

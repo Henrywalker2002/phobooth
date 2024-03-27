@@ -112,13 +112,12 @@ function Booking() {
           .post("/order/", updateOrderLst)
           .then((res) => {
             console.log(res);
+            navigate("/orders", { replace: true });
           })
           .catch((err) => {
             console.log(err);
           });
       }
-
-      navigate("/orders", { replace: true });
     } catch (error) {
       console.log(error);
     }

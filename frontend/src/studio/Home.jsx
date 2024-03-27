@@ -19,7 +19,7 @@ function Home() {
       <StudioNavbar />
 
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-violet-50 bg-opacity-50 flex flex-col px-[100px] py-11">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mb-10">
         <div className="flex justify-between border border-indigo-100 border-solid  rounded-md bg-white px-8 py-8  shadow shadow-indigo-100">
           <div className="flex gap-5 items-center px-8 py-8">
             <div className="flex flex-col items-center">

@@ -180,7 +180,7 @@ function Complains() {
           sx={{
             "& .MuiInputBase-input": {
               padding: "10px 12px",
-              width: "330px",
+              width: "400px",
               height: "40px",
               boxSizing: "border-box",
             },
@@ -191,7 +191,7 @@ function Complains() {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <IconButton>
+                <IconButton sx={{ padding: 0 }}>
                   <RiSearchLine className="w-5 h-5" />
                 </IconButton>
               </InputAdornment>

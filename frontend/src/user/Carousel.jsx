@@ -111,7 +111,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
     <div className="bg-indigo-200 flex flex-col items-center px-5 max-sm:hidden">
       <div className="w-full max-w-[1320px] mt-10 mb-14">
         <div className="gap-5 flex">
-          <div className="flex flex-col items-stretch w-[18%] h-fit">
+          <div className="flex flex-col justify-center items-stretch w-[18%]">
             <Paper>
               <MenuList dense sx={{ padding: 0 }}>
                 {categories.length > 0

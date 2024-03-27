@@ -45,36 +45,60 @@ function Orders() {
   // Collapsible table
   const [cancelId, setCancelId] = useState();
   const [pageCount, setPageCount] = useState(1);
+  const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
-  const [filterOrders, setFilterOrders] = useState([]);
+  const [filterVal, setFilterVal] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
 
+  const getSlugForFilter = (slug) => {
+    if (filterVal.status) {
+      slug += `&status=${filterVal?.status}`;
+    }
+    if (filterVal.studio) {
+      slug += `&studio=${filterVal?.studio}`;
+    }
+    if (filterVal.date_from) {
+      slug += `&date_from=${filterVal?.date_from}`;
+    }
+    if (filterVal.date_end) {
+      slug += `&date_end=${filterVal?.date_end}`;
+    }
+    console.log(slug);
+    return slug;
+  };
+
   useEffect(() => {
+    let slug = "/order/?limit=5&offset=0";
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get("/order/?limit=5&offset=0")
+      .get(slug)
       .then((res) => {
         console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
+        setDefaultPage(1);
         setOrders(res?.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [filterVal]);
 
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
+    let slug = `/order/?limit=5&offset=${offset}`;
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get(`/order/?limit=5&offset=${offset}`)
+      .get(slug)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
+        setDefaultPage(page);
         setOrders(res.data.results);
       })
       .catch((err) => {
@@ -410,7 +434,7 @@ function Orders() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
         Quản lý đơn hàng
       </div>
 
@@ -493,9 +517,7 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filterOrders.length > 0 ? (
-              filterOrders.map((row) => <Row key={row?.id} row={row} />)
-            ) : orders.length > 0 ? (
+            {orders.length > 0 ? (
               orders.map((row) => <Row key={row?.id} row={row} />)
             ) : (
               <TableRow>
@@ -511,6 +533,7 @@ function Orders() {
       <Pagination
         count={pageCount}
         onChange={getOrdersForPage}
+        page={defaultPage}
         sx={{
           margin: "0 auto",
           width: "fit-content",
@@ -525,8 +548,8 @@ function Orders() {
       <Filter
         open={openFilter}
         setOpen={setOpenFilter}
-        orders={orders}
-        setFilterOrders={setFilterOrders}
+        filterVal={filterVal}
+        setFilterVal={setFilterVal}
       />
 
       {/* Cancel Order */}

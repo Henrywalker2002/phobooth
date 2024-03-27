@@ -38,36 +38,57 @@ function Orders() {
   const [openFilter, setOpenFilter] = useState(false);
   // local
   const [pageCount, setPageCount] = useState(1);
+  const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
-  const [filterOrders, setFilterOrders] = useState([]);
+  const [filterVal, setFilterVal] = useState({});
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
 
+  const getSlugForFilter = (slug) => {
+    if (filterVal.status) {
+      slug += `&status=${filterVal?.status}`;
+    }
+    if (filterVal.date_from) {
+      slug += `&date_from=${filterVal?.date_from}`;
+    }
+    if (filterVal.date_end) {
+      slug += `&date_end=${filterVal?.date_end}`;
+    }
+    console.log(slug);
+    return slug;
+  };
+
   useEffect(() => {
+    let slug = "order/studio/?limit=5&offset=0";
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get("order/studio/?limit=5&offset=0")
+      .get(slug)
       .then((res) => {
         // console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
+        setDefaultPage(1);
         setOrders(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [filterVal]);
 
   // get Orders For Each Page
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
+    let slug = `/order/studio/?limit=5&offset=${offset}`;
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get(`/order/studio/?limit=5&offset=${offset}`)
+      .get(slug)
       .then((res) => {
         // console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
+        setDefaultPage(page);
         setOrders(res.data.results);
       })
       .catch((err) => {
@@ -118,7 +139,7 @@ function Orders() {
           <TableCell component="th" scope="row">
             {row.id}
           </TableCell>
-          <TableCell align="left">{row.created_at}</TableCell>
+          <TableCell align="left">{row.created_at.substring(0, 10)}</TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
@@ -375,9 +396,7 @@ function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filterOrders.length > 0 ? (
-              filterOrders.map((row) => <Row key={row?.id} row={row} />)
-            ) : orders.length > 0 ? (
+            {orders.length > 0 ? (
               orders.map((row) => <Row key={row?.id} row={row} />)
             ) : (
               <TableRow>
@@ -393,14 +412,15 @@ function Orders() {
       <Filter
         open={openFilter}
         setOpen={setOpenFilter}
-        orders={orders}
-        setFilterOrders={setFilterOrders}
+        filterVal={filterVal}
+        setFilterVal={setFilterVal}
       />
 
       {/* Pagination */}
       <Pagination
         count={pageCount}
         onChange={getOrdersForPage}
+        page={defaultPage}
         sx={{
           margin: "0 auto",
           width: "fit-content",
