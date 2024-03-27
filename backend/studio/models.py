@@ -13,10 +13,14 @@ class Studio(BaseModel):
     email = models.EmailField(max_length=255, null=False, unique=True)
     avatar = models.ImageField(upload_to="avatars/", null=True)
     address = models.ForeignKey(to = Address, on_delete=models.SET_NULL, null=True)
-
+    bank_bin = models.CharField(max_length=6, null=True, blank=True)
+    account_number = models.CharField(max_length=20, null=True, blank=True)    
     
     def __eq__(self, other):
         return self.id == other.id
 
     def __ne__(self, other: object) -> bool:
         return self.id != other.id
+    
+    def __hash__(self) -> int:
+        return hash(self.id)

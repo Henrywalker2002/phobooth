@@ -299,7 +299,7 @@ function Navbar() {
         <MenuBtn>
           <RiSearchLine style={{ color: "#666666", width: 20, height: 20 }} />
         </MenuBtn>
-
+        
         {userInfo == "" ? (
           <div className="btn-gr w-60 max-sm:hidden">
             <Button

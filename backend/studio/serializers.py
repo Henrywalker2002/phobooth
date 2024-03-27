@@ -4,6 +4,7 @@ from django.db import transaction
 from backend.custom_middleware import get_current_user
 import re
 from role.models import Role
+from user.models import User
 from address.serializers import AddressSerializer
 from address.models import Address
         
@@ -38,7 +39,7 @@ class StudioSerializer(serializers.ModelSerializer):
         address = Address.objects.create(**address_data)
         studio = Studio.objects.create(address = address,**validated_data)
         user = get_current_user()
-        user.studio = studio
+        user.own_studio = studio
         role = Role.objects.get(code_name = "studio")
         user.role.add(role)
         user.save()
@@ -54,9 +55,21 @@ class StudioUpdateSerializer(StudioSerializer):
     
     address = AddressSerializer()
     
+    def validate(self, attrs):
+        if 'bank_bin' in attrs:
+            if 'account_number' not in attrs:
+                raise serializers.ValidationError("Bank bin must be used with account number")
+            else:
+                #validate bank account
+                pass 
+        if 'account_number' in attrs:
+            if 'bank_bin' not in attrs:
+                raise serializers.ValidationError("Account number must be used with bank bin")
+        return attrs
+    
     class Meta:
         model = Studio
-        fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]
+        fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar", "bank_bin", "account_number"]
     
 
 class StudioDetailSerializer(serializers.ModelSerializer):
@@ -66,4 +79,15 @@ class StudioDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
         fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]
-        
+
+
+class AddEmployeeSerializer(serializers.Serializer):
+    
+    email = serializers.EmailField()
+    
+    def validate_email(self, value):
+        user = User.objects.filter(email = value)
+        if user:
+            return user
+        raise serializers.ValidationError("User not found")
+    

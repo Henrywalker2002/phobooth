@@ -104,6 +104,7 @@ function App() {
             <Route path="/studio/:code_name" element={<StudioDetail />} />
             {/* Studio Home trang chủ của Studio đăng nhập vào */}
             <Route path="/studio/" element={<StudioHome />} />
+            <Route path="/notification" element={<NotificationList />} />
           </Route>
 
           {/* Admin - Staff */}
@@ -115,7 +116,6 @@ function App() {
           <Route path="/staff/categories" element={<Categories />} />
 
           {/* Everyone */}
-
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/" element={<Home />} />
         </Route>
