@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Alert,
-  Avatar,
   Breadcrumbs,
   Button,
   Divider,
@@ -65,10 +63,11 @@ export default function VerifyStudio() {
     })
     .then((res) => {
       console.log(res.data);
+      setOpenSbar(true)
       setPayload({});
       setErrorMsg({});
+      navigate("/studio/profile");
     })
-    .then(() => setOpenSbar(true))
     .catch((err) => {
       console.log(err);
       if (err.response?.status === 400) {

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Avatar, TextField, Grid } from "@mui/material";
+import React from "react";
+import { TextField, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import VerifyUploadImage from "./VerifyUploadImage";
 
-const StyledTextField = styled(TextField)({
+export const StyledTextField = styled(TextField)({
   width: "90%",
   marginTop: "10px",
   borderRadius: "5px",
@@ -25,8 +24,7 @@ export default function VerifyForm(props) {
   const {payload, handleChangePayload, errorMsg} = props;
 
   return (
-    <Grid container spacing={2}>
-      
+    <Grid container spacing={2}>     
       <Grid item xs={6}>
         <div className="text-zinc-900 text-sm leading-5">
           Tên người đại diện pháp lý của Studio *

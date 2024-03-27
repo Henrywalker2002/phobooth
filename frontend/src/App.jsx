@@ -23,6 +23,9 @@ import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
 import VerifyStudio from "./studio/verify";
+import VerifyStudioList from "./admin/VerifyStudio";
+import VerifyStudioDetail from "./admin/VerifyStudio/VerifyStudioDetail";
+import { AdminHome } from "./admin";
 
 function App() {
   const theme = createTheme({
@@ -96,7 +99,12 @@ function App() {
             <Route path="/studio/profile/verify" element={<VerifyStudio />} />
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
-
+          {/* admin */}
+          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+            <Route path="/admin" element={<AdminHome />} />
+            <Route path="/admin/verify-studio" element={<VerifyStudioList/>}/>
+            <Route path="/admin/verify-studio/:id" element={<VerifyStudioDetail />}/>
+          </Route>
           {/* Everyone */}
 
           <Route path="/item/detail/:id" element={<ItemDetail />} />
