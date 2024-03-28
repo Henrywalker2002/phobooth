@@ -30,12 +30,39 @@ function NotificationContent({ title, message, timestamp }) {
   );
 }
 
-function handle_redirect_url(url, navigate) {
+function handle_redirect_url(id, is_read, url, navigate, axiosPrivate) {
   console.log(url);
+  if (!is_read) {
+    axiosPrivate
+      .patch(`/notification/${id}/`, { is_read: true })
+      .then((response) => {
+        // console.log(response.data); 
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   navigate(url);
 }
 
+function handle_read_all(axiosPrivate, notifications, setNotifications) {
+  axiosPrivate
+    .put('/notification/read-all/', {})
+    .then((response) => {
+      setNotifications(
+        notifications.map((notification) => {
+          notification.is_read = true;
+          return notification;
+        })
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
 function Notification({
+  id,
   image,
   title,
   message,
@@ -43,15 +70,14 @@ function Notification({
   is_read,
   redirect_url,
   navigate,
+  axiosPrivate,
 }) {
   return (
     <MenuItem
       alignItems="flex-start"
-      onClick={() => handle_redirect_url(redirect_url, navigate)}
+      onClick={() => handle_redirect_url(id, is_read, redirect_url, navigate, axiosPrivate)}
     >
-      <ListItemAvatar>
-        <Avatar src={image.src} alt={image.alt} />
-      </ListItemAvatar>
+      {image}
       <ListItemText>
         <NotificationContent
           title={title}
@@ -85,7 +111,7 @@ function NotificationList({ anchorNoti, handleClose }) {
       .get("/notification/")
       .then((response) => {
         var results = response.data.results;
-        console.log(results);
+        // console.log(results);
         setNotifications(
           results.map((notification) => handleContentNotification(notification))
         );
@@ -138,6 +164,7 @@ function NotificationList({ anchorNoti, handleClose }) {
           {notifications.map((notification, i) => (
             <Box key={i}>
               <Notification
+                id = {notification.id}
                 image={notification.image}
                 title={notification.title}
                 message={notification.message}
@@ -145,6 +172,7 @@ function NotificationList({ anchorNoti, handleClose }) {
                 is_read={notification.is_read}
                 redirect_url={notification.redirect_url}
                 navigate={navigate}
+                axiosPrivate = {axiosPrivate}
               />
               {i !== notifications.length - 1 && <Divider />}
             </Box>
@@ -153,6 +181,23 @@ function NotificationList({ anchorNoti, handleClose }) {
       </DialogContent>
 
       <DialogActions>
+      <Button
+          autoFocus
+          onClick={() => handle_read_all(axiosPrivate, notifications, setNotifications)}
+          sx={{
+            textTransform: "none",
+            color: "#3F41A6",
+            width: "fit-content",
+            padding: "5px 20px",
+            fontWeight: "600",
+            "&:hover": {
+              bgcolor: "#E2E5FF",
+            },
+          }}
+        >
+          Đọc tất cả
+        </Button>
+
         <Button
           autoFocus
           onClick={() => navigate("/notification")}

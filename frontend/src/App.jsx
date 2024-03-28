@@ -104,7 +104,6 @@ function App() {
             <Route path="/studio/:code_name" element={<StudioDetail />} />
             {/* Studio Home trang chủ của Studio đăng nhập vào */}
             <Route path="/studio/" element={<StudioHome />} />
-            <Route path="/notification" element={<NotificationList />} />
           </Route>
 
           {/* Admin - Staff */}
