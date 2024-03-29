@@ -299,7 +299,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
 
                       <TableCell align="left">
                         <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                          {item.category.title}
+                          {item.category?.title}
                         </div>
                       </TableCell>
                       <TableCell align="left">

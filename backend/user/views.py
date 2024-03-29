@@ -17,6 +17,7 @@ from django.db import transaction
 from address.models import Address
 import json
 from django.http.request import QueryDict
+from user.filter import StaffFilter
 
 
 class UserViewSet(BaseModelViewSet):
@@ -107,6 +108,8 @@ class StaffViewSet(BaseModelViewSet):
                         "update": UpdateStaffSerializer, "partial_update": UpdateStaffSerializer,}
     queryset = User.objects.all()
     permission_classes = [StaffPermission]
+    filterset_class = StaffFilter
+    search_fields = ["@username", "@full_name", "@email"]
     
     def get_queryset(self):
         return self.queryset.filter(role__code_name__in=["staff", "admin"])
