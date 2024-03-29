@@ -6,16 +6,18 @@ import {
   TextField,
   Button,
   MenuItem,
+  IconButton,
 } from "@mui/material";
-import { useCookies } from "react-cookie";
-import axios from "../api/axios";
+import axios from "../../api/axios";
+import { FaXmark } from "react-icons/fa6";
 
-function EditAddress({ open, setOpen, setNewAddress }) {
-  const [cookies] = useCookies(["accInfo"]);
+function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
   const [provinces, setProvinces] = useState([]);
-  const [address, setAddress] = useState({});
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [newAddress, setNewAddress] = useState({});
 
-  // get province list
+  // setup address
   useEffect(() => {
     axios
       .get("province/?limit=63&offset=0")
@@ -23,53 +25,41 @@ function EditAddress({ open, setOpen, setNewAddress }) {
         // console.log(res);
         setProvinces(res.data.results);
       })
-      .catch((err) => console.log(err));
-  }, []);
 
-  // setup address
-  const setUpInitialAddress = () => {
-    if (cookies.userInfo.address !== null) {
-      let distlist = [];
-      let wardlist = [];
-      axios
-        .get(`province/${cookies.userInfo.address.province.code_name}/`)
-        .then((res) => {
-          // console.log(res);
-          distlist = res.data.districts;
-          return distlist;
-        })
-        .then((distlist) => {
-          wardlist = distlist?.find(
-            (dist) => dist.code === cookies.userInfo.address.district.code
-          )?.wards;
-        })
-        .then(() => {
-          setAddress([
-            {
-              street: cookies.userInfo.address.street,
-              ward: cookies.userInfo.address.ward,
-              district: cookies.userInfo.address.district,
-              province: cookies.userInfo.address.province,
-              distlist: distlist,
-              wardlist: wardlist,
-            },
-          ]);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-  useEffect(() => {
-    setUpInitialAddress();
+      .then(() => {
+        axios
+          .get(`province/${address?.province?.code_name}/`)
+          .then((res) => {
+            // console.log(res);
+            setDistricts(res.data.districts);
+            return res.data.districts;
+          })
+          .then((distlist) => {
+            setWards(
+              distlist?.find((dist) => dist.code === address.district.code)
+                ?.wards
+            );
+          });
+      })
+      .then(() => {
+        setNewAddress({
+          ...address,
+        });
+      })
+      .catch((err) => console.log(err));
+    console.log(address);
+    console.log(districts);
+    console.log(wards);
   }, []);
 
   const handleUpdateProv = async (prov) => {
     try {
       const res = await axios.get(`province/${prov.code_name}/`);
       // console.log(res);
-      setAddress({
-        ...address,
+      setDistricts(res.data.districts);
+      setNewAddress({
+        ...newAddress,
         province: prov,
-        distlist: res.data.districts,
       });
     } catch (error) {
       console.log(error);
@@ -77,20 +67,13 @@ function EditAddress({ open, setOpen, setNewAddress }) {
   };
 
   const handleUpdateDist = (district) => {
-    setAddress({
-      ...address,
+    setWards(districts?.find((dist) => dist.code === district.code)?.wards);
+    setNewAddress({
+      ...newAddress,
       district: district,
-      wardlist: address.distlist?.find((dist) => dist.code === district.code)
-        ?.wards,
     });
   };
 
-  const handleUpdateOtherInfo = (e) => {
-    setAddress({
-      ...address,
-      [e.target.name]: e.target.value,
-    });
-  };
   return (
     <Dialog
       open={open}
@@ -105,20 +88,30 @@ function EditAddress({ open, setOpen, setNewAddress }) {
         },
       }}
     >
-      <DialogTitle>Cập nhật địa chỉ nhận hàng</DialogTitle>
+      <DialogTitle>
+        <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
+          <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
+            Cập nhật địa chỉ nhận hàng
+          </div>
+          <IconButton
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <FaXmark />
+          </IconButton>
+        </div>
+      </DialogTitle>
       <DialogContent dividers={true}>
         <div className="flex items-center gap-5 mb-5">
           <TextField
             id="outlined-select-provinces"
             label="Tỉnh thành"
-            value={
-              address.province
-                ? address.province?.code
-                : cookies.userInfo.address.province.code
-            }
+            defaultValue={address?.province?.code}
             select
             sx={{
-              width: "150px",
+              width: "200px",
+
               marginY: "10px",
             }}
           >
@@ -138,15 +131,15 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             id="outlined-select-districts"
             label="Quận huyện"
             variant="outlined"
-            defaultValue={cookies.userInfo.address.district.code}
+            defaultValue={address?.district?.code}
             select
             sx={{
-              width: "150px",
+              width: "200px",
               marginY: "10px",
             }}
           >
             <MenuItem value="">--Chọn quận huyện--</MenuItem>
-            {address?.distlist?.map((dist, index) => (
+            {districts?.map((dist, index) => (
               <MenuItem
                 key={index}
                 value={dist.code}
@@ -161,19 +154,19 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             label="Phường xã"
             variant="outlined"
             name="ward"
-            defaultValue={cookies.userInfo.address.ward.code}
             select
+            defaultValue={address?.ward?.code}
             sx={{
-              width: "150px",
+              width: "200px",
               marginY: "10px",
             }}
           >
             <MenuItem value="">--Chọn phường xã--</MenuItem>
-            {address?.wardlist?.map((ward, index) => (
+            {wards?.map((ward, index) => (
               <MenuItem
                 key={index}
                 value={ward.code}
-                onClick={() => setAddress({ ...address, ward: ward })}
+                onClick={() => setNewAddress({ ...newAddress, ward: ward })}
               >
                 {ward.name}
               </MenuItem>
@@ -185,10 +178,10 @@ function EditAddress({ open, setOpen, setNewAddress }) {
             label="Số nhà, đường"
             variant="outlined"
             name="street"
-            value={
-              address.street ? address.street : cookies.userInfo.address.street
+            defaultValue={address?.street}
+            onChange={(e) =>
+              setNewAddress({ ...newAddress, street: e.target.value })
             }
-            onChange={(e) => setAddress({ ...address, street: e.target.value })}
             sx={{
               width: "200px",
               marginY: "10px",
@@ -201,7 +194,7 @@ function EditAddress({ open, setOpen, setNewAddress }) {
           <Button
             variant="contained"
             onClick={() => {
-              setNewAddress({ ...address });
+              handleUpdateAddress(newAddress);
             }}
             sx={{
               textTransform: "none",

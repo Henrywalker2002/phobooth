@@ -48,7 +48,7 @@ function Login() {
       const response = await axios.post(LOGIN_URL, loginInfo, {
         headers: { "Content-Type": "application/json" },
       });
-      // console.log(response?.data);
+      console.log(response?.data);
       setCookie(
         "userInfo",
         {

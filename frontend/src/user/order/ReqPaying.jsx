@@ -11,8 +11,8 @@ import {
 import React, { useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import dayjs from "dayjs";
-import { isBeforeToday } from "../util/Compare";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { isBeforeToday } from "../../util/Compare";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function ReqPaying({ open, setOpen, req, setReload }) {
   const axiosPrivate = useAxiosPrivate();

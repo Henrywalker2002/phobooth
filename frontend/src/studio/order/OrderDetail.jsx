@@ -52,7 +52,6 @@ function OrderDetail(props) {
   const [statusMsg, setStatusMsg] = useState(false);
   // local
   const [order, setOrder] = useState({});
-
   const [selectedItem, setSelectedItem] = useState({});
   const [delivery, setDelivery] = useState(false);
   const [status, setStatus] = useState("ORDERED"); // [1, 2, 3]
@@ -308,6 +307,7 @@ function OrderDetail(props) {
           </div>
 
           <Button
+            disabled={order?.status === "ORDERED" ? false : true}
             variant="text"
             startIcon={<AddIcon />}
             onClick={() => {
