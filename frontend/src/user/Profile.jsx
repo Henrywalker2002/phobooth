@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
   FormHelperText,
+  Tooltip,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -399,28 +400,30 @@ function Profile() {
               <div className="text-zinc-900 text-sm leading-5 mt-4">
                 Email *
               </div>
-              <TextField
-                disabled
-                required
-                variant="outlined"
-                name="email"
-                value={newInfo.email ?? cookies.userInfo.email ?? ""}
-                // defaultValue={cookies.userInfo.email}
-                onChange={updateUserInfo}
-                InputProps={{
-                  type: "email",
-                }}
-                error={errMsg.email ? true : false}
-                helperText={errMsg.email ? errMsg.email[0] : ""}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  width: "350px",
-                  marginY: "10px",
-                }}
-              />
+              <Tooltip title="Bạn không thể thay đổi email đã đăng kí.">
+                <span>
+                  <TextField
+                    disabled
+                    required
+                    variant="outlined"
+                    name="email"
+                    value={newInfo.email ?? cookies.userInfo.email ?? ""}
+                    // defaultValue={cookies.userInfo.email}
+
+                    InputProps={{
+                      type: "email",
+                    }}
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        height: "45px",
+                        boxSizing: "border-box",
+                      },
+                      width: "350px",
+                      marginY: "10px",
+                    }}
+                  />
+                </span>
+              </Tooltip>
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
                 Số điện thoại

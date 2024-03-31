@@ -20,6 +20,7 @@ import {
   TextField,
   Alert,
   AlertTitle,
+  Tooltip,
 } from "@mui/material";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -28,6 +29,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddIcon from "@mui/icons-material/Add";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
+import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import StudioNavbar from "../../components/StudioNavbar";
 import AddOrderItem from "./AddOrderItem";
@@ -133,6 +135,113 @@ function OrderDetail(props) {
     else setDelivery(false);
   };
 
+  // disable btn
+  const EditIconButton = ({ row }) => {
+    if (order.status !== "ORDERED") {
+      return (
+        <Tooltip
+          title={"Bạn chỉ được cập nhật khi đơn đang trạng thái 'Đã đặt'"}
+        >
+          <span>
+            <IconButton disabled>
+              <MdEdit
+                style={{
+                  width: "22px",
+                  height: "22px",
+                }}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <IconButton onClick={() => handleOpenEditItem(row)}>
+        <MdEdit
+          style={{
+            width: "22px",
+            height: "22px",
+          }}
+        />
+      </IconButton>
+    );
+  };
+
+  const DelIconButton = ({ row }) => {
+    // console.log(row);
+    if (order.status !== "ORDERED") {
+      return (
+        <Tooltip title={"Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt'"}>
+          <span>
+            <IconButton disabled>
+              <MdDeleteOutline
+                style={{
+                  width: "22px",
+                  height: "22px",
+                }}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <IconButton onClick={() => handleOpenDelItem(row)}>
+        <MdDeleteOutline
+          style={{
+            width: "22px",
+            height: "22px",
+          }}
+        />
+      </IconButton>
+    );
+  };
+
+  const AddButton = () => {
+    if (order.status !== "ORDERED") {
+      return (
+        <Tooltip
+          title={"Bạn chỉ được thêm sản phẩm khi đơn đang trạng thái 'Đã đặt'"}
+        >
+          <span>
+            <Button
+              disabled
+              variant="text"
+              startIcon={<AddIcon />}
+              sx={{
+                textTransform: "none",
+                color: "#3F41A6",
+                "&:hover": {
+                  bgcolor: "#E2E5FF",
+                },
+              }}
+            >
+              Thêm sản phẩm
+            </Button>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <Button
+        variant="text"
+        startIcon={<AddIcon />}
+        onClick={() => {
+          setOpenAddItem(true);
+        }}
+        sx={{
+          textTransform: "none",
+          color: "#3F41A6",
+          "&:hover": {
+            bgcolor: "#E2E5FF",
+          },
+        }}
+      >
+        Thêm sản phẩm
+      </Button>
+    );
+  };
+
   // Collapsible table
   function getPrice(item) {
     if (item.price) {
@@ -196,32 +305,8 @@ function OrderDetail(props) {
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
-            <IconButton
-              disabled={
-                status === "CANCELED" || status === "IN_PROCESS" ? true : false
-              }
-              onClick={() => handleOpenEditItem(row)}
-            >
-              <MdEdit
-                style={{
-                  width: "22px",
-                  height: "22px",
-                }}
-              />
-            </IconButton>
-            <IconButton
-              disabled={
-                status === "CANCELED" || status === "IN_PROCESS" ? true : false
-              }
-              onClick={() => handleOpenDelItem(row)}
-            >
-              <MdDeleteOutline
-                style={{
-                  width: "22px",
-                  height: "22px",
-                }}
-              />
-            </IconButton>
+            <EditIconButton row={row} />
+            <DelIconButton row={row} />
           </TableCell>
         </TableRow>
         <TableRow>
@@ -306,23 +391,7 @@ function OrderDetail(props) {
             {order?.order_item?.length} sản phẩm
           </div>
 
-          <Button
-            disabled={order?.status === "ORDERED" ? false : true}
-            variant="text"
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenAddItem(true);
-            }}
-            sx={{
-              textTransform: "none",
-              color: "#3F41A6",
-              "&:hover": {
-                bgcolor: "#E2E5FF",
-              },
-            }}
-          >
-            Thêm sản phẩm
-          </Button>
+          <AddButton />
         </div>
         <Table aria-label="collapsible table">
           <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -364,8 +433,8 @@ function OrderDetail(props) {
             </Alert>
           ) : (
             <div className="flex justify-start gap-[350px] px-16">
-              <div className="flex flex-col items-stretch w-[200px]">
-                <div className="flex grow flex-col items-stretch px-5">
+              <div className="flex flex-col items-stretch gap-4 ">
+                <div className="flex grow flex-col items-stretch px-5 w-[200px]">
                   <div className="items-center flex justify-between gap-4 pr-20">
                     <div className="text-indigo-800 text-sm font-medium leading-4 tracking-wide uppercase grow whitespace-nowrap my-auto">
                       Vận chuyển
@@ -410,6 +479,27 @@ function OrderDetail(props) {
                     ) : null}
                   </TextField>
                 </div>
+                <Button
+                  startIcon={
+                    <FaArrowRight style={{ width: "18px", height: "18px" }} />
+                  }
+                  onClick={() => navigate(`/studio/order/detail/${id}/demo`)}
+                  sx={{
+                    textTransform: "none",
+                    color: "#3F41A6",
+                    width: "fit-content",
+                    padding: "5px 15px",
+                    height: "35px",
+                    borderRadius: "5px",
+                    fontSize: "15px",
+                    "&:hover": {
+                      color: "#1A237E",
+                      bgcolor: "transparent",
+                    },
+                  }}
+                >
+                  Cập nhật thành phẩm
+                </Button>
               </div>
               <div className="flex flex-col items-stretch gap-5 w-[450px]">
                 <div className="items-stretch flex justify-between gap-5 px-5 max-md:mt-10">
@@ -422,6 +512,7 @@ function OrderDetail(props) {
                       : "Chưa cập nhật"}
                   </div>
                 </div>
+
                 {order.note == null ? null : (
                   <Alert
                     sx={{
@@ -445,6 +536,88 @@ function OrderDetail(props) {
           )}
         </div>
       </TableContainer>
+
+      {/* Thông tin vận chuyển */}
+      <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
+        <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
+          Thông tin vận chuyển
+        </div>
+        <div className="flex w-full flex-col items-stretch mt-7 px-9">
+          <div className="flex items-stretch justify-between gap-10">
+            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+              <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
+                Tên khách hàng
+              </div>
+              <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
+                {order?.customer?.full_name ?? "Chưa cập nhật"}
+              </div>
+            </div>
+            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                số điện thoại
+              </div>
+              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                Chưa cập nhật
+              </div>
+            </div>
+          </div>
+          <div className="flex items-stretch justify-between gap-5 mt-6 ">
+            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                Địa chỉ
+              </div>
+
+              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                {order?.address?.street}, {order?.address?.ward.name_with_type},{" "}
+                {order?.address?.district.name_with_type},{" "}
+                {order?.address?.province.name_with_type}
+              </div>
+
+              <div className="items-stretch flex gap-2 mt-2 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                  className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
+                />
+                <div className="text-zinc-500 text-sm leading-5 my-auto">
+                  Phí vận chuyển :
+                </div>
+                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
+                  20,000
+                </div>
+              </div>
+            </div>
+            <div className="w-[450px] flex justify-start items-start">
+              <div className="max-w-[200px] items-stretch flex basis-[0%] flex-col self-start gap-3">
+                <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap self-start">
+                  trạng thái vận chuyển
+                </div>
+                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2.5 py-1 self-start">
+                  Chưa vận chuyển
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            disabled={order.status === "CANCELED" ? true : false}
+            variant="contained"
+            sx={{
+              marginTop: "30px",
+              textTransform: "none",
+              borderRadius: "43px",
+              color: "#F6F5FB",
+              bgcolor: "#3F41A6",
+              width: "130px",
+              "&:hover": {
+                bgcolor: "#3F41A6B2",
+              },
+            }}
+          >
+            Lưu thông tin
+          </Button>
+        </div>
+      </div>
 
       {/* Payment Request */}
       <Payment order={order} setOrder={setOrder} />

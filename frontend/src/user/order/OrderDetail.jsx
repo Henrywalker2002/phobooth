@@ -26,6 +26,8 @@ import {
   Snackbar,
   Alert,
   AlertTitle,
+  Popover,
+  Tooltip,
 } from "@mui/material";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -41,6 +43,7 @@ import CancelOrder from "./CancelOrder";
 import ReqPaying from "./ReqPaying";
 import DeltailRequest from "../../studio/order/DeltailRequest";
 import CreateComplain from "./CreateComplain";
+import { translateOrderStatus } from "../../util/Translate";
 
 function OrderDetail() {
   // global
@@ -65,6 +68,61 @@ function OrderDetail() {
     style: "currency",
     currency: "VND",
   });
+
+  // button component
+  const CancelButton = () => {
+    if (order.status === "CANCELED" || order.status === "COMPLETED") {
+      return (
+        <Tooltip
+          title={
+            "Bạn không thể hủy khi đơn đang trạng thái " +
+            translateOrderStatus(order.status)
+          }
+        >
+          <span>
+            <Button
+              disabled
+              variant="outlined"
+              sx={{
+                borderRadius: "43px",
+                borderColor: "#3F41A6",
+                color: "#3F41A6",
+                padding: "5px 25px",
+                textTransform: "none",
+                width: "fit-content",
+                "&:hover": {
+                  bgcolor: "#F6F5FB",
+                  borderColor: "#3F41A6",
+                },
+              }}
+            >
+              Hủy đơn
+            </Button>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <Button
+        onClick={() => setOpenCancel(true)}
+        variant="outlined"
+        sx={{
+          borderRadius: "43px",
+          borderColor: "#3F41A6",
+          color: "#3F41A6",
+          padding: "5px 25px",
+          textTransform: "none",
+          width: "fit-content",
+          "&:hover": {
+            bgcolor: "#F6F5FB",
+            borderColor: "#3F41A6",
+          },
+        }}
+      >
+        Hủy đơn
+      </Button>
+    );
+  };
 
   function getPrice(item) {
     if (item.price) {
@@ -616,30 +674,8 @@ function OrderDetail() {
 
                 {/* Btn */}
                 <div className=" mx-auto my-2 flex justify-center gap-5">
-                  <Button
-                    disabled={
-                      order.status === "CANCELED" ||
-                      order.status === "COMPLETED"
-                        ? true
-                        : false
-                    }
-                    onClick={() => setOpenCancel(true)}
-                    variant="outlined"
-                    sx={{
-                      borderRadius: "43px",
-                      borderColor: "#3F41A6",
-                      color: "#3F41A6",
-                      padding: "5px 25px",
-                      textTransform: "none",
-                      width: "fit-content",
-                      "&:hover": {
-                        bgcolor: "#F6F5FB",
-                        borderColor: "#3F41A6",
-                      },
-                    }}
-                  >
-                    Hủy đơn
-                  </Button>
+                  <CancelButton />
+
                   <Button
                     variant="contained"
                     onClick={() => setOpenCreateComplain(true)}
@@ -675,24 +711,32 @@ function OrderDetail() {
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                 Tên khách hàng
               </div>
-              <TextField
+
+              <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
+                {order?.customer?.full_name ?? "Chưa cập nhật"}
+              </div>
+
+              {/* <TextField
                 id="outlined-basic"
                 variant="outlined"
                 value={order?.customer?.full_name ?? ""}
                 defaultValue={order?.customer?.full_name}
                 sx={{ marginTop: "10px" }}
-              />
+              /> */}
             </div>
             <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                 số điện thoại
               </div>
-              <TextField
+              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                Chưa cập nhật
+              </div>
+              {/* <TextField
                 id="outlined-basic"
                 variant="outlined"
                 placeholder="(671) 555-0110"
                 sx={{ marginTop: "10px" }}
-              />
+              /> */}
             </div>
           </div>
           <div className="flex items-stretch justify-between gap-5 mt-6 ">
@@ -700,26 +744,14 @@ function OrderDetail() {
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
                 Địa chỉ
               </div>
-              {/* <FormControl fullWidth>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={value}
-                  onChange={handleChange}
-                  sx={{ marginTop: "10px" }}
-                >
-                  <MenuItem value={1}>
-                    4140 Parker Rd. Allentown, New Mexico 31134
-                  </MenuItem>
-                  <MenuItem value={2}>
-                    312 Parker Rd. Allentown, New Mexico
-                  </MenuItem>
-                  <MenuItem value={3}>
-                    235 Parker Rd. Allentown, New Mexico
-                  </MenuItem>
-                </Select>
-              </FormControl> */}
-              <TextField
+
+              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                {order?.address?.street}, {order?.address?.ward.name_with_type},{" "}
+                {order?.address?.district.name_with_type},{" "}
+                {order?.address?.province.name_with_type}
+              </div>
+
+              {/* <TextField
                 disabled
                 name="address"
                 value={`${order?.address?.street}, ${order?.address?.ward.name_with_type}, ${order?.address?.district.name_with_type}, ${order?.address?.province.name_with_type}`}
@@ -731,7 +763,7 @@ function OrderDetail() {
                   // width: "350px",
                   marginY: "10px",
                 }}
-              />
+              /> */}
 
               <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
                 <img

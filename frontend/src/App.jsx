@@ -28,6 +28,7 @@ import Complains from "./staff/Complains";
 import StudioDetail from "./user/studio_info/StudioDetail";
 import Categories from "./staff/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
+import StudioDemo from "./studio/demo/Demo";
 
 function App() {
   const theme = createTheme({
@@ -94,6 +95,10 @@ function App() {
             <Route path="/studio/items/add" element={<AddItem />} />
             <Route path="/studio/items" element={<ItemMgmt />} />
             <Route path="/studio/register" element={<Register />} />
+            <Route
+              path="/studio/order/detail/:id/demo"
+              element={<StudioDemo />}
+            />
             <Route
               path="/studio/order/detail/:id"
               element={<StudioOrderDetail />}
