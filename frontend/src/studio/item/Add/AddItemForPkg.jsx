@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Checkbox,
   Dialog,
@@ -17,6 +17,7 @@ import {
   Button,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
   let title =
@@ -26,34 +27,61 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
       ? "HÀNG HÓA"
       : "DỊCH VỤ HỖ TRỢ";
 
-  const [selectedList, setSelectedList] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
+  const [selectList, setSelectList] = useState([]);
+  const [selected, setSelected] = useState([]);
 
-  const updateSelectedList = (item) => {
-    let newList = [...selectedList];
-    newList.push(item);
-    setSelectedList(newList);
-  };
-  const removeSelectedList = (id) => {
-    const newList = selectedList.filter((item) => item.id !== id);
-    setSelectedList(newList);
-  };
+  useEffect(() => {
+    setSelected([...itemList]);
+  }, [itemList]);
 
-  const isSelectedItem = (itemId, selectedItemList) => {
-    const result = selectedItemList?.find((item) => item.id === itemId);
+  // selection list
+  useEffect(() => {
+    let slug = type == "PRODUCT" ? "/item-product/" : "/item-service/";
+    axiosPrivate
+      .get(slug)
+      .then((res) => {
+        console.log(res.data.results);
+        if (type == "PRODUCT") setSelectList(res.data.results);
+        else if (type == "SERVICE")
+          setSelectList(
+            res.data.results.filter((item) => item.type === "SERVICE")
+          );
+        else {
+          setSelectList(
+            res.data.results.filter((item) => item.type === "ACCESSORY")
+          );
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  //   check selected item in selectList
+  const isSelectedItem = (itemId) => {
+    const result = itemList?.find((item) => item.id === itemId);
     if (result) return true;
     return false;
   };
 
-  const handleSaveSelected = () => {
-    let newList = itemList.selected ? itemList.selected : [];
-    newList = [...newList, ...selectedList];
-    setItemList({
-      ...itemList,
-      selected: newList,
-    });
-    setOpen(false);
-    setSelectedList([]);
+  //   add + remove item in selected
+  const updateSelectedList = (item) => {
+    let newList = [...selected];
+    newList.push(item);
+    setSelected(newList);
   };
+
+  const removeSelectedList = (id) => {
+    const newList = selected.filter((item) => item.id !== id);
+    setSelected(newList);
+  };
+
+  //   save update list in itemList
+  const handleSaveSelected = () => {
+    setItemList([...selected]);
+    setOpen(false);
+    setSelected([]);
+  };
+
   return (
     <Dialog
       open={open}
@@ -123,8 +151,8 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {itemList?.selectList?.length > 0 ? (
-                itemList.selectList.map((item) => (
+              {selectList?.length > 0 ? (
+                selectList.map((item) => (
                   <TableRow
                     key={item.id}
                     // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -136,7 +164,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
                             ? updateSelectedList(item)
                             : removeSelectedList(item.id);
                         }}
-                        disabled={isSelectedItem(item.id, itemList.selected)}
+                        disabled={isSelectedItem(item.id)}
                         inputProps={{ "aria-label": "controlled" }}
                         sx={{
                           "&.Mui-checked": {
@@ -160,8 +188,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
 
                     <TableCell align="left">
                       <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                        {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
-                        {item.category.title}
+                        {item.category?.title}
                       </div>
                     </TableCell>
                     {type === "PRODUCT" ? (

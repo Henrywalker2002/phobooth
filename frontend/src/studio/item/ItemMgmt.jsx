@@ -6,7 +6,9 @@ import {
   IconButton,
   InputAdornment,
   Link,
+  Pagination,
   Paper,
+  Snackbar,
   Tab,
   Table,
   TableBody,
@@ -25,14 +27,14 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import StudioNavbar from "../components/StudioNavbar";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import StudioNavbar from "../../components/StudioNavbar";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import DelItem from "./DelItem";
 
 function ItemMgmt() {
   // global
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   // console.log(auth.access);
 
   // local
@@ -40,51 +42,117 @@ function ItemMgmt() {
   const [serviceList, setServiceList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [pkgList, setPkgList] = useState([]);
+  const [openDelSBar, setOpenDelSBar] = useState(false);
+  const [openDelDialog, setOpenDelDialog] = useState(false);
+  const [delItem, setDelItem] = useState({});
+  const [reset, setReset] = useState(false);
+
+  // pagination
+  const itemsPage = 5;
+  const [serPageCount, setSerPageCount] = useState(1);
+  const [proPageCount, setProPageCount] = useState(1);
+  const [pkgPageCount, setPkgPageCount] = useState(1);
 
   useEffect(() => {
-    axios
-      .get("/item-service/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/item-service/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
+        setSerPageCount(Math.ceil(res.data.count / itemsPage));
         setServiceList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
+
+  // get services for each page
+  const getServiceForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-service/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setSerPageCount(currCount);
+        setServiceList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
-    axios
-      .get("/item-product/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/item-product/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
+        setProPageCount(Math.ceil(res.data.count / itemsPage));
         setProductList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
+
+  // get product for each page
+  const getProductForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-product/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setProPageCount(currCount);
+        setProductList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
-    axios
-      .get("/item-service-pack/", {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .get(`/item-service-pack/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        console.log(res.data.results);
+        // console.log(res.data.results);
+        setPkgPageCount(Math.ceil(res.data.count / itemsPage));
         setPkgList(res.data.results);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [reset]);
+
+  // get pkg for each page
+  const getPkgForPage = (e, page) => {
+    console.log(page);
+    let offset = itemsPage * (page - 1);
+    axiosPrivate
+      .get(`/item-service-pack/?limit=${itemsPage}&offset=${offset}`)
+      .then((res) => {
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 5);
+        if (currCount !== serPageCount) setPkgPageCount(currCount);
+        setPkgList(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  // delete item
+  const handleDelItem = (item) => {
+    setDelItem(item);
+    setOpenDelDialog(true);
+  };
+
+  // Close SnackBar delete successfully
+  const handleCloseDelSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenDelSBar(false);
   };
   return (
     <div>
@@ -102,11 +170,12 @@ function ItemMgmt() {
         }}
       >
         <Link
-          underline="hover"
+          component="button"
+          underline="none"
           key="1"
           sx={{ color: "#808080" }}
-          // href="/studio"
-          onClick={() => navigate("/studio")}
+          // href="/"
+          onClick={() => navigate("/studio", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
@@ -285,10 +354,16 @@ function ItemMgmt() {
                       </TableCell>
                       <TableCell align="left">
                         <div className="flex gap-1">
-                          <IconButton>
+                          <IconButton
+                            onClick={() =>
+                              navigate(`/studio/items/edit/${service.id}`, {
+                                state: { typ: "SERVICE" },
+                              })
+                            }
+                          >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(service)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -303,6 +378,20 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Service */}
+          <Pagination
+            count={serPageCount}
+            onChange={getServiceForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
         <TabPanel value="product">
           {/* Product Table */}
@@ -355,10 +444,16 @@ function ItemMgmt() {
                       <TableCell align="left">{product.fixed_price}</TableCell>
                       <TableCell align="left" sx={{ width: "140px" }}>
                         <div className="flex gap-1 w-fit">
-                          <IconButton>
+                          <IconButton
+                            onClick={() =>
+                              navigate(`/studio/items/edit/${product.id}`, {
+                                state: { typ: "PRODUCT" },
+                              })
+                            }
+                          >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(product)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -373,6 +468,20 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Product */}
+          <Pagination
+            count={proPageCount}
+            onChange={getProductForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
         <TabPanel value="pkg">
           {/* Package Table */}
@@ -428,10 +537,16 @@ function ItemMgmt() {
                       </TableCell>
                       <TableCell align="left" sx={{ width: "140px" }}>
                         <div className="flex gap-1 w-fit">
-                          <IconButton>
+                          <IconButton
+                            onClick={() =>
+                              navigate(`/studio/items/edit/${pkg.id}`, {
+                                state: { typ: "SERVICE_PACK" },
+                              })
+                            }
+                          >
                             <ModeEditIcon style={{ color: "#666666" }} />
                           </IconButton>
-                          <IconButton>
+                          <IconButton onClick={() => handleDelItem(pkg)}>
                             <DeleteOutlineIcon style={{ color: "#666666" }} />
                           </IconButton>
                         </div>
@@ -446,8 +561,41 @@ function ItemMgmt() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Pagination For Pkg */}
+          <Pagination
+            count={pkgPageCount}
+            onChange={getPkgForPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
         </TabPanel>
       </TabContext>
+
+      {/* Delete Dialog */}
+      <DelItem
+        open={openDelDialog}
+        setOpen={setOpenDelDialog}
+        item={delItem}
+        setOpenDelSBar={setOpenDelSBar}
+        reset={reset}
+        setReset={setReset}
+      />
+
+      {/* Delete successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openDelSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseDelSBar}
+        message="Xóa sản phẩm thành công !"
+      />
     </div>
   );
 }

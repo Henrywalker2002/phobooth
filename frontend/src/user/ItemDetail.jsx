@@ -17,13 +17,18 @@ import { IoIosAdd } from "react-icons/io";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import Err401Dialog from "../components/Err401Dialog";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useCookies } from "react-cookie";
 
 function ItemDetail(props) {
   const { auth } = useAuth();
+  const [cookies] = useCookies(["accInfo"]);
+  const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   let { id } = useParams(props, "id");
   const [item, setItem] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -34,7 +39,7 @@ function ItemDetail(props) {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setItem(res.data);
       })
       .catch((err) => {
@@ -44,19 +49,19 @@ function ItemDetail(props) {
 
   // Add to cart
   const handleAddToCart = (id) => {
-    axios
+    axiosPrivate
       .post(
         "/cart/",
         { item: id, number: quantity },
         {
           headers: {
-            Authorization: `Bearer ${auth.access}`,
+            ...axiosPrivate.defaults.headers,
             "Content-Type": "application/json",
           },
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setOpenSBar(true);
       })
       .catch((err) => {
@@ -81,16 +86,17 @@ function ItemDetail(props) {
       <div className="introItem mt-5">
         {/* Link */}
         <Breadcrumbs aria-label="breadcrumb" sx={{ marginLeft: "130px" }}>
-          <Link underline="hover" color="inherit" href="/">
+          <Link
+            component="button"
+            underline="none"
+            color="inherit"
+            onClick={() => navigate("/", { replace: true })}
+          >
             <GoHome
               style={{ color: "#808080", width: "24px", height: "24px" }}
             />
           </Link>
-          <Link
-            underline="hover"
-            color="#999999"
-            href="/material-ui/getting-started/installation/"
-          >
+          <Link component="button" href="#" underline="none" color="#999999">
             Dịch vụ
           </Link>
           <Typography color="#3F41A6">{item?.category?.title}</Typography>
@@ -241,7 +247,7 @@ function ItemDetail(props) {
                     },
                   }}
                   onClick={() => {
-                    if (auth.username) handleAddToCart(item.id);
+                    if (cookies?.userInfo?.username) handleAddToCart(item.id);
                     else setOpenErr401(true);
                   }}
                 >

@@ -5,18 +5,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import useAuth from "../hooks/useAuth";
-import axios from "../api/axios";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function DeleteOrderItem({ open, setOpen, orderItem, setOrder }) {
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const handleDeleteItem = () => {
-    axios
-      .delete(`/order-item/${orderItem.id}/`, {
-        headers: {
-          Authorization: `Bearer ${auth.access}`,
-        },
-      })
+    axiosPrivate
+      .delete(`/order-item/${orderItem.id}/`)
       .then((res) => {
         setOrder(res.data);
         setOpen(false);

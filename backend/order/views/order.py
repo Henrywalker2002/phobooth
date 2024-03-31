@@ -11,6 +11,8 @@ from order.permission import OrderPermission
 from base.exceptions import MethodNotAllowed
 import datetime
 from notification.execute import NotificationService
+from address.models import Address
+from order.filter import OrderFilter
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -18,12 +20,14 @@ class OrderViewSet(BaseModelViewSet):
     serializer_class = {"create": CreateOrderSerializer, "list": OrderSummarySerializer, "update": UpdateOrderSerializer, "default": ReadOrderSerializer, "partial_update": UpdateOrderSerializer,
                         "list_order_of_studio": OrderSummarySerializer, "retrieve": ReadOrderSerializer}
     permission_classes = [OrderPermission]
+    filterset_class = OrderFilter   
+    search_fields = ["@studio__code_name", "@studio__friendly_name", "@order_item__item__name", "@order_item__item__description"]
 
     def get_queryset(self):
         if self.action == "list":
-            return self.queryset.filter(customer=self.request.user).order_by("-created_at")[:50]
+            return self.queryset.filter(customer=self.request.user).order_by("-created_at")
         elif self.action == "list_order_of_studio":
-            return self.queryset.filter(studio=self.request.user.studio).order_by("-created_at")[:50]
+            return self.queryset.filter(studio=self.request.user.studio).order_by("-created_at")
         return super().get_queryset()
 
     @transaction.atomic
@@ -32,13 +36,30 @@ class OrderViewSet(BaseModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order_item = serializer.validated_data.pop('order_item')
+        address = serializer.validated_data.pop('address')
         studio = order_item[0]['item'].studio
         # create order
         serializer.validated_data['studio'] = studio
         self.perform_create(serializer)
-
-        # create order item
         order = serializer.instance
+        # create address 
+        if address:
+            address = Address(**address)
+            if address != request.user.address:
+                address.save()
+                order.address = address
+                order.save()        
+                if not request.user.address:
+                    user = request.user 
+                    user.address = address
+                    user.save()
+        else :
+            if request.user.address:
+                order.address = request.user.address
+                order.save()
+        
+        # create order item
+
         OrderItem.objects.bulk_create(
             [OrderItem(order=order, **item) for item in order_item])
 
@@ -64,8 +85,24 @@ class OrderViewSet(BaseModelViewSet):
                 NotificationService.user_cancel_order(instance)
             else :
                 NotificationService.studio_deny_order(instance)
-            
+        
+        address = serializer.validated_data.pop('address', None)
         self.perform_update(serializer)    
+        order = serializer.instance
+        if address:
+            address = Address(**address)
+            if address != request.user.address:
+                address.save()
+                order.address = address
+                order.save()        
+                if not request.user.address:
+                    user = request.user 
+                    user.address = address
+                    user.save()
+        else :
+            if request.user.address:
+                order.address = request.user.address
+                order.save()
         
         serializer_return = self.get_serializer(instance = instance, is_get = True)
         return Response(data = serializer_return.data)

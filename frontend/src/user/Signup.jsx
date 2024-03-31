@@ -7,27 +7,25 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Navigate, useNavigate } from "react-router-dom";
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  FormHelperText,
-  TextField,
-} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Checkbox, FormHelperText, TextField } from "@mui/material";
 import { FaArrowLeft } from "react-icons/fa6";
 import axios from "../api/axios";
+import { useCookies } from "react-cookie";
+import { translateErrSignUp } from "../util/Translate";
 
 function Signup() {
   const userRef = useRef();
   const navigate = useNavigate();
+  const [, setCookie] = useCookies(["accInfo"]);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
   const [errMsg, setErrMsg] = useState({});
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -46,16 +44,25 @@ function Signup() {
       const response = await axios.post("/user/sign-up/", signupInfo, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(JSON.stringify(response?.data));
-      sessionStorage.setItem("username", user);
+      console.log(response?.data);
+      setCookie(
+        "userInfo",
+        {
+          ...response?.data,
+          password: pwd,
+        },
+        { path: "/" }
+      );
+      setCookie("persist", false, { path: "/" });
       setUser("");
       setPwd("");
       setEmail("");
       setFullName("");
-      setSuccess(true);
+      navigate(from, { replace: true });
     } catch (err) {
       console.log(err);
-      setErrMsg(err.response.data);
+      let newErr = translateErrSignUp(err.response.data);
+      setErrMsg(newErr);
     }
   };
   // show/hide pwd
@@ -96,6 +103,7 @@ function Signup() {
                   bgcolor: "transparent",
                 },
               }}
+              // onClick={() => navigate(-1)}
               onClick={() => navigate("/")}
               startIcon={<FaArrowLeft />}
             >
@@ -108,7 +116,7 @@ function Signup() {
             </div>
 
             {/* Đăng kí gg,fb */}
-            <div class="mt-6 flex flex-row justify-evenly">
+            <div className="mt-6 flex flex-row justify-evenly">
               <Button
                 variant="outlined"
                 startIcon={
@@ -160,7 +168,7 @@ function Signup() {
                 Đăng kí với Facebook
               </Button>
             </div>
-            <div class="my-3 text-sm text-gray-600 text-center">
+            <div className="my-3 text-sm text-gray-600 text-center">
               <p>or</p>
             </div>
             {/* Login Form */}
@@ -175,6 +183,8 @@ function Signup() {
                 inputRef={userRef}
                 onChange={(e) => setFullName(e.target.value)}
                 value={fullname}
+                error={errMsg.full_name ? true : false}
+                helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
               />
 
               <TextField
@@ -184,7 +194,7 @@ function Signup() {
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
                 error={errMsg.username ? true : false}
-                helperText={errMsg.username ? "Tên người dùng đã tồn tại" : ""}
+                helperText={errMsg.username ? errMsg.username[0] : ""}
               />
 
               <FormControl
@@ -205,7 +215,7 @@ function Signup() {
                     display: errMsg.email ? "block" : "none",
                   }}
                 >
-                  Email này đã được đăng kí
+                  {errMsg.email ? errMsg.email[0] : ""}
                 </FormHelperText>
               </FormControl>
 
@@ -273,12 +283,12 @@ function Signup() {
                 </Button>
               </div>
             </form>
-            <div class="mt-3 text-sm text-neutral-700 text-center">
+            <div className="mt-3 text-sm text-neutral-700 text-center">
               <p>
                 Bạn đã có tài khoản?{" "}
                 <a
                   href="/login"
-                  class="text-indigo-800 font-semibold hover:underline"
+                  className="text-indigo-800 font-semibold hover:underline"
                 >
                   ĐĂNG NHẬP
                 </a>
@@ -287,10 +297,6 @@ function Signup() {
           </div>
         </div>
       </div>
-      {/* Khi login thành công */}
-      <Dialog open={success}>
-        <Navigate to="/" />
-      </Dialog>
     </div>
   );
 }

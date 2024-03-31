@@ -9,13 +9,19 @@ import Booking from "./user/Booking";
 import { ThemeProvider, createTheme } from "@mui/material";
 import Orders from "./user/Orders";
 import OrderDetail from "./user/OrderDetail";
-import StudioOrderDetail from "./studio/OrderDetail";
-import StudioOrders from "./studio/Orders";
+import StudioOrderDetail from "./studio/order/OrderDetail";
+import StudioOrders from "./studio/order/Orders";
 import CartContextLayout from "./context/CartContextLayout";
 import Register from "./studio/Register";
-import ItemMgmt from "./studio/ItemMgmt";
-import AddItem from "./studio/AddItem";
 import StudioHome from "./studio/Home";
+import Unauthorized from "./components/Unauthorized";
+import RequireAuth from "./context/RequireAuth";
+import PersistLogin from "./context/PersistLogin";
+import AddItem from "./studio/item/Add/AddItem";
+import ItemMgmt from "./studio/item/ItemMgmt";
+import EditItem from "./studio/item/Edit/EditItem";
+import Profile from "./user/Profile";
+import StudioProfile from "./studio/Profile";
 import AdminManageAccount from "./adminAccount/manageAccount";
 
 function App() {
@@ -62,31 +68,39 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* <Route element={<PersistLogin />}>
-          
-        </Route> */}
+        <Route element={<PersistLogin />}>
+          {/* User */}
+          <Route element={<RequireAuth allowedRoles={"customer"} />}>
+            <Route element={<CartContextLayout />}>
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/booking" element={<Booking />} />
+            </Route>
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/order/detail/:id" element={<OrderDetail />} />
+            <Route path="/profile" element={<Profile />} />
 
-        <Route element={<CartContextLayout />}>
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/booking" element={<Booking />} />
+            {/* Studio */}
+            {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
+            <Route path="/studio/items/edit/:id" element={<EditItem />} />
+            <Route path="/studio/items/add" element={<AddItem />} />
+            <Route path="/studio/items" element={<ItemMgmt />} />
+            <Route path="/studio/register" element={<Register />} />
+            <Route
+              path="/studio/order/detail/:id"
+              element={<StudioOrderDetail />}
+            />
+            <Route path="/studio/orders" element={<StudioOrders />} />
+            <Route path="/studio/profile" element={<StudioProfile />} />
+            <Route path="/studio/" element={<StudioHome />} />
+          </Route>
+
+          {/* Everyone */}
+
+          <Route path="/item/detail/:id" element={<ItemDetail />} />
+          <Route path="/" element={<Home />} />
         </Route>
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/order/detail/:id" element={<OrderDetail />} />
-        <Route path="/item/detail/:id" element={<ItemDetail />} />
-
-        {/* Studio */}
-        <Route path="/studio/items/add" element={<AddItem />} />
-        <Route path="/studio/items" element={<ItemMgmt />} />
-        <Route path="/studio/register" element={<Register />} />
-        <Route
-          path="/studio/order/detail/:id"
-          element={<StudioOrderDetail />}
-        />
-        <Route path="/studio/orders" element={<StudioOrders />} />
-        <Route path="/studio/" element={<StudioHome />} />
-
-        <Route path="/" element={<AdminManageAccount />} />
       </Routes>
     </ThemeProvider>
   );

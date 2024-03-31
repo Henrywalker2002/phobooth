@@ -15,6 +15,9 @@ from role.models import Role
 from user.permission import UserPermission, StaffPermission
 from django.db import transaction
 from address.models import Address
+import json
+from django.http.request import QueryDict
+from user.filter import StaffFilter
 
 
 class UserViewSet(BaseModelViewSet):
@@ -59,7 +62,20 @@ class UserViewSet(BaseModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        if isinstance(request.data, QueryDict):
+            data = request.data.dict()
+        else:
+            data = request.data
+        address = data.get("address", None)
+        if isinstance(address, str):
+            try:
+                address = json.loads(address)
+                data['address'] = address
+            except Exception as e:
+                return Response(data = {"error": "Invalid address format"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
         
         save_flag = False
@@ -92,6 +108,8 @@ class StaffViewSet(BaseModelViewSet):
                         "update": UpdateStaffSerializer, "partial_update": UpdateStaffSerializer,}
     queryset = User.objects.all()
     permission_classes = [StaffPermission]
+    filterset_class = StaffFilter
+    search_fields = ["@username", "@full_name", "@email"]
     
     def get_queryset(self):
         return self.queryset.filter(role__code_name__in=["staff", "admin"])
