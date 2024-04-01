@@ -21,7 +21,7 @@ function ItemList({ code_name, itemType }) {
   //   local
   const [itemList, setItemList] = useState([]);
   // pagination
-  const itemsPage = 6;
+  const itemsPage = 9;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ function ItemList({ code_name, itemType }) {
   };
   return (
     <div>
-      <div className="mx-auto my-3 flex justify-between items-center w-[800px]">
+      <div className="flex justify-between items-center w-[800px]">
         <div className="flex gap-2 items-center">
           <div className=" text-zinc-500">Sắp xếp theo :</div>
           <TextField

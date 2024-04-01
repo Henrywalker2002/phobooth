@@ -13,7 +13,7 @@ import StudioOrderDetail from "./studio/order/OrderDetail";
 import StudioOrders from "./studio/order/Orders";
 import CartContextLayout from "./context/CartContextLayout";
 import Register from "./studio/Register";
-import StudioHome from "./studio/Home";
+import StudioHome from "./studio/home/Home";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./context/RequireAuth";
 import PersistLogin from "./context/PersistLogin";
