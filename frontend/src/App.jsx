@@ -29,6 +29,7 @@ import StudioDetail from "./user/studio_info/StudioDetail";
 import Categories from "./staff/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
+import AdvancedSearch from "./user/search/AdvancedSearch";
 
 function App() {
   const theme = createTheme({
@@ -121,6 +122,7 @@ function App() {
 
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
+          <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/" element={<Home />} />
         </Route>
       </Routes>
