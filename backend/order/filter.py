@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filter
 from order.models import OrderStatusChoice
+from order.models import Order
 
 
 class OrderFilter(filter.FilterSet):
@@ -8,4 +9,4 @@ class OrderFilter(filter.FilterSet):
     customer = filter.CharFilter(field_name="customer__username")
     date_from = filter.DateFilter(field_name="created_at", lookup_expr="gte")
     date_end = filter.DateFilter(field_name="modified_at", lookup_expr="lte")
-    status = filter.ChoiceFilter(field_name="status", choices=OrderStatusChoice.choices)
+    status = filter.MultipleChoiceFilter(field_name="status", choices=OrderStatusChoice.choices)

@@ -27,6 +27,8 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import AddEmploy from "../components/AddEmploy";
 import EditEmploy from "../components/EditEmploy";
+import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
+import StaffFilter from "./filter";
 
 const Title1 = styled("div")({
     color: "#3f41a6",
@@ -90,6 +92,9 @@ export default function AdminManageAccount() {
   const [count, setCount] = useState(0);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [openFilter, setOpenFilter] = React.useState(false);
+  const [filterVal, setFilterVal] = React.useState({});
+
   const mappingStatus = (status) => {
     if (status){
       return {
@@ -146,12 +151,15 @@ export default function AdminManageAccount() {
     setOpenEdit(false);
   }
 
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  }
+
   useEffect(() => {
     axiosPrivate
-      .get(`/staff/?limit=10&offset=${(page - 1)*10}`, {
+      .get(`/staff/?limit=10&offset=${(page - 1)*10}`, { params : filterVal
       })
       .then((res) => {
-        console.log(res);
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
         });
@@ -162,7 +170,7 @@ export default function AdminManageAccount() {
       .catch((err) => {
         console.log(err);
       });
-  }, [page]);
+  }, [page, filterVal]);
 
   function handleDate(date) {
     let newDate = new Date(date);
@@ -171,6 +179,13 @@ export default function AdminManageAccount() {
 
   const handlePageChange = (event, value) => {
     setPage(value);
+  };
+
+  const handleSearch = (event) => {
+    if (event.key === "Enter") {
+      setFilterVal({...filterVal, search : event.target.value})
+      event.target.value = "";
+    }
   };
 
   return (
@@ -190,14 +205,34 @@ export default function AdminManageAccount() {
             <Box display="flex" alignItems="center" justifyContent="center">
               <BoxSearch>
                 <SearchIcon style={{paddingRight: "5px"}} />
-                <CustomInput type="text" placeholder="Tìm kiếm" />
+                <CustomInput type="text" placeholder="Tìm kiếm" onKeyDown={handleSearch}/>
               </BoxSearch>
               <ButAdd variant="contained" sx={{ marginLeft: "10px" }} onClick={handleClickOpenAdd}>
                 <AddIcon />
                 Thêm nhân viên
               </ButAdd>
+
+              <Button
+                variant="text"
+                endIcon={<TuneOutlinedIcon />}
+                onClick={() => {
+                  setOpenFilter(true);
+                }}
+                sx={{
+                  textTransform: "none",
+                  color: "#3F41A6",
+                  "&:hover": {
+                    bgcolor: "#E2E5FF",
+                  },
+                }}
+              >
+                Bộ lọc
+              </Button>
+              {/* dialog */}
               <AddEmploy open={openAdd} handleClose={handleCloseAdd} items = {items} setItems={setItems} />
               <EditEmploy open={openEdit} handleClose={handleCloseEdit} items = {items} setItems={setItems} currentItem = {clickItem}/>
+              <StaffFilter open={openFilter} handleClose={handleCloseFilter} filterVal={filterVal} setFilterVal={setFilterVal}/>
+
             </Box>
           <TableContainer component={Paper} style={{width: "90%", marginLeft: "5%"}}>
             <Table>
@@ -271,7 +306,6 @@ export default function AdminManageAccount() {
                 <Pagination count={Math.ceil(count/10)} color="primary" onChange={handlePageChange}/>
             </Box>
           </TableContainer>
-         
         </Box>
       </Box>
     </Box>
