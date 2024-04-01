@@ -16,17 +16,12 @@ import {
   Stepper,
   StepLabel,
   Divider,
-  TextField,
-  FormControl,
-  Select,
-  MenuItem,
   Breadcrumbs,
   Link,
   Pagination,
   Snackbar,
   Alert,
   AlertTitle,
-  Popover,
   Tooltip,
 } from "@mui/material";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
@@ -44,6 +39,7 @@ import ReqPaying from "./ReqPaying";
 import DeltailRequest from "../../studio/order/DeltailRequest";
 import CreateComplain from "./CreateComplain";
 import { translateOrderStatus } from "../../util/Translate";
+import RatingDialog from "./RatingDialog";
 
 function OrderDetail() {
   // global
@@ -56,14 +52,15 @@ function OrderDetail() {
   const [openDetailReq, setOpenDetailReq] = useState(false);
   const [openPayingReq, setOpenPayingReq] = useState(false);
   const [openCreateComplain, setOpenCreateComplain] = useState(false);
+  const [openRating, setOpenRating] = useState(false);
   // local
   const [reload, setReload] = useState(false);
-  const [value, setValue] = useState("");
   const [order, setOrder] = useState({});
   const [requestList, setRequestList] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [statusMsg, setStatusMsg] = useState("");
   const [selectedReq, setSelectedReq] = useState({});
+  const [selectedItem, setSelectedItem] = useState({});
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -186,10 +183,6 @@ function OrderDetail() {
       });
   };
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-
   // Close Cancel Order SnackBar Success/Err
   const handleCloseCancelSBar = (e, reason) => {
     if (reason === "clickaway") {
@@ -250,6 +243,10 @@ function OrderDetail() {
           <TableCell align="left">
             {order.status === "COMPLETED" ? (
               <Button
+                onClick={() => {
+                  setSelectedItem(row);
+                  setOpenRating(true);
+                }}
                 variant="text"
                 sx={{
                   color: "#3F41A6",
@@ -715,14 +712,6 @@ function OrderDetail() {
               <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
                 {order?.customer?.full_name ?? "Chưa cập nhật"}
               </div>
-
-              {/* <TextField
-                id="outlined-basic"
-                variant="outlined"
-                value={order?.customer?.full_name ?? ""}
-                defaultValue={order?.customer?.full_name}
-                sx={{ marginTop: "10px" }}
-              /> */}
             </div>
             <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
@@ -731,12 +720,6 @@ function OrderDetail() {
               <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
                 Chưa cập nhật
               </div>
-              {/* <TextField
-                id="outlined-basic"
-                variant="outlined"
-                placeholder="(671) 555-0110"
-                sx={{ marginTop: "10px" }}
-              /> */}
             </div>
           </div>
           <div className="flex items-stretch justify-between gap-5 mt-6 ">
@@ -750,20 +733,6 @@ function OrderDetail() {
                 {order?.address?.district.name_with_type},{" "}
                 {order?.address?.province.name_with_type}
               </div>
-
-              {/* <TextField
-                disabled
-                name="address"
-                value={`${order?.address?.street}, ${order?.address?.ward.name_with_type}, ${order?.address?.district.name_with_type}, ${order?.address?.province.name_with_type}`}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  // width: "350px",
-                  marginY: "10px",
-                }}
-              /> */}
 
               <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
                 <img
@@ -835,6 +804,13 @@ function OrderDetail() {
       <CreateComplain
         open={openCreateComplain}
         setOpen={setOpenCreateComplain}
+      />
+
+      {/* Rating Item */}
+      <RatingDialog
+        open={openRating}
+        setOpen={setOpenRating}
+        orderItem={selectedItem}
       />
 
       {/* Paying */}
