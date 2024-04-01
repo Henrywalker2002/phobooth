@@ -20,14 +20,13 @@ import {
   Dialog,
   DialogContentText
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import AddEmploy from "../components/AddEmploy";
+import EditEmploy from "../components/EditEmploy";
 
 const Title1 = styled("div")({
     color: "#3f41a6",
@@ -52,7 +51,7 @@ const ButAdd = styled(Button)({
       borderWidth: "2px", // Độ rộng viền cho variant outlined
       borderRadius: "43px", // Đường viền cong cho variant outlined
     },
-    "&.MuiButton-contained": {
+    "&.MuiButton-contained": { 
       borderRadius: "43px", // Đường viền cong cho variant contained
     },
   });
@@ -84,9 +83,13 @@ const ButAdd = styled(Button)({
   });
 
 export default function AdminManageAccount() {
-  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
   const [items, setItems] = useState([]);
   const [order_item, set_order_item] = useState([]);
+  const [clickItem, setClickItem] = useState({});
+  const [count, setCount] = useState(0);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [page, setPage] = React.useState(1);
   const mappingStatus = (status) => {
     if (status){
       return {
@@ -101,14 +104,28 @@ export default function AdminManageAccount() {
   };
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (item) => {
+    setClickItem(item);
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-    const handleDelete = () => {
+
+  const handleDelete = () => {
     // Xử lý logic xóa ở đây
+    axiosPrivate.delete(`/staff/${clickItem.username}/`).then((res) => {
+      setItems(items.filter((item) => item.username !== clickItem.username));
+      handleClose();
+    }).catch((err) => {
+      if (err.response.status === 400) {
+        console.log(err);
+      }
+      else if (err.response.status === 404) {
+        setItems(items.filter((item) => item.username !== clickItem.username));
+        handleClose();
+      }
+    });
     setOpen(false);
   };
   const [openAdd, setOpenAdd] = React.useState(false);
@@ -119,46 +136,43 @@ export default function AdminManageAccount() {
   const handleCloseAdd = () => {
     setOpenAdd(false);
   };
+
+  const handleClickEdit = (item) => {
+    setOpenEdit(true);
+    setClickItem(item);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  }
+
   useEffect(() => {
-    axios
-      .get("/staff/?limit=10&offset=0", {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExMzU2ODA4LCJpYXQiOjE3MTEyNzA0MDgsImp0aSI6IjA2YTkxYTNjOTg0NTQxZmViMjQxNDEwNTBlZDVhMTA3IiwidXNlcl9pZCI6MX0.xQ1PhT84DjooXiLrHVbO_jhLcXVHBmF_4evudCsx3bk`,
-        },
+    axiosPrivate
+      .get(`/staff/?limit=10&offset=${(page - 1)*10}`, {
       })
       .then((res) => {
-        console.log(res.data.results);
+        console.log(res);
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
         });
-        console.log(initialOrderList);
+        setCount(res.data.count);
         setItems(res.data.results);
         set_order_item(initialOrderList);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-  // const handleDelete = async (Id) => {
-  //   await axiosBaseUrl
-  //     .delete(
-  //       `staff/${postId}`,
-  //       {
-  //         id: postId,
-  //         headers: {
-  //           Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExMzU2ODA4LCJpYXQiOjE3MTEyNzA0MDgsImp0aSI6IjA2YTkxYTNjOTg0NTQxZmViMjQxNDEwNTBlZDVhMTA3IiwidXNlcl9pZCI6MX0.xQ1PhT84DjooXiLrHVbO_jhLcXVHBmF_4evudCsx3bk" ,
-  //         },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       const post_list = items.filter(item => item.id !== postId);
-  //       setItems(post_list);
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.response);
-  //     });
-  // };
+  }, [page]);
+
+  function handleDate(date) {
+    let newDate = new Date(date);
+    return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`
+  }
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
   return (
     <Box
       style={{
@@ -175,14 +189,15 @@ export default function AdminManageAccount() {
             <Title1>Quản lý tài khoản</Title1>
             <Box display="flex" alignItems="center" justifyContent="center">
               <BoxSearch>
-              <SearchIcon style={{paddingRight: "5px"}} />
-              <CustomInput type="text" placeholder="Tìm kiếm" />
-            </BoxSearch>
+                <SearchIcon style={{paddingRight: "5px"}} />
+                <CustomInput type="text" placeholder="Tìm kiếm" />
+              </BoxSearch>
               <ButAdd variant="contained" sx={{ marginLeft: "10px" }} onClick={handleClickOpenAdd}>
                 <AddIcon />
                 Thêm nhân viên
               </ButAdd>
-              <AddEmploy open={openAdd} onClose={handleCloseAdd} />
+              <AddEmploy open={openAdd} handleClose={handleCloseAdd} items = {items} setItems={setItems} />
+              <EditEmploy open={openEdit} handleClose={handleCloseEdit} items = {items} setItems={setItems} currentItem = {clickItem}/>
             </Box>
           <TableContainer component={Paper} style={{width: "90%", marginLeft: "5%"}}>
             <Table>
@@ -202,22 +217,23 @@ export default function AdminManageAccount() {
                     const status = mappingStatus(item.is_active);
                     return (
                       <TableRow key={index} >
-                        <TableCell>{item.full_name} abc</TableCell>
+                        <TableCell>{item.full_name}</TableCell>
                         <TableCell>{item.username}</TableCell>
                         <TableCell>{item.role}</TableCell>
-                        <TableCell>{item.created_at}</TableCell>
+                        <TableCell>{handleDate(item.created_at)}</TableCell>
                         <TableCell >{status.msg}</TableCell>
                         <TableCell style={{ display: "flex", alignItems: "center" }}>
                         <Button
                             variant="text"
                             onClick={() => {
+                              handleClickEdit(item);
                             }}
                           >
                             <EditIcon style={{color:"black", height: "27px"}}/>
                           </Button>
                           <Button
                             variant="text"
-                            onClick={handleClickOpen}
+                            onClick={() => handleClickOpen(item)}
                           >
                             <DeleteIcon style={{color:"black", height: "27px"}}/>
                           </Button>
@@ -230,14 +246,14 @@ export default function AdminManageAccount() {
                             <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
                             <DialogContent>
                               <DialogContentText id="alert-dialog-description">
-                                Bạn có chắc chắn muốn xóa?
+                                {`Bạn có chắc chắn muốn xóa ${clickItem.full_name}?`}
                               </DialogContentText>
                             </DialogContent>
                             <DialogActions>
                               <Button onClick={handleClose} color="primary">
                                 Hủy
                               </Button>
-                              <Button onClick={handleDelete} color="primary" autoFocus>
+                              <Button onClick={() => handleDelete()} color="primary" autoFocus>
                                 Xóa
                               </Button>
                             </DialogActions>
@@ -252,7 +268,7 @@ export default function AdminManageAccount() {
               )}
             </Table>
             <Box style={{display: "flex", justifyContent: "center", margin: "10px"}}>
-                <Pagination count={3} color="primary"/>
+                <Pagination count={Math.ceil(count/10)} color="primary" onChange={handlePageChange}/>
             </Box>
           </TableContainer>
          

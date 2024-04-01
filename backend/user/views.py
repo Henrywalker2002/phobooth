@@ -110,6 +110,7 @@ class StaffViewSet(BaseModelViewSet):
     permission_classes = [StaffPermission]
     filterset_class = StaffFilter
     search_fields = ["@username", "@full_name", "@email"]
+    lookup_field = "username"
     
     def get_queryset(self):
         return self.queryset.filter(role__code_name__in=["staff", "admin"])
@@ -126,7 +127,8 @@ class StaffViewSet(BaseModelViewSet):
         user.set_password(user.password)
         user.save()
         user.role.set([role])
-        return Response(data=self.get_serializer(user, is_get=True).data, status=status.HTTP_201_CREATED)
+        data = StaffSummarySerializer(user).data
+        return Response(data=data, status=status.HTTP_201_CREATED)
     
     @transaction.atomic
     def update(self, request, *args, **kwargs):
@@ -136,7 +138,7 @@ class StaffViewSet(BaseModelViewSet):
         serializer.is_valid(raise_exception=True)
         if 'role' in serializer.validated_data:
             role = serializer.validated_data.pop("role")
-            if not self.request.user.role.filter(code_name= role).exists():
+            if not self.request.user.role.filter(code_name= "admin").exists():
                 self.permission_denied(request, message="You don't have permission to change role", code=403)
             role = Role.objects.filter(code_name=role)
             if not role:

@@ -96,6 +96,11 @@ function App() {
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
+          {/* Admin */}
+          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+            <Route path="/admin/manage-account" element={<AdminManageAccount />} />
+          </Route>
+
           {/* Everyone */}
 
           <Route path="/item/detail/:id" element={<ItemDetail />} />
