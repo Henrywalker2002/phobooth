@@ -48,13 +48,13 @@ const ButAdd = styled(Button)({
 
 export default function EditEmploy({open, handleClose, items, setItems, currentItem}) {
 
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState({});
   const [successMessage, setSuccessMessage] = useState(null);
   const axiosPrivate = useAxiosPrivate();
 
   const handleCurrentClose = () => {
     handleClose();
-    setErrorMessage(null);
+    setErrorMessage({});
     setSuccessMessage(null);
   }
 
@@ -85,11 +85,11 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
     }
     if (formData.password !== "") {
       if (formData.password.length < 8) {
-        setErrorMessage("Mật khẩu phải có ít nhất 8 ký tự");
+        setErrorMessage({...errorMessage, password: "Mật khẩu phải có ít nhất 8 ký tự"})
         return;
       }
       if (formData.password !== formData.confirmPassword) {
-        setErrorMessage("Mật khẩu không khớp");
+        setErrorMessage({...errorMessage, confirmPassword : "Mật khẩu không khớp"})
         return;
       }
       data.password = formData.password;
@@ -110,28 +110,24 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
         return item;
       }))
       setSuccessMessage("Cập nhật thông tin thành công");
-      setErrorMessage(null);
+      setErrorMessage({});
     }).catch((err) => {
       if (err.response.status === 400) {
         var data = err.response.data;
-        var message = "";
-        if (data.username[0].includes("exists")) {
-          message += "Tên người dùng đã tồn tại \n";
+        if (data.username && data.username[0].includes("exists")) {
+          setErrorMessage({...errorMessage, username: "Tên người dùng đã tồn tại"})
         }
-        if (data.email[0].includes("exists")) {
-          message += "Email đã tồn tại \n";
+        if (data.email && data.email[0].includes("exists")) {
+          setErrorMessage({...errorMessage, email: "Email đã tồn tại"})
         }
-        else if (data.email[0].includes("valid")) {
-          message += "Email không hợp lệ \n";
+        else if (data.email && data.email[0].includes("valid")) {
+          setErrorMessage({...errorMessage, email: "Email không hợp lệ"})
         }
-        if (data.phone[0].includes("exists")) {
-          message += "Số điện thoại đã tồn tại \n";
+        if (data.phone && data.phone[0].includes("exists")) {
+          setErrorMessage({...errorMessage, phone: "Số điện thoại đã tồn tại"})
         }
-        else if (data.phone[0].includes("valid")) {
-          message += "Số điện thoại không hợp lệ \n";
-        }
-        if (message) {
-          setErrorMessage(message);
+        else if (data.phone && data.phone[0].includes("valid")) {
+          setErrorMessage({...errorMessage, phone: "Số điện thoại không hợp lệ"})
         }
       }
     })
@@ -149,7 +145,7 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
         password: "",
         confirmPassword: ""
       })
-      setErrorMessage(null);
+      setErrorMessage({});
     }).catch((err) => {
       setErrorMessage("Không thể lấy thông tin thành viên")
     })
@@ -192,6 +188,8 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
           //   label="Email"
             value={formData.email}
             onChange={handleChange("email")}
+            error = {errorMessage.email ? true : false}
+            helperText = {errorMessage.email ?? ""}
             fullWidth
             required
             type="email"
@@ -203,6 +201,8 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
           //   label="Số điện thoại"
             value={formData.phone}
             onChange={handleChange("phone")}
+            error = {errorMessage.phone ? true : false}
+            helperText = {errorMessage.phone ?? ""}
             fullWidth
             required
           />
@@ -245,6 +245,8 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
           //   label="Mật khẩu"
             type="password"
             value={formData.password}
+            error = {errorMessage.password ? true : false}
+            helperText = {errorMessage.password ?? ""}
             onChange={handleChange("password")}
             fullWidth
           />
@@ -255,6 +257,8 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
           //   label="Nhập lại mật khẩu"
             type="password"
             value={formData.confirmPassword}
+            error = {errorMessage.confirmPassword ? true : false}
+            helperText = {errorMessage.confirmPassword ?? ""}
             onChange={handleChange("confirmPassword")}
             fullWidth
           />
@@ -262,7 +266,6 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
         <Alert severity="info">Điền mật khẩu nếu cần thay đổi không thì để trống</Alert>
       </Grid>
     
-    {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
     {successMessage && <Alert severity="success">{successMessage}</Alert>}
     
     </DialogContent>
@@ -270,7 +273,7 @@ export default function EditEmploy({open, handleClose, items, setItems, currentI
           <Grid container justifyContent="center">
               <Grid item>
               <ButCan onClick={() => {
-                  setErrorMessage(null);
+                  setErrorMessage({});
                   resetFormData();
                   handleCurrentClose()
                 }}>Hủy</ButCan>

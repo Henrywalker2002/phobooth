@@ -44,7 +44,7 @@ const ButAdd = styled(Button)({
     marginLeft: "15px"
 })
 function AddEmployeeDialog({ open, handleClose, items, setItems }) {
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState({});
   const AxiosPrivate = useAxiosPrivate();
 
   const [formData, setFormData] = React.useState({
@@ -92,24 +92,20 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
       console.log(err);
       if (err.response.status === 400) {
         var data = err.response.data;
-        var message = "";
-        if (data.username[0].includes("exists")) {
-          message += "Tên người dùng đã tồn tại \n";
+        if (data.username && data.username[0].includes("exists")) {
+          setErrorMessage({...errorMessage, username: "Tên người dùng đã tồn tại"})
         }
-        if (data.email[0].includes("exists")) {
-          message += "Email đã tồn tại \n";
+        if (data.email && data.email[0].includes("exists")) {
+          setErrorMessage({...errorMessage, email: "Email đã tồn tại"}) 
         }
-        else if (data.email[0].includes("valid")) {
-          message += "Email không hợp lệ \n";
+        else if (data.email && data.email[0].includes("valid")) {
+          setErrorMessage({...errorMessage, email: "Email không hợp lệ"})
         }
-        if (data.phone[0].includes("exists")) {
-          message += "Số điện thoại đã tồn tại \n";
+        if (data.phone && data.phone[0].includes("exists")) {
+          setErrorMessage({...errorMessage, phone: "Số điện thoại đã tồn tại"})
         }
-        else if (data.phone[0].includes("valid")) {
-          message += "Số điện thoại không hợp lệ \n";
-        }
-        if (message) {
-          setErrorMessage(message);
+        else if (data.phone && data.phone[0].includes("valid")) {
+          setErrorMessage({...errorMessage, phone: "Số điện thoại không hợp lệ"})
         }
       }
     });
@@ -138,6 +134,8 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
             //   label="Tên người dùng"
               value={formData.username}
               onChange={handleChange("username")}
+              error = {errorMessage.username ? true : false}
+              helperText = {errorMessage.username ?? ""}
               fullWidth
               required = {true}
             />
@@ -148,6 +146,8 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
             //   label="Email"
               value={formData.email}
               onChange={handleChange("email")}
+              error = {errorMessage.email ? true : false}
+              helperText = {errorMessage.email ?? ""}
               fullWidth
               required
               type="email"
@@ -159,6 +159,8 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
             //   label="Số điện thoại"
               value={formData.phone}
               onChange={handleChange("phone")}
+              error = {errorMessage.phone ? true : false}
+              helperText = {errorMessage.phone ?? ""}
               fullWidth
               required
             />
@@ -199,6 +201,8 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
               type="password"
               value={formData.password}
               onChange={handleChange("password")}
+              error = {errorMessage.password ? true : false}
+              helperText = {errorMessage.password ?? ""}
               fullWidth
               required
             />
@@ -216,14 +220,12 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
           </Grid>
         </Grid>
       
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      
       </DialogContent>
         <DialogActions>
             <Grid container justifyContent="center">
                 <Grid item>
                 <ButCan onClick={() => {
-                    setErrorMessage(null);
+                    setErrorMessage({});
                     resetFormData();
                     handleClose()
                   }}>Hủy</ButCan>
