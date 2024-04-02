@@ -15,6 +15,9 @@ import AdminNavbar from "../../components/AdminNavbar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { StyledTextField } from "../../studio/verify/VerifyForm";
 import DeniedDialog from "./DeniedDialog";
+import {Document, Page} from 'react-pdf/dist/esm/entry.webpack5';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 
 export default function VerifyStudioDetail() {
   const { id } = useParams();
@@ -49,6 +52,25 @@ export default function VerifyStudioDetail() {
         console.error(error);
       });
   };
+
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+  }
+
+  function changePage(offset) {
+    setPageNumber(prevPageNumber => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
+  }
 
   return loading ? (
     <></>
@@ -208,15 +230,34 @@ export default function VerifyStudioDetail() {
           <div className="text-zinc-900 text-sm leading-5 mt-3">
             Giấy phép kinh doanh/Chứng minh đăng kí doanh nghiệp
           </div>
+          
+          <Document
+            file={studio.license}
+            onLoadSuccess={onDocumentLoadSuccess}
+          >
+            <Page pageNumber={pageNumber} />
+          </Document>
 
-          <div className="mt-3">
-            <iframe
-              src="https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf"
-              width="100%"
-              height="500px"
-            />
-            {/* <embed src="https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf" type="application/pdf" width="100%" height="600px" /> */}
+          <div>
+            <p>
+              Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
+            </p>
+            <button
+              type="button"
+              disabled={pageNumber <= 1}
+              onClick={previousPage}
+            >
+              Trước
+            </button>
+            <button
+              type="button"
+              disabled={pageNumber >= numPages}
+              onClick={nextPage}
+            >
+              Sau
+            </button>
           </div>
+        
         </div>
         <div className="flex  gap-5 ml-4 my-5 self-start">
           <Button
