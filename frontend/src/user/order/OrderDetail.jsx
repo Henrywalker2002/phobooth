@@ -38,8 +38,9 @@ import CancelOrder from "./CancelOrder";
 import ReqPaying from "./ReqPaying";
 import DeltailRequest from "../../studio/order/DeltailRequest";
 import CreateComplain from "./CreateComplain";
-import { translateOrderStatus } from "../../util/Translate";
+import { translateOrderStatus, translateType } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
+import UpdateHistory from "./UpdateHistory";
 
 function OrderDetail() {
   // global
@@ -212,7 +213,7 @@ function OrderDetail() {
               )}
             </IconButton>
           </TableCell>
-          <TableCell component="th" scope="row">
+          <TableCell component="th" scope="row" sx={{ width: "280px" }}>
             <div className="items-stretch flex gap-5">
               <img
                 loading="lazy"
@@ -230,7 +231,7 @@ function OrderDetail() {
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item?.type}
+              {translateType(row.item?.type)}
             </div>
           </TableCell>
           <TableCell align="left">
@@ -295,7 +296,7 @@ function OrderDetail() {
         aria-label="breadcrumb"
         sx={{
           marginTop: "30px",
-          paddingLeft: "120px",
+          paddingLeft: "70px",
         }}
       >
         <Link
@@ -332,472 +333,489 @@ function OrderDetail() {
         </Typography>
       </Breadcrumbs>
 
-      <TableContainer
-        component={Paper}
-        sx={{
-          width: "1200px",
-          margin: "50px auto",
-          border: "0.5px solid #d6d3d1",
-        }}
-      >
-        <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-20 py-4 rounded-lg">
-          <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
-            {order?.studio?.friendly_name}
-          </div>
-          <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
-            {order?.order_item?.length} sản phẩm
-          </div>
-        </div>
-        <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
-            <TableRow>
-              <TableCell sx={{ maxWidth: "50px" }} />
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                SẢN PHẨM
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                PHÂN LOẠI
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                DANH MỤC
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                SỐ LƯỢNG
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                GIÁ ĐƠN VỊ
-              </TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {order?.order_item?.length > 0 ? (
-              order?.order_item.map((item) => <Row key={item.id} row={item} />)
-            ) : (
-              <TableRow>
-                <TableCell>Chưa có đơn hàng</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        {/* Note from customer */}
-        {order.note == null ? null : (
-          <Alert
+      <div className="flex justify-between items-start mt-5 px-16">
+        <div className="flex flex-col gap-5">
+          {/* Order Detail */}
+          <TableContainer
+            component={Paper}
             sx={{
               width: "950px",
-              marginX: "auto",
-              marginY: "30px",
-              bgcolor: "#E7EAFF",
-              color: "#3F41A6",
+              border: "0.5px solid #d6d3d1",
             }}
-            icon={
-              <StickyNote2OutlinedIcon
-                sx={{ color: "#3F41A6" }}
-                fontSize="inherit"
-              />
-            }
-            severity="info"
           >
-            <AlertTitle>Ghi chú</AlertTitle>
-            {order.note}
-          </Alert>
-        )}
-
-        {/* Status bar */}
-        <Box
-          sx={{
-            width: "100%",
-            marginY: "50px",
-          }}
-        >
-          {order.status !== "CANCELED" ? (
-            <Stepper activeStep={getActiveStep(order)} alternativeLabel>
-              {steps.map((label, i) => (
-                <ColoredStep key={i}>
-                  <StepLabel>{label}</StepLabel>
-                </ColoredStep>
-              ))}
-            </Stepper>
-          ) : (
-            <Alert
-              sx={{ maxWidth: "1000px", marginX: "auto" }}
-              severity="error"
-              color="warning"
-            >
-              Đơn hàng này đã được hủy.
-            </Alert>
-          )}
-        </Box>
-        {/* payment request + invoice - currently hidden */}
-        <div className="w-full max-w-[1200px] mt-8 mb-7">
-          <div className="flex justify-around">
-            {/* payment request + complain*/}
-            <div className="flex flex-col w-[437px]">
-              {/* payment request */}
-              <div className="items-stretch flex flex-col px-5">
-                <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
-                  Yêu cầu thanh toán mới nhất
-                </div>
-
-                <div className="flex flex-col mt-5 gap-5">
-                  {requestList.length > 0
-                    ? requestList?.map((req) => {
-                        if (req.status === "PENDING")
-                          return (
-                            <Paper
-                              key={req.id}
-                              sx={{
-                                width: "430px",
-                                border: "0.5px solid #d6d3d1",
-                                alignItems: "stretch",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                gap: "30px",
-                                borderRadius: "8px",
-                                padding: "15px",
-                              }}
-                            >
-                              <div className="items-stretch flex grow  flex-col py-px gap-2.5">
-                                <div className="text-zinc-500 text-base font-medium leading-6">
-                                  Thanh toán lần {req.no}
-                                </div>
-                                <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
-                                  {formatter.format(req.amount)}
-                                </div>
-                                <div className="flex  gap-3 ">
-                                  <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
-                                    Thời hạn :
-                                  </div>
-                                  <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                                    {dayjs(req.expiration_date).format(
-                                      "DD-MM-YYYY"
-                                    )}
-                                  </div>
-                                  <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                                    {daysleftCount(req.expiration_date) > 0
-                                      ? `Còn ${daysleftCount(
-                                          req.expiration_date
-                                        )} ngày`
-                                      : "Quá hạn"}
-                                  </div>
-                                </div>
-                              </div>
-                              <Button
-                                variant="contained"
-                                onClick={() => {
-                                  setSelectedReq(req);
-                                  setOpenPayingReq(true);
-                                }}
-                                sx={{
-                                  justifyContent: "center",
-                                  alignSelf: "center",
-                                  fontSize: "13px",
-                                  textTransform: "none",
-                                  borderRadius: "43px",
-                                  color: "#F6F5FB",
-                                  bgcolor: "#3F41A6",
-                                  width: "102px",
-                                  height: "32px",
-                                  "&:hover": {
-                                    bgcolor: "#3F41A6B2",
-                                  },
-                                }}
-                              >
-                                Thanh toán
-                              </Button>
-                            </Paper>
-                          );
-                        else if (req.status === "PAID")
-                          return (
-                            <Paper
-                              onClick={() => {
-                                setSelectedReq(req);
-                                setOpenDetailReq(true);
-                              }}
-                              key={req.id}
-                              sx={{
-                                width: "430px",
-                                border: "0.5px solid #d6d3d1",
-                                alignItems: "stretch",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                gap: "20px",
-                                borderRadius: "8px",
-                                padding: "10px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
-                                <div className="text-zinc-500 text-base font-medium leading-6">
-                                  Thanh toán lần {req.no}
-                                </div>
-                                <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
-                                  {formatter.format(req.amount)}
-                                </div>
-                                <div className="flex items-stretch gap-2.5 mt-3">
-                                  <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                                    Ngày thanh toán :
-                                  </div>
-                                  <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
-                                    {dayjs(req.payment_date).format(
-                                      "DD-MM-YYYY"
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="text-green-800 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-green-600 bg-opacity-20 self-center my-auto px-3 py-1">
-                                Đã thanh toán
-                              </div>
-                            </Paper>
-                          );
-                      })
-                    : "Chưa có yêu cầu thanh toán!"}
-                </div>
-
-                {/* Pagination */}
-                {requestList.length > 0 ? (
-                  <Pagination
-                    count={pageCount}
-                    onChange={getReqsForPage}
-                    sx={{
-                      margin: "20px auto",
-                      width: "fit-content",
-                      "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-                        {
-                          bgcolor: "#E2E5FF",
-                        },
-                    }}
-                  />
-                ) : null}
+            <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-16 py-4 rounded-lg">
+              <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
+                {order?.studio?.friendly_name}
+              </div>
+              <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
+                {order?.order_item?.length} sản phẩm
               </div>
             </div>
+            <Table aria-label="collapsible table">
+              <TableHead sx={{ bgcolor: "#E2E5FF" }}>
+                <TableRow>
+                  <TableCell sx={{ maxWidth: "50px" }} />
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "280px" }}
+                  >
+                    SẢN PHẨM
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "150px" }}
+                  >
+                    PHÂN LOẠI
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "150px" }}
+                  >
+                    DANH MỤC
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    SỐ LƯỢNG
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    GIÁ ĐƠN VỊ
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {order?.order_item?.length > 0 ? (
+                  order?.order_item.map((item) => (
+                    <Row key={item.id} row={item} />
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell>Chưa có đơn hàng</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            {/* Note from customer */}
+            {order.note == null ? null : (
+              <Alert
+                sx={{
+                  width: "85%",
+                  marginX: "auto",
+                  marginY: "30px",
+                  bgcolor: "#E7EAFF",
+                  color: "#3F41A6",
+                }}
+                icon={
+                  <StickyNote2OutlinedIcon
+                    sx={{ color: "#3F41A6" }}
+                    fontSize="inherit"
+                  />
+                }
+                severity="info"
+              >
+                <AlertTitle>Ghi chú</AlertTitle>
+                {order.note}
+              </Alert>
+            )}
 
-            {/* invoice */}
-            <div className="flex flex-col w-[342px]">
-              <div className="border border-[color:var(--gray-scale-gray-100,#E6E6E6)] flex w-full grow flex-col pt-5 pb-2.5 rounded-md border-solid">
-                <div className="flex items-stretch justify-between gap-5 px-5">
-                  <div className="items-stretch flex grow basis-[0%] flex-col self-start">
-                    <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                      Mã đơn :
+            {/* Status bar */}
+            <Box
+              sx={{
+                width: "100%",
+                marginY: "50px",
+              }}
+            >
+              {order.status !== "CANCELED" ? (
+                <Stepper activeStep={getActiveStep(order)} alternativeLabel>
+                  {steps.map((label, i) => (
+                    <ColoredStep key={i}>
+                      <StepLabel>{label}</StepLabel>
+                    </ColoredStep>
+                  ))}
+                </Stepper>
+              ) : (
+                <Alert
+                  sx={{ maxWidth: "1000px", marginX: "auto" }}
+                  severity="error"
+                  color="warning"
+                >
+                  Đơn hàng này đã được hủy.
+                </Alert>
+              )}
+            </Box>
+            {/* payment request + invoice - currently hidden */}
+            <div className="w-full max-w-[1200px] mt-8 mb-7">
+              <div className="flex justify-around">
+                {/* payment request + complain*/}
+                <div className="flex flex-col w-[437px]">
+                  {/* payment request */}
+                  <div className="items-stretch flex flex-col px-5">
+                    <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
+                      Yêu cầu thanh toán mới nhất
                     </div>
-                    <div className="text-zinc-900 text-sm leading-5 mt-1.5">
-                      {order.id}
+
+                    <div className="flex flex-col mt-5 gap-5">
+                      {requestList.length > 0
+                        ? requestList?.map((req) => {
+                            if (req.status === "PENDING")
+                              return (
+                                <Paper
+                                  key={req.id}
+                                  sx={{
+                                    width: "430px",
+                                    border: "0.5px solid #d6d3d1",
+                                    alignItems: "stretch",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    gap: "30px",
+                                    borderRadius: "8px",
+                                    padding: "15px",
+                                  }}
+                                >
+                                  <div className="items-stretch flex grow  flex-col py-px gap-2.5">
+                                    <div className="text-zinc-500 text-base font-medium leading-6">
+                                      Thanh toán lần {req.no}
+                                    </div>
+                                    <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
+                                      {formatter.format(req.amount)}
+                                    </div>
+                                    <div className="flex  gap-3 ">
+                                      <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
+                                        Thời hạn :
+                                      </div>
+                                      <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
+                                        {dayjs(req.expiration_date).format(
+                                          "DD-MM-YYYY"
+                                        )}
+                                      </div>
+                                      <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
+                                        {daysleftCount(req.expiration_date) > 0
+                                          ? `Còn ${daysleftCount(
+                                              req.expiration_date
+                                            )} ngày`
+                                          : "Quá hạn"}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="contained"
+                                    onClick={() => {
+                                      setSelectedReq(req);
+                                      setOpenPayingReq(true);
+                                    }}
+                                    sx={{
+                                      justifyContent: "center",
+                                      alignSelf: "center",
+                                      fontSize: "13px",
+                                      textTransform: "none",
+                                      borderRadius: "43px",
+                                      color: "#F6F5FB",
+                                      bgcolor: "#3F41A6",
+                                      width: "102px",
+                                      height: "32px",
+                                      "&:hover": {
+                                        bgcolor: "#3F41A6B2",
+                                      },
+                                    }}
+                                  >
+                                    Thanh toán
+                                  </Button>
+                                </Paper>
+                              );
+                            else if (req.status === "PAID")
+                              return (
+                                <Paper
+                                  onClick={() => {
+                                    setSelectedReq(req);
+                                    setOpenDetailReq(true);
+                                  }}
+                                  key={req.id}
+                                  sx={{
+                                    width: "430px",
+                                    border: "0.5px solid #d6d3d1",
+                                    alignItems: "stretch",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    gap: "20px",
+                                    borderRadius: "8px",
+                                    padding: "10px",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                                    <div className="text-zinc-500 text-base font-medium leading-6">
+                                      Thanh toán lần {req.no}
+                                    </div>
+                                    <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap mt-1.5">
+                                      {formatter.format(req.amount)}
+                                    </div>
+                                    <div className="flex items-stretch gap-2.5 mt-3">
+                                      <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                                        Ngày thanh toán :
+                                      </div>
+                                      <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
+                                        {dayjs(req.payment_date).format(
+                                          "DD-MM-YYYY"
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-green-800 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-green-600 bg-opacity-20 self-center my-auto px-3 py-1">
+                                    Đã thanh toán
+                                  </div>
+                                </Paper>
+                              );
+                          })
+                        : "Chưa có yêu cầu thanh toán!"}
                     </div>
+
+                    {/* Pagination */}
+                    {requestList.length > 0 ? (
+                      <Pagination
+                        count={pageCount}
+                        onChange={getReqsForPage}
+                        sx={{
+                          margin: "20px auto",
+                          width: "fit-content",
+                          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                            {
+                              bgcolor: "#E2E5FF",
+                            },
+                        }}
+                      />
+                    ) : null}
                   </div>
-                  <Divider orientation="vertical" flexItem></Divider>
+                </div>
 
-                  <div className="items-stretch z-[1] flex grow basis-[0%] flex-col pr-8 self-start max-md:pr-5">
-                    <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                      hóa đơn :
+                {/* invoice */}
+                <div className="flex flex-col w-[342px]">
+                  <div className="border border-[color:var(--gray-scale-gray-100,#E6E6E6)] flex w-full grow flex-col pt-5 pb-2.5 rounded-md border-solid">
+                    <div className="flex items-stretch justify-between gap-5 px-5">
+                      <div className="items-stretch flex grow basis-[0%] flex-col self-start">
+                        <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                          Mã đơn :
+                        </div>
+                        <div className="text-zinc-900 text-sm leading-5 mt-1.5">
+                          {order.id}
+                        </div>
+                      </div>
+                      <Divider orientation="vertical" flexItem></Divider>
+
+                      <div className="items-stretch z-[1] flex grow basis-[0%] flex-col pr-8 self-start max-md:pr-5">
+                        <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                          hóa đơn :
+                        </div>
+                        <div className="text-indigo-400 text-sm font-medium leading-4 underline whitespace-nowrap mt-1.5">
+                          Xuất hóa đơn
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-indigo-400 text-sm font-medium leading-4 underline whitespace-nowrap mt-1.5">
-                      Xuất hóa đơn
+                    <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-4" />
+                    <div className="items-stretch self-stretch flex flex-col px-5 py-4">
+                      <div className="justify-between items-stretch flex gap-5 pb-3">
+                        <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+                          Tổng thành phần :
+                        </div>
+                        <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
+                          {order.total_price == null
+                            ? "Chưa cập nhật"
+                            : order.total_price}
+                        </div>
+                      </div>
+                      <div className="justify-between items-stretch flex gap-5 py-3">
+                        <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+                          Phí vận chuyển :
+                        </div>
+                        <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
+                          Chưa có
+                        </div>
+                      </div>
+                      <div className="bg-neutral-200 shrink-0 h-px" />
+                      <div className="justify-between items-stretch flex gap-5 py-3">
+                        <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+                          Khuyến mãi từ PhoBooth:
+                        </div>
+                        <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
+                          {order.discount_price == null
+                            ? "Chưa có"
+                            : order.discount_price}
+                        </div>
+                      </div>
+                      <div className="justify-between items-stretch flex gap-5 py-3">
+                        <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+                          Khuyến mãi từ Studio Demo:
+                        </div>
+                        <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
+                          {order.discount_price == null
+                            ? "Chưa có"
+                            : order.discount_price}
+                        </div>
+                      </div>
+                      <div className="bg-neutral-200 shrink-0 h-px" />
+                      <div className="bg-neutral-200 shrink-0 h-px" />
+                      <div className="justify-between items-stretch flex gap-5 py-3">
+                        <div className="text-zinc-900 text-lg leading-7 whitespace-nowrap">
+                          Tổng cộng
+                        </div>
+                        <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
+                          {order.total_price == null
+                            ? "Chưa cập nhật"
+                            : order.total_price}
+                        </div>
+                      </div>
+                      <div className="bg-neutral-200 shrink-0 h-0.5" />
+                      <div className="justify-between items-stretch flex gap-5 py-3">
+                        <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+                          Đã thanh toán
+                        </div>
+                        <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
+                          -{order.amount_paid}
+                        </div>
+                      </div>
+
+                      <div className="bg-neutral-200 z-[1] shrink-0 h-0.5" />
+                      <div className="justify-between items-stretch flex gap-5 pt-3">
+                        <div className="text-zinc-900 text-lg leading-7 whitespace-nowrap">
+                          Còn lại
+                        </div>
+                        <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
+                          {order.total_price - order.amount_paid}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Btn */}
+                    <div className=" mx-auto my-2 flex justify-center gap-5">
+                      <CancelButton />
+
+                      <Button
+                        variant="contained"
+                        onClick={() => setOpenCreateComplain(true)}
+                        sx={{
+                          textTransform: "none",
+                          borderRadius: "43px",
+                          color: "#F6F5FB",
+                          bgcolor: "#3F41A6",
+                          width: "fit-content",
+                          padding: "5px 25px",
+                          "&:hover": {
+                            bgcolor: "#3F41A6B2",
+                          },
+                        }}
+                      >
+                        Khiếu nại
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-4" />
-                <div className="items-stretch self-stretch flex flex-col px-5 py-4">
-                  <div className="justify-between items-stretch flex gap-5 pb-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Tổng thành phần :
-                    </div>
-                    <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      {order.total_price == null
-                        ? "Chưa cập nhật"
-                        : order.total_price}
-                    </div>
+              </div>
+            </div>
+          </TableContainer>
+
+          {/* Thông tin vận chuyển */}
+          <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
+            <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
+              Thông tin vận chuyển
+            </div>
+            <div className="flex w-full flex-col items-stretch mt-7 px-9">
+              <div className="flex items-stretch justify-between gap-10">
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                    Tên khách hàng
                   </div>
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
+
+                  <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
+                    {order?.customer?.full_name ?? "Chưa cập nhật"}
+                  </div>
+                </div>
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                    số điện thoại
+                  </div>
+                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                    Chưa cập nhật
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-stretch justify-between gap-5 mt-6 ">
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                    Địa chỉ
+                  </div>
+
+                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                    {order?.address?.street},{" "}
+                    {order?.address?.ward.name_with_type},{" "}
+                    {order?.address?.district.name_with_type},{" "}
+                    {order?.address?.province.name_with_type}
+                  </div>
+
+                  <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                      className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
+                    />
+                    <div className="text-zinc-500 text-sm leading-5 my-auto">
                       Phí vận chuyển :
                     </div>
-                    <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      Chưa có
-                    </div>
-                  </div>
-                  <div className="bg-neutral-200 shrink-0 h-px" />
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Khuyến mãi từ PhoBooth:
-                    </div>
-                    <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      {order.discount_price == null
-                        ? "Chưa có"
-                        : order.discount_price}
-                    </div>
-                  </div>
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Khuyến mãi từ Studio Demo:
-                    </div>
-                    <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
-                      {order.discount_price == null
-                        ? "Chưa có"
-                        : order.discount_price}
-                    </div>
-                  </div>
-                  <div className="bg-neutral-200 shrink-0 h-px" />
-                  <div className="bg-neutral-200 shrink-0 h-px" />
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-zinc-900 text-lg leading-7 whitespace-nowrap">
-                      Tổng cộng
-                    </div>
-                    <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                      {order.total_price == null
-                        ? "Chưa cập nhật"
-                        : order.total_price}
-                    </div>
-                  </div>
-                  <div className="bg-neutral-200 shrink-0 h-0.5" />
-                  <div className="justify-between items-stretch flex gap-5 py-3">
-                    <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                      Đã thanh toán
-                    </div>
-                    <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
-                      -{order.amount_paid}
-                    </div>
-                  </div>
-
-                  <div className="bg-neutral-200 z-[1] shrink-0 h-0.5" />
-                  <div className="justify-between items-stretch flex gap-5 pt-3">
-                    <div className="text-zinc-900 text-lg leading-7 whitespace-nowrap">
-                      Còn lại
-                    </div>
-                    <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                      {order.total_price - order.amount_paid}
+                    <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
+                      20,000
                     </div>
                   </div>
                 </div>
-
-                {/* Btn */}
-                <div className=" mx-auto my-2 flex justify-center gap-5">
-                  <CancelButton />
-
-                  <Button
-                    variant="contained"
-                    onClick={() => setOpenCreateComplain(true)}
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: "43px",
-                      color: "#F6F5FB",
-                      bgcolor: "#3F41A6",
-                      width: "fit-content",
-                      padding: "5px 25px",
-                      "&:hover": {
-                        bgcolor: "#3F41A6B2",
-                      },
-                    }}
-                  >
-                    Khiếu nại
-                  </Button>
+                <div className="w-[450px] flex justify-start">
+                  <div className="max-w-[200px] items-stretch flex basis-[0%] flex-col self-start">
+                    <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                      hàng hóa vận chuyển
+                    </div>
+                    <div className="items-stretch border flex w-full flex-col mt-1 pl-3 pr-7 py-1.5 rounded-lg border-solid border-neutral-200 max-md:pr-5">
+                      <div className="items-stretch flex justify-between gap-5 pr-5 py-1">
+                        <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                          Khung ảnh :
+                        </div>
+                        <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
+                          x 1
+                        </div>
+                      </div>
+                      <div className="items-stretch flex justify-between gap-5 pr-2 py-1">
+                        <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                          Ảnh in :
+                        </div>
+                        <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
+                          x 10
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
+                trạng thái vận chuyển
+              </div>
+              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 mt-1 px-2.5 py-1 self-start">
+                Chưa vận chuyển
+              </div>
+              <Button
+                disabled={order.status === "CANCELED" ? true : false}
+                variant="contained"
+                sx={{
+                  marginTop: "30px",
+                  textTransform: "none",
+                  borderRadius: "43px",
+                  color: "#F6F5FB",
+                  bgcolor: "#3F41A6",
+                  width: "130px",
+                  "&:hover": {
+                    bgcolor: "#3F41A6B2",
+                  },
+                }}
+              >
+                Lưu thông tin
+              </Button>
             </div>
           </div>
         </div>
-      </TableContainer>
-
-      {/* Thông tin vận chuyển */}
-      <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
-        <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
-          Thông tin vận chuyển
-        </div>
-        <div className="flex w-full flex-col items-stretch mt-7 px-9">
-          <div className="flex items-stretch justify-between gap-10">
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                Tên khách hàng
-              </div>
-
-              <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
-                {order?.customer?.full_name ?? "Chưa cập nhật"}
-              </div>
-            </div>
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                số điện thoại
-              </div>
-              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                Chưa cập nhật
-              </div>
-            </div>
-          </div>
-          <div className="flex items-stretch justify-between gap-5 mt-6 ">
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
-                Địa chỉ
-              </div>
-
-              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                {order?.address?.street}, {order?.address?.ward.name_with_type},{" "}
-                {order?.address?.district.name_with_type},{" "}
-                {order?.address?.province.name_with_type}
-              </div>
-
-              <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
-                />
-                <div className="text-zinc-500 text-sm leading-5 my-auto">
-                  Phí vận chuyển :
-                </div>
-                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
-                  20,000
-                </div>
-              </div>
-            </div>
-            <div className="w-[450px] flex justify-start">
-              <div className="max-w-[200px] items-stretch flex basis-[0%] flex-col self-start">
-                <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                  hàng hóa vận chuyển
-                </div>
-                <div className="items-stretch border flex w-full flex-col mt-1 pl-3 pr-7 py-1.5 rounded-lg border-solid border-neutral-200 max-md:pr-5">
-                  <div className="items-stretch flex justify-between gap-5 pr-5 py-1">
-                    <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                      Khung ảnh :
-                    </div>
-                    <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
-                      x 1
-                    </div>
-                  </div>
-                  <div className="items-stretch flex justify-between gap-5 pr-2 py-1">
-                    <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                      Ảnh in :
-                    </div>
-                    <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
-                      x 10
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
-            trạng thái vận chuyển
-          </div>
-          <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 mt-1 px-2.5 py-1 self-start">
-            Chưa vận chuyển
-          </div>
-          <Button
-            disabled={order.status === "CANCELED" ? true : false}
-            variant="contained"
-            sx={{
-              marginTop: "30px",
-              textTransform: "none",
-              borderRadius: "43px",
-              color: "#F6F5FB",
-              bgcolor: "#3F41A6",
-              width: "130px",
-              "&:hover": {
-                bgcolor: "#3F41A6B2",
-              },
-            }}
-          >
-            Lưu thông tin
-          </Button>
-        </div>
+        <UpdateHistory />
       </div>
 
       {/* Create Complain */}
