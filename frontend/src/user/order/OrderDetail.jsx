@@ -213,7 +213,7 @@ function OrderDetail() {
               )}
             </IconButton>
           </TableCell>
-          <TableCell component="th" scope="row" sx={{ width: "280px" }}>
+          <TableCell component="th" scope="row">
             <div className="items-stretch flex gap-5">
               <img
                 loading="lazy"
@@ -224,7 +224,7 @@ function OrderDetail() {
                 }
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
-              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto rounded-lg">
+              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-normal truncate my-auto rounded-lg">
                 {row.item?.name}
               </div>
             </div>
@@ -357,7 +357,7 @@ function OrderDetail() {
                   <TableCell sx={{ maxWidth: "50px" }} />
                   <TableCell
                     align="left"
-                    sx={{ color: "#3F41A6", width: "280px" }}
+                    sx={{ color: "#3F41A6", width: "250px" }}
                   >
                     SẢN PHẨM
                   </TableCell>
