@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import StaffNavbar from "../components/StaffNavbar";
+import StaffNavbar from "../../components/StaffNavbar";
 import {
   Breadcrumbs,
   Button,
@@ -28,11 +28,11 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import { RiSearchLine } from "react-icons/ri";
 // import axios from "../api/axios";
-import { translateType } from "../util/Translate";
+import { translateType } from "../../util/Translate";
 import CreateCategory from "./CreateCategory";
 import EditCategory from "./EditCategory";
 import DelCategory from "./DelCategory";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function Categories() {
   // global

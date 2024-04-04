@@ -22,11 +22,12 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+import AdminManageAccount from "./staff/accounts/manageAccount";
 import ComplainDetail from "./user/order/ComplainDetail";
-import ComplainDetailStaff from "./staff/ComplainDetail";
-import Complains from "./staff/Complains";
+import ComplainDetailStaff from "./staff/complains/ComplainDetail";
+import Complains from "./staff/complains/Complains";
 import StudioDetail from "./user/studio_info/StudioDetail";
-import Categories from "./staff/Categories";
+import Categories from "./staff/categories/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
@@ -112,7 +113,15 @@ function App() {
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
-          {/* Admin - Staff */}
+          {/* Admin */}
+          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+            <Route
+              path="/admin/manage-account"
+              element={<AdminManageAccount />}
+            />
+          </Route>
+
+          {/* Staff */}
           <Route
             path="/staff/complain/detail/"
             element={<ComplainDetailStaff />}

@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { FaXmark } from "react-icons/fa6";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { translateErrCategory } from "../util/Translate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateErrCategory } from "../../util/Translate";
 
-function CreateCategory({ open, setOpen, setOpenSBar }) {
+function EditCategory({ open, setOpen, setOpenSBar, category }) {
   // global
   const axiosPrivate = useAxiosPrivate();
   // local
@@ -24,23 +24,25 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
   const handleChangeCategory = (e) => {
     setNewCategory({ ...newCategory, [e.target.name]: e.target.value });
   };
-  const handleCreateCategory = (e) => {
-    e.preventDefault();
+
+  const handleEditCategory = () => {
     console.log(newCategory);
-    axiosPrivate
-      .post("/category/", newCategory)
-      .then((res) => {
-        console.log(res.data);
-        setOpen(false);
-        setOpenSBar(true);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response?.status === 400) {
-          let newErr = translateErrCategory(err.response.data);
-          setErrMsg({ ...errMsg, ...newErr });
-        }
-      });
+    if (Object.keys(newCategory).length > 0) {
+      axiosPrivate
+        .patch(`/category/${category.code_name}/`, newCategory)
+        .then((res) => {
+          console.log(res);
+          setOpen(false);
+          setOpenSBar(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response?.status === 400) {
+            let newErr = translateErrCategory(err.response.data);
+            setErrMsg({ ...errMsg, ...newErr });
+          }
+        });
+    }
   };
 
   return (
@@ -53,7 +55,7 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-            Thêm danh mục
+            Cập nhật danh mục
           </div>
           <IconButton
             onClick={() => {
@@ -79,8 +81,8 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
                 required
                 variant="outlined"
                 name="title"
-                //   value={newInfo.full_name ?? cookies.userInfo.full_name ?? ""}
                 onChange={handleChangeCategory}
+                defaultValue={category?.title}
                 error={errMsg.title ? true : false}
                 helperText={errMsg.title ? errMsg.title[0] : ""}
                 sx={{
@@ -100,7 +102,7 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
                 name="type"
                 //   value={service.category ? service.category : ""}
                 onChange={handleChangeCategory}
-                defaultValue=""
+                defaultValue={category?.type}
                 error={errMsg.type ? true : false}
                 helperText={errMsg.type ? errMsg.type[0] : ""}
                 select
@@ -126,6 +128,7 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
                 multiline
                 rows={3}
                 onChange={handleChangeCategory}
+                defaultValue={category?.description}
                 error={errMsg.description ? true : false}
                 helperText={errMsg.description ? errMsg.description[0] : ""}
                 sx={{
@@ -160,7 +163,7 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
 
           <Button
             variant="contained"
-            onClick={handleCreateCategory}
+            onClick={handleEditCategory}
             sx={{
               textTransform: "none",
               bgcolor: "#3F41A6",
@@ -180,4 +183,4 @@ function CreateCategory({ open, setOpen, setOpenSBar }) {
   );
 }
 
-export default CreateCategory;
+export default EditCategory;
