@@ -22,6 +22,7 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+
 import AdminManageAccount from "./staff/accounts/manageAccount";
 import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/complains/ComplainDetail";
@@ -31,6 +32,11 @@ import Categories from "./staff/categories/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
+
+import ComplainDetail from "./user/order/ComplainDetail";
+import ComplainDetailStaff from "./staff/ComplainDetail";
+import Complains from "./staff/Complains";
+
 
 function App() {
   const theme = createTheme({
@@ -113,6 +119,7 @@ function App() {
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
 
+
           {/* Admin */}
           <Route element={<RequireAuth allowedRoles={"admin"} />}>
             <Route
@@ -128,6 +135,14 @@ function App() {
           />
           <Route path="/staff/complains" element={<Complains />} />
           <Route path="/staff/categories" element={<Categories />} />
+
+          {/* Admin - Staff */}
+          <Route
+            path="/staff/complain/detail/"
+            element={<ComplainDetailStaff />}
+          />
+          <Route path="/staff/complains" element={<Complains />} />
+
 
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />

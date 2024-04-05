@@ -16,12 +16,14 @@ import {
   Stepper,
   StepLabel,
   Divider,
+
   Breadcrumbs,
   Link,
   Pagination,
   Snackbar,
   Alert,
   AlertTitle,
+
   Tooltip,
 } from "@mui/material";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
@@ -53,19 +55,23 @@ function OrderDetail() {
   const [openDetailReq, setOpenDetailReq] = useState(false);
   const [openPayingReq, setOpenPayingReq] = useState(false);
   const [openCreateComplain, setOpenCreateComplain] = useState(false);
+
   const [openRating, setOpenRating] = useState(false);
   // local
   const [reload, setReload] = useState(false);
+
   const [order, setOrder] = useState({});
   const [requestList, setRequestList] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [statusMsg, setStatusMsg] = useState("");
   const [selectedReq, setSelectedReq] = useState({});
   const [selectedItem, setSelectedItem] = useState({});
+
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
 
   // button component
   const CancelButton = () => {
@@ -147,6 +153,7 @@ function OrderDetail() {
     axiosPrivate
       .get(`/order/${id}`)
       .then((res) => {
+
         console.log(res.data);
         setOrder(res.data);
       })
@@ -183,6 +190,7 @@ function OrderDetail() {
         console.log(err);
       });
   };
+
 
   // Close Cancel Order SnackBar Success/Err
   const handleCloseCancelSBar = (e, reason) => {
@@ -224,6 +232,7 @@ function OrderDetail() {
                 }
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
+
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-normal truncate my-auto rounded-lg">
                 {row.item?.name}
               </div>
@@ -231,6 +240,7 @@ function OrderDetail() {
           </TableCell>
           <TableCell align="left">
             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+
               {translateType(row.item?.type)}
             </div>
           </TableCell>
@@ -244,6 +254,7 @@ function OrderDetail() {
           <TableCell align="left">
             {order.status === "COMPLETED" ? (
               <Button
+
                 onClick={() => {
                   setSelectedItem(row);
                   setOpenRating(true);
@@ -296,6 +307,7 @@ function OrderDetail() {
         aria-label="breadcrumb"
         sx={{
           marginTop: "30px",
+
           paddingLeft: "70px",
         }}
       >
@@ -332,6 +344,7 @@ function OrderDetail() {
           #{order?.id}
         </Typography>
       </Breadcrumbs>
+
 
       <div className="flex justify-between items-start mt-5 px-16">
         <div className="flex flex-col gap-5">
@@ -789,6 +802,7 @@ function OrderDetail() {
                   </div>
                 </div>
               </div>
+
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
                 trạng thái vận chuyển
               </div>
@@ -823,6 +837,7 @@ function OrderDetail() {
         open={openCreateComplain}
         setOpen={setOpenCreateComplain}
       />
+
 
       {/* Rating Item */}
       <RatingDialog
