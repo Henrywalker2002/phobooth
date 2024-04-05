@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'complain_forum',
     'versatileimagefield',
     'demo',
+    'rate'
 ]
 
 MIDDLEWARE = [
