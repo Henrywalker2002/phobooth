@@ -17,9 +17,13 @@ import {
   Link,
   Pagination,
   Snackbar,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import { RiSearchLine } from "react-icons/ri";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +32,10 @@ import { daysleftCount, isBefore } from "../../util/Compare";
 import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
 
+import Filter from "./Filter";
+import { translateOrderStatus } from "../../util/Translate";
+
+
 function Orders() {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -35,38 +43,67 @@ function Orders() {
   const [openCancel, setOpenCancel] = useState(false);
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
+
+  const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
   const [cancelId, setCancelId] = useState();
   const [pageCount, setPageCount] = useState(1);
+  const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
+  const [filterVal, setFilterVal] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
 
+
+  const getSlugForFilter = (slug) => {
+    if (filterVal.status) {
+      slug += `&status=${filterVal?.status}`;
+    }
+    if (filterVal.studio) {
+      slug += `&studio=${filterVal?.studio}`;
+    }
+    if (filterVal.date_from) {
+      slug += `&date_from=${filterVal?.date_from}`;
+    }
+    if (filterVal.date_end) {
+      slug += `&date_end=${filterVal?.date_end}`;
+    }
+    console.log(slug);
+    return slug;
+  };
+
   useEffect(() => {
+    let slug = "/order/?limit=5&offset=0";
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get("/order/?limit=5&offset=0")
+      .get(slug)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
+        setDefaultPage(1);
         setOrders(res?.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+
+  }, [filterVal]);
 
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
+    let slug = `/order/?limit=5&offset=${offset}`;
+    slug = getSlugForFilter(slug);
     axiosPrivate
-      .get(`/order/?limit=5&offset=${offset}`)
+      .get(slug)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
+        setDefaultPage(page);
         setOrders(res.data.results);
       })
       .catch((err) => {
@@ -152,8 +189,8 @@ function Orders() {
           </TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.status}
+            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-center rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+              {translateOrderStatus(row.status)}
             </div>
           </TableCell>
           <TableCell align="left">
@@ -402,9 +439,58 @@ function Orders() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
+
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
         Quản lý đơn hàng
       </div>
+
+      <div className="flex gap-5 items-center w-fit mx-auto my-3">
+        {/* search */}
+        <TextField
+          id="input-with-icon-textfield"
+          placeholder="Tìm kiếm"
+          sx={{
+            "& .MuiInputBase-input": {
+              padding: "10px 12px",
+              width: "450px",
+              height: "40px",
+              boxSizing: "border-box",
+            },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "30px",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconButton sx={{ padding: 0 }}>
+                  <RiSearchLine className="w-5 h-5" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
+
+        {/* filter */}
+        <Button
+          variant="text"
+          endIcon={<TuneOutlinedIcon />}
+          onClick={() => {
+            setOpenFilter(true);
+          }}
+          sx={{
+            textTransform: "none",
+            color: "#3F41A6",
+            "&:hover": {
+              bgcolor: "#E2E5FF",
+            },
+          }}
+        >
+          Bộ lọc
+        </Button>
+      </div>
+
 
       {/* Table */}
       <TableContainer
@@ -454,6 +540,9 @@ function Orders() {
       <Pagination
         count={pageCount}
         onChange={getOrdersForPage}
+
+        page={defaultPage}
+
         sx={{
           margin: "0 auto",
           width: "fit-content",
@@ -462,6 +551,15 @@ function Orders() {
               bgcolor: "#E2E5FF",
             },
         }}
+      />
+
+
+      {/* Filter Dialog */}
+      <Filter
+        open={openFilter}
+        setOpen={setOpenFilter}
+        filterVal={filterVal}
+        setFilterVal={setFilterVal}
       />
 
       {/* Cancel Order */}

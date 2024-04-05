@@ -79,7 +79,7 @@ function Cart() {
     axiosPrivate
       .get("/cart/")
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
         });

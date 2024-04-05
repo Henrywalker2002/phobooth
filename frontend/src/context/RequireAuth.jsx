@@ -5,9 +5,17 @@ const RequireAuth = ({ allowedRoles }) => {
   const [cookies] = useCookies(["accInfo"]);
   const location = useLocation();
 
-  return cookies?.userInfo?.role?.find(
-    (role) => allowedRoles === role.code_name
-  ) ? (
+  function checkRoleHelper(allowedRoles, userRoles) {
+    if (!userRoles) {
+      return false;
+    }
+    const res = userRoles.filter((role) => {
+      return allowedRoles === role.code_name;
+    });
+    return res ? true : false;
+  }
+
+  return checkRoleHelper(allowedRoles, cookies?.userInfo?.role) ? (
     <Outlet />
   ) : !cookies?.userInfo?.id ? (
     <Navigate to="/login" state={{ from: location }} replace />

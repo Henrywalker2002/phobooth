@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import {
   Table,
@@ -29,18 +30,32 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 import EditAddress from "./EditAddress";
 
+import AddressAlert from "./AddressAlert";
+
+
 function Booking() {
   const navigate = useNavigate();
   const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
   const { itemLists, setItemLists } = useContext(CartContext);
-  const [newAddress, setNewAddress] = useState({});
+
+  const [address, setAddress] = useState({ ...cookies.userInfo.address });
   const [openEditAddr, setOpenEditAddr] = useState(false);
+  const [openAddrAlert, setOpenAddrAlert] = useState(false);
+
+  const [newAddress, setNewAddress] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
+  // check address
+  useEffect(() => {
+    if (!cookies.userInfo.address) {
+      setOpenAddrAlert(true);
+    }
+  }, []);
 
   const getTotalPrice = (lst, typ) => {
     if (lst.length) {
@@ -89,11 +104,12 @@ function Booking() {
           order_item: order_item,
           note: itemLst.note,
           address: {
-            id: cookies.userInfo.address.id,
-            street: cookies.userInfo.address.street,
-            ward: cookies.userInfo.address.ward.code,
-            district: cookies.userInfo.address.district.code,
-            province: cookies.userInfo.address.province.code,
+            id: address.id,
+            street: address.street,
+            ward: address.ward.code,
+            district: address.district.code,
+            province: address.province.code,
+
           },
         };
 
@@ -103,13 +119,15 @@ function Booking() {
           .post("/order/", updateOrderLst)
           .then((res) => {
             console.log(res);
+
+            navigate("/orders", { replace: true });
+
           })
           .catch((err) => {
             console.log(err);
           });
       }
 
-      navigate("/orders", { replace: true });
     } catch (error) {
       console.log(error);
     }
@@ -119,6 +137,14 @@ function Booking() {
     setItemLists([]);
     navigate("/cart");
   };
+
+  // update adress
+  const handleUpdateAddress = (newAddr) => {
+    console.log(newAddr);
+    setAddress(newAddr);
+    setOpenEditAddr(false);
+  };
+
   return (
     <div>
       <Navbar />
@@ -327,24 +353,17 @@ function Booking() {
                 </AlertTitle>
                 <div className="flex items-start gap-2">
                   <div className=" text-stone-500 text-base leading-6">
-                    {cookies.userInfo.address.street},{" "}
-                    {cookies.userInfo.address.ward.name_with_type},{" "}
-                    {cookies.userInfo.address.district.name_with_type},{" "}
-                    {cookies.userInfo.address.province.name_with_type}
+
+                    {address?.street}, {address?.ward?.name_with_type},{" "}
+                    {address?.district?.name_with_type},{" "}
+                    {address?.province?.name_with_type}
                   </div>
                   <IconButton
                     sx={{ padding: 0 }}
-                    // onClick={() => {
-                    //   if (Object.keys(newAddress).length <= 0) {
-                    //     setNewAddress({
-                    //       street: cookies.userInfo.address.street,
-                    //       ward: cookies.userInfo.address.ward,
-                    //       district: cookies.userInfo.address.district,
-                    //       province: cookies.userInfo.address.province,
-                    //     });
-                    //   }
-                    //   setOpenEditAddr(true);
-                    // }}
+                    onClick={() => {
+                      setOpenEditAddr(true);
+                    }}
+
                   >
                     <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
                   </IconButton>
@@ -411,9 +430,14 @@ function Booking() {
       <EditAddress
         open={openEditAddr}
         setOpen={setOpenEditAddr}
-        newAddress={newAddress}
-        setNewAddress={setNewAddress}
+
+        address={address}
+        handleUpdateAddress={handleUpdateAddress}
       />
+
+      {/* Address Alert */}
+      <AddressAlert open={openAddrAlert} setOpen={setOpenAddrAlert} />
+
     </div>
   );
 }

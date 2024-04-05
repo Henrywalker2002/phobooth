@@ -53,7 +53,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio", "date_of_birth", "phone", "address"]
+        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio", "date_of_birth", "phone", "address", "is_active", "created_at"]
 
 
 class UserSignUpSerializer(serializers.ModelSerializer):

@@ -84,3 +84,48 @@ export const translateErrSignUp = (err) => {
   }
   return err;
 };
+
+export const translateOrderStatus = (status) => {
+  if (status === "ORDERED") return "Đã đặt";
+  else if (status === "IN_PROCESS") return "Đang tiến hành";
+  else if (status === "SHIPPING") return "Vận chuyển";
+  else if (status === "COMPLETED") return "Hoàn thành";
+  else if (status === "CANCELED") return "Hủy đơn";
+  return "";
+};
+
+export const translateType = (typ) => {
+  if (typ === "SERVICE") return "Dịch vụ";
+  else if (typ === "PRODUCT") return "Hàng hóa";
+  else if (typ === "ACCESSORY") return "Dịch vụ hỗ trợ";
+  else if (typ === "SERVICE_PACK") return "Gói dịch vụ";
+  return "";
+};
+
+export const translateErrCategory = (err) => {
+  if (err.description && err.description[0] == "This field may not be blank.") {
+    err.description[0] = "Bạn không được để trống trường này.";
+  }
+
+  if (
+    err.type &&
+    (err.type[0] == '"" is not a valid choice.' ||
+      err.type[0] == "This field is required.")
+  ) {
+    err.type[0] = "Bạn cần chọn loại cho danh mục.";
+  }
+
+  if (err.title) {
+    if (err.title[0] == "category with this title already exists.") {
+      err.title[0] = "Danh mục có tiêu đề này đã tồn tại.";
+    } else if (err.title[0] == "This field may not be blank.") {
+      err.title[0] = "Bạn không được để trống trường này.";
+    }
+  }
+  return err;
+};
+
+export const translateRole = (role) => {
+  if (role == "admin") return "Quản lý";
+  else if (role == "staff") return "Nhân viên";
+};

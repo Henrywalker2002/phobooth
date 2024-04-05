@@ -6,57 +6,21 @@ import {
   TextField,
   Button,
   MenuItem,
-} from "@mui/material";
-import { useCookies } from "react-cookie";
-import axios from "../../api/axios";
-import { useLayoutEffect } from "react";
 
-function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
-  const [cookies] = useCookies(["accInfo"]);
+  IconButton,
+} from "@mui/material";
+import axios from "../../api/axios";
+import { FaXmark } from "react-icons/fa6";
+
+function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-  const [address, setAddress] = useState({});
+  const [newAddress, setNewAddress] = useState({});
 
   // setup address
-  // const setUpInitialAddress = () => {
-  //   if (cookies.userInfo.address !== null) {
-  //     axios
-  //       .get(`province/${cookies.userInfo.address.province.code_name}/`)
-  //       .then((res) => {
-  //         // console.log(res);
-  //         setDistricts(res.data.districts);
-  //         return res.data.districts;
-  //       })
-  //       .then((distlist) => {
-  //         setWards(
-  //           distlist?.find(
-  //             (dist) => dist.code === cookies.userInfo.address.district.code
-  //           )?.wards
-  //         );
-  //       })
-  //       .then(() => {
-  //         axios
-  //           .get("province/?limit=63&offset=0")
-  //           .then((res) => {
-  //             // console.log(res);
-  //             setProvinces(res.data.results);
-  //           })
-  //           .catch((err) => console.log(err));
-  //       })
-  //       .then(() => {
-  //         setAddress({
-  //           street: cookies.userInfo.address.street,
-  //           ward: cookies.userInfo.address.ward.code,
-  //           district: cookies.userInfo.address.district.code,
-  //           province: cookies.userInfo.address.province.code,
-  //         });
-  //       })
-  //       .then(() => console.log(address))
-  //       .catch((err) => console.log(err));
-  //   }
-  // };
-  useLayoutEffect(() => {
+  useEffect(() => {
+
     axios
       .get("province/?limit=63&offset=0")
       .then((res) => {
@@ -66,7 +30,9 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
 
       .then(() => {
         axios
-          .get(`province/${newAdress?.province?.code_name}/`)
+
+          .get(`province/${address?.province?.code_name}/`)
+
           .then((res) => {
             // console.log(res);
             setDistricts(res.data.districts);
@@ -74,25 +40,35 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
           })
           .then((distlist) => {
             setWards(
-              distlist?.find((dist) => dist.code === newAdress.district.code)
+
+              distlist?.find((dist) => dist.code === address.district.code)
                 ?.wards
             );
           });
+      })
+
+      .then(() => {
+        setNewAddress({
+          ...address,
+        });
       })
       .catch((err) => console.log(err));
     console.log(address);
     console.log(districts);
     console.log(wards);
-  }, [newAdress]);
+
+  }, []);
+
 
   const handleUpdateProv = async (prov) => {
     try {
       const res = await axios.get(`province/${prov.code_name}/`);
       // console.log(res);
       setDistricts(res.data.districts);
-      setAddress({
-        ...address,
-        province: prov.code,
+
+      setNewAddress({
+        ...newAddress,
+        province: prov,
       });
     } catch (error) {
       console.log(error);
@@ -100,12 +76,11 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
   };
 
   const handleUpdateDist = (district) => {
-    setWards(
-      address.distlist?.find((dist) => dist.code === district.code)?.wards
-    );
-    setAddress({
-      ...address,
-      district: district.code,
+
+    setWards(districts?.find((dist) => dist.code === district.code)?.wards);
+    setNewAddress({
+      ...newAddress,
+      district: district,
     });
   };
 
@@ -113,8 +88,6 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
     <Dialog
       open={open}
       onClose={() => {
-        setDistricts([]);
-        setWards([]);
         setOpen(false);
       }}
       sx={{
@@ -125,13 +98,27 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
         },
       }}
     >
-      <DialogTitle>Cập nhật địa chỉ nhận hàng</DialogTitle>
+
+      <DialogTitle>
+        <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
+          <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
+            Cập nhật địa chỉ nhận hàng
+          </div>
+          <IconButton
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <FaXmark />
+          </IconButton>
+        </div>
+      </DialogTitle>
       <DialogContent dividers={true}>
         <div className="flex items-center gap-5 mb-5">
           <TextField
             id="outlined-select-provinces"
             label="Tỉnh thành"
-            defaultValue={newAdress?.province?.code}
+            defaultValue={address?.province?.code}
             select
             sx={{
               width: "200px",
@@ -155,7 +142,7 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
             id="outlined-select-districts"
             label="Quận huyện"
             variant="outlined"
-            defaultValue={newAdress?.district?.code}
+            defaultValue={address?.district?.code}
             select
             sx={{
               width: "200px",
@@ -179,7 +166,7 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
             variant="outlined"
             name="ward"
             select
-            defaultValue={newAdress?.ward?.code}
+            defaultValue={address?.ward?.code}
             sx={{
               width: "200px",
               marginY: "10px",
@@ -190,7 +177,7 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
               <MenuItem
                 key={index}
                 value={ward.code}
-                onClick={() => setAddress({ ...address, ward: ward.code })}
+                onClick={() => setNewAddress({ ...newAddress, ward: ward })}
               >
                 {ward.name}
               </MenuItem>
@@ -202,8 +189,10 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
             label="Số nhà, đường"
             variant="outlined"
             name="street"
-            defaultValue={newAdress?.street}
-            onChange={(e) => setAddress({ ...address, street: e.target.value })}
+            defaultValue={address?.street}
+            onChange={(e) =>
+              setNewAddress({ ...newAddress, street: e.target.value })
+            }
             sx={{
               width: "200px",
               marginY: "10px",
@@ -216,7 +205,7 @@ function EditAddress({ open, setOpen, newAdress, setNewAddress }) {
           <Button
             variant="contained"
             onClick={() => {
-              console.log(address);
+              handleUpdateAddress(newAddress);
             }}
             sx={{
               textTransform: "none",

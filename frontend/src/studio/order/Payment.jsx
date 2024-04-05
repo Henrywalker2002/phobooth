@@ -9,6 +9,7 @@ import {
   TableRow,
   Button,
   Snackbar,
+  Tooltip,
 } from "@mui/material";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,6 +21,7 @@ import EditRequest from "./EditRequest";
 import DelRequest from "./DelRequest";
 import DeltailRequest from "./DeltailRequest";
 import { isBeforeToday } from "../../util/Compare";
+import { translateOrderStatus } from "../../util/Translate";
 
 function Payment({ order, setOrder }) {
   // global
@@ -102,6 +104,135 @@ function Payment({ order, setOrder }) {
     setOpenSbar(false);
   };
 
+  // disable button
+  const CreateReqButton = () => {
+    if (
+      order.status === "CANCELED" ||
+      order.status === "ORDERED" ||
+      order.status === "COMPLETED" ||
+      order.total_price === order.amount_created
+    ) {
+      return (
+        <Tooltip
+          title={
+            "Bạn không thể cập nhật khi đơn đang trạng thái " +
+            `"${translateOrderStatus(order.status)}" ` +
+            "hoặc số tiền cần thanh toán đã được tạo hết."
+          }
+        >
+          <span>
+            <Button
+              disabled
+              variant="contained"
+              startIcon={<AddIcon />}
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "140px",
+                height: "35px",
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Tạo yêu cầu
+            </Button>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => setOpenCreateReq(true)}
+        sx={{
+          textTransform: "none",
+          bgcolor: "#3F41A6",
+          width: "140px",
+          height: "35px",
+          borderRadius: "20px",
+          "&:hover": {
+            bgcolor: "#3949AB",
+          },
+        }}
+      >
+        Tạo yêu cầu
+      </Button>
+    );
+  };
+
+  const EditIconButton = ({ row }) => {
+    if (row.status === "PAID" || order.status === "CANCELED") {
+      return (
+        <Tooltip
+          title={
+            "Bạn không thể cập nhật khi đơn đang trạng thái 'Hủy đơn' hoặc yêu cầu đã được thanh toán."
+          }
+        >
+          <span>
+            <IconButton disabled>
+              <MdEdit
+                style={{
+                  width: "22px",
+                  height: "22px",
+                  // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
+                }}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <IconButton onClick={(e) => handleOpenEditReq(e, row.id)}>
+        <MdEdit
+          style={{
+            width: "22px",
+            height: "22px",
+            // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
+          }}
+        />
+      </IconButton>
+    );
+  };
+
+  const DelIconButton = ({ row }) => {
+    if (row.status === "PAID" || order.status === "CANCELED") {
+      return (
+        <Tooltip
+          title={
+            "Bạn không thể xóa khi đơn đang trạng thái 'Hủy đơn' hoặc yêu cầu đã được thanh toán."
+          }
+        >
+          <span>
+            <IconButton disabled>
+              <MdDeleteOutline
+                style={{
+                  width: "22px",
+                  height: "22px",
+                  // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
+                }}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <IconButton onClick={(e) => handleOpenDelReq(e, row.id)}>
+        <MdDeleteOutline
+          style={{
+            width: "22px",
+            height: "22px",
+            // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
+          }}
+        />
+      </IconButton>
+    );
+  };
+
   return (
     <Paper
       sx={{
@@ -146,31 +277,7 @@ function Payment({ order, setOrder }) {
             </div>
           </div>
 
-          <Button
-            disabled={
-              order.status === "CANCELED" ||
-              order.status === "ORDERED" ||
-              order.status === "COMPLETED" ||
-              order.total_price === order.amount_created
-                ? true
-                : false
-            }
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenCreateReq(true)}
-            sx={{
-              textTransform: "none",
-              bgcolor: "#3F41A6",
-              width: "140px",
-              height: "35px",
-              borderRadius: "20px",
-              "&:hover": {
-                bgcolor: "#3949AB",
-              },
-            }}
-          >
-            Tạo yêu cầu
-          </Button>
+          <CreateReqButton />
         </div>
       </div>
 
@@ -244,38 +351,8 @@ function Payment({ order, setOrder }) {
                 </TableCell>
 
                 <TableCell align="left" sx={{ width: "130px" }}>
-                  <IconButton
-                    disabled={
-                      row.status === "PAID" || order.status === "CANCELED"
-                        ? true
-                        : false
-                    }
-                    onClick={(e) => handleOpenEditReq(e, row.id)}
-                  >
-                    <MdEdit
-                      style={{
-                        width: "22px",
-                        height: "22px",
-                        // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
-                      }}
-                    />
-                  </IconButton>
-                  <IconButton
-                    disabled={
-                      row.status === "PAID" || order.status === "CANCELED"
-                        ? true
-                        : false
-                    }
-                    onClick={(e) => handleOpenDelReq(e, row.id)}
-                  >
-                    <MdDeleteOutline
-                      style={{
-                        width: "22px",
-                        height: "22px",
-                        // color: row.status === "PAID" ? "#C5CEE0" : "#979797",
-                      }}
-                    />
-                  </IconButton>
+                  <EditIconButton row={row} />
+                  <DelIconButton row={row} />
                 </TableCell>
               </TableRow>
             ))

@@ -19,13 +19,11 @@ import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
 import Err401Dialog from "../components/Err401Dialog";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 
 function ItemDetail(props) {
-  const { auth } = useAuth();
   const [cookies] = useCookies(["accInfo"]);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -39,7 +37,7 @@ function ItemDetail(props) {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         setItem(res.data);
       })
       .catch((err) => {
@@ -316,6 +314,9 @@ function ItemDetail(props) {
                       <Button
                         variant="outlined"
                         startIcon={<MdStorefront />}
+                        onClick={() =>
+                          navigate("/studio/" + item?.studio?.code_name)
+                        }
                         sx={{
                           borderRadius: "4px",
                           borderColor: "#1A093E",

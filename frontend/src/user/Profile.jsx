@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
   FormHelperText,
+  Tooltip,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -40,7 +41,7 @@ function Profile() {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const [openSBar, setOpenSbar] = useState(false);
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState([{ id: uuidv4() }]);
   const [provinces, setProvinces] = useState([]);
   const [newInfo, setNewInfo] = useState({});
   const [avt, setAvt] = useState({});
@@ -399,28 +400,30 @@ function Profile() {
               <div className="text-zinc-900 text-sm leading-5 mt-4">
                 Email *
               </div>
-              <TextField
-                disabled
-                required
-                variant="outlined"
-                name="email"
-                value={newInfo.email ?? cookies.userInfo.email ?? ""}
-                // defaultValue={cookies.userInfo.email}
-                onChange={updateUserInfo}
-                InputProps={{
-                  type: "email",
-                }}
-                error={errMsg.email ? true : false}
-                helperText={errMsg.email ? errMsg.email[0] : ""}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  width: "350px",
-                  marginY: "10px",
-                }}
-              />
+              <Tooltip title="Bạn không thể thay đổi email đã đăng kí.">
+                <span>
+                  <TextField
+                    disabled
+                    required
+                    variant="outlined"
+                    name="email"
+                    value={newInfo.email ?? cookies.userInfo.email ?? ""}
+                    // defaultValue={cookies.userInfo.email}
+
+                    InputProps={{
+                      type: "email",
+                    }}
+                    sx={{
+                      "& .MuiInputBase-input": {
+                        height: "45px",
+                        boxSizing: "border-box",
+                      },
+                      width: "350px",
+                      marginY: "10px",
+                    }}
+                  />
+                </span>
+              </Tooltip>
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
                 Số điện thoại
@@ -648,7 +651,7 @@ function Profile() {
                     <MenuItem
                       key={index}
                       value={prov.code}
-                      onClick={() => handleUpdateProv(addresses[0].id, prov)}
+                      onClick={() => handleUpdateProv(addresses[0]?.id, prov)}
                     >
                       {prov.name}
                     </MenuItem>
@@ -682,7 +685,7 @@ function Profile() {
                       key={index}
                       value={dist.code}
                       onClick={() =>
-                        handleUpdateDist(addresses[0].id, dist.code)
+                        handleUpdateDist(addresses[0]?.id, dist.code)
                       }
                     >
                       {dist.name}
