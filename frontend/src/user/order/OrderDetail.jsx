@@ -836,6 +836,7 @@ function OrderDetail() {
       <CreateComplain
         open={openCreateComplain}
         setOpen={setOpenCreateComplain}
+        order_id={id}
       />
 
 

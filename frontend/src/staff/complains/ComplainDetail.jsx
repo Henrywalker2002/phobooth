@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import {
@@ -13,9 +13,111 @@ import {
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { IoIosSend } from "react-icons/io";
+import { useParams } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import avatar from "../../assets/avatar.png"
+import ResponseText from "../../components/ResponseText";
+import { convertRole, convertTime, convertStatus } from "./helpFunction";
+import { useCookies } from "react-cookie";
+
 
 function ComplainDetail() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [complainData, setComplainData] = React.useState({});
+  const [relies, setRelies] = React.useState([]);
+  const axiosPrivate = useAxiosPrivate();
+  const [cookies, setCookies] = useCookies(["userInfo"]);
+  const [reply, setReply] = React.useState("");
+  const [error, setError] = React.useState("");
+  const limit = 20;
+  const [page, setPage] = React.useState(1);
+  const [pageCount, setPageCount] = React.useState(0);
+  const [pageNext, setPageNext] = React.useState(null);
+
+  const endOfMessagesRef = React.useRef(null);
+  const scrollToBottom = () => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    console.log(id);
+    axiosPrivate.get(`/complain/${id}`).then((res) => {
+      setComplainData(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+    axiosPrivate.get(`/complain-reply/`, {
+      params : {
+        limit : limit, 
+        offset : (page - 1)*10, 
+        complain : id}, 
+        })
+        .then((res) => {
+          console.log(res);
+          setRelies(res.data.results);
+          setPageNext(res.data.next);
+          setPageCount(Math.ceil(res.data.count / limit));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [pageCount]);
+
+  const handleLoadMoreResponse = (e) => {
+    const { scrollTop } = e.currentTarget;
+    if (scrollTop === 0) {
+      if (pageNext) {
+        axiosPrivate.get(pageNext)
+        .then((res) => {
+          setRelies([...relies, ...res.data.results]);
+          setPageNext(res.data.next);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      }
+    }
+  }
+
+  const handleReply = () => {
+    if (reply === "") {
+      setError("Không thể gửi phản hồi trống");
+      return;
+    }
+    axiosPrivate.post(`/complain-reply/`,{ complain: id, text: reply})
+    .then((res) => {
+      setReply("");
+      setRelies([...relies, res.data]);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
+  const handleChangeReply = (e) => {
+    setReply(e.target.value);
+  };
+
+  const handleCompleted = () => {
+    axiosPrivate.patch(`/complain/${id}/`, {status: "RESOLVED"}).then((res) => {
+      setComplainData({...complainData, status: "RESOLVED"})
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
+  const handleRefund = () => {};
+
+
   return (
     <div>
       <Navbar />
@@ -61,7 +163,7 @@ function ComplainDetail() {
 
           //   onClick={() => navigate("/orders", { replace: true })}
         >
-          Đơn hàng #6356
+          Đơn hàng {complainData.order}
         </Link>
 
         <Typography
@@ -72,13 +174,12 @@ function ComplainDetail() {
             fontWeight: "500",
           }}
         >
-          Khiếu nại #8437
+          Khiếu nại {complainData.id}
         </Typography>
       </Breadcrumbs>
 
       {/* Header */}
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
-        Chất lượng ảnh kém
       </div>
 
       <Paper
@@ -94,45 +195,57 @@ function ComplainDetail() {
             <div className="flex gap-4">
               <img
                 loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                srcSet={complainData.user?.avatar ? complainData.user?.avatar : avatar }
+                placeholder="user avatar"
                 className="w-11 h-11 rounded-full "
               />
               <div className="flex flex-col justify-around">
                 <div className="text-base tracking-wider text-black">
-                  @Golanginya
+                  {complainData.user?.full_name}
                 </div>
                 <div className="text-sm font-medium tracking-wide text-indigo-800">
-                  Khách hàng
+                  {convertRole(complainData.user?.role)}
                 </div>
               </div>
             </div>
             <div className=" my-auto text-xs font-semibold tracking-wide text-indigo-800">
-              19:35, 20 Tháng 11 2023
+              {convertTime(complainData.created_at)}
             </div>
           </div>
           <Divider sx={{ marginY: "20px" }} />
 
           <div className="flex flex-col gap-5">
             <div className="text-lg font-semibold text-gray-700">
-              Chất lượng ảnh kém
+              {complainData.title}
             </div>
             <div className="flex gap-3.5 self-start text-sm leading-5">
               <div className="grow my-auto text-zinc-900">Phân loại :</div>
               <div className="justify-center px-2 py-1 text-indigo-800 bg-violet-50 rounded">
-                Chất lượng
+                {complainData.type === "REFUND" ? "Hoàn tiền" : "Khác"} 
               </div>
             </div>
-            <div className="text-sm leading-6 text-black">
-              Posuere arcu arcu consectetur turpis rhoncus tellus. Massa,
-              consectetur massa sit fames nulla eu vehicula ullamcorper. Ante
-              sit mauris elementum sollicitudin arcu sit suspendisse pretium.
-              Nisl egestas fringilla justo bibendum.
+
+            <div className="flex gap-3.5 self-start text-sm leading-5">
+              <div className="grow my-auto text-zinc-900">Trạng thái :</div>
+              <div className="justify-center px-2 py-1 text-indigo-800 bg-violet-50 rounded">
+                {convertStatus(complainData.status)}
+              </div>
             </div>
-            <img
-              loading="lazy"
-              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a602748760702052c0ab92b911ec6447b484204fcc93a99289e2151cb6c513c1?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-              className="max-w-full aspect-[1.92] w-[645px]"
-            />
+
+
+            <div className="text-sm leading-6 text-black">
+              {complainData.description}
+            </div>
+            {complainData.pictures?.map((picture, i) => {
+              return (
+                <img
+                  key={i}
+                  loading="lazy"
+                  srcSet={picture.picture}
+                  className="max-w-full aspect-[1.92] w-[645px]"
+                />
+              );
+            })}
           </div>
         </div>
       </Paper>
@@ -140,80 +253,17 @@ function ComplainDetail() {
       <div className="text-indigo-800 text-xl font-semibold flex justify-center whitespace-nowrap mt-10">
         Phản hồi khiếu nại
       </div>
-      <div className="flex flex-col gap-5 my-5">
-        <Paper
-          sx={{
-            width: "800px",
-            marginX: "auto",
-            border: "1px solid #d6d3d1",
-          }}
-        >
-          <div className="flex flex-col px-10 py-5 bg-white rounded ">
-            <div className="flex items-center justify-between w-full ">
-              <div className="flex gap-4">
-                <img
-                  loading="lazy"
-                  srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="w-11 h-11 rounded-full "
-                />
-                <div className="flex flex-col justify-around">
-                  <div className="text-base tracking-wider text-black">
-                    @morgenshtern
-                  </div>
-                  <div className="text-sm font-medium tracking-wide text-indigo-800">
-                    Nhân viên
-                  </div>
-                </div>
-              </div>
-              <div className=" text-xs font-semibold tracking-wide text-indigo-800">
-                19:35, 20 Tháng 11 2023
-              </div>
-            </div>
-            <Divider sx={{ marginY: "10px" }} />
-
-            <div className="text-sm leading-6 text-black">
-              Posuere arcu arcu consectetur turpis rhoncus tellus. Massa,
-              consectetur massa sit fames nulla eu vehicula ullamcorper.
-            </div>
-          </div>
-        </Paper>
-
-        <Paper
-          sx={{
-            width: "800px",
-            marginX: "auto",
-            border: "1px solid #d6d3d1",
-          }}
-        >
-          <div className="flex flex-col px-10 py-5 bg-white rounded border-l-4 border-indigo-800">
-            <div className="flex items-center justify-between w-full ">
-              <div className="flex gap-4">
-                <img
-                  loading="lazy"
-                  srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/dbf522b5c190249e2ae2bd9014be604a5527c5b765e5c0c32a5010ae4552e449?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="w-11 h-11 rounded-full "
-                />
-                <div className="flex flex-col justify-around">
-                  <div className="text-base tracking-wider text-black">
-                    @Golanginya
-                  </div>
-                  <div className="text-sm font-medium tracking-wide text-indigo-800">
-                    Khách hàng
-                  </div>
-                </div>
-              </div>
-              <div className=" text-xs font-semibold tracking-wide text-indigo-800">
-                19:35, 20 Tháng 11 2023
-              </div>
-            </div>
-            <Divider sx={{ marginY: "10px" }} />
-
-            <div className="text-sm leading-6 text-black">
-              Antesit mauris elementum sollicitudin arcu sit suspendisse
-              pretium. Nisl egestas fringilla justo bibendum.
-            </div>
-          </div>
-        </Paper>
+      <div className="flex items-center flex-col text-center justify-center gap-5 my-5">
+        
+        <div className="max-h-screen text-left w-800 overflow-y-scroll border-2 rounded-lg" onScroll={handleLoadMoreResponse}>
+          {relies.map((reply, i) => {
+            return (
+              <ResponseText reply={reply} />
+            )
+          })}
+          <div ref={endOfMessagesRef} />
+        </div>
+        
 
         <Paper
           sx={{
@@ -227,20 +277,20 @@ function ComplainDetail() {
               <div className="flex gap-4">
                 <img
                   loading="lazy"
-                  srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/c83a3707116b59c9f60efcf253a3c62595477ee02261c48cd179c192ca177996?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                  srcSet={cookies.userInfo?.avatar ? cookies.userInfo?.avatar : avatar}
                   className="w-11 h-11 rounded-full "
                 />
                 <div className="flex flex-col justify-around">
                   <div className="text-base tracking-wider text-black">
-                    @morgenshtern
+                    {cookies.userInfo?.full_name}
                   </div>
                   <div className="text-sm font-medium tracking-wide text-indigo-800">
-                    Nhân viên
+                    {convertRole(cookies.userInfo?.role)}
                   </div>
                 </div>
               </div>
               <div className=" text-xs font-semibold tracking-wide text-indigo-800">
-                19:35, 20 Tháng 11 2023
+                {convertTime(new Date())}
               </div>
             </div>
             <Divider sx={{ marginY: "10px" }} />
@@ -253,6 +303,10 @@ function ComplainDetail() {
               sx={{
                 width: "100%",
               }}
+              onChange={handleChangeReply}
+              value={reply}
+              helperText={error? error : ""}
+              error={error ? true : false}  
             />
 
             <div className="flex gap-5 justify-end my-3">
@@ -277,6 +331,7 @@ function ComplainDetail() {
               <Button
                 variant="contained"
                 startIcon={<IoIosSend style={{ fontSize: "18px" }} />}
+                onClick={handleReply}
                 sx={{
                   textTransform: "none",
                   bgcolor: "#3F41A6",
@@ -287,6 +342,7 @@ function ComplainDetail() {
                     bgcolor: "#3949AB",
                   },
                 }}
+                disabled = {complainData.status == "RESOLVED" || reply === ""}
               >
                 Gửi
               </Button>
@@ -312,6 +368,8 @@ function ComplainDetail() {
               borderColor: "#3F41A6",
             },
           }}
+          onClick={handleRefund}
+          disabled={complainData.status === "RESOLVED"}
         >
           Hoàn tiền
         </Button>
@@ -327,6 +385,8 @@ function ComplainDetail() {
               bgcolor: "#3949AB",
             },
           }}
+          onClick={handleCompleted}
+          disabled={complainData.status === "RESOLVED"}
         >
           Hoàn tất khiếu nại
         </Button>

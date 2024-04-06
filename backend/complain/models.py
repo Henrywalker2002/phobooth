@@ -18,7 +18,7 @@ class ComplainStatusChoices(models.TextChoices):
 class Complain(BaseModel):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="complains")
     staff_resolved = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="resolved_complains", null=True, blank=True)
-    order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name="complain")
+    order = models.OneToOneField(to=Order, on_delete=models.CASCADE, related_name="complain")
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=50, choices=ComplainTypeChoices.choices, default=ComplainTypeChoices.OTHER)
     description = models.TextField()

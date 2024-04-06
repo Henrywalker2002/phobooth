@@ -33,10 +33,6 @@ import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
 
-import ComplainDetail from "./user/order/ComplainDetail";
-import ComplainDetailStaff from "./staff/ComplainDetail";
-import Complains from "./staff/Complains";
-
 
 function App() {
   const theme = createTheme({
@@ -86,7 +82,7 @@ function App() {
 
         <Route element={<PersistLogin />}>
           {/* User */}
-          <Route element={<RequireAuth allowedRoles={"customer"} />}>
+          <Route element={<RequireAuth allowedRoles={["customer"]} />}>
             <Route element={<CartContextLayout />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/booking" element={<Booking />} />
@@ -98,56 +94,49 @@ function App() {
             <Route path="/notification" element={<NotificationMgmt />} />
 
             {/* Studio */}
-            {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
-            <Route path="/studio/items/edit/:id" element={<EditItem />} />
-            <Route path="/studio/items/add" element={<AddItem />} />
-            <Route path="/studio/items" element={<ItemMgmt />} />
-            <Route path="/studio/register" element={<Register />} />
-            <Route
-              path="/studio/order/detail/:id/demo"
-              element={<StudioDemo />}
-            />
-            <Route
-              path="/studio/order/detail/:id"
-              element={<StudioOrderDetail />}
-            />
-            <Route path="/studio/orders" element={<StudioOrders />} />
-            <Route path="/studio/profile" element={<StudioProfile />} />
-            {/* Studio Detail dành cho user xem */}
-            <Route path="/studio/:code_name" element={<StudioDetail />} />
-            {/* Studio Home trang chủ của Studio đăng nhập vào */}
-            <Route path="/studio/" element={<StudioHome />} />
+            <Route element={<RequireAuth allowedRoles={["studio"]} />}>
+              <Route path="/studio/items/edit/:id" element={<EditItem />} />
+              <Route path="/studio/items/add" element={<AddItem />} />
+              <Route path="/studio/items" element={<ItemMgmt />} />
+              <Route path="/studio/register" element={<Register />} />
+              <Route
+                path="/studio/order/detail/:id/demo"
+                element={<StudioDemo />}
+              />
+              <Route
+                path="/studio/order/detail/:id"
+                element={<StudioOrderDetail />}
+              />
+              {/* Studio Home trang chủ của Studio đăng nhập vào */}
+              <Route path="/studio/" element={<StudioHome />} />  
+              <Route path="/studio/orders" element={<StudioOrders />} />
+              <Route path="/studio/profile" element={<StudioProfile />} />
+            </Route>
           </Route>
 
 
           {/* Admin */}
-          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route
               path="/admin/manage-account"
               element={<AdminManageAccount />}
             />
           </Route>
 
+          <Route element = {<RequireAuth allowedRoles={["admin", "staff"]} />}>
+            <Route path="/complain/detail/:id" element={<ComplainDetailStaff />} />
+            <Route path="/staff/complains" element={<Complains />} />
+            <Route path="/staff/categories" element={<Categories />} />
+          </Route>
           {/* Staff */}
-          <Route
-            path="/staff/complain/detail/"
-            element={<ComplainDetailStaff />}
-          />
-          <Route path="/staff/complains" element={<Complains />} />
-          <Route path="/staff/categories" element={<Categories />} />
-
-          {/* Admin - Staff */}
-          <Route
-            path="/staff/complain/detail/"
-            element={<ComplainDetailStaff />}
-          />
-          <Route path="/staff/complains" element={<Complains />} />
 
 
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/" element={<Home />} />
+          {/* Studio Detail dành cho user xem */}
+          <Route path="/studio/:code_name" element={<StudioDetail />} />
         </Route>
       </Routes>
     </ThemeProvider>
