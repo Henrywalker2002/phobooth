@@ -22,6 +22,10 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+import VerifyStudio from "./studio/verify";
+import VerifyStudioList from "./admin/VerifyStudio";
+import VerifyStudioDetail from "./admin/VerifyStudio/VerifyStudioDetail";
+import { AdminHome } from "./admin";
 import AdminManageAccount from "./staff/accounts/manageAccount";
 import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/complains/ComplainDetail";
@@ -107,12 +111,21 @@ function App() {
             />
             <Route path="/studio/orders" element={<StudioOrders />} />
             <Route path="/studio/profile" element={<StudioProfile />} />
+            <Route path="/studio/profile/verify" element={<VerifyStudio />} />
             {/* Studio Detail dành cho user xem */}
             <Route path="/studio/:code_name" element={<StudioDetail />} />
             {/* Studio Home trang chủ của Studio đăng nhập vào */}
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
-
+          {/* admin */}
+          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+            <Route path="/admin" element={<AdminHome />} />
+            <Route path="/admin/verify-studio" element={<VerifyStudioList />} />
+            <Route
+              path="/admin/verify-studio/:id"
+              element={<VerifyStudioDetail />}
+            />
+          </Route>
           {/* Admin */}
           <Route element={<RequireAuth allowedRoles={"admin"} />}>
             <Route
