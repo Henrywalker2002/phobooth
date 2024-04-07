@@ -22,6 +22,7 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+import Rate from "./user/Rate/Rate";
 
 function App() {
   const theme = createTheme({
