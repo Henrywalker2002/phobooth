@@ -83,6 +83,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'backend.JWTMiddleware.JWTAuthenticationMiddleware',
     'backend.custom_middleware.CustomMiddleware',
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -219,8 +220,14 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     ]
 }
 
+
+X_FRAME_OPTIONS = 'sameorigin'
+
+XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     },
 }
+

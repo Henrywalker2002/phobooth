@@ -23,6 +23,11 @@ import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
 
+import VerifyStudio from "./studio/verify";
+import VerifyStudioList from "./admin/VerifyStudio";
+import VerifyStudioDetail from "./admin/VerifyStudio/VerifyStudioDetail";
+import { AdminHome } from "./admin";
+
 import AdminManageAccount from "./staff/accounts/manageAccount";
 import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/complains/ComplainDetail";
@@ -94,26 +99,37 @@ function App() {
             <Route path="/notification" element={<NotificationMgmt />} />
 
             {/* Studio */}
-            <Route element={<RequireAuth allowedRoles={["studio"]} />}>
-              <Route path="/studio/items/edit/:id" element={<EditItem />} />
-              <Route path="/studio/items/add" element={<AddItem />} />
-              <Route path="/studio/items" element={<ItemMgmt />} />
-              <Route path="/studio/register" element={<Register />} />
-              <Route
-                path="/studio/order/detail/:id/demo"
-                element={<StudioDemo />}
-              />
-              <Route
-                path="/studio/order/detail/:id"
-                element={<StudioOrderDetail />}
-              />
-              {/* Studio Home trang chủ của Studio đăng nhập vào */}
-              <Route path="/studio/" element={<StudioHome />} />  
-              <Route path="/studio/orders" element={<StudioOrders />} />
-              <Route path="/studio/profile" element={<StudioProfile />} />
-            </Route>
-          </Route>
 
+            {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
+            <Route path="/studio/items/edit/:id" element={<EditItem />} />
+            <Route path="/studio/items/add" element={<AddItem />} />
+            <Route path="/studio/items" element={<ItemMgmt />} />
+            <Route path="/studio/register" element={<Register />} />
+            <Route
+              path="/studio/order/detail/:id/demo"
+              element={<StudioDemo />}
+            />
+            <Route
+              path="/studio/order/detail/:id"
+              element={<StudioOrderDetail />}
+            />
+            <Route path="/studio/orders" element={<StudioOrders />} />
+            <Route path="/studio/profile" element={<StudioProfile />} />
+            <Route path="/studio/profile/verify" element={<VerifyStudio />} />
+            {/* Studio Detail dành cho user xem */}
+            <Route path="/studio/:code_name" element={<StudioDetail />} />
+            {/* Studio Home trang chủ của Studio đăng nhập vào */}
+            <Route path="/studio/" element={<StudioHome />} />
+          </Route>
+          {/* admin */}
+          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+            <Route path="/admin" element={<AdminHome />} />
+            <Route path="/admin/verify-studio" element={<VerifyStudioList />} />
+            <Route
+              path="/admin/verify-studio/:id"
+              element={<VerifyStudioDetail />}
+            />
+          </Route>
 
           {/* Admin */}
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>

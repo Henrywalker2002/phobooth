@@ -82,7 +82,9 @@ function Notification({
     >
       {/* {image} */}
       <ListItemAvatar>
-        <Avatar>{image.icon}</Avatar>
+        <Avatar sx={{ color: "#3F41A6", bgcolor: "#E2E5FF" }}>
+          {image.icon}
+        </Avatar>
       </ListItemAvatar>
       {/* <ListItemIcon>{image}</ListItemIcon> */}
       <ListItemText>
