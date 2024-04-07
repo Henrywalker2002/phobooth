@@ -12,6 +12,8 @@ class PaymentMethodChoices(models.TextChoices):
 class PaymentStatusChoices(models.TextChoices):
     PENDING = "PENDING", "PENDING"
     PAID = "PAID", "PAID"
+    DESTROYED = "DESTROYED", "DESTROYED"
+    REFUND = "REFUND", "REFUND"
 
 
 class Payment(BaseModel):
@@ -22,6 +24,7 @@ class Payment(BaseModel):
     bank_tran_no = models.CharField(max_length = 255, blank = True, null = True)
     vn_pay_tran_no = models.CharField(max_length = 255, blank = True, null = True)
     vn_order_infor = models.CharField(max_length = 255, blank = True, null = True)
+    vn_pay_TxnRef = models.CharField(max_length = 255, blank = True, null = True)
     payment_date = models.DateField(null = True, default = None)
     expiration_date = models.DateField()
     amount = models.IntegerField()

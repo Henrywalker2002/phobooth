@@ -31,8 +31,10 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { daysleftCount, isBefore } from "../../util/Compare";
 import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
+
 import Filter from "./Filter";
 import { translateOrderStatus } from "../../util/Translate";
+
 
 function Orders() {
   const navigate = useNavigate();
@@ -41,6 +43,7 @@ function Orders() {
   const [openCancel, setOpenCancel] = useState(false);
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
+
   const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
   const [cancelId, setCancelId] = useState();
@@ -53,6 +56,7 @@ function Orders() {
     style: "currency",
     currency: "VND",
   });
+
 
   const getSlugForFilter = (slug) => {
     if (filterVal.status) {
@@ -86,6 +90,7 @@ function Orders() {
       .catch((err) => {
         console.log(err);
       });
+
   }, [filterVal]);
 
   const getOrdersForPage = (e, page) => {
@@ -434,6 +439,7 @@ function Orders() {
       </Breadcrumbs>
 
       {/* Header */}
+
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
         Quản lý đơn hàng
       </div>
@@ -485,6 +491,7 @@ function Orders() {
         </Button>
       </div>
 
+
       {/* Table */}
       <TableContainer
         component={Paper}
@@ -533,7 +540,9 @@ function Orders() {
       <Pagination
         count={pageCount}
         onChange={getOrdersForPage}
+
         page={defaultPage}
+
         sx={{
           margin: "0 auto",
           width: "fit-content",
@@ -543,6 +552,7 @@ function Orders() {
             },
         }}
       />
+
 
       {/* Filter Dialog */}
       <Filter

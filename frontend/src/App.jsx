@@ -22,10 +22,12 @@ import ItemMgmt from "./studio/item/ItemMgmt";
 import EditItem from "./studio/item/Edit/EditItem";
 import Profile from "./user/Profile";
 import StudioProfile from "./studio/Profile";
+
 import VerifyStudio from "./studio/verify";
 import VerifyStudioList from "./admin/VerifyStudio";
 import VerifyStudioDetail from "./admin/VerifyStudio/VerifyStudioDetail";
 import { AdminHome } from "./admin";
+
 import AdminManageAccount from "./staff/accounts/manageAccount";
 import ComplainDetail from "./user/order/ComplainDetail";
 import ComplainDetailStaff from "./staff/complains/ComplainDetail";
@@ -35,6 +37,7 @@ import Categories from "./staff/categories/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
+
 
 function App() {
   const theme = createTheme({
@@ -84,7 +87,7 @@ function App() {
 
         <Route element={<PersistLogin />}>
           {/* User */}
-          <Route element={<RequireAuth allowedRoles={"customer"} />}>
+          <Route element={<RequireAuth allowedRoles={["customer"]} />}>
             <Route element={<CartContextLayout />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/booking" element={<Booking />} />
@@ -96,6 +99,7 @@ function App() {
             <Route path="/notification" element={<NotificationMgmt />} />
 
             {/* Studio */}
+
             {/* <Route element={<RequireAuth allowedRoles={"studio"} />}></Route> */}
             <Route path="/studio/items/edit/:id" element={<EditItem />} />
             <Route path="/studio/items/add" element={<AddItem />} />
@@ -126,26 +130,29 @@ function App() {
               element={<VerifyStudioDetail />}
             />
           </Route>
+
           {/* Admin */}
-          <Route element={<RequireAuth allowedRoles={"admin"} />}>
+          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route
               path="/admin/manage-account"
               element={<AdminManageAccount />}
             />
           </Route>
 
+          <Route element = {<RequireAuth allowedRoles={["admin", "staff"]} />}>
+            <Route path="/complain/detail/:id" element={<ComplainDetailStaff />} />
+            <Route path="/staff/complains" element={<Complains />} />
+            <Route path="/staff/categories" element={<Categories />} />
+          </Route>
           {/* Staff */}
-          <Route
-            path="/staff/complain/detail/"
-            element={<ComplainDetailStaff />}
-          />
-          <Route path="/staff/complains" element={<Complains />} />
-          <Route path="/staff/categories" element={<Categories />} />
+
 
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/" element={<Home />} />
+          {/* Studio Detail dành cho user xem */}
+          <Route path="/studio/:code_name" element={<StudioDetail />} />
         </Route>
       </Routes>
     </ThemeProvider>

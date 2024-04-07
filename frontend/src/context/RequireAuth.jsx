@@ -10,9 +10,21 @@ const RequireAuth = ({ allowedRoles }) => {
       return false;
     }
     const res = userRoles.filter((role) => {
-      return allowedRoles === role.code_name;
+      for (let i = 0; i < allowedRoles.length; i++) {
+        if (allowedRoles[i] === role.code_name) {
+          return true;
+        }
+      }
+      return false;
     });
-    return res ? true : false;
+    return res.length > 0 ? true : false;
+  }
+  var check; 
+  if (typeof allowedRoles === "string") {
+    check = checkRoleHelper([allowedRoles], cookies?.userInfo?.role);
+  }
+  else {
+    check = checkRoleHelper(allowedRoles, cookies?.userInfo?.role);
   }
 
   return checkRoleHelper(allowedRoles, cookies?.userInfo?.role) ? (
