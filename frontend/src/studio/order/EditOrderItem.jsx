@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { FaXmark } from "react-icons/fa6";
-import { IconButton, Button, TextField, Dialog, Snackbar } from "@mui/material";
+import { IconButton, Button, TextField, Dialog } from "@mui/material";
 import { validFixedPrice } from "../../util/Validation";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateType } from "../../util/Translate";
 
 function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
   const axiosPrivate = useAxiosPrivate();
-  // const [openSBar, setOpenSbar] = useState(false);
   const [price, setPrice] = useState(orderItem.price);
   const [quantity, setQuantity] = useState(orderItem.quantity);
   const [errMsg, setErrMsg] = useState({});
@@ -45,14 +45,6 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
     }
   };
 
-  // Close Status SnackBar Success/Err
-  // const handleCloseSBar = (e, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   setOpenSbar(false);
-  // };
-
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
       <div className="min-w-[350px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-10 rounded-lg border-solid">
@@ -80,7 +72,7 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
             </div>
             <div className="min-w-fit z-[1] flex justify-start gap-3 mt-2.5 items-start">
               <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch  px-2 py-1">
-                {orderItem?.item?.type}
+                {translateType(orderItem?.item?.type)}
               </div>
               <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch  px-2 py-1">
                 {orderItem?.item?.category?.title}
@@ -171,15 +163,6 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
           Lưu thay đổi
         </Button>
       </div>
-
-      {/* Update order-item successfully */}
-      {/* <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={openSBar}
-        autoHideDuration={2000}
-        onClose={handleCloseSBar}
-        message={"Đã cập nhật sản phẩm đơn hàng !"}
-      /> */}
     </Dialog>
   );
 }
