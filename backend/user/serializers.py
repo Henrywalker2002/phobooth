@@ -41,9 +41,11 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
 class UserSummarySerializer(serializers.ModelSerializer):
     
+    role = serializers.SlugRelatedField(slug_field='code_name', many=True, read_only=True)
+    
     class Meta:
         model = User 
-        fields = ["id", "username", "email", "full_name", "avatar"]
+        fields = ["id", "username", "email", "full_name", "avatar", "role", ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -53,7 +55,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio", "date_of_birth", "phone", "address"]
+        fields = ["id", "username", "email", "full_name", "role", "avatar", "studio", "date_of_birth", "phone", "address", "is_active", "created_at"]
 
 
 class UserSignUpSerializer(serializers.ModelSerializer):

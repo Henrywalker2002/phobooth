@@ -2,12 +2,24 @@ import React, { useEffect, useState } from "react";
 import { IoChatboxEllipses } from "react-icons/io5";
 import AddBusinessOutlinedIcon from "@mui/icons-material/AddBusinessOutlined";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { Box, Button, Tab } from "@mui/material";
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Tab,
+  Link,
+  Typography,
+  Avatar,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ItemList from "./ItemList";
 import Navbar from "../../components/Navbar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useParams } from "react-router-dom";
+import Filter from "./Filter";
+import Footer from "./Footer";
 
 function StudioDetail() {
   // global
@@ -35,21 +47,53 @@ function StudioDetail() {
     <div>
       <Navbar />
 
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          component="button"
+          underline="none"
+          key="1"
+          sx={{ color: "#808080" }}
+          // href="/"
+          onClick={() => navigate("/", { replace: true })}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          {studio.friendly_name}
+        </Typography>
+      </Breadcrumbs>
+
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mb-10">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 my-5">
         <div className="flex justify-between border border-indigo-100 border-solid  rounded-md bg-white px-8 py-8  shadow shadow-indigo-100">
           <div className="flex gap-5 items-center px-8 py-8">
-            <div className="flex flex-col items-center">
-              <img
-                loading="lazy"
-                src={
-                  studio?.avatar
-                    ? studio?.avatar
-                    : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-                }
-                className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
-              />
-            </div>
+            <Avatar
+              alt={studio?.friendly_name}
+              src={
+                studio?.avatar
+                  ? studio?.avatar
+                  : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
+              }
+              sx={{ width: 70, height: 70 }}
+            />
             <div className="flex flex-col items-stretch">
               <div className="flex flex-col items-stretch gap-4 justify-center">
                 <div className="flex gap-3 items-center">
@@ -159,67 +203,79 @@ function StudioDetail() {
       </div>
 
       {/* Tab loại sản phẩm */}
-      <TabContext value={type}>
-        <Box>
-          <TabList
-            onChange={handleChange}
-            centered
-            sx={{
-              "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
-                bgcolor: "#3F41A6",
-                width: "90px",
-              },
-            }}
-          >
-            <Tab
-              label="Dịch vụ"
-              value="service"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-            <Tab
-              label="Hàng hóa"
-              value="product"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-            <Tab
-              label="Gói dịch vụ"
-              value="service-pack"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-          </TabList>
-        </Box>
+      <div className="flex gap-20 items-start my-5 w-fit mx-auto">
+        <Filter />
+        <div className="">
+          <TabContext value={type}>
+            <Box>
+              <TabList
+                onChange={handleChange}
+                centered
+                sx={{
+                  "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                    bgcolor: "#3F41A6",
+                    width: "90px",
+                  },
+                }}
+              >
+                <Tab
+                  label="Dịch vụ"
+                  value="service"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+                <Tab
+                  label="Hàng hóa"
+                  value="product"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+                <Tab
+                  label="Gói dịch vụ"
+                  value="service-pack"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+              </TabList>
+            </Box>
 
-        <TabPanel value="service">
-          {/* Service List */}
-          <ItemList code_name={code_name} itemType={"SERVICE"} />
-        </TabPanel>
-        <TabPanel value="product">
-          {/* Product List */}
-          <ItemList code_name={code_name} itemType={"PRODUCT"} />
-        </TabPanel>
-        <TabPanel value="service-pack">
-          {/* Package List */}
-          <ItemList code_name={code_name} itemType={"SERVICE_PACK"} />
-        </TabPanel>
-      </TabContext>
+            <TabPanel value="service">
+              {/* Service List */}
+              <ItemList code_name={code_name} itemType={"SERVICE"} />
+            </TabPanel>
+            <TabPanel value="product">
+              {/* Product List */}
+              <ItemList code_name={code_name} itemType={"PRODUCT"} />
+            </TabPanel>
+            <TabPanel value="service-pack">
+              {/* Package List */}
+              <ItemList code_name={code_name} itemType={"SERVICE_PACK"} />
+            </TabPanel>
+          </TabContext>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer
+        address={studio.address}
+        phone={studio.phone}
+        email={studio.email}
+      />
     </div>
   );
 }

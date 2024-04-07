@@ -6,6 +6,8 @@ class PaymentPermission(BaseAdvancedPermission):
     def has_permission(self, request, view):
         if view.action == "handle_payment_return":
             return True
+        elif view.action == "refund":
+            return self.is_admin(request) or self.is_staff(request)
         if request.method in permissions.SAFE_METHODS:
             return request.user.is_authenticated
         else:

@@ -31,4 +31,4 @@ class ReadReplySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Reply
-        fields = ['id', 'user', 'complain', 'text', 'pictures']
+        fields = ['id', 'user', 'complain', 'text', 'pictures', 'created_at']

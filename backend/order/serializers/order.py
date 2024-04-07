@@ -10,6 +10,7 @@ from payment.serializers import ReadPaymentSerializer
 from payment.models import PaymentStatusChoices
 from order_history.serializers import OrderHistorySummarySerializer
 from address.serializers import AddressSerializer, ReadAddressSerializer
+from complain.serializers import ComplainSummarySerializer
 
 class CreateOrderSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
@@ -48,6 +49,8 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     payment = ReadPaymentSerializer(many=True, read_only=True)
     order_history = OrderHistorySummarySerializer(many=True, read_only=True)
     address = ReadAddressSerializer(read_only=True)
+    complain = ComplainSummarySerializer(read_only=True)
+    
     class Meta:
         model = Order
         fields = [
@@ -66,7 +69,8 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "studio",
             "payment",
             "order_history",
-            "address"
+            "address",
+            "complain"
         ]
 
 class OrderSummarySerializer(serializers.ModelSerializer):
@@ -74,6 +78,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
     studio = StudioSummarySerializer(read_only=True)
     customer = UserSummarySerializer(read_only=True)
     payment = ReadPaymentSerializer(many = True, read_only=True)
+    complain = ComplainSummarySerializer(read_only=True)
     
     class Meta:
         model = Order
@@ -92,6 +97,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
             "order_item",
             "studio",
             "payment",
+            "complain"
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):

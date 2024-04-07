@@ -1,5 +1,5 @@
 import React from "react";
-import StaffNavbar from "../components/StaffNavbar";
+import StaffNavbar from "../../components/StaffNavbar";
 import {
   Breadcrumbs,
   Link,
@@ -21,94 +21,33 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function Complains() {
   // global
   const navigate = useNavigate();
-  const complainData = {
-    count: 2,
-    next: null,
-    previous: null,
-    results: [
-      {
-        id: 3,
-        user: {
-          id: 13,
-          username: "first user",
-          email: "first@email.com",
-          full_name: "First User",
-          avatar: null,
-        },
-        order: 8,
-        title: "title",
-        type: "REFUND",
-        description: "no",
-        status: "PENDING",
-        pictures: [
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/dich-vu-chup-hinh-san-pham-2_C5Ot1tH.png",
-          },
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/anh-avatar-dep-35_LOaa2xv.jpg",
-          },
-        ],
-      },
-      {
-        id: 2,
-        user: {
-          id: 13,
-          username: "first user",
-          email: "first@email.com",
-          full_name: "First User",
-          avatar: null,
-        },
-        order: 8,
-        title: "title",
-        type: "REFUND",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum sapien nec accumsan porta. Donec.",
-        status: "IN_PROCESS",
-        pictures: [
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/dich-vu-chup-hinh-san-pham-2.png",
-          },
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/anh-avatar-dep-35.jpg",
-          },
-        ],
-      },
-      {
-        id: 1,
-        user: {
-          id: 13,
-          username: "first user",
-          email: "first@email.com",
-          full_name: "First User",
-          avatar: null,
-        },
-        order: 8,
-        title: "title",
-        type: "REFUND",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum sapien nec accumsan porta. Donec.",
-        status: "RESOLVED",
-        pictures: [
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/dich-vu-chup-hinh-san-pham-2.png",
-          },
-          {
-            picture:
-              "http://127.0.0.1:8000/assets/complain_pictures/anh-avatar-dep-35.jpg",
-          },
-        ],
-      },
-    ],
+  const axiosPrivate = useAxiosPrivate();
+  const [page, setPage] = React.useState(1);
+  const [pageCount, setPageCount] = React.useState(1);
+  const [complainData, setComplainData] = React.useState({});
+  const [filterVal, setFilterVal] = React.useState({});
+  const limit = 10;
+
+  React.useEffect(() => {
+    axiosPrivate.get(`/complain/?limit=${limit}&offset=${(page-1)*limit}`).then((res) => {
+      setComplainData(res.data);
+      setPageCount(Math.ceil(res.data.count / limit));
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, [page, filterVal])
+
+
+  const handlePageChange = (event, value) => {
+    console.log(value);
+    setPage(value);
   };
+
   return (
     <div>
       <StaffNavbar />
@@ -228,11 +167,12 @@ function Complains() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {complainData?.results.length > 0 ? (
+            {complainData?.results?.length > 0 ? (
               complainData?.results.map((complain, i) => (
                 <TableRow
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  onClick = {() => navigate(`/complain/detail/${complain.id}`)}
                 >
                   <TableCell component="th" scope="row">
                     {complain.id}
@@ -263,7 +203,7 @@ function Complains() {
                       <div className="w-[115px] text-green-600 text-sm leading-6 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 flex justify-center">
                         Đã giải quyết
                       </div>
-                    ) : complain.status === "IN_PROCESS" ? (
+                    ) : complain.status === "IN_PROGRESS" ? (
                       <div className="w-[115px] text-yellow-700 text-sm leading-6 whitespace-nowrap rounded bg-yellow-300 bg-opacity-20 py-1 flex justify-center">
                         Đang xử lý
                       </div>
@@ -282,9 +222,8 @@ function Complains() {
 
       {/* Pagination */}
       <Pagination
-        // count={pageCount}
-        // onChange={getOrdersForPage}
-        count={1}
+        count={pageCount}
+        onChange={handlePageChange}
         sx={{
           margin: "0 auto",
           width: "fit-content",

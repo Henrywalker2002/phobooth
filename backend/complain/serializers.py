@@ -34,9 +34,16 @@ class ReadCompainSerializer(serializers.ModelSerializer):
     pictures = CompainPictureSerializer(many=True)
     user = UserSummarySerializer()
     staff_resolved = UserSummarySerializer()
+    
     class Meta:
         model = Complain
-        fields = ['id', 'staff_resolved', 'user', 'order', 'title', 'type', 'description', 'status', 'pictures']
+        fields = ['id', 'staff_resolved', 'user', 'order', 'title', 'type', 'description', 'status', 'pictures', 'created_at', ]
+
+class ComplainSummarySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Complain
+        fields = ['id', 'title', 'status', 'type', 'description', 'created_at', ]
 
 
 class UpdateComplainSerializer(serializers.ModelSerializer):

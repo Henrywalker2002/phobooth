@@ -14,11 +14,14 @@ import { FaXmark } from "react-icons/fa6";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { v4 as uuidv4 } from "uuid";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function CreateComplain({ open, setOpen }) {
+function CreateComplain({ open, setOpen, order_id }) {
   // local
   const [imgList, setImgList] = useState([]);
-
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
+  const axiosPrivate = useAxiosPrivate();
   //   image list
   const handleUpdateImgList = (e) => {
     let imgFiles = e.target.files;
@@ -40,7 +43,32 @@ function CreateComplain({ open, setOpen }) {
     setImgList(newList);
   };
 
-  const handleCreateComplain = () => {};
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleCreateComplain = (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("type", formData.type);
+    data.append("order", order_id);
+    if (imgList.length > 0) {
+      for (let img of imgList) {
+        console.log(img);
+        data.append("images", img.img_file, img.img_file.name);
+      }
+    }
+    axiosPrivate.post("/complain/", data, {headers : {'Content-Type': 'multipart/form-data'}})
+    .then((res) => {
+      console.log(res);
+      setOpen(false);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
   return (
     <Dialog
       sx={{ minWidth: "400px" }}
@@ -48,6 +76,7 @@ function CreateComplain({ open, setOpen }) {
       onClose={() => setOpen(false)}
       scroll="paper"
     >
+      <form onSubmit={handleCreateComplain}>
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
@@ -67,7 +96,6 @@ function CreateComplain({ open, setOpen }) {
         dividers={true}
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
-        <form onSubmit={handleCreateComplain}>
           <div className="self-stretch flex items-stretch  gap-[130px]">
             <div className="flex basis-[0%] flex-col items-stretch">
               <div className="text-zinc-900 text-sm leading-5">Tiêu đề *</div>
@@ -75,10 +103,10 @@ function CreateComplain({ open, setOpen }) {
                 required
                 variant="outlined"
                 name="title"
-                //   value={newInfo.full_name ?? cookies.userInfo.full_name ?? ""}
-                //   onChange={updateUserInfo}
-                //   error={errMsg.full_name ? true : false}
-                //   helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
+                value = {formData.title}
+                onChange = {handleChange}
+                error={errors.title ? true : false}
+                helperText={errors.title ? errors.title : ""}
                 sx={{
                   "& .MuiInputBase-input": {
                     height: "45px",
@@ -94,8 +122,10 @@ function CreateComplain({ open, setOpen }) {
                 required
                 id="outlined-select-categories"
                 name="type"
-                //   value={service.category ? service.category : ""}
-                //   onChange={updateService}
+                value={formData.type}
+                onChange={handleChange}
+                error={errors.type ? true : false}
+                helperText={errors.type ? errors.type : ""}
                 defaultValue=""
                 select
                 sx={{
@@ -108,7 +138,6 @@ function CreateComplain({ open, setOpen }) {
                   marginY: "10px",
                 }}
               >
-                <MenuItem value="">--Chọn loại--</MenuItem>
                 <MenuItem value="REFUND">Hoàn tiền</MenuItem>
                 <MenuItem value="OTHER">Các loại khác</MenuItem>
               </TextField>
@@ -123,10 +152,14 @@ function CreateComplain({ open, setOpen }) {
                   width: "400px",
                   marginY: "10px",
                 }}
+                value = {formData.description}
+                onChange = {handleChange}
+                error={errors.description ? true : false}
+                helperText={errors.description ? errors.description : ""}
               />
 
               <div className="text-zinc-900 text-sm leading-5">
-                Hình ảnh liên quan *
+                Hình ảnh liên quan 
               </div>
               <div className="flex flex-col gap-7 w-full my-3">
                 <div className="flex gap-3 items-center">
@@ -209,7 +242,7 @@ function CreateComplain({ open, setOpen }) {
               </div>
             </div>
           </div>
-        </form>
+
       </DialogContent>
 
       <DialogActions>
@@ -229,7 +262,7 @@ function CreateComplain({ open, setOpen }) {
               },
             }}
           >
-            Hủy thông tin
+            Hủy 
           </Button>
 
           <Button
@@ -244,12 +277,14 @@ function CreateComplain({ open, setOpen }) {
               "&:hover": {
                 bgcolor: "#3949AB",
               },
+
             }}
           >
             Gửi khiếu nại
           </Button>
         </div>
       </DialogActions>
+      </form>
     </Dialog>
   );
 }

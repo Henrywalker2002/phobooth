@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function DelCategory({ open, setOpen, setOpenSBar, category }) {
   const axiosPrivate = useAxiosPrivate();

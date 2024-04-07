@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   MenuItem,
+
   IconButton,
 } from "@mui/material";
 import axios from "../../api/axios";
@@ -19,6 +20,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
 
   // setup address
   useEffect(() => {
+
     axios
       .get("province/?limit=63&offset=0")
       .then((res) => {
@@ -28,7 +30,9 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
 
       .then(() => {
         axios
+
           .get(`province/${address?.province?.code_name}/`)
+
           .then((res) => {
             // console.log(res);
             setDistricts(res.data.districts);
@@ -36,11 +40,13 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
           })
           .then((distlist) => {
             setWards(
+
               distlist?.find((dist) => dist.code === address.district.code)
                 ?.wards
             );
           });
       })
+
       .then(() => {
         setNewAddress({
           ...address,
@@ -50,13 +56,16 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
     console.log(address);
     console.log(districts);
     console.log(wards);
+
   }, []);
+
 
   const handleUpdateProv = async (prov) => {
     try {
       const res = await axios.get(`province/${prov.code_name}/`);
       // console.log(res);
       setDistricts(res.data.districts);
+
       setNewAddress({
         ...newAddress,
         province: prov,
@@ -67,6 +76,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
   };
 
   const handleUpdateDist = (district) => {
+
     setWards(districts?.find((dist) => dist.code === district.code)?.wards);
     setNewAddress({
       ...newAddress,
@@ -88,6 +98,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
         },
       }}
     >
+
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">

@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { FaXmark } from "react-icons/fa6";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { translateErrCategory } from "../util/Translate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateErrCategory } from "../../util/Translate";
 
-function EditCategory({ open, setOpen, setOpenSBar, category }) {
+function CreateCategory({ open, setOpen, setOpenSBar }) {
   // global
   const axiosPrivate = useAxiosPrivate();
   // local
@@ -24,25 +24,23 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
   const handleChangeCategory = (e) => {
     setNewCategory({ ...newCategory, [e.target.name]: e.target.value });
   };
-
-  const handleEditCategory = () => {
+  const handleCreateCategory = (e) => {
+    e.preventDefault();
     console.log(newCategory);
-    if (Object.keys(newCategory).length > 0) {
-      axiosPrivate
-        .patch(`/category/${category.code_name}/`, newCategory)
-        .then((res) => {
-          console.log(res);
-          setOpen(false);
-          setOpenSBar(true);
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.response?.status === 400) {
-            let newErr = translateErrCategory(err.response.data);
-            setErrMsg({ ...errMsg, ...newErr });
-          }
-        });
-    }
+    axiosPrivate
+      .post("/category/", newCategory)
+      .then((res) => {
+        console.log(res.data);
+        setOpen(false);
+        setOpenSBar(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response?.status === 400) {
+          let newErr = translateErrCategory(err.response.data);
+          setErrMsg({ ...errMsg, ...newErr });
+        }
+      });
   };
 
   return (
@@ -55,7 +53,7 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-            Cập nhật danh mục
+            Thêm danh mục
           </div>
           <IconButton
             onClick={() => {
@@ -81,8 +79,8 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
                 required
                 variant="outlined"
                 name="title"
+                //   value={newInfo.full_name ?? cookies.userInfo.full_name ?? ""}
                 onChange={handleChangeCategory}
-                defaultValue={category?.title}
                 error={errMsg.title ? true : false}
                 helperText={errMsg.title ? errMsg.title[0] : ""}
                 sx={{
@@ -102,7 +100,7 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
                 name="type"
                 //   value={service.category ? service.category : ""}
                 onChange={handleChangeCategory}
-                defaultValue={category?.type}
+                defaultValue=""
                 error={errMsg.type ? true : false}
                 helperText={errMsg.type ? errMsg.type[0] : ""}
                 select
@@ -128,7 +126,6 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
                 multiline
                 rows={3}
                 onChange={handleChangeCategory}
-                defaultValue={category?.description}
                 error={errMsg.description ? true : false}
                 helperText={errMsg.description ? errMsg.description[0] : ""}
                 sx={{
@@ -163,7 +160,7 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
 
           <Button
             variant="contained"
-            onClick={handleEditCategory}
+            onClick={handleCreateCategory}
             sx={{
               textTransform: "none",
               bgcolor: "#3F41A6",
@@ -183,4 +180,4 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
   );
 }
 
-export default EditCategory;
+export default CreateCategory;
