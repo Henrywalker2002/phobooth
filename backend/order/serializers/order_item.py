@@ -2,7 +2,7 @@ from rest_framework import serializers
 from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item, Variation
 from item.serializers.item import ItemShortSerializer
-from order.exceptions import UpdateOrderItemException
+from order.exceptions import UpdateOrderItemException, UpdateCompletedOrderException
 
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
@@ -43,6 +43,8 @@ class AppendOrderItemSerializer(CreateOrderItemSerializer):
         if item.studio != attrs.get("item").studio:
             raise serializers.ValidationError(
                 "You can't add item from different studio")
+        if order.status == OrderStatusChoice.COMPLETED:
+            raise UpdateCompletedOrderException()
         return attrs
     
     class Meta:
