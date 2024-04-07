@@ -19,7 +19,10 @@ import avatar from "../../assets/avatar.png"
 import ResponseText from "../../components/ResponseText";
 import { convertRole, convertTime, convertStatus } from "./helpFunction";
 import { useCookies } from "react-cookie";
+import PaymentList from "../../components/PaymentList";
 
+const id = window.location.pathname.split("/")[3];
+const ws = new WebSocket(`ws://localhost:8000/ws/complain-forum/${id}/`);
 
 function ComplainDetail() {
   const navigate = useNavigate();
@@ -34,6 +37,8 @@ function ComplainDetail() {
   const [page, setPage] = React.useState(1);
   const [pageCount, setPageCount] = React.useState(0);
   const [pageNext, setPageNext] = React.useState(null);
+  const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
+
 
   const endOfMessagesRef = React.useRef(null);
   const scrollToBottom = () => {
@@ -64,7 +69,27 @@ function ComplainDetail() {
         .catch((err) => {
           console.log(err);
         });
+    
+    ws.onopen = () => {
+      console.log("connected");
+    }
 
+    ws.onclose = () => {
+      console.log("disconnected");
+    }
+
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (data.reply?.user?.username !== cookies.userInfo?.username) {
+        setRelies([...relies, data.reply]);
+      }
+
+    window.addEventListener('beforeunload', () => ws.close());
+    return () => {
+      // Remove the event listener when the component is unmounted
+      window.removeEventListener('beforeunload', () => ws.close());
+    };
+    }
   }, []);
 
   useEffect(() => {
@@ -95,6 +120,12 @@ function ComplainDetail() {
     axiosPrivate.post(`/complain-reply/`,{ complain: id, text: reply})
     .then((res) => {
       setReply("");
+      // send data with socket 
+      var data = {
+        "type" : "reply",
+        "reply" : res.data
+      }
+      ws.send(JSON.stringify(data));
       setRelies([...relies, res.data]);
     })
     .catch((err) => {
@@ -115,7 +146,9 @@ function ComplainDetail() {
     });
   };
 
-  const handleRefund = () => {};
+  const handleRefund = () => {
+    setOpenPaymentDialog(true);
+  };
 
 
   return (
@@ -391,6 +424,8 @@ function ComplainDetail() {
           Hoàn tất khiếu nại
         </Button>
       </div>
+      
+      <PaymentList open={openPaymentDialog} setOpen={setOpenPaymentDialog} order_id={id} />
     </div>
   );
 }

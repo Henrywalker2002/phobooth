@@ -1,7 +1,8 @@
 from base.views import BaseModelViewSet
 from payment.models import Payment, PaymentStatusChoices, PaymentMethodChoices
 from payment.serializers import (CreatePaymentSerializer, ReadPaymentSerializer,
-                                 UpdatePaymentSerializer, GetPaymentURLSerializer)
+                                 UpdatePaymentSerializer, GetPaymentURLSerializer,
+                                 RefundPaymentSerializer)
 from order.serializers.order import ReadOrderSerializer
 from payment.permission import PaymentPermission
 from payment.filters import PaymentFilter
@@ -22,7 +23,7 @@ class PaymentViewSet(BaseModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = {"create": CreatePaymentSerializer, "update": UpdatePaymentSerializer,
                         "partial_update": UpdatePaymentSerializer, "default": ReadPaymentSerializer, 
-                        "get_payment_url": GetPaymentURLSerializer, }
+                        "get_payment_url": GetPaymentURLSerializer, "refund": RefundPaymentSerializer}
     permission_classes = [PaymentPermission]
     filterset_class = PaymentFilter
     search_fields = ["@order__order_item__item__name"]
@@ -155,10 +156,29 @@ class PaymentViewSet(BaseModelViewSet):
             payment_instance.payment_method = PaymentMethodChoices.VNPAY
             payment_instance.bank_code = data.get('vnp_BankCode', None)
             payment_instance.bank_tran_no = data.get('vnp_BankTranNo', None)
-            payment_instance.vn_pay_tran = data.get("vnp_TransactionNo", None)
+            payment_instance.vn_pay_tran_no = data.get("vnp_TransactionNo", None)
             payment_instance.vn_order_infor = data.get("vnp_OrderInfo", None)
+            payment_instance.vn_pay_TxnRef = data.get("vnp_TxnRef", None)
             payment_instance.save() 
             # create notification
             NotificationService.user_pay(payment_instance)
             self.update_amout_paid_order(payment_instance.order)
         return Response(data=data)
+
+    def gen_request_id_refund(self, payment):
+        return f"{payment.order.id}-{payment.id}-refund"
+    
+    @action(detail=False, methods=["POST"], url_path="refund")
+    def refund(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ids = serializer.validated_data["ids"]
+        payments = Payment.objects.filter(id__in=ids)
+        
+        for payment in payments:
+            # call api for refund
+            payment.status = PaymentStatusChoices.REFUND
+        self.queryset.bulk_update(payments, ["status"])
+        data = ReadPaymentSerializer(payments.first().order.payment, many=True).data
+        return Response(data=data)
+            
