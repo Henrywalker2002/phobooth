@@ -30,6 +30,7 @@ import Categories from "./staff/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
+import Rate4Pro from "./components/Rate4Pro";
 
 function App() {
   const theme = createTheme({
@@ -123,7 +124,7 @@ function App() {
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Rate4Pro />} />
         </Route>
       </Routes>
     </ThemeProvider>
