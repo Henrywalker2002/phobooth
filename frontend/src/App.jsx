@@ -1,4 +1,5 @@
 import React from "react";
+import { ThemeProvider, createTheme } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import Home from "./user/Home";
 import Login from "./user/Login";
@@ -6,7 +7,6 @@ import Signup from "./user/Signup";
 import ItemDetail from "./user/ItemDetail";
 import Cart from "./user/order/Cart";
 import Booking from "./user/order/Booking";
-import { ThemeProvider, createTheme } from "@mui/material";
 import Orders from "./user/order/Orders";
 import OrderDetail from "./user/order/OrderDetail";
 import StudioOrderDetail from "./studio/order/OrderDetail";
@@ -28,16 +28,15 @@ import VerifyStudioList from "./admin/VerifyStudio";
 import VerifyStudioDetail from "./admin/VerifyStudio/VerifyStudioDetail";
 import { AdminHome } from "./admin";
 
-import AdminManageAccount from "./staff/accounts/manageAccount";
-import ComplainDetail from "./user/order/ComplainDetail";
-import ComplainDetailStaff from "./staff/complains/ComplainDetail";
-import Complains from "./staff/complains/Complains";
+import AdminManageAccount from "./admin/accounts/manageAccount";
+import ComplainDetail from "./user/order/complain/ComplainDetail";
+import ComplainDetailAdmin from "./admin/complains/ComplainDetail";
+import Complains from "./admin/complains/Complains";
 import StudioDetail from "./user/studio_info/StudioDetail";
-import Categories from "./staff/categories/Categories";
+import Categories from "./admin/categories/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
-
 
 function App() {
   const theme = createTheme({
@@ -94,7 +93,7 @@ function App() {
             </Route>
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
-            <Route path="/complain/detail/" element={<ComplainDetail />} />
+            <Route path="/complain/detail/:id" element={<ComplainDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notification" element={<NotificationMgmt />} />
 
@@ -121,31 +120,26 @@ function App() {
             {/* Studio Home trang chủ của Studio đăng nhập vào */}
             <Route path="/studio/" element={<StudioHome />} />
           </Route>
-          {/* admin */}
-          <Route element={<RequireAuth allowedRoles={"admin"} />}>
-            <Route path="/admin" element={<AdminHome />} />
+
+          {/* Admin + Staff */}
+          <Route element={<RequireAuth allowedRoles={["admin", "staff"]} />}>
             <Route path="/admin/verify-studio" element={<VerifyStudioList />} />
             <Route
               path="/admin/verify-studio/:id"
               element={<VerifyStudioDetail />}
             />
-          </Route>
-
-          {/* Admin */}
-          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route
               path="/admin/manage-account"
               element={<AdminManageAccount />}
             />
+            <Route
+              path="/admin/complain/detail/:id"
+              element={<ComplainDetailAdmin />}
+            />
+            <Route path="/admin/complains" element={<Complains />} />
+            <Route path="/admin/categories" element={<Categories />} />
+            <Route path="/admin" element={<AdminHome />} />
           </Route>
-
-          <Route element = {<RequireAuth allowedRoles={["admin", "staff"]} />}>
-            <Route path="/complain/detail/:id" element={<ComplainDetailStaff />} />
-            <Route path="/staff/complains" element={<Complains />} />
-            <Route path="/staff/categories" element={<Categories />} />
-          </Route>
-          {/* Staff */}
-
 
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />

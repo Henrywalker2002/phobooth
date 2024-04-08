@@ -10,24 +10,22 @@ import {
   TextField,
   styled,
 } from "@mui/material";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
+import LocalActivityOutlinedIcon from "@mui/icons-material/LocalActivityOutlined";
+import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
+import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { RiSearchLine } from "react-icons/ri";
-import { HiOutlineMenu } from "react-icons/hi";
-import { IoPersonSharp } from "react-icons/io5";
-import { MdOutlineVerifiedUser } from "react-icons/md";
-import { IoMailOutline } from "react-icons/io5";
-import {
-  MdNotificationsNone,
-  MdOutlineChat,
-  MdOutlineShoppingCart,
-  MdLogout,
-} from "react-icons/md";
+import { MdNotificationsNone, MdOutlineChat } from "react-icons/md";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
+import { translateRole } from "../util/Translate";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
   display: "none",
@@ -55,6 +53,7 @@ export default function AdminNavbar() {
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
       setUserInfo(cookies?.userInfo?.username);
+      console.log(cookies?.userInfo);
     } else setUserInfo("");
   }, []);
 
@@ -93,7 +92,7 @@ export default function AdminNavbar() {
         <div className="header flex w-[350px] gap-x-7 max-sm:justify-center">
           <div
             className="logo flex items-center w-[180px] cursor-pointer max-sm:w-fit"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/admin")}
           >
             <Logo
               sx={{
@@ -112,13 +111,13 @@ export default function AdminNavbar() {
                 width: "140px",
                 height: "35px",
                 borderRadius: "5px",
-                fontSize: "17.5px",
+                fontSize: "18px",
                 "&:hover": {
                   color: "#3F41A6",
                 },
               }}
             >
-              Quản lý
+              {translateRole(cookies?.userInfo?.role[0]?.code_name)}
             </Button>
           </div>
         </div>
@@ -217,10 +216,6 @@ export default function AdminNavbar() {
               <MdOutlineChat style={{ color: "#666666" }} />
             </IconButton>
 
-            <IconButton onClick={() => navigate("/cart")}>
-              <MdOutlineShoppingCart style={{ color: "#666666" }} />
-            </IconButton>
-
             <IconButton
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
@@ -250,39 +245,56 @@ export default function AdminNavbar() {
                 {userInfo}
               </MenuItem>
               <Divider />
-              <MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/admin/manage-account");
+                }}
+              >
                 <ListItemIcon>
-                  <IoPersonSharp  style={{ width: "20px", height: "20px" }} />
+                  <PersonOutlineOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Quản lý tài khoản</ListItemText>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem
+                onClick={() => {
+                  navigate("/admin/categories");
+                }}
+              >
                 <ListItemIcon>
-                  <HiOutlineMenu style={{ width: "20px", height: "20px" }} />
+                  <ListOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Quản lý danh mục</ListItemText>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+
+              <MenuItem
+                onClick={() => {
+                  navigate("/admin/complains");
+                }}
+              >
                 <ListItemIcon>
-                  <HiOutlineMenu style={{ width: "20px", height: "20px" }} />
-                </ListItemIcon>
-                <ListItemText>Quản lý khuyến mãi </ListItemText>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <IoMailOutline style={{ width: "20px", height: "20px" }} />
+                  <MailOutlineOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Quản lý khiếu nại</ListItemText>
               </MenuItem>
-              <MenuItem onClick={() => {navigate("/admin/verify-studio")}}>
+              <MenuItem
+                onClick={() => {
+                  navigate("/admin/verify-studio");
+                }}
+              >
                 <ListItemIcon>
-                  <MdOutlineVerifiedUser  style={{ width: "20px", height: "20px" }} />
+                  <VerifiedUserOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Quản lý xác thực Studio</ListItemText>
               </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <LocalActivityOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText>Quản lý khuyến mãi </ListItemText>
+              </MenuItem>
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
-                  <MdLogout style={{ width: "20px", height: "20px" }} />
+                  <LogoutOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Đăng xuất</ListItemText>
               </MenuItem>
