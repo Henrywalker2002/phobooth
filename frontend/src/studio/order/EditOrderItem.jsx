@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { FaXmark } from "react-icons/fa6";
-import { IconButton, Button, TextField, Dialog, Snackbar } from "@mui/material";
+import { IconButton, Button, TextField, Dialog } from "@mui/material";
 import { validFixedPrice } from "../../util/Validation";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateType } from "../../util/Translate";
 
 function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
   const axiosPrivate = useAxiosPrivate();
@@ -71,7 +72,7 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
             </div>
             <div className="min-w-fit z-[1] flex justify-start gap-3 mt-2.5 items-start">
               <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch  px-2 py-1">
-                {orderItem?.item?.type}
+                {translateType(orderItem?.item?.type)}
               </div>
               <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch  px-2 py-1">
                 {orderItem?.item?.category?.title}

@@ -68,6 +68,11 @@ class OrderViewSet(BaseModelViewSet):
         data = self.get_serializer(order, is_get=True).data
         return Response(data, status=status.HTTP_201_CREATED)
 
+    def update_number_order_completed(self, studio):
+        studio.number_order_completed = studio.order.filter(
+            status=OrderStatusChoice.COMPLETED).count()
+        studio.save()
+    
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -77,6 +82,7 @@ class OrderViewSet(BaseModelViewSet):
             serializer.validated_data['finish_date'] = datetime.date.today().strftime("%Y-%m-%d")
             # create notification
             NotificationService.studio_completed_order(instance)
+            self.update_number_order_completed(instance.studio)
         
         if serializer.validated_data.get('status') == OrderStatusChoice.IN_PROCESS:
             NotificationService.studio_accept_order(instance)

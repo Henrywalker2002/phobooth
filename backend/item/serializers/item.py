@@ -2,6 +2,7 @@ from rest_framework import serializers
 from item.models import Item, ItemPicture
 from studio.serializers import StudioSummarySerializer
 from category.serializers import CategorySummarySerializer
+from rate.serializers import ReadRateSerializer
 
 
 class ItemPictureSerializer(serializers.ModelSerializer):
@@ -17,11 +18,12 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     studio = StudioSummarySerializer(read_only=True)
     pictures = ItemPictureSerializer(read_only=True, many=True)
     category = CategorySummarySerializer(read_only=True)
+    rates = ReadRateSerializer(read_only=True, many=True)
     
     class Meta:
         model = Item
         fields = ['id', 'name', 'description', 'type', 'category', 'pictures', 'status', 
-                  'studio', 'min_price', 'max_price', "fixed_price", "star" ]
+                  'studio', 'min_price', 'max_price', "fixed_price", "star", "rates" ]
         
 
 class ItemSummarySerializer(serializers.ModelSerializer):

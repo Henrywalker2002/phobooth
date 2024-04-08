@@ -33,6 +33,7 @@ import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
 import Filter from "./Filter";
 import { translateOrderStatus } from "../../util/Translate";
+import RatingDialog from "./RatingDialog";
 
 function Orders() {
   const navigate = useNavigate();
@@ -48,6 +49,8 @@ function Orders() {
   const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
   const [filterVal, setFilterVal] = useState({});
+  const [openRating, setOpenRating] = useState(false);
+  const [selectedOrderItem, setSelectedOrderItem] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -312,6 +315,10 @@ function Orders() {
                                   borderRadius: "43px",
                                 },
                               }}
+                              onClick={() => {
+                                setSelectedOrderItem(detailedRow);
+                                setOpenRating(true);
+                              }}
                             >
                               Đánh giá
                             </Button>
@@ -570,6 +577,13 @@ function Orders() {
         onClose={handleCloseCancelSBar}
         message={statusMsg}
       />
+        
+        {/* Rating Dialog */}
+        <RatingDialog
+          open={openRating}
+          setOpen={setOpenRating}
+          orderItem={selectedOrderItem}
+        />
     </div>
   );
 }

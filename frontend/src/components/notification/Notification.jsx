@@ -14,7 +14,6 @@ import {
   DialogContent,
   MenuItem,
   MenuList,
-  ListItemIcon,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -153,7 +152,7 @@ function NotificationList({ anchorNoti, handleClose }) {
       BackdropProps={{
         invisible: true,
       }}
-      disablebackdropclick
+      // disablebackdropclick
     >
       <DialogTitle sx={{ padding: "14px 20px" }}>
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">

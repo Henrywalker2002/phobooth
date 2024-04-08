@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import {
   Button,
   Card,
@@ -22,7 +22,7 @@ function ItemList({ itemType }) {
   //   local
   const [itemList, setItemList] = useState([]);
   // pagination
-  const itemsPage = 6;
+  const itemsPage = 9;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {

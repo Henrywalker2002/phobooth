@@ -13,7 +13,7 @@ import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
 
-function ItemList({ code_name, itemType }) {
+function ItemList() {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -21,14 +21,12 @@ function ItemList({ code_name, itemType }) {
   //   local
   const [itemList, setItemList] = useState([]);
   // pagination
-  const itemsPage = 9;
+  const itemsPage = 12;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {
     axios
-      .get(
-        `/item/?limit=${itemsPage}&offset=0&studio=${code_name}&type=${itemType}`
-      )
+      .get(`/item/?limit=${itemsPage}&offset=0`)
       .then((res) => {
         console.log(res.data);
         setItemsCount(Math.ceil(res.data.count / itemsPage));
@@ -42,9 +40,7 @@ function ItemList({ code_name, itemType }) {
     console.log(page);
     let offset = itemsPage * (page - 1);
     axios
-      .get(
-        `/item/?limit=${itemsPage}&offset=${offset}&studio=${code_name}&type=${itemType}`
-      )
+      .get(`/item/?limit=${itemsPage}&offset=${offset}`)
       .then((res) => {
         console.log(res.data);
         let currCount = Math.ceil(res.data.count / itemsPage);
@@ -67,7 +63,7 @@ function ItemList({ code_name, itemType }) {
   };
   return (
     <div>
-      <div className="flex justify-between items-center w-[800px]">
+      <div className="mx-auto flex justify-between items-center w-[800px]">
         <div className="flex gap-2 items-center">
           <div className=" text-zinc-500">Sắp xếp theo :</div>
           <TextField
@@ -96,7 +92,7 @@ function ItemList({ code_name, itemType }) {
           <span className="font-semibold leading-5 text-zinc-900">
             {itemList.count}
           </span>{" "}
-          <span className="text-stone-500">sản phẩm</span>
+          <span className="text-stone-500">kết quả tìm kiếm</span>
         </div>
       </div>
       <div className="flex self-center mx-auto my-5 w-fit max-w-[810px]">
@@ -151,8 +147,12 @@ function ItemList({ code_name, itemType }) {
                       <div className="flex-nowrap w-full justify-center truncate text-yellow-950 text-[17px] font-semibold leading-7 tracking-wider ">
                         {item?.name}
                       </div>
-                      <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
+
+                      <div className="justify-center text-indigo-800 text-[15px] font-medium leading-6 tracking-wide whitespace-nowrap mt-1">
                         {displayPrice(item)}
+                      </div>
+                      <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
+                        {item?.studio?.friendly_name}
                       </div>
                     </div>
                     <div>

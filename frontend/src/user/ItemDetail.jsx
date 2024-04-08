@@ -22,6 +22,16 @@ import axios from "../api/axios";
 import Err401Dialog from "../components/Err401Dialog";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
+import RateOfItem from "../components/RateOfProduct";
+import logo from "../assets/logo2.png"
+
+const mappingType = { "SERVICE": "Dịch vụ", 
+              "PRODUCT": "Hàng hoá", "SERVICE_PACK": "Gói dịch vụ" }
+
+const handleDate = (date) => {
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString();
+}
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -72,11 +82,10 @@ function ItemDetail(props) {
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSBar(false);
   };
 
-  const list0 = ["Hàng hóa khác của Studio", "Tương tự"];
+  const list0 = ["Sản phẩm khác của Studio", "Tương tự"];
   const list1 = [1, 2, 3, 4];
   return (
     <div>
@@ -95,7 +104,7 @@ function ItemDetail(props) {
             />
           </Link>
           <Link component="button" href="#" underline="none" color="#999999">
-            Dịch vụ
+            {mappingType[item?.type]}
           </Link>
           <Typography color="#3F41A6">{item?.category?.title}</Typography>
         </Breadcrumbs>
@@ -149,20 +158,16 @@ function ItemDetail(props) {
                 <div className="text-zinc-400 text-xl font-medium leading-8 self-stretch">
                   •
                 </div>
-                <div className="justify-center text-black text-base font-medium tracking-wider">
-                  100 Đánh Giá
-                </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {item?.min_price || "1.000.000"}Đ -{" "}
-                {item?.max_price || "2.000.000"}Đ
+                {item.fixed_price ?? `${item.min_price} - ${item.max_price}`} Đ
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
                   Phân loại :
                 </div>
                 <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                  Dịch vụ
+                  {mappingType[item?.type]}
                 </div>
                 <div className="text-zinc-900 text-sm leading-5 my-auto">
                   Lĩnh vực :
@@ -175,7 +180,7 @@ function ItemDetail(props) {
               <div className="text-zinc-500 text-sm leading-5 self-stretch mt-3">
                 {item?.description + " "}
               </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
+              {/* <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
                 <FaCircleCheck className="text-indigo-800 w-5" />
                 <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -204,7 +209,7 @@ function ItemDetail(props) {
               </div>
               <div className="text-indigo-800 text-base font-bold self-stretch whitespace-nowrap mt-3">
                 Xem thêm
-              </div>
+              </div> */}
               <div className="justify-start items-stretch self-stretch flex gap-5 mt-5 px-px py-5 ">
                 <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
                   <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
@@ -282,14 +287,14 @@ function ItemDetail(props) {
                 <div className="flex flex-col items-center w-3/12">
                   <img
                     loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/a03459bc5fde60d2f75cb8b03f2ccbad49b23f0228eae68d9dde7986fe045e7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                    src={item.studio?.avatar ?? logo}
                     className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
                   />
                 </div>
                 <div className="flex flex-col items-stretch w-9/12">
                   <div className="flex flex-col items-stretch gap-2 justify-center">
                     <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
-                      Studio Demo
+                      {item.studio?.friendly_name}
                     </div>
                     <div className="flex items-stretch justify-start gap-2">
                       <Button
@@ -345,7 +350,7 @@ function ItemDetail(props) {
                       Đánh giá
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                      4.9
+                      {item.studio?.star}
                     </div>
                   </div>
                   <div className="flex justify-between w-[300px]">
@@ -353,7 +358,7 @@ function ItemDetail(props) {
                       Đơn thành công
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                      100
+                      {item.studio?.number_order_completed}
                     </div>
                   </div>
                 </div>
@@ -371,7 +376,7 @@ function ItemDetail(props) {
                       Tham gia
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                      6 năm trước
+                      {handleDate(item.studio?.created_at)}
                     </div>
                   </div>
                 </div>
@@ -380,6 +385,8 @@ function ItemDetail(props) {
           </div>
         </div>
       </div>
+
+      <RateOfItem item_id={id} star={item.star} description={item.description} />
 
       {/* Các danh sách */}
       <div className="my-20 flex flex-col gap-14">

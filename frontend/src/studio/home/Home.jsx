@@ -1,15 +1,48 @@
-import React, { useState } from "react";
-import StudioNavbar from "../components/StudioNavbar";
+import React, { useEffect, useState } from "react";
+import StudioNavbar from "../../components/StudioNavbar";
 import { IoChatboxEllipses } from "react-icons/io5";
 import AddBusinessOutlinedIcon from "@mui/icons-material/AddBusinessOutlined";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import { Box, Button, Tab } from "@mui/material";
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Link,
+  Tab,
+  Typography,
+  Avatar,
+} from "@mui/material";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ItemList from "./ItemList";
+import Filter from "./Filter";
+import { useCookies } from "react-cookie";
+import Footer from "./Footer";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+
+const handleDate = (date) => {
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString();
+
+}
 
 function Home() {
+  const [cookies] = useCookies(["accInfo"]);
+  const axiosPrivate = useAxiosPrivate();
   // local
   const [type, setType] = useState("service");
+  const [studio, setStudio] = useState({});
+
+  useEffect(() => {
+    axiosPrivate
+      .get(`/studio/${cookies.userInfo.studio.code_name}`)
+      .then((res) => {
+        console.log(res.data);
+        setStudio(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleChange = (event, newValue) => {
     setType(newValue);
@@ -18,22 +51,58 @@ function Home() {
     <div>
       <StudioNavbar />
 
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+        }}
+      >
+        <Link
+          component="button"
+          underline="none"
+          key="1"
+          sx={{ color: "#808080" }}
+          // href="/"
+          onClick={() => navigate("/studio", { replace: true })}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          Trang chủ Studio
+        </Typography>
+      </Breadcrumbs>
+
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mb-10">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 my-5">
         <div className="flex justify-between border border-indigo-100 border-solid  rounded-md bg-white px-8 py-8  shadow shadow-indigo-100">
           <div className="flex gap-5 items-center px-8 py-8">
-            <div className="flex flex-col items-center">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/a03459bc5fde60d2f75cb8b03f2ccbad49b23f0228eae68d9dde7986fe045e7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
-              />
-            </div>
+            <Avatar
+              alt={studio?.friendly_name}
+              src={
+                studio?.avatar
+                  ? studio?.avatar
+                  : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
+              }
+              sx={{ width: 70, height: 70 }}
+            />
             <div className="flex flex-col items-stretch">
               <div className="flex flex-col items-stretch gap-4 justify-center">
                 <div className="flex gap-3 items-center">
                   <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
-                    Studio Demo
+                    {studio?.friendly_name}
                   </div>
                   <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
                 </div>
@@ -87,7 +156,7 @@ function Home() {
                   Đánh giá
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  4.9
+                  {studio.star}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -103,7 +172,7 @@ function Home() {
                   Tham gia
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  6 năm trước
+                  {handleDate(studio.created_at)}
                 </div>
               </div>
             </div>
@@ -121,7 +190,7 @@ function Home() {
                   Đơn thành công
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  100
+                  {studio.number_order_completed}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -129,7 +198,7 @@ function Home() {
                   Trạng thái
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  Đã xác thực
+                  {studio.is_verified ? "Đã xác thực" : "Chưa xác thực"}
                 </div>
               </div>
             </div>
@@ -138,67 +207,79 @@ function Home() {
       </div>
 
       {/* Tab loại sản phẩm */}
-      <TabContext value={type}>
-        <Box>
-          <TabList
-            onChange={handleChange}
-            centered
-            sx={{
-              "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
-                bgcolor: "#3F41A6",
-                width: "90px",
-              },
-            }}
-          >
-            <Tab
-              label="Dịch vụ"
-              value="service"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-            <Tab
-              label="Hàng hóa"
-              value="product"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-            <Tab
-              label="Gói dịch vụ"
-              value="service-pack"
-              sx={{
-                textTransform: "none",
-                fontSize: "17px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                },
-              }}
-            />
-          </TabList>
-        </Box>
+      <div className="flex gap-20 items-start my-5 w-fit mx-auto">
+        <Filter />
+        <div>
+          <TabContext value={type}>
+            <Box>
+              <TabList
+                onChange={handleChange}
+                centered
+                sx={{
+                  "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                    bgcolor: "#3F41A6",
+                    width: "90px",
+                  },
+                }}
+              >
+                <Tab
+                  label="Dịch vụ"
+                  value="service"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+                <Tab
+                  label="Hàng hóa"
+                  value="product"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+                <Tab
+                  label="Gói dịch vụ"
+                  value="service-pack"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "17px",
+                    "&.Mui-selected": {
+                      color: "#3F41A6",
+                    },
+                  }}
+                />
+              </TabList>
+            </Box>
 
-        <TabPanel value="service">
-          {/* Service List */}
-          <ItemList itemType={"service"} />
-        </TabPanel>
-        <TabPanel value="product">
-          {/* Product List */}
-          <ItemList itemType={"product"} />
-        </TabPanel>
-        <TabPanel value="service-pack">
-          {/* Package List */}
-          <ItemList itemType={"service-pack"} />
-        </TabPanel>
-      </TabContext>
+            <TabPanel value="service">
+              {/* Service List */}
+              <ItemList itemType={"service"} />
+            </TabPanel>
+            <TabPanel value="product">
+              {/* Product List */}
+              <ItemList itemType={"product"} />
+            </TabPanel>
+            <TabPanel value="service-pack">
+              {/* Package List */}
+              <ItemList itemType={"service-pack"} />
+            </TabPanel>
+          </TabContext>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer
+        address={studio.address}
+        phone={studio.phone}
+        email={studio.email}
+      />
     </div>
   );
 }
