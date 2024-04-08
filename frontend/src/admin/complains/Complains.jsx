@@ -22,6 +22,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import AdminNavbar from "../../components/AdminNavbar";
 
 function Complains() {
   // global
@@ -34,14 +35,16 @@ function Complains() {
   const limit = 10;
 
   React.useEffect(() => {
-    axiosPrivate.get(`/complain/?limit=${limit}&offset=${(page-1)*limit}`).then((res) => {
-      setComplainData(res.data);
-      setPageCount(Math.ceil(res.data.count / limit));
-    }).catch((err) => {
-      console.log(err);
-    });
-  }, [page, filterVal])
-
+    axiosPrivate
+      .get(`/complain/?limit=${limit}&offset=${(page - 1) * limit}`)
+      .then((res) => {
+        setComplainData(res.data);
+        setPageCount(Math.ceil(res.data.count / limit));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [page, filterVal]);
 
   const handlePageChange = (event, value) => {
     console.log(value);
@@ -50,7 +53,7 @@ function Complains() {
 
   return (
     <div>
-      <StaffNavbar />
+      <AdminNavbar />
 
       {/* Breadcumbs */}
       <Breadcrumbs
@@ -69,7 +72,7 @@ function Complains() {
           key="1"
           sx={{ color: "#808080" }}
           // href="/"
-          // onClick={() => navigate("/", { replace: true })}
+          onClick={() => navigate("/admin", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
@@ -171,8 +174,13 @@ function Complains() {
               complainData?.results.map((complain, i) => (
                 <TableRow
                   key={i}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  onClick = {() => navigate(`/complain/detail/${complain.id}`)}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    navigate(`/admin/complain/detail/${complain.id}`)
+                  }
                 >
                   <TableCell component="th" scope="row">
                     {complain.id}

@@ -372,7 +372,7 @@ function OrderDetail(props) {
             fontWeight: "500",
           }}
         >
-          #{order?.id}
+          Đơn hàng #{order?.id}
         </Typography>
       </Breadcrumbs>
 

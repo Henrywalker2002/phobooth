@@ -8,9 +8,7 @@ import {
   TableRow,
   Paper,
   Pagination,
-  Box,
   Button,
-  styled,
   DialogActions,
   DialogTitle,
   DialogContent,
@@ -24,6 +22,7 @@ import {
   IconButton,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -33,11 +32,12 @@ import AddEmploy from "./AddEmploy";
 import EditEmploy from "./EditEmploy";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import StaffFilter from "./filter";
-import StaffNavbar from "../../components/StaffNavbar";
 import { RiSearchLine } from "react-icons/ri";
 import { translateRole } from "../../util/Translate";
+import AdminNavbar from "../../components/AdminNavbar";
 
 export default function AdminManageAccount() {
+  const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const [items, setItems] = useState([]);
   const [order_item, set_order_item] = useState([]);
@@ -48,17 +48,6 @@ export default function AdminManageAccount() {
   const [openFilter, setOpenFilter] = React.useState(false);
   const [filterVal, setFilterVal] = React.useState({});
 
-  const mappingStatus = (status) => {
-    if (status) {
-      return {
-        msg: "Hoạt động",
-      };
-    } else {
-      return {
-        msg: "Không hoạt động",
-      };
-    }
-  };
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = (item) => {
@@ -147,7 +136,7 @@ export default function AdminManageAccount() {
 
   return (
     <div>
-      <StaffNavbar />
+      <AdminNavbar />
 
       {/* Breadcumbs */}
       <Breadcrumbs
@@ -166,7 +155,7 @@ export default function AdminManageAccount() {
           key="1"
           sx={{ color: "#808080" }}
           // href="/"
-          // onClick={() => navigate("/", { replace: true })}
+          onClick={() => navigate("/admin", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>
@@ -436,182 +425,6 @@ export default function AdminManageAccount() {
         filterVal={filterVal}
         setFilterVal={setFilterVal}
       />
-
-      {/* <Box
-        style={{
-          padding: "20px",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Box>
-          <Title1>Quản lý tài khoản</Title1>
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <BoxSearch>
-              <SearchIcon style={{ paddingRight: "5px" }} />
-              <CustomInput
-                type="text"
-                placeholder="Tìm kiếm"
-                onKeyDown={handleSearch}
-              />
-            </BoxSearch>
-            <ButAdd
-              variant="contained"
-              sx={{ marginLeft: "10px" }}
-              onClick={handleClickOpenAdd}
-            >
-              <AddIcon />
-              Thêm nhân viên
-            </ButAdd>
-
-            <Button
-              variant="text"
-              endIcon={<TuneOutlinedIcon />}
-              onClick={() => {
-                setOpenFilter(true);
-              }}
-              sx={{
-                textTransform: "none",
-                color: "#3F41A6",
-                "&:hover": {
-                  bgcolor: "#E2E5FF",
-                },
-              }}
-            >
-              Bộ lọc
-            </Button>
-
-            <AddEmploy
-              open={openAdd}
-              handleClose={handleCloseAdd}
-              items={items}
-              setItems={setItems}
-            />
-            <EditEmploy
-              open={openEdit}
-              handleClose={handleCloseEdit}
-              items={items}
-              setItems={setItems}
-              currentItem={clickItem}
-            />
-            <StaffFilter
-              open={openFilter}
-              handleClose={handleCloseFilter}
-              filterVal={filterVal}
-              setFilterVal={setFilterVal}
-            />
-          </Box>
-          <TableContainer
-            component={Paper}
-            style={{ width: "90%", marginLeft: "5%" }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow style={{ backgroundColor: "#f6f5fb" }}>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    Họ và tên
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    Tên người dùng
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    Chức vụ
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    Ngày tham gia
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    Trạng thái
-                  </TableCell>
-                  <TableCell style={{ fontWeight: "bold", color: "#3f41a6" }}>
-                    {" "}
-                    Hành động
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              {items.length > 0 ? (
-                <TableBody>
-                  {items?.map((item, index) => {
-                    const status = mappingStatus(item.is_active);
-                    return (
-                      <TableRow key={index}>
-                        <TableCell>{item.full_name}</TableCell>
-                        <TableCell>{item.username}</TableCell>
-                        <TableCell>{item.role}</TableCell>
-                        <TableCell>{handleDate(item.created_at)}</TableCell>
-                        <TableCell>{status.msg}</TableCell>
-                        <TableCell
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
-                          <Button
-                            variant="text"
-                            onClick={() => {
-                              handleClickEdit(item);
-                            }}
-                          >
-                            <EditIcon
-                              style={{ color: "black", height: "27px" }}
-                            />
-                          </Button>
-                          <Button
-                            variant="text"
-                            onClick={() => handleClickOpen(item)}
-                          >
-                            <DeleteIcon
-                              style={{ color: "black", height: "27px" }}
-                            />
-                          </Button>
-                          <Dialog
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                          >
-                            <DialogTitle id="alert-dialog-title">
-                              {"Xác nhận xóa?"}
-                            </DialogTitle>
-                            <DialogContent>
-                              <DialogContentText id="alert-dialog-description">
-                                {`Bạn có chắc chắn muốn xóa ${clickItem.full_name}?`}
-                              </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleClose} color="primary">
-                                Hủy
-                              </Button>
-                              <Button
-                                onClick={() => handleDelete()}
-                                color="primary"
-                                autoFocus
-                              >
-                                Xóa
-                              </Button>
-                            </DialogActions>
-                          </Dialog>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              ) : (
-                <></>
-              )}
-            </Table>
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                margin: "10px",
-              }}
-            >
-              <Pagination
-                count={Math.ceil(count / 10)}
-                color="primary"
-                onChange={handlePageChange}
-              />
-            </Box>
-          </TableContainer>
-        </Box>
-      </Box> */}
     </div>
   );
 }
