@@ -45,4 +45,4 @@ class ReadRateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Rate 
-        fields = ['id', 'item', 'user', 'star', 'comment', 'pictures', ]
+        fields = ['id', 'item', 'user', 'star', 'comment', 'pictures', 'created_at']

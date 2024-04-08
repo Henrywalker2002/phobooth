@@ -30,7 +30,6 @@ import Categories from "./staff/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
-import Rate4Pro from "./components/Rate4Pro";
 
 function App() {
   const theme = createTheme({
@@ -77,7 +76,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
+        <Route path="/" element={<Home />} />
         <Route element={<PersistLogin />}>
           {/* User */}
           <Route element={<RequireAuth allowedRoles={"customer"} />}>
@@ -124,7 +123,6 @@ function App() {
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
-          <Route path="/" element={<Rate4Pro />} />
         </Route>
       </Routes>
     </ThemeProvider>

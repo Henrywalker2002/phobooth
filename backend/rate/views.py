@@ -3,23 +3,27 @@ from rate.models import Rate, RatePicture
 from rate.serializers import CreateRateSerializer, ReadRateSerializer
 from rate.permission import RatePermission
 from rate.exceptions import RateException
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.response import Response
 from rest_framework import status
-from functools import reduce
 from item.models import Item
 from django.db.models import Avg
 from django.db import transaction   
 
 
-class RateViewSet(BaseGenericViewSet, CreateModelMixin):
-    serializer_class = {'default' : CreateRateSerializer, 'retrieve' : ReadRateSerializer}
+class RateViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin):
+    serializer_class = {'default' : CreateRateSerializer, 'retrieve' : ReadRateSerializer, 'list' : ReadRateSerializer}
     queryset = Rate.objects.all()
     permission_classes = (RatePermission,)
+    filterset_fields = ('item', 'user', 'star')
     
     def update_star(self, item: Item):
         item.star = item.rates.aggregate(Avg('star'))['star__avg']
         item.save()
+        studio = item.studio
+        items = studio.items 
+        studio.star = Rate.objects.filter(item__in = items.all()).aggregate(Avg('star'))['star__avg']
+        studio.save()
     
     @transaction.atomic
     def create(self, request, *args, **kwargs):

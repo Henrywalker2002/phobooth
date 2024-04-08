@@ -15,6 +15,13 @@ class Studio(BaseModel):
     address = models.ForeignKey(to = Address, on_delete=models.SET_NULL, null=True)
     bank_bin = models.CharField(max_length=6, null=True, blank=True)
     account_number = models.CharField(max_length=20, null=True, blank=True)    
+    number_order_completed = models.IntegerField(default=0)
+    star = models.FloatField(default=5)
+    number_rate = models.IntegerField(default=0)
+    
+    @property
+    def total_item(self):
+        return self.items.count()
     
     def __eq__(self, other):
         return self.id == other.id
