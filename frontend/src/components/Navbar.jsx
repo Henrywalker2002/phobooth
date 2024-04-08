@@ -31,6 +31,7 @@ import {
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
+import NotificationList from "./notification/Notification";
 // import logo from "../assets/logo1.png";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
@@ -63,7 +64,7 @@ function Navbar() {
   }, []);
 
   // profile nav
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,6 +72,7 @@ function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = () => {
     removeCookie("userInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
@@ -80,6 +82,16 @@ function Navbar() {
   // Open Menu
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
+  };
+
+  // notification handle
+  const [anchorNoti, setAnchorNoti] = useState(null);
+  // const open = Boolean(anchorEl);
+  const handleNotificationClick = (event) => {
+    setAnchorNoti(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setAnchorNoti(null);
   };
 
   return (
@@ -335,7 +347,7 @@ function Navbar() {
           </div>
         ) : (
           <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
-            <IconButton>
+            <IconButton onClick={handleNotificationClick}>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>
 
@@ -414,6 +426,12 @@ function Navbar() {
             </Menu>
           </div>
         )}
+
+        {/* Notification */}
+        <NotificationList
+          anchorNoti={anchorNoti}
+          handleClose={handleNotificationClose}
+        />
       </div>
     </AppBar>
   );

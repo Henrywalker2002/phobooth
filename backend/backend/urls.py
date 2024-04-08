@@ -22,6 +22,7 @@ from notification.views import NotificationViewSet
 from complain.views import ComplainViewSet
 from complain_forum.views import ReplyViewSet
 from demo.views import ImageDemoViewSet, ImageDemoCommentViewSet
+from rate.views import RateViewSet
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -53,6 +54,7 @@ router.register(r'complain', ComplainViewSet, 'complain')
 router.register(r'complain-reply', ReplyViewSet, 'complain-reply')
 router.register(r'demo', ImageDemoViewSet, 'demo')
 router.register(r'demo-comment', ImageDemoCommentViewSet, 'demo-comment')
+router.register(r'rate', RateViewSet, 'rate')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -1,45 +1,20 @@
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { translateErrStatusOrder } from "../util/Translate";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-function CancelOrder({
-  open,
-  setOpen,
-  id,
-  setOrder,
-  setStatusMsg,
-  setOpenCancelSBar,
-}) {
+function DelCategory({ open, setOpen, setOpenSBar, category }) {
   const axiosPrivate = useAxiosPrivate();
-
-  // Open Status SnackBar Success/Err
-  const handleOpenStatusSBar = (msg) => {
-    setStatusMsg(translateErrStatusOrder(msg));
-    setOpenCancelSBar(true);
-  };
-
-  const handleCancelOrder = () => {
+  const handleDelReq = () => {
     axiosPrivate
-      .patch(`/order/${id}/`, {
-        status: "CANCELED",
-      })
+      .delete(`/category/${category.id}/`)
       .then((res) => {
         console.log(res.data);
-        setOrder(res.data);
-        setStatusMsg("Hủy đơn hàng thành công!");
+
+        setOpenSBar(true);
       })
-      .then(() => {
-        setOpen(false);
-        setOpenCancelSBar(true);
-      })
+      .then(() => setOpen(false))
       .catch((err) => {
         console.log(err);
-        if (err.response.data.status) {
-          handleOpenStatusSBar(err.response.data.status[0]);
-        } else {
-          handleOpenStatusSBar(err.response.data.detail);
-        }
       });
   };
   return (
@@ -51,7 +26,9 @@ function CancelOrder({
         },
       }}
     >
-      <DialogContent>Bạn có muốn hủy đơn hàng #{id} không?</DialogContent>
+      <DialogContent>
+        Bạn có muốn xóa danh mục "{category.title}" không?
+      </DialogContent>
       <DialogActions>
         <Button
           onClick={() => setOpen(false)}
@@ -66,7 +43,7 @@ function CancelOrder({
         </Button>
         <Button
           variant="contained"
-          onClick={() => handleCancelOrder()}
+          onClick={() => handleDelReq()}
           sx={{
             // textTransform: "none",
             bgcolor: "#3F41A6",
@@ -77,11 +54,11 @@ function CancelOrder({
             },
           }}
         >
-          Hủy đơn
+          Xóa
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default CancelOrder;
+export default DelCategory;
