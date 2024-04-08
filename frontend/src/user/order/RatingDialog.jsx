@@ -13,13 +13,17 @@ import {
   DialogContent,
   DialogTitle,
   Rating,
+  Alert,
 } from "@mui/material";
 import { translateType } from "../../util/Translate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function RatingDialog({ open, setOpen, orderItem }) {
-  const [star, setStar] = useState(0);
   const [imgList, setImgList] = useState([]);
-
+  const [data, setData] = useState({ star: 5});
+  const axiosPrivate = useAxiosPrivate();
+  const [error, setError] = useState(null);
+  const [successRate, setSuccessRate] = useState(false);
   //   image list
   const handleUpdateImgList = (e) => {
     let imgFiles = e.target.files;
@@ -33,15 +37,50 @@ function RatingDialog({ open, setOpen, orderItem }) {
         });
       }
       setImgList(newList);
-      // console.log(newList);
     }
   };
   const handleDeleteImg = (id) => {
     const newList = imgList.filter((img) => img.id !== id);
     setImgList(newList);
   };
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(data);
+    let formData = new FormData();
+    formData.append("star", data.star);
+    formData.append("comment", data.comment);
+    for (let img of imgList) {
+      formData.append("pictures", img.img_file, img.img_file.name);
+    }
+    formData.append("order_item", orderItem.id);
+    axiosPrivate.post("/rate/", formData, { headers : { 'Content-Type': 'multipart/form-data'}})
+    .then(res => {
+      console.log(res.data);
+      setSuccessRate(true);
+      setOpen(false);
+    })
+    .catch(err => {
+      console.log(err);
+      var data = err.response.data;
+      if (data.order_item) {
+        setError("Bạn đã đánh giá sản phẩm này rồi!");
+      }
+    })
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+    setError(null);
+  }
+
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={handleClose}>
+      <form onSubmit={handleSubmit}>
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
@@ -49,7 +88,6 @@ function RatingDialog({ open, setOpen, orderItem }) {
           </div>
           <IconButton
             onClick={() => {
-              setStar(0);
               setImgList([]);
               setOpen(false);
             }}
@@ -63,6 +101,20 @@ function RatingDialog({ open, setOpen, orderItem }) {
         dividers={true}
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
+        {error ? (
+          <Alert severity="error" sx={{ marginBottom: "10px" }}>
+            {error}
+          </Alert>
+        ) : null}
+        {successRate ? (
+          <Alert
+            sx={{ maxWidth: "1000px", marginX: "auto" }}
+            severity="success"
+            color="success"
+          >
+            Cảm ơn bạn đã đánh giá sản phẩm!
+          </Alert>
+        ) : null}
         <div className="min-w-[350px]  bg-white flex flex-col items-stretch rounded-lg border-solid">
           <div className="flex w-full justify-start gap-4 items-center">
             <img
@@ -89,19 +141,19 @@ function RatingDialog({ open, setOpen, orderItem }) {
             </div>
           </div>
 
-          <form>
+
             <div className="self-stretch flex items-stretch gap-[130px]">
               <div className="flex basis-[0%] flex-col items-stretch">
                 <div className="flex gap-3 items-center my-3">
                   <div className="text-zinc-900 text-sm leading-5">
-                    Đánh giá *
+                    Đánh giá 
                   </div>
                   <Rating
-                    name="simple-controlled"
-                    precision={0.5}
-                    value={star}
-                    onChange={(event, newValue) => {
-                      setStar(newValue);
+                    name="star"
+                    precision={1}
+                    value={data.star ? data.star : 5}
+                    onChange={(event, value) => {
+                      setData({ ...data, star: value });
                     }}
                     sx={{ color: "#3F41A6" }}
                   />
@@ -110,7 +162,9 @@ function RatingDialog({ open, setOpen, orderItem }) {
                 <div className="text-zinc-900 text-sm leading-5">Mô tả </div>
                 <TextField
                   required
-                  name="description"
+                  name="comment"
+                  onChange={handleChange}
+                  value = {data.comment}
                   multiline
                   rows={3}
                   sx={{
@@ -203,7 +257,6 @@ function RatingDialog({ open, setOpen, orderItem }) {
                 </div>
               </div>
             </div>
-          </form>
         </div>
       </DialogContent>
 
@@ -245,6 +298,7 @@ function RatingDialog({ open, setOpen, orderItem }) {
           </Button>
         </div>
       </DialogActions>
+      </form>
     </Dialog>
   );
 }

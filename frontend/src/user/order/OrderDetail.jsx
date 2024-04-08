@@ -196,6 +196,7 @@ function OrderDetail() {
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
+    const [openRating, setOpenRating] = useState(false);
 
     return (
       <React.Fragment>
@@ -441,6 +442,7 @@ function OrderDetail() {
                   Đơn hàng này đã được hủy.
                 </Alert>
               )}
+              
             </Box>
             {/* payment request + invoice - currently hidden */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
@@ -829,6 +831,7 @@ function OrderDetail() {
         open={openRating}
         setOpen={setOpenRating}
         orderItem={selectedItem}
+        setSuccessRate={setSuccessRate}
       />
 
       {/* Paying */}
