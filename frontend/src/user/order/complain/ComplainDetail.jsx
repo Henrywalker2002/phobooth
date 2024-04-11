@@ -31,7 +31,7 @@ function ComplainDetail() {
   const [complainData, setComplainData] = React.useState({});
   const [relies, setRelies] = React.useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const [cookies, setCookies] = useCookies(["userInfo"]);
+  const [cookies] = useCookies(["userInfo"]);
   const [reply, setReply] = React.useState("");
   const [error, setError] = React.useState("");
   const limit = 20;
@@ -366,24 +366,6 @@ function ComplainDetail() {
             />
 
             <div className="flex gap-5 justify-end my-3">
-              {/* <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "fit-content",
-              padding: "3px 10px",
-
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            Hủy
-          </Button> */}
-
               <Button
                 variant="contained"
                 startIcon={<IoIosSend style={{ fontSize: "18px" }} />}

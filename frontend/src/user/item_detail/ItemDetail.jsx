@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import {
   Breadcrumbs,
   Button,
@@ -8,7 +8,10 @@ import {
   Link,
   Snackbar,
   Typography,
+  Tab,
+  Box,
 } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { GoHome } from "react-icons/go";
 import { FaStar } from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -18,10 +21,12 @@ import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../api/axios";
-import Err401Dialog from "../components/Err401Dialog";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import axios from "../../api/axios";
+import Err401Dialog from "../../components/Err401Dialog";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
+import ItemRatings from "./ItemRatings";
+import ImgList from "./ImgList";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -32,6 +37,7 @@ function ItemDetail(props) {
   const [quantity, setQuantity] = useState(1);
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
+  const [infoType, setInfoType] = useState("description");
 
   useEffect(() => {
     axios
@@ -44,6 +50,10 @@ function ItemDetail(props) {
         console.log(err);
       });
   }, []);
+
+  const handleChangeTab = (event, newValue) => {
+    setInfoType(newValue);
+  };
 
   // Add to cart
   const handleAddToCart = (id) => {
@@ -106,31 +116,41 @@ function ItemDetail(props) {
             <div className="flex grow flex-col items-stretch mt-1.5 w-[420px]">
               <img
                 loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/8f18e8b0708ad8b1a12f919deb0d5d5786fdbbea68ff0383aedde733a4549b98?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                className="aspect-[1.14] object-contain object-center w-full overflow-hidden"
+                srcSet={item?.pictures ? item?.pictures[0]?.picture : null}
+                className="object-cover object-center w-full overflow-hidden h-[370px] rounded-lg"
               />
               <div className="mt-3">
                 <div className="flex items-stretch justify-between">
                   <div className="flex flex-col w-[120px] ">
                     <img
                       loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                      className="aspect-[1.09] object-contain object-center w-full overflow-hidden shrink-0 max-w-full grow"
+                      srcSet={
+                        item?.pictures ? item?.pictures[1]?.picture : null
+                      }
+                      className="rounded-lg w-full h-[120px] object-cover overflow-hidden shrink-0 max-w-full grow"
                     />
                   </div>
                   <div className="flex flex-col w-[120px] ">
                     <img
                       loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                      className="aspect-[1.09] object-contain object-center w-full overflow-hidden shrink-0 max-w-full grow"
+                      srcSet={
+                        item?.pictures ? item?.pictures[2]?.picture : null
+                      }
+                      className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
                     />
                   </div>
                   <div className="flex flex-col w-[120px] ">
-                    <img
-                      loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/2d94aab145f799f917484d2293e851d4bf661a95047e66d2f6132ee8dd894056?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                      className="aspect-[1.09] object-contain object-center w-full overflow-hidden shrink-0 max-w-full grow"
-                    />
+                    {item?.pictures?.length > 4 ? (
+                      <ImgList pictures={item.pictures} />
+                    ) : (
+                      <img
+                        loading="lazy"
+                        srcSet={
+                          item?.pictures ? item?.pictures[3]?.picture : null
+                        }
+                        className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -274,7 +294,7 @@ function ItemDetail(props) {
       </div>
 
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-violet-50 bg-opacity-50 flex flex-col px-[100px] py-11 mt-[120px]">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mt-[120px]">
         <div className="border bg-white mx-6 px-9 py-10 border-solid border-neutral-200 rounded-md">
           <div className="gap-5 flex">
             <div className="flex flex-col items-start justify-center w-[43%] ml-5">
@@ -380,6 +400,63 @@ function ItemDetail(props) {
           </div>
         </div>
       </div>
+
+      {/* Mô tả + Đánh giá */}
+      <TabContext value={infoType}>
+        <Box sx={{ marginTop: "50px" }}>
+          <TabList
+            onChange={handleChangeTab}
+            centered
+            sx={{
+              "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                bgcolor: "#3F41A6",
+                width: "90px",
+              },
+            }}
+          >
+            <Tab
+              label="Mô tả"
+              value="description"
+              sx={{
+                textTransform: "none",
+                fontSize: "20px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                  fontWeight: "550",
+                },
+              }}
+            />
+            <Tab
+              label="Đánh giá"
+              value="rating"
+              sx={{
+                textTransform: "none",
+                fontSize: "20px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                  fontWeight: "550",
+                },
+              }}
+            />
+          </TabList>
+        </Box>
+        <TabPanel value="description">
+          {/* Mô tả */}
+          <div className="text-lg leading-8 text-zinc-500 px-[90px]">
+            Mauris pretium elit a dui pulvinar, in ornare sapien euismod. Nullam
+            interdum nisl ante, id feugiat quam euismod commodo. Sed ultrices
+            lectus ut iaculis rhoncus. Aenean non dignissim justo, at fermentum
+            turpis. Sed molestie, ligula ut molestie ultrices, tellus ligula
+            viverra neque, malesuada consectetur diam sapien volutpat risus.
+            Quisque eget tortor lobortis, facilisis metus eu, elementum est.
+            Nunc sit amet erat quis ex convallis suscipit. ur ridiculus mus.
+          </div>
+        </TabPanel>
+        <TabPanel value="rating">
+          {/* Đánh giá */}
+          <ItemRatings />
+        </TabPanel>
+      </TabContext>
 
       {/* Các danh sách */}
       <div className="my-20 flex flex-col gap-14">

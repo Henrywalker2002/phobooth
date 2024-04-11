@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./user/Home";
 import Login from "./user/Login";
 import Signup from "./user/Signup";
-import ItemDetail from "./user/ItemDetail";
+import ItemDetail from "./user/item_detail/ItemDetail";
 import Cart from "./user/order/Cart";
 import Booking from "./user/order/Booking";
 import Orders from "./user/order/Orders";
