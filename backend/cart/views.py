@@ -5,12 +5,15 @@ from cart.serializers import CartSerializer, CartListSerializer
 from rest_framework import permissions
 from rest_framework.response import Response
 from cart.filters import CartFilter
+from cart.filters import CartFilter
 
 
 class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
     queryset = Cart.objects.all()
     serializer_class = {"default": CartSerializer, "list": CartListSerializer}
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = CartFilter
+    search_fields = ["@item__name", "@item__description"]
     filterset_class = CartFilter
     search_fields = ["@item__name", "@item__description"]
 
@@ -46,7 +49,7 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
                     res.append({"studio": studio, "items": [item]})
             else:
                 res.append({"studio": studio, "items": [item]})
-        
+
 
         return self.get_paginated_response(res)
 

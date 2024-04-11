@@ -1,10 +1,24 @@
 import hashlib
 import hmac
 import urllib.parse
+import requests
 
 class VnPay:
     requestData = {}
     responseData = {}
+    
+    def get_refund_url(self, vnpay_refund_url, secret_key):
+        input_data = sorted(self.requestData.items())
+        query_string = ''
+        seq = 0
+        for key, val in input_data:
+            if seq == 1:
+                query_string = query_string + "&" + key + '=' + urllib.parse.quote_plus(str(val))
+            else:
+                seq = 1
+                query_string = key + '=' + urllib.parse.quote_plus(str(val))
+        hash_value = self.__hmacsha512(secret_key, query_string)
+        return vnpay_refund_url + "?" + query_string + '&vnp_SecureHash=' + hash_value
 
     def get_payment_url(self, vnpay_payment_url, secret_key):
         inputData = sorted(self.requestData.items())

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from order.models import Order, OrderStatusChoice
-from payment.models import Payment, PaymentStatusChoices
+from payment.models import Payment, PaymentStatusChoices, PaymentMethodChoices
 from payment.exceptions import (UpdatePaidPaymentException, AmountExceedException,
                                 PaymentExpiredException, PaymentPaidException, 
                                 PaymentExceedTimeException, AddPaymentOrderedOrderException)
@@ -82,3 +82,22 @@ class GetPaymentURLSerializer(serializers.Serializer):
         if instance.number_attemp_in_day > 10 and instance.payment_attemp_date == datetime.date.today():
             raise PaymentExceedTimeException()
         return attrs
+
+class RefundPaymentSerializer(serializers.ModelSerializer):
+    
+    ids = serializers.ListField(child = serializers.IntegerField())
+    
+    def validate_ids(self, value):
+        payments = Payment.objects.filter(id__in = value)
+        payment_ids = payments.values_list("id", flat = True)
+        for id in value:
+            if id not in payment_ids:
+                raise serializers.ValidationError(f"Payment with id {id} not found")
+        for payment in payments:
+            if payment.status != PaymentStatusChoices.PAID or payment.payment_method != PaymentMethodChoices.VNPAY:
+                raise serializers.ValidationError("Payment must be paid and use VNPAY method")
+        return value
+
+    class Meta:
+        model = Payment
+        fields = ["ids"]

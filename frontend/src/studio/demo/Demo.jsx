@@ -121,7 +121,7 @@ function Demo() {
             navigate(`/studio/order/detail/${id}`, { replace: true })
           }
         >
-          #{id}
+          Đơn hàng #{id}
         </Link>
 
         <Typography

@@ -124,3 +124,8 @@ export const translateErrCategory = (err) => {
   }
   return err;
 };
+
+export const translateRole = (role) => {
+  if (role == "admin") return "Quản lý";
+  else if (role == "staff") return "Nhân viên";
+};
