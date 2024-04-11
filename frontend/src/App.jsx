@@ -97,7 +97,7 @@ function App() {
             <Route path="/studio/items" element={<ItemMgmt />} />
             <Route path="/studio/register" element={<Register />} />
             <Route
-              path="/studio/order/detail/:id/demo"
+              path="/order/:id/demo"
               element={<StudioDemo />}
             />
             <Route

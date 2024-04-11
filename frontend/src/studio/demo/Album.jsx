@@ -4,90 +4,91 @@ import {
   Button,
   ImageList,
   ImageListItem,
+  Badge, 
+  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import AddImg from "./AddImg";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function Album() {
+function Album({
+  imageList,
+  setImageList,
+  currentDemo,
+  setCurrentDemo,
+  narbarType,
+  order_id,
+  page, 
+  setPage,
+  totalImage,
+  setTotalImage,
+}) {
+  const axiosPrivate = useAxiosPrivate();
   const [openAddImg, setOpenAddImg] = useState(false);
-  const itemData = [
-    {
-      img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-      title: "Breakfast",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
-      title: "Burger",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1522770179533-24471fcdba45",
-      title: "Camera",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c",
-      title: "Coffee",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1533827432537-70133748f5c8",
-      title: "Hats",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62",
-      title: "Honey",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6",
-      title: "Basketball",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
-      title: "Fern",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
-      title: "Mushrooms",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
-      title: "Tomato basil",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
-      title: "Sea star",
-    },
-    {
-      img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
-      title: "Bike",
-    },
-  ];
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollHeight, scrollTop, clientHeight } = scrollContainerRef.current;
+      const isBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+  
+      if (isBottom) {
+        console.log('Scrolled to the bottom');
+        // Load more images or do something else
+        setPage(page + 1);
+      }
+    };
+  
+    const scrollContainer = scrollContainerRef.current;
+    scrollContainer.addEventListener('scroll', handleScroll);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleDeleteImg = (item) => {
+    axiosPrivate.delete(`/demo/${item.id}/`).then((res) => {
+      setImageList(imageList.filter((img) => img.id !== item.id));
+    }).then((err) => {
+      console.log(err);
+    });
+  };
   return (
     <Paper
+      ref={scrollContainerRef}
       sx={{
         width: "fit-content",
         margin: "40px 30px",
         minWidth: "300px",
+        maxHeight : "700px",
+        overflowY : "scroll",
+        overflowX : "hidden",
         border: "1px solid #d6d3d1",
       }}
     >
       <div className="flex justify-between items-center px-4 py-2 bg-white rounded-lg leading-[150%]">
-        <Button
-          variant="text"
-          startIcon={<AddIcon />}
-          onClick={() => setOpenAddImg(true)}
-          sx={{
-            textTransform: "none",
-            color: "#3F41A6",
-            "&:hover": {
-              bgcolor: "#E2E5FF",
-            },
-          }}
-        >
-          Thêm hình ảnh
-        </Button>
+        {narbarType === "studio" &&
+          <Button
+            variant="text"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenAddImg(true)}
+            sx={{
+              textTransform: "none",
+              color: "#3F41A6",
+              "&:hover": {
+                bgcolor: "#E2E5FF",
+              },
+            }}
+          >
+            Thêm hình ảnh
+          </Button>
+        }
         <div className="flex gap-1 text-base">
           <div className="text-zinc-900">Tổng số :</div>
-          <div className="text-stone-500">10</div>
+          <div className="text-stone-500">{totalImage}</div>
         </div>
       </div>
       <Divider />
@@ -97,9 +98,9 @@ function Album() {
         cols={2}
         gap={12}
       >
-        {itemData.map((item) => (
+        {imageList?.map((item) => (
           <ImageListItem
-            key={item.img}
+            key={item.id}
             sx={{
               width: "138px",
               height: "105px",
@@ -110,20 +111,47 @@ function Album() {
               },
             }}
           >
-            <img
-              width="108"
-              height="89"
-              className="rounded-[5px]"
-              src={`${item.img}`}
-              alt={item.title}
-              loading="lazy"
-            />
+            <Badge
+              badgeContent={
+                <IconButton onClick={() => handleDeleteImg(item)}>
+                  <HighlightOffIcon
+                    sx={{
+                      color: "#78716C",
+                    }}
+                  />
+                </IconButton>
+              }
+              sx={{
+                bgcolor: "transparent",
+                height: "108px",
+
+              }}
+            >
+              <img
+                width="108"
+                height="89"
+                className="rounded-[5px]"
+                src={`${item.image?.thumbnail}`}
+                alt={item.title}
+                loading="lazy"
+                onClick={() => setCurrentDemo(item)}
+              />
+            </Badge>
           </ImageListItem>
         ))}
       </ImageList>
 
       {/* Add Img */}
-      <AddImg open={openAddImg} setOpen={setOpenAddImg} />
+      <AddImg
+        open={openAddImg}
+        setOpen={setOpenAddImg}
+        imageList={imageList}
+        setImageList={setImageList}
+        setCurrentDemo={setCurrentDemo}
+        order_id={order_id}
+        totalImage={totalImage}
+        setTotalImage={setTotalImage}
+      />
     </Paper>
   );
 }

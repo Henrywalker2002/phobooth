@@ -11,7 +11,7 @@ class ReadDemoImageCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ImageDemoComment
-        fields = ['id', 'user', 'text', ]
+        fields = ['id', 'user', 'text', 'created_at']
 
 
 class CreateDemoImageCommentSerializer(serializers.ModelSerializer):

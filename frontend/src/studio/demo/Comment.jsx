@@ -2,42 +2,37 @@ import React from "react";
 import { Paper, Divider, TextField, Button } from "@mui/material";
 import { IoIosSend } from "react-icons/io";
 
-function Comment() {
+function handleDate(created_at) {
+  const date = new Date(created_at);
+  return `${date.getDate()} Tháng ${date.getMonth() + 1} ${date.getFullYear()}`
+}
+
+function OneComment({ comment }) {
+  return (
+    <div className="flex flex-col gap-2 ">
+      <div className="flex gap-5 items-center">
+        <div className="text-base font-medium leading-7 text-black">
+          {comment.user?.full_name}
+        </div>
+        <div className="text-sm leading-5 text-neutral-500">
+          {handleDate(comment.created_at)}
+        </div>
+      </div>
+      <div className="w-full text-sm leading-5 text-zinc-500">
+        {comment.text}
+      </div>
+      <Divider sx={{ marginTop: "10px" }} />
+    </div>
+    )
+}
+
+function Comment({commentList, setCommentList}) {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2 ">
-        <div className="flex gap-5 items-center">
-          <div className="text-base font-medium leading-7 text-black">
-            Scarlet withch
-          </div>
-          <div className="text-sm leading-5 text-neutral-500">
-            6 Tháng 5 2023
-          </div>
-        </div>
-        <div className="w-full text-sm leading-5 text-zinc-500">
-          Sed commodo aliquam dui ac porta. Fusce ipsum felis, imperdiet at
-          posuere ac, viverra at mauris. Maecenas tincidunt ligula a sem
-          vestibulum pharetra. Maecenas auctor tortor lacus, nec laoreet nisi
-          porttitor vel.{" "}
-        </div>
-        <Divider sx={{ marginTop: "10px" }} />
-      </div>
 
-      <div className="flex flex-col gap-2 ">
-        <div className="flex gap-5 items-center">
-          <div className="text-base font-medium leading-7 text-black">
-            Golanginya
-          </div>
-          <div className="text-sm leading-5 text-neutral-500">
-            20 Tháng 11 2023
-          </div>
-        </div>
-        <div className="w-full text-sm leading-5 text-zinc-500">
-          Antesit mauris elementum sollicitudin arcu sit suspendisse pretium.
-          Nisl egestas fringilla justo bibendum.
-        </div>
-        <Divider sx={{ marginTop: "10px" }} />
-      </div>
+      {commentList.map((comment, index) => {
+        return <OneComment key={index} comment={comment} />;
+      })}
 
       <Paper
         sx={{
