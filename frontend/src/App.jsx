@@ -104,10 +104,7 @@ function App() {
             <Route path="/studio/items/add" element={<AddItem />} />
             <Route path="/studio/items" element={<ItemMgmt />} />
             <Route path="/studio/register" element={<Register />} />
-            <Route
-              path="/order/:id/demo"
-              element={<StudioDemo />}
-            />
+            <Route path="/order/:id/demo" element={<StudioDemo />} />
             <Route
               path="/studio/order/detail/:id"
               element={<StudioOrderDetail />}

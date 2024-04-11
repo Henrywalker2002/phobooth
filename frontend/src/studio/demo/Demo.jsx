@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import StudioNavbar from "../../components/StudioNavbar";
-import NavBar from "../../components/NavBar";
+import NavBar from "../../components/Navbar";
 import { Breadcrumbs, Link, Typography, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -10,7 +10,7 @@ import Album from "./Album";
 import Slider from "./Slider";
 import Comment from "./Comment";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
 
 function handleDate(created_at) {
   const date = new Date(created_at);
@@ -62,17 +62,15 @@ function Demo() {
 
   useEffect(() => {
     axiosPrivate.get(`/order/${id}/`).then((res) => {
-      let order_infor = res.data
-      let user_infor = cookies.userInfo
+      let order_infor = res.data;
+      let user_infor = cookies.userInfo;
       if (user_infor?.username === order_infor?.customer?.username) {
-        setNavbarType("customer")
+        setNavbarType("customer");
+      } else {
+        setNavbarType("studio");
       }
-      else {
-        setNavbarType("studio")
-      }
-    })
+    });
   }, []);
-
 
   return (
     <div>
@@ -168,87 +166,91 @@ function Demo() {
           {/* Info + Cmt */}
 
           {imageList.length > 0 && (
-          <TabContext value={infoType}>
-            <Box>
-              <TabList
-                onChange={handleChangeTab}
-                centered
-                sx={{
-                  "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
-                    bgcolor: "#3F41A6",
-                    width: "90px",
-                  },
-                }}
-              >
-                <Tab
-                  label="THÔNG TIN CHUNG"
-                  value="basic"
+            <TabContext value={infoType}>
+              <Box>
+                <TabList
+                  onChange={handleChangeTab}
+                  centered
                   sx={{
-                    textTransform: "none",
-                    fontSize: "15px",
-                    "&.Mui-selected": {
-                      color: "#3F41A6",
-                      fontWeight: "550",
+                    "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                      bgcolor: "#3F41A6",
+                      width: "90px",
                     },
                   }}
-                />
-                <Tab
-                  label="BÌNH LUẬN"
-                  value="cmt"
-                  sx={{
-                    textTransform: "none",
-                    fontSize: "15px",
-                    "&.Mui-selected": {
-                      color: "#3F41A6",
-                      fontWeight: "550",
-                    },
-                  }}
-                />
-              </TabList>
-            </Box>
-            <TabPanel value="basic">
-              <div className="flex flex-col items-start text-sm max-w-[912px] gap-2.5">
-                <div className="flex gap-3 tracking-wide">
-                  <div className="font-medium text-zinc-900">Tiêu đề :</div>
-                  <div className="text-stone-500">{currentDemo.title}</div>
-                </div>
-                <div className="flex gap-3 tracking-wide">
-                  <div className="font-medium text-zinc-900">
-                    Thời gian cập nhật :
+                >
+                  <Tab
+                    label="THÔNG TIN CHUNG"
+                    value="basic"
+                    sx={{
+                      textTransform: "none",
+                      fontSize: "15px",
+                      "&.Mui-selected": {
+                        color: "#3F41A6",
+                        fontWeight: "550",
+                      },
+                    }}
+                  />
+                  <Tab
+                    label="BÌNH LUẬN"
+                    value="cmt"
+                    sx={{
+                      textTransform: "none",
+                      fontSize: "15px",
+                      "&.Mui-selected": {
+                        color: "#3F41A6",
+                        fontWeight: "550",
+                      },
+                    }}
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="basic">
+                <div className="flex flex-col items-start text-sm max-w-[912px] gap-2.5">
+                  <div className="flex gap-3 tracking-wide">
+                    <div className="font-medium text-zinc-900">Tiêu đề :</div>
+                    <div className="text-stone-500">{currentDemo.title}</div>
                   </div>
-                  <div className="text-stone-500">
-                    {handleDate(currentDemo.created_at)}
+                  <div className="flex gap-3 tracking-wide">
+                    <div className="font-medium text-zinc-900">
+                      Thời gian cập nhật :
+                    </div>
+                    <div className="text-stone-500">
+                      {handleDate(currentDemo.created_at)}
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-3 tracking-wide">
-                  <div className="font-medium text-zinc-900">Kích thước :</div>
-                  <div className=" text-stone-500">{`${currentDemo.width} x ${currentDemo.height}`}</div>
-                </div>
-                <div className="flex gap-2.5 tracking-wide">
-                  <div className="font-medium text-zinc-900">Dung lượng :</div>
-                  <div className=" text-stone-500">{currentDemo.size} B</div>
-                </div>
-                <div className="flex gap-2.5 tracking-wide">
-                  <div className="font-medium text-zinc-900">Định dạng :</div>
-                  <div className=" text-stone-500">{currentDemo.format}</div>
-                </div>
-                <div className="flex flex-col gap-1 tracking-wide">
-                  <div className="font-medium text-zinc-900">Mô tả :</div>
-                  <div className="text-stone-500">
-                    {currentDemo.description}
+                  <div className="flex gap-3 tracking-wide">
+                    <div className="font-medium text-zinc-900">
+                      Kích thước :
+                    </div>
+                    <div className=" text-stone-500">{`${currentDemo.width} x ${currentDemo.height}`}</div>
                   </div>
-                </div>
+                  <div className="flex gap-2.5 tracking-wide">
+                    <div className="font-medium text-zinc-900">
+                      Dung lượng :
+                    </div>
+                    <div className=" text-stone-500">{currentDemo.size} B</div>
+                  </div>
+                  <div className="flex gap-2.5 tracking-wide">
+                    <div className="font-medium text-zinc-900">Định dạng :</div>
+                    <div className=" text-stone-500">{currentDemo.format}</div>
+                  </div>
+                  <div className="flex flex-col gap-1 tracking-wide">
+                    <div className="font-medium text-zinc-900">Mô tả :</div>
+                    <div className="text-stone-500">
+                      {currentDemo.description}
+                    </div>
+                  </div>
 
-                <div className="self-stretch mt-5 w-full border border-solid bg-neutral-200 border-neutral-200 min-h-[1px] max-md:max-w-full" />
-              </div>
-            </TabPanel>
-            <TabPanel value="cmt">
-              <Comment
-                commentList={commentList}
-                setCommentList={setCommentList}
-              />
-            </TabPanel>
-          </TabContext>
+                  <div className="self-stretch mt-5 w-full border border-solid bg-neutral-200 border-neutral-200 min-h-[1px] max-md:max-w-full" />
+                </div>
+              </TabPanel>
+              <TabPanel value="cmt">
+                <Comment
+                  commentList={commentList}
+                  setCommentList={setCommentList}
+                />
+              </TabPanel>
+            </TabContext>
           )}
         </div>
       </div>
