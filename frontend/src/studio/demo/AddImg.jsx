@@ -13,9 +13,12 @@ import { FaXmark } from "react-icons/fa6";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { v4 as uuidv4 } from "uuid";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function AddImg({ open, setOpen }) {
+function AddImg({ open, setOpen, imageList, setImageList, setCurrentDemo, order_id, totalImage, setTotalImage}) {
   const [imgList, setImgList] = useState([]);
+  const [data, setData] = useState({});
+  const axiosPrivate = useAxiosPrivate();
 
   //   image list
   const handleUpdateImgList = (e) => {
@@ -37,6 +40,30 @@ function AddImg({ open, setOpen }) {
     const newList = imgList.filter((img) => img.id !== id);
     setImgList(newList);
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("order", order_id);
+    formData.append("image", imgList[0].img_file, imgList[0].img_file.name);
+    axiosPrivate.post("/demo/", formData).then((res) => {
+      console.log(res);
+      setImageList([...imageList, res.data]);
+      setTotalImage(totalImage + 1);
+      setOpen(false);
+      setCurrentDemo(res.data);
+      setImgList([]);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  }
   return (
     <Dialog
       sx={{ minWidth: "400px" }}
@@ -44,6 +71,7 @@ function AddImg({ open, setOpen }) {
       onClose={() => setOpen(false)}
       scroll="paper"
     >
+    <form onSubmit={handleSubmit}>
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
@@ -63,7 +91,6 @@ function AddImg({ open, setOpen }) {
         dividers={true}
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
-        <form>
           <div className="self-stretch flex items-stretch  gap-[130px]">
             <div className="flex basis-[0%] flex-col items-stretch">
               <div className="text-zinc-900 text-sm leading-5">Tiêu đề *</div>
@@ -79,6 +106,7 @@ function AddImg({ open, setOpen }) {
                   width: "400px",
                   marginY: "10px",
                 }}
+                onChange={handleChange}
               />
 
               <div className="text-zinc-900 text-sm leading-5">Mô tả *</div>
@@ -91,6 +119,7 @@ function AddImg({ open, setOpen }) {
                   width: "400px",
                   marginY: "10px",
                 }}
+                onChange={handleChange}
               />
 
               <div className="text-zinc-900 text-sm leading-5">
@@ -137,6 +166,7 @@ function AddImg({ open, setOpen }) {
                         whiteSpace: "nowrap",
                         width: 1,
                       }}
+                      disabled={imgList.length == 1}
                     />
                   </Button>
                   <div className="text-stone-500 text-[13px] leading-6">
@@ -177,7 +207,6 @@ function AddImg({ open, setOpen }) {
               </div>
             </div>
           </div>
-        </form>
       </DialogContent>
 
       <DialogActions>
@@ -218,6 +247,7 @@ function AddImg({ open, setOpen }) {
           </Button>
         </div>
       </DialogActions>
+      </form>
     </Dialog>
   );
 }

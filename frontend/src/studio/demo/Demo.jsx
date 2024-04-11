@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StudioNavbar from "../../components/StudioNavbar";
+import NavBar from "../../components/NavBar";
 import { Breadcrumbs, Link, Typography, Tab, Box } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -8,18 +9,74 @@ import { useNavigate, useParams } from "react-router-dom";
 import Album from "./Album";
 import Slider from "./Slider";
 import Comment from "./Comment";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import {useCookies} from "react-cookie";
+
+function handleDate(created_at) {
+  const date = new Date(created_at);
+  return `${date.getHours()}:${date.getMinutes()}, ${date.getDate()} Tháng ${
+    date.getMonth() + 1
+  } ${date.getFullYear()}`;
+}
 
 function Demo() {
   let { id } = useParams();
+  const [cookies, setCookie] = useCookies(["accInfo"]);
   const navigate = useNavigate();
   const [infoType, setInfoType] = useState("basic");
+  const axiosPrivate = useAxiosPrivate();
 
   const handleChangeTab = (event, newValue) => {
     setInfoType(newValue);
   };
+  const [imageList, setImageList] = useState([]);
+  const [currentDemo, setCurrentDemo] = useState({});
+  const limit = 50;
+  const [page, setPage] = useState(1);
+  const [totalImage, setTotalImage] = useState(0);
+  const [commentList, setCommentList] = useState([]);
+  const [step, setStep] = useState(0);
+  const [navbarType, setNavbarType] = useState("studio");
+
+  useEffect(() => {
+    axiosPrivate
+      .get(`/demo/?order=${id}&limit=${limit}&offset=${(page - 1) * limit}`)
+      .then((res) => {
+        if (page > 1 && imageList.length == 0) {
+          return;
+        }
+        if (imageList.length > 0) {
+          if (res.data.results.length > 0) {
+            setImageList([...imageList, ...res.data.results]);
+          }
+        } else {
+          setImageList(res.data.results);
+        }
+        setTotalImage(res.data.count);
+        if (res.data.results.length > 0) {
+          setCurrentDemo(res.data.results[0]);
+          setCommentList(res.data.results[0].comment);
+        }
+      });
+  }, [page]);
+
+  useEffect(() => {
+    axiosPrivate.get(`/order/${id}/`).then((res) => {
+      let order_infor = res.data
+      let user_infor = cookies.userInfo
+      if (user_infor?.username === order_infor?.customer?.username) {
+        setNavbarType("customer")
+      }
+      else {
+        setNavbarType("studio")
+      }
+    })
+  }, []);
+
+
   return (
     <div>
-      <StudioNavbar />
+      {navbarType === "studio" ? <StudioNavbar /> : <NavBar />}
 
       {/* Breadcumbs */}
       <Breadcrumbs
@@ -80,7 +137,18 @@ function Demo() {
       </Breadcrumbs>
 
       <div className="flex gap-20 items-start px-[80px] mt-5">
-        <Album />
+        <Album
+          imageList={imageList}
+          setImageList={setImageList}
+          currentDemo={currentDemo}
+          setCurrentDemo={setCurrentDemo}
+          narbarType={navbarType}
+          order_id={id}
+          page={page}
+          setPage={setPage}
+          totalImage={totalImage}
+          setTotalImage={setTotalImage}
+        />
         <div className="flex flex-col items-center w-[60%] gap-5">
           {/* Header */}
           <div className="text-indigo-800 text-2xl font-semibold w-full flex justify-center whitespace-nowrap ">
@@ -88,9 +156,18 @@ function Demo() {
           </div>
 
           {/* Slider */}
-          <Slider />
+          <Slider
+            currentDemo={currentDemo}
+            setCurrentDemo={setCurrentDemo}
+            maxSteps={imageList.length}
+            step={step}
+            setStep={setStep}
+            imageList={imageList}
+          />
 
           {/* Info + Cmt */}
+
+          {imageList.length > 0 && (
           <TabContext value={infoType}>
             <Box>
               <TabList
@@ -133,35 +210,32 @@ function Demo() {
               <div className="flex flex-col items-start text-sm max-w-[912px] gap-2.5">
                 <div className="flex gap-3 tracking-wide">
                   <div className="font-medium text-zinc-900">Tiêu đề :</div>
-                  <div className="text-stone-500">Suối</div>
+                  <div className="text-stone-500">{currentDemo.title}</div>
                 </div>
                 <div className="flex gap-3 tracking-wide">
                   <div className="font-medium text-zinc-900">
                     Thời gian cập nhật :
                   </div>
-                  <div className="text-stone-500">16:00, 15 Tháng 11 2023</div>
+                  <div className="text-stone-500">
+                    {handleDate(currentDemo.created_at)}
+                  </div>
                 </div>
                 <div className="flex gap-3 tracking-wide">
                   <div className="font-medium text-zinc-900">Kích thước :</div>
-                  <div className=" text-stone-500">1280 x 720</div>
+                  <div className=" text-stone-500">{`${currentDemo.width} x ${currentDemo.height}`}</div>
                 </div>
                 <div className="flex gap-2.5 tracking-wide">
                   <div className="font-medium text-zinc-900">Dung lượng :</div>
-                  <div className=" text-stone-500">80.5 KB</div>
+                  <div className=" text-stone-500">{currentDemo.size} B</div>
                 </div>
                 <div className="flex gap-2.5 tracking-wide">
                   <div className="font-medium text-zinc-900">Định dạng :</div>
-                  <div className=" text-stone-500">PNG</div>
+                  <div className=" text-stone-500">{currentDemo.format}</div>
                 </div>
                 <div className="flex flex-col gap-1 tracking-wide">
                   <div className="font-medium text-zinc-900">Mô tả :</div>
                   <div className="text-stone-500">
-                    Sed commodo aliquam dui ac porta. Fusce ipsum felis,
-                    imperdiet at posuere ac, viverra at mauris. Maecenas
-                    tincidunt ligula a sem vestibulum pharetra. Maecenas auctor
-                    tortor lacus, nec laoreet nisi porttitor vel. Etiam
-                    tincidunt metus vel dui interdum sollicitudin. Mauris sem
-                    ante, vestibulum nec orci vitae.
+                    {currentDemo.description}
                   </div>
                 </div>
 
@@ -169,9 +243,13 @@ function Demo() {
               </div>
             </TabPanel>
             <TabPanel value="cmt">
-              <Comment />
+              <Comment
+                commentList={commentList}
+                setCommentList={setCommentList}
+              />
             </TabPanel>
           </TabContext>
+          )}
         </div>
       </div>
     </div>

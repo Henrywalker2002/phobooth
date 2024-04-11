@@ -21,6 +21,11 @@ import { useParams } from "react-router-dom";
 import Filter from "./Filter";
 import Footer from "./Footer";
 
+const handleDate = (date) => {
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString();
+}
+
 function StudioDetail() {
   // global
   let { code_name } = useParams();
@@ -152,7 +157,7 @@ function StudioDetail() {
                   Đánh giá
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  4.9
+                  {studio.star ? studio.star : "Chưa có đánh giá"}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -160,7 +165,7 @@ function StudioDetail() {
                   Sản phẩm
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  35
+                  {studio.total_items ? studio.total_items : 0}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -168,7 +173,7 @@ function StudioDetail() {
                   Tham gia
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  6 năm trước
+                  {handleDate(studio.created_at)}
                 </div>
               </div>
             </div>
@@ -194,7 +199,7 @@ function StudioDetail() {
                   Trạng thái
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  Đã xác thực
+                  {studio.is_verified ? "Đã xác thực" : "Chưa xác thực"}
                 </div>
               </div>
             </div>

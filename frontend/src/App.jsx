@@ -83,7 +83,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
+        <Route path="/" element={<Home />} />
         <Route element={<PersistLogin />}>
           {/* User */}
           <Route element={<RequireAuth allowedRoles={["customer"]} />}>
@@ -105,7 +105,7 @@ function App() {
             <Route path="/studio/items" element={<ItemMgmt />} />
             <Route path="/studio/register" element={<Register />} />
             <Route
-              path="/studio/order/detail/:id/demo"
+              path="/order/:id/demo"
               element={<StudioDemo />}
             />
             <Route
