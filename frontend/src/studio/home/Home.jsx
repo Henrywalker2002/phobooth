@@ -21,6 +21,12 @@ import { useCookies } from "react-cookie";
 import Footer from "./Footer";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
+const handleDate = (date) => {
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString();
+
+}
+
 function Home() {
   const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
@@ -150,7 +156,7 @@ function Home() {
                   Đánh giá
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  4.9
+                  {studio.star}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -166,7 +172,7 @@ function Home() {
                   Tham gia
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  6 năm trước
+                  {handleDate(studio.created_at)}
                 </div>
               </div>
             </div>
@@ -184,7 +190,7 @@ function Home() {
                   Đơn thành công
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  100
+                  {studio.number_order_completed}
                 </div>
               </div>
               <div className="flex justify-between w-[350px]">
@@ -192,7 +198,7 @@ function Home() {
                   Trạng thái
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  Đã xác thực
+                  {studio.is_verified ? "Đã xác thực" : "Chưa xác thực"}
                 </div>
               </div>
             </div>

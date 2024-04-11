@@ -116,8 +116,8 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         if value == OrderStatusChoice.COMPLETED:
             if instance.total_price != instance.amount_paid:
                 raise UpdateCompletedOrderPaidException()
-            if instance.payment.filter(status = PaymentStatusChoices.PENDING).exists():
-                raise UpdateCompletedOrderPaidException()
+            # if instance.payment.filter(status = PaymentStatusChoices.PENDING).exists():
+            #     raise UpdateCompletedOrderPaidException()
             if instance.order_item.filter(price = None).exists():
                 raise UpdateCompletedOrderOrderItemException()
         elif value == OrderStatusChoice.ORDERED:

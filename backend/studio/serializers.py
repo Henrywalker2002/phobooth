@@ -12,7 +12,8 @@ from address.models import Address
 class StudioSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
-        fields = ['id', 'code_name', 'friendly_name', "is_verified", "avatar"]
+        fields = ['id', 'code_name', 'friendly_name', "is_verified", "avatar", 
+                  "star", "number_order_completed", 'created_at']
 
 
 class StudioSerializer(serializers.ModelSerializer):
@@ -78,7 +79,9 @@ class StudioDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Studio
-        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar", "bank_bin", "account_number", "account_name"]
+
+        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item"]
+
 
 
 class AddEmployeeSerializer(serializers.Serializer):
