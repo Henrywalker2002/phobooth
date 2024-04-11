@@ -60,7 +60,12 @@ function Login() {
 
       setUser("");
       setPwd("");
-      navigate(from, { replace: true });
+      if (
+        response.data.role[0].code_name === "admin" ||
+        response.data.role[0].code_name === "staff"
+      )
+        navigate("/admin", { replace: true });
+      else navigate(from, { replace: true });
     } catch (err) {
       setErrMsg(err.response.data.messsage);
       // errRef.current.focus();

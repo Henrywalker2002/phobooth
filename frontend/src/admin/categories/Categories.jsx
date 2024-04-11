@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import StaffNavbar from "../components/StaffNavbar";
 import {
   Breadcrumbs,
   Button,
@@ -28,15 +27,18 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import { RiSearchLine } from "react-icons/ri";
 // import axios from "../api/axios";
-import { translateType } from "../util/Translate";
+import { translateType } from "../../util/Translate";
 import CreateCategory from "./CreateCategory";
 import EditCategory from "./EditCategory";
 import DelCategory from "./DelCategory";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import AdminNavbar from "../../components/AdminNavbar";
+import { useNavigate } from "react-router-dom";
 
 function Categories() {
   // global
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
   // dialog
   const [openCreateCategory, setOpenCreateCategory] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
@@ -135,7 +137,7 @@ function Categories() {
 
   return (
     <div>
-      <StaffNavbar />
+      <AdminNavbar />
 
       {/* Breadcumbs */}
       <Breadcrumbs
@@ -154,7 +156,7 @@ function Categories() {
           key="1"
           sx={{ color: "#808080" }}
           // href="/"
-          // onClick={() => navigate("/", { replace: true })}
+          onClick={() => navigate("/admin", { replace: true })}
         >
           <HomeOutlinedIcon />
         </Link>

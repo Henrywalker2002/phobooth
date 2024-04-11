@@ -37,7 +37,7 @@ import { daysleftCount } from "../../util/Compare";
 import CancelOrder from "./CancelOrder";
 import ReqPaying from "./ReqPaying";
 import DeltailRequest from "../../studio/order/DeltailRequest";
-import CreateComplain from "./CreateComplain";
+import CreateComplain from "./complain/CreateComplain";
 import { translateOrderStatus, translateType } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
 import UpdateHistory from "./UpdateHistory";
@@ -53,15 +53,18 @@ function OrderDetail() {
   const [openDetailReq, setOpenDetailReq] = useState(false);
   const [openPayingReq, setOpenPayingReq] = useState(false);
   const [openCreateComplain, setOpenCreateComplain] = useState(false);
+
   const [openRating, setOpenRating] = useState(false);
   // local
   const [reload, setReload] = useState(false);
+
   const [order, setOrder] = useState({});
   const [requestList, setRequestList] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [statusMsg, setStatusMsg] = useState("");
   const [selectedReq, setSelectedReq] = useState({});
   const [selectedItem, setSelectedItem] = useState({});
+
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -149,6 +152,7 @@ function OrderDetail() {
       .then((res) => {
         console.log(res.data);
         setOrder(res.data);
+        setReload(false);
       })
       .catch((err) => {
         console.log(err);
@@ -157,11 +161,11 @@ function OrderDetail() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/payment/?order=${id}&limit=3&offset=0`)
+      .get(`/payment/?order=${id}&limit=2&offset=0`)
       .then((res) => {
         // console.log(res.data);
         let count = res.data.count;
-        setPageCount(Math.ceil(count / 3));
+        setPageCount(Math.ceil(count / 2));
         setRequestList(res.data.results);
       })
       .catch((err) => {
@@ -170,12 +174,12 @@ function OrderDetail() {
   }, []);
 
   const getReqsForPage = (e, page) => {
-    let offset = 3 * (page - 1);
+    let offset = 2 * (page - 1);
     axiosPrivate
-      .get(`/order/?limit=3&offset=${offset}`)
+      .get(`/payment/?order=${id}&limit=2&offset=${offset}`)
       .then((res) => {
-        // console.log(res.data);
-        let currCount = Math.ceil(res.data.count / 3);
+        console.log(res.data);
+        let currCount = Math.ceil(res.data.count / 2);
         if (currCount !== pageCount) setPageCount(currCount);
         setRequestList(res.data.results);
       })
@@ -225,6 +229,7 @@ function OrderDetail() {
                 }
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
+
               <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-normal truncate my-auto rounded-lg">
                 {row.item?.name}
               </div>
@@ -297,6 +302,7 @@ function OrderDetail() {
         aria-label="breadcrumb"
         sx={{
           marginTop: "30px",
+
           paddingLeft: "70px",
         }}
       >
@@ -330,7 +336,7 @@ function OrderDetail() {
             fontWeight: "500",
           }}
         >
-          #{order?.id}
+          Đơn hàng #{order?.id}
         </Typography>
       </Breadcrumbs>
 
@@ -444,7 +450,7 @@ function OrderDetail() {
               )}
               
             </Box>
-            {/* payment request + invoice - currently hidden */}
+            {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
                 {/* payment request + complain*/}
@@ -455,7 +461,7 @@ function OrderDetail() {
                       Yêu cầu thanh toán mới nhất
                     </div>
 
-                    <div className="flex flex-col mt-5 gap-5">
+                    <div className="flex flex-col mt-3 gap-5 h-[240px]">
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -576,7 +582,7 @@ function OrderDetail() {
                         count={pageCount}
                         onChange={getReqsForPage}
                         sx={{
-                          margin: "20px auto",
+                          margin: "10px auto",
                           width: "fit-content",
                           "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                             {
@@ -586,13 +592,94 @@ function OrderDetail() {
                       />
                     ) : null}
                   </div>
+                  {/* Complain */}
+                  <div className="items-stretch flex flex-col px-5">
+                    <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
+                      Khiếu nại
+                    </div>
+
+                    <div className="flex flex-col mt-2 gap-5">
+                      {order.complain !== null ? (
+                        <Paper
+                          sx={{
+                            width: "330px",
+                            border: "0.5px solid #d6d3d1",
+                            alignItems: "stretch",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            gap: "20px",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                            <div className="text-zinc-500 text-base font-medium leading-6">
+                              {order?.complain?.title}
+                            </div>
+                            <div className="flex items-stretch gap-2.5 mt-2">
+                              <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                                Ngày gửi :
+                              </div>
+                              <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
+                                {dayjs(order?.complain?.created_at).format(
+                                  "DD-MM-YYYY"
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex justify-start mt-1.5">
+                              <Button
+                                variant="text"
+                                onClick={() =>
+                                  navigate(
+                                    `/complain/detail/${order?.complain?.id}`,
+                                    {
+                                      state: { orderId: id },
+                                    }
+                                  )
+                                }
+                                sx={{
+                                  textTransform: "none",
+                                  color: "#3F41A6",
+                                  fontSize: "14px",
+                                  fontWeight: "600px",
+                                  padding: "0",
+                                  "&:hover": {
+                                    bgcolor: "#E2E5FF",
+                                    color: "#1A237E",
+                                  },
+                                }}
+                              >
+                                Xem chi tiết
+                              </Button>
+                            </div>
+                          </div>
+                          {order?.complain?.status === "PENDING" ? (
+                            <div className="w-fit text-red-500 text-sm leading-6 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                              Chờ xử lý
+                            </div>
+                          ) : order?.complain?.status === "RESOLVED" ? (
+                            <div className="w-fit text-green-600 text-sm leading-6 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                              Đã giải quyết
+                            </div>
+                          ) : order?.complain?.status === "IN_PROGRESS" ? (
+                            <div className="w-fit text-yellow-700 text-sm leading-6 whitespace-nowrap rounded bg-yellow-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                              Đang xử lý
+                            </div>
+                          ) : null}
+                        </Paper>
+                      ) : (
+                        "Chưa có khiếu nại!"
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* invoice */}
                 <div className="flex flex-col w-[342px]">
-                  <div className="border border-[color:var(--gray-scale-gray-100,#E6E6E6)] flex w-full grow flex-col pt-5 pb-2.5 rounded-md border-solid">
-                    <div className="flex items-stretch justify-between gap-5 px-5">
-                      <div className="items-stretch flex grow basis-[0%] flex-col self-start">
+                  <div className="border border-[color:var(--gray-scale-gray-100,#E6E6E6)] flex w-full flex-col pt-5 pb-2.5 rounded-md border-solid">
+                    <div className="flex  justify-between gap-5 px-5">
+                      <div className=" flex grow basis-[0%] flex-col self-start">
                         <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                           Mã đơn :
                         </div>
@@ -670,7 +757,8 @@ function OrderDetail() {
                           Đã thanh toán
                         </div>
                         <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
-                          -{order.amount_paid}
+                          {order.amount_paid > 0 ? "-" : ""}
+                          {order.amount_paid}
                         </div>
                       </div>
 
@@ -691,6 +779,7 @@ function OrderDetail() {
 
                       <Button
                         variant="contained"
+                        disabled={order?.complain == null ? false : true}
                         onClick={() => setOpenCreateComplain(true)}
                         sx={{
                           textTransform: "none",
@@ -791,6 +880,7 @@ function OrderDetail() {
                   </div>
                 </div>
               </div>
+
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
                 trạng thái vận chuyển
               </div>
@@ -824,6 +914,8 @@ function OrderDetail() {
       <CreateComplain
         open={openCreateComplain}
         setOpen={setOpenCreateComplain}
+        order_id={id}
+        setReload={setReload}
       />
 
       {/* Rating Item */}

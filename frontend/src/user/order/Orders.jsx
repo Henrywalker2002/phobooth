@@ -31,6 +31,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { daysleftCount, isBefore } from "../../util/Compare";
 import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
+
 import Filter from "./Filter";
 import { translateOrderStatus } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
@@ -42,6 +43,7 @@ function Orders() {
   const [openCancel, setOpenCancel] = useState(false);
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
+
   const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
   const [cancelId, setCancelId] = useState();
@@ -329,69 +331,152 @@ function Orders() {
                   </TableBody>
                 </Table>
 
-                {/* yêu cầu thanh toán */}
-                <div className="flex flex-col gap-3 my-5">
-                  <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
-                    Yêu cầu thanh toán gần nhất
-                  </div>
-                  {recentRequest ? (
-                    <Paper
-                      sx={{
-                        width: "430px",
-                        border: "0.5px solid #d6d3d1",
-                        alignItems: "stretch",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: "30px",
-                        borderRadius: "8px",
-                        padding: "15px",
-                      }}
-                    >
-                      <div className="items-stretch flex grow  flex-col py-px gap-2.5">
-                        <div className="text-zinc-500 text-base font-medium leading-6">
-                          Thanh toán lần {recentRequest.no}
-                        </div>
-                        <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
-                          {formatter.format(recentRequest.amount)}
-                        </div>
-                        <div className="flex  gap-3 ">
-                          <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
-                            Thời hạn :
-                          </div>
-                          <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                            {dayjs(recentRequest.expiration_date).format(
-                              "DD-MM-YYYY"
-                            )}
-                          </div>
-                          <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                            Còn {daysleftCount(recentRequest.expiration_date)}{" "}
-                            ngày
-                          </div>
-                        </div>
-                      </div>
-                      <Button
-                        variant="contained"
+                {/* Pay request + complain */}
+                <div className="flex justify-between items-start px-16">
+                  {/* yêu cầu thanh toán */}
+                  <div className="flex flex-col gap-3 my-5">
+                    <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
+                      Yêu cầu thanh toán gần nhất
+                    </div>
+                    {recentRequest ? (
+                      <Paper
                         sx={{
-                          justifyContent: "center",
-                          alignSelf: "center",
-                          fontSize: "13px",
-                          textTransform: "none",
-                          borderRadius: "43px",
-                          color: "#F6F5FB",
-                          bgcolor: "#3F41A6",
-                          width: "102px",
-                          height: "32px",
-                          "&:hover": {
-                            bgcolor: "#3F41A6B2",
-                          },
+                          width: "430px",
+                          border: "0.5px solid #d6d3d1",
+                          alignItems: "stretch",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "30px",
+                          borderRadius: "8px",
+                          padding: "15px",
                         }}
                       >
-                        Thanh toán
-                      </Button>
-                    </Paper>
-                  ) : (
-                    "Chưa có yêu cầu cần thanh toán!"
-                  )}
+                        <div className="items-stretch flex grow  flex-col py-px gap-2.5">
+                          <div className="text-zinc-500 text-base font-medium leading-6">
+                            Thanh toán lần {recentRequest.no}
+                          </div>
+                          <div className="text-indigo-800 text-xl font-semibold leading-4 whitespace-nowrap ">
+                            {formatter.format(recentRequest.amount)}
+                          </div>
+                          <div className="flex  gap-3 ">
+                            <div className="text-zinc-500 text-sm leading-5 self-center whitespace-nowrap my-auto">
+                              Thời hạn :
+                            </div>
+                            <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
+                              {dayjs(recentRequest.expiration_date).format(
+                                "DD-MM-YYYY"
+                              )}
+                            </div>
+                            <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
+                              Còn {daysleftCount(recentRequest.expiration_date)}{" "}
+                              ngày
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            justifyContent: "center",
+                            alignSelf: "center",
+                            fontSize: "13px",
+                            textTransform: "none",
+                            borderRadius: "43px",
+                            color: "#F6F5FB",
+                            bgcolor: "#3F41A6",
+                            width: "102px",
+                            height: "32px",
+                            "&:hover": {
+                              bgcolor: "#3F41A6B2",
+                            },
+                          }}
+                        >
+                          Thanh toán
+                        </Button>
+                      </Paper>
+                    ) : (
+                      "Chưa có yêu cầu cần thanh toán!"
+                    )}
+                  </div>
+                  {/* Complain */}
+                  <div className="flex flex-col gap-3 my-5">
+                    <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
+                      Khiếu nại
+                    </div>
+                    {row.complain !== null ? (
+                      <Paper
+                        sx={{
+                          width: "330px",
+                          border: "0.5px solid #d6d3d1",
+                          alignItems: "stretch",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "20px",
+                          borderRadius: "8px",
+                          padding: "10px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                          <div className="text-zinc-500 text-base font-medium leading-6">
+                            {row?.complain?.title}
+                          </div>
+                          <div className="flex items-stretch gap-2.5 mt-2">
+                            <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
+                              Ngày gửi :
+                            </div>
+                            <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
+                              {dayjs(row?.complain?.created_at).format(
+                                "DD-MM-YYYY"
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex justify-start mt-1.5">
+                            <Button
+                              variant="text"
+                              onClick={() =>
+                                navigate(
+                                  `/complain/detail/${row?.complain?.id}`,
+                                  {
+                                    state: { orderId: row?.id },
+                                  }
+                                )
+                              }
+                              sx={{
+                                textTransform: "none",
+                                color: "#3F41A6",
+                                fontSize: "14px",
+                                fontWeight: "600px",
+                                padding: "0",
+                                "&:hover": {
+                                  bgcolor: "#E2E5FF",
+                                  color: "#1A237E",
+                                },
+                              }}
+                            >
+                              Xem chi tiết
+                            </Button>
+                          </div>
+                        </div>
+                        {row?.complain?.status === "PENDING" ? (
+                          <div className="w-fit text-red-500 text-sm leading-6 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                            Chờ xử lý
+                          </div>
+                        ) : row?.complain?.status === "RESOLVED" ? (
+                          <div className="w-fit text-green-600 text-sm leading-6 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                            Đã giải quyết
+                          </div>
+                        ) : row?.complain?.status === "IN_PROGRESS" ? (
+                          <div className="w-fit text-yellow-700 text-sm leading-6 whitespace-nowrap rounded bg-yellow-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                            Đang xử lý
+                          </div>
+                        ) : null}
+                      </Paper>
+                    ) : (
+                      <div className="flex min-w-[330px]">
+                        Chưa có khiếu nại!
+                      </div>
+                    )}
+                  </div>
                 </div>
               </Box>
             </Collapse>
@@ -441,6 +526,7 @@ function Orders() {
       </Breadcrumbs>
 
       {/* Header */}
+
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
         Quản lý đơn hàng
       </div>

@@ -1,5 +1,5 @@
 from base.views import BaseGenericViewSet
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, DestroyModelMixin
 from demo.models import ImageDemo, ImageDemoComment
 from demo.serializers import (CreateDemoImageSerializer, ReadDemoImageSerializer, 
                               CreateDemoImageCommentSerializer, ReadDemoImageCommentSerializer)
@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from demo.exceptions import QueryParamDemoImageException, QueryParamDemoImageCommentException
 
 
-class ImageDemoViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin):
+class ImageDemoViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin, DestroyModelMixin):
     queryset = ImageDemo.objects.all()
     serializer_class = {"default" : ReadDemoImageSerializer, "create" : CreateDemoImageSerializer, 
                         "retrieve" : ReadDemoImageSerializer,}

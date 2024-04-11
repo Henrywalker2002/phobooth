@@ -21,6 +21,7 @@ import { BiStore } from "react-icons/bi";
 import { CgFileDocument } from "react-icons/cg";
 import { LuTicket } from "react-icons/lu";
 import { RiSearchLine } from "react-icons/ri";
+import { HiOutlineMenu } from "react-icons/hi";
 import {
   MdNotificationsNone,
   MdOutlineChat,
