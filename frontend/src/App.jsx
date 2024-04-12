@@ -37,6 +37,7 @@ import Categories from "./admin/categories/Categories";
 import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
+import StudioReport from "./studio/report/Report";
 
 function App() {
   const theme = createTheme({
@@ -112,6 +113,7 @@ function App() {
             <Route path="/studio/orders" element={<StudioOrders />} />
             <Route path="/studio/profile" element={<StudioProfile />} />
             <Route path="/studio/profile/verify" element={<VerifyStudio />} />
+            <Route path="/studio/report" element={<StudioReport />} />
             {/* Studio Detail dành cho user xem */}
             <Route path="/studio/:code_name" element={<StudioDetail />} />
             {/* Studio Home trang chủ của Studio đăng nhập vào */}

@@ -154,14 +154,16 @@ function Demo() {
           </div>
 
           {/* Slider */}
-          <Slider
-            currentDemo={currentDemo}
-            setCurrentDemo={setCurrentDemo}
-            maxSteps={imageList.length}
-            step={step}
-            setStep={setStep}
-            imageList={imageList}
-          />
+          {imageList.length > 0 && (
+            <Slider
+              currentDemo={currentDemo}
+              setCurrentDemo={setCurrentDemo}
+              maxSteps={imageList.length}
+              step={step}
+              setStep={setStep}
+              imageList={imageList}
+            />
+          )}
 
           {/* Info + Cmt */}
 

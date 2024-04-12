@@ -4,7 +4,7 @@ import {
   Button,
   ImageList,
   ImageListItem,
-  Badge, 
+  Badge,
   IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,7 +20,7 @@ function Album({
   setCurrentDemo,
   narbarType,
   order_id,
-  page, 
+  page,
   setPage,
   totalImage,
   setTotalImage,
@@ -31,30 +31,34 @@ function Album({
 
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollHeight, scrollTop, clientHeight } = scrollContainerRef.current;
+      const { scrollHeight, scrollTop, clientHeight } =
+        scrollContainerRef.current;
       const isBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-  
+
       if (isBottom) {
-        console.log('Scrolled to the bottom');
+        console.log("Scrolled to the bottom");
         // Load more images or do something else
         setPage(page + 1);
       }
     };
-  
+
     const scrollContainer = scrollContainerRef.current;
-    scrollContainer.addEventListener('scroll', handleScroll);
+    scrollContainer.addEventListener("scroll", handleScroll);
 
     return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll);
+      scrollContainer.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const handleDeleteImg = (item) => {
-    axiosPrivate.delete(`/demo/${item.id}/`).then((res) => {
-      setImageList(imageList.filter((img) => img.id !== item.id));
-    }).then((err) => {
-      console.log(err);
-    });
+    axiosPrivate
+      .delete(`/demo/${item.id}/`)
+      .then((res) => {
+        setImageList(imageList.filter((img) => img.id !== item.id));
+      })
+      .then((err) => {
+        console.log(err);
+      });
   };
   return (
     <Paper
@@ -63,14 +67,14 @@ function Album({
         width: "fit-content",
         margin: "40px 30px",
         minWidth: "300px",
-        maxHeight : "700px",
-        overflowY : "scroll",
-        overflowX : "hidden",
+        height: "700px",
+        overflowY: "scroll",
+        overflowX: "hidden",
         border: "1px solid #d6d3d1",
       }}
     >
       <div className="flex justify-between items-center px-4 py-2 bg-white rounded-lg leading-[150%]">
-        {narbarType === "studio" &&
+        {narbarType === "studio" && (
           <Button
             variant="text"
             startIcon={<AddIcon />}
@@ -85,7 +89,7 @@ function Album({
           >
             Thêm hình ảnh
           </Button>
-        }
+        )}
         <div className="flex gap-1 text-base">
           <div className="text-zinc-900">Tổng số :</div>
           <div className="text-stone-500">{totalImage}</div>
@@ -124,7 +128,6 @@ function Album({
               sx={{
                 bgcolor: "transparent",
                 height: "108px",
-
               }}
             >
               <img
