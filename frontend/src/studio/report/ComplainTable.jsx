@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Rating,
   Pagination,
@@ -12,27 +12,48 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 
-function ComplainTable() {
-  const sortTypes = ["Mới nhất", "Cũ nhất", "Đang xử lý", "Đã giải quyết"];
-  const complainList = [
-    {
-      no: 1,
-      name: "Chất lượng ảnh kém",
-      type: "Hoàn tiền",
-      updatedDate: "10-10-2024",
-      item: "Chụp ảnh gia đình",
-      status: "RESOLVED",
-    },
-    {
-      no: 2,
-      name: "Chất lượng ảnh kém",
-      type: "Hoàn tiền",
-      updatedDate: "10-10-2024",
-      item: "Chụp ảnh gia đình",
-      status: "IN_PROGRESS",
-    },
+const handleDate = (modified_at) => {
+  const date = new Date(modified_at);
+  return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+}
+
+function ComplainTable({studioInfor} ) {
+  const sortTypes = [
+    {value : '-modified_at', label : 'Mới nhất'},
+    {value : 'modified_at', label : 'Cũ nhất',},
+    {value : "IN_PROGRESS", label : "Đang xử lý",},
+    {value : "RESOLVED", label : "Đã giải quyết",}
   ];
+  const [filter, setFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalItem, setTotalItem] = useState(0);
+  const [complainList, setComplainList] = useState([]);
+  const limit = 10;
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let params = {
+      limit : limit,
+      offset : (page - 1) * limit,
+    }
+    if (filter) {
+      if (filter == "IN_PROGRESS" || filter == "RESOLVED") {
+        params.status = filter;
+      } else {
+        params.ordering = filter;
+      }
+    }
+    axiosPrivate.get('/complain/', {params : params}).then((res) => {
+      setComplainList(res.data.results);
+      setTotalItem(res.data.count);
+    }).catch((res) => {
+      console.log(res.data);
+    });
+  }, [page, filter])
   return (
     <Paper
       elevation={2}
@@ -48,12 +69,12 @@ function ComplainTable() {
             <div className="flex-auto text-xl font-semibold leading-7 text-zinc-900">
               Khiếu nại liên quan
             </div>
-            <div className="leading-[150%] text-zinc-500">Tổng số : 20</div>
+            <div className="leading-[150%] text-zinc-500">Tổng số : {totalItem}</div>
           </div>
           <TextField
             id="outlined-select-currency"
             select
-            defaultValue="Mới nhất"
+            value={filter}
             sx={{
               "& .MuiInputBase-input": {
                 width: "180px",
@@ -63,10 +84,11 @@ function ComplainTable() {
                 fontSize: "14px",
               },
             }}
+            onChange={(e) => setFilter(e.target.value)}
           >
             {sortTypes.map((option, index) => (
-              <MenuItem key={index} value={option}>
-                {option}
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
               </MenuItem>
             ))}
           </TextField>
@@ -86,7 +108,7 @@ function ComplainTable() {
                   Ngày cập nhật
                 </TableCell>
                 <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                  Sản phẩm
+                  Đơn hàng
                 </TableCell>
                 <TableCell align="left" sx={{ color: "#3F41A6" }}>
                   Trạng thái
@@ -99,18 +121,19 @@ function ComplainTable() {
                   <TableRow
                     key={i}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    onClick={() => navigate(`/complain/detail/${complain.id}`)}
                   >
                     <TableCell component="th" scope="row">
-                      {complain.no}
+                      {complain.id}
                     </TableCell>
-                    <TableCell align="left">{complain.name}</TableCell>
+                    <TableCell align="left">{complain.title}</TableCell>
                     <TableCell align="left">
                       <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2 py-1">
                         {complain?.type}
                       </div>
                     </TableCell>
-                    <TableCell align="left">{complain.updatedDate}</TableCell>
-                    <TableCell align="left">{complain.item}</TableCell>
+                    <TableCell align="left">{handleDate(complain.modified_at)}</TableCell>
+                    <TableCell align="left">{complain.order}</TableCell>
                     <TableCell align="left">
                       {complain.status === "PENDING" ? (
                         <div className="w-[115px] text-red-500 text-sm leading-6 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 flex justify-center">
@@ -138,8 +161,8 @@ function ComplainTable() {
         </TableContainer>
 
         <Pagination
-          count={3}
-          // onChange={getServiceForPage}
+          count={Math.ceil(totalItem / limit)}
+          onChange={(e, value) => setPage(value)}
           sx={{
             margin: "0 auto",
             width: "fit-content",
