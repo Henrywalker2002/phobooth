@@ -38,6 +38,7 @@ import NotificationMgmt from "./user/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
 import StudioReport from "./studio/report/Report";
+import TransferRequests from "./admin/transfer/Requests";
 
 function App() {
   const theme = createTheme({
@@ -137,6 +138,7 @@ function App() {
             />
             <Route path="/admin/complains" element={<Complains />} />
             <Route path="/admin/categories" element={<Categories />} />
+            <Route path="/admin/transfer" element={<TransferRequests />} />
             <Route path="/admin" element={<AdminHome />} />
           </Route>
 
