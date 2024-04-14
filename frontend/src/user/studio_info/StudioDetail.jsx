@@ -24,7 +24,7 @@ import Footer from "./Footer";
 const handleDate = (date) => {
   const newDate = new Date(date);
   return newDate.toLocaleDateString();
-}
+};
 
 function StudioDetail() {
   // global
@@ -34,6 +34,7 @@ function StudioDetail() {
   // local
   const [studio, setStudio] = useState({});
   const [type, setType] = useState("service");
+  const [filterVal, setFilterVal] = useState({});
 
   useEffect(() => {
     axiosPrivate
@@ -209,7 +210,7 @@ function StudioDetail() {
 
       {/* Tab loại sản phẩm */}
       <div className="flex gap-20 items-start my-5 w-fit mx-auto">
-        <Filter />
+        <Filter filterVal={filterVal} setFilterVal={setFilterVal} />
         <div className="">
           <TabContext value={type}>
             <Box>
@@ -261,15 +262,27 @@ function StudioDetail() {
 
             <TabPanel value="service">
               {/* Service List */}
-              <ItemList code_name={code_name} itemType={"SERVICE"} />
+              <ItemList
+                code_name={code_name}
+                itemType={"SERVICE"}
+                filterVal={filterVal}
+              />
             </TabPanel>
             <TabPanel value="product">
               {/* Product List */}
-              <ItemList code_name={code_name} itemType={"PRODUCT"} />
+              <ItemList
+                code_name={code_name}
+                itemType={"PRODUCT"}
+                filterVal={filterVal}
+              />
             </TabPanel>
             <TabPanel value="service-pack">
               {/* Package List */}
-              <ItemList code_name={code_name} itemType={"SERVICE_PACK"} />
+              <ItemList
+                code_name={code_name}
+                itemType={"SERVICE_PACK"}
+                filterVal={filterVal}
+              />
             </TabPanel>
           </TabContext>
         </div>

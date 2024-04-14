@@ -405,6 +405,13 @@ function Navbar() {
                 </ListItemIcon>
                 <ListItemText>Kênh Studio</ListItemText>
               </MenuItem>
+
+              <MenuItem onClick={() => navigate("/advanced-search/")}>
+                <ListItemIcon>
+                  <RiSearchLine className="w-5 h-5" />
+                </ListItemIcon>
+                <ListItemText>Tìm kiếm nâng cao</ListItemText>
+              </MenuItem>
               <MenuItem onClick={() => navigate("/orders")}>
                 <ListItemIcon>
                   <CgFileDocument style={{ width: "20px", height: "20px" }} />

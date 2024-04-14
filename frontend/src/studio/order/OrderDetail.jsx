@@ -483,7 +483,7 @@ function OrderDetail(props) {
                   startIcon={
                     <FaArrowRight style={{ width: "18px", height: "18px" }} />
                   }
-                  onClick={() => navigate(`/studio/order/detail/${id}/demo`)}
+                  onClick={() => navigate(`/order/${id}/demo`)}
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",

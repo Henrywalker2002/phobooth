@@ -90,6 +90,7 @@ function Home() {
                   endIcon={
                     <FaArrowRight style={{ width: "18px", height: "18px" }} />
                   }
+                  onClick={() => navigate("/advanced-search/")}
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",
