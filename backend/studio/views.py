@@ -66,7 +66,7 @@ class StudioViewSet(BaseModelViewSet):
         serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
-        if 'address' in data:
+        if 'address' in serializer.validated_data :
             address_data = serializer.validated_data.pop('address')
             address = instance.address
             if address:

@@ -20,6 +20,7 @@ class Studio(BaseModel):
     star = models.FloatField(default=5)
     number_rate = models.IntegerField(default=0)
     account_name = models.CharField(max_length=255, null=True, blank=True)
+    account_balance = models.IntegerField(default=0)
     @property
     def total_item(self):
         return self.items.count()

@@ -42,6 +42,7 @@ class Order(BaseModel):
         default=OrderStatusChoice.ORDERED,
     )
     note = models.TextField(null=True, default=None)
+    done_payment = models.BooleanField(default=False)
     
     @property
     def remaining_amount(self):

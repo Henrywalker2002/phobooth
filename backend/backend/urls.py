@@ -23,6 +23,7 @@ from complain.views import ComplainViewSet
 from complain_forum.views import ReplyViewSet
 from demo.views import ImageDemoViewSet, ImageDemoCommentViewSet
 from rate.views import RateViewSet
+from draw_money.views import DrawMoneyViewSet
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -55,6 +56,7 @@ router.register(r'complain-reply', ReplyViewSet, 'complain-reply')
 router.register(r'demo', ImageDemoViewSet, 'demo')
 router.register(r'demo-comment', ImageDemoCommentViewSet, 'demo-comment')
 router.register(r'rate', RateViewSet, 'rate')
+router.register(r'draw-money', DrawMoneyViewSet, 'draw-money')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -1,20 +1,41 @@
 import React from "react";
-import { Paper, Avatar, Rating, Button } from "@mui/material";
+import { Paper, Avatar, Rating, Button, Snackbar } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { RiBarChartFill } from "react-icons/ri";
 import StarIcon from "@mui/icons-material/Star";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import { FaArrowRight } from "react-icons/fa6";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function Widgets() {
+function Widgets( {studioInfor, setStudioInfor} ) {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+  const [openSBar, setOpenSBar] = React.useState(false);
+  const [messageBar, setMessageBar] = React.useState('');
+  const axiosPrivate = useAxiosPrivate();
+
+  const handleDrawMoney = () => {
+    axiosPrivate.post('/draw-money/', {}).then((res) => {
+      setOpenSBar(true);
+      setMessageBar('Rút tiền thành công');
+      setStudioInfor({...studioInfor, account_balance: 0});
+    }).catch((res) => {
+      console.log(res.data);
+      if (res.data.status === 400) {
+        if ("non_field_errors" in res.data && res.data.non_field_errors[0].includes('account number') ) {
+          setOpenSBar(true);
+          setMessageBar('Chưa có thông tin tài khoản ngân hàng');
+        }
+      }
+    });
+  };
+
   return (
     <div className="flex gap-5 px-5 py-2.5 my-5">
-      <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
+      {/* <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -44,7 +65,7 @@ function Widgets() {
             </div>
           </div>
         </Paper>
-      </div>
+      </div> */}
 
       <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
         <Paper
@@ -68,16 +89,17 @@ function Widgets() {
                 </div>
                 <div className="flex gap-1 items-end">
                   <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                    300000
+                    {studioInfor.number_order_completed}
                   </div>
                   <div className="text-xs tracking-tight leading-5 text-slate-400">
                     đơn
                   </div>
                 </div>
-                <div className="flex gap-1.5 text-xs tracking-tight leading-5">
+                {/* have not handled yet */}
+                {/* <div className="flex gap-1.5 text-xs tracking-tight leading-5">
                   <div className="font-bold text-teal-500">+23%</div>
                   <div className="text-slate-400">kể từ tháng trước</div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -104,11 +126,12 @@ function Widgets() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="text-xl text-indigo-900 font-semibold tracking-tight">
-                    4
+                    {studioInfor.star}
                   </div>
                   <Rating
                     name="read-only"
-                    value={4}
+                    value={parseFloat(studioInfor.star)}
+                    precision={0.1}
                     readOnly
                     size="medium"
                     sx={{ color: "#3F41A6" }}
@@ -140,7 +163,7 @@ function Widgets() {
                 </div>
                 <div className="flex gap-1 items-end">
                   <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                    300
+                    {studioInfor.total_item}
                   </div>
                   <div className="text-xs tracking-tight leading-5 text-slate-400">
                     sản phẩm
@@ -171,7 +194,7 @@ function Widgets() {
                   Số dư
                 </div>
                 <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                  {formatter.format(3000000)}
+                  {studioInfor.account_balance}
                 </div>
                 <Button
                   startIcon={
@@ -188,6 +211,8 @@ function Widgets() {
                       color: "#1A237E",
                     },
                   }}
+                  disabled = {studioInfor.account_balance < 10000}
+                  onClick={handleDrawMoney}
                 >
                   Rút tiền
                 </Button>
@@ -196,6 +221,12 @@ function Widgets() {
           </div>
         </Paper>
       </div>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={2000}
+        message= {messageBar}
+      />
     </div>
   );
 }

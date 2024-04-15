@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Rating,
   Pagination,
@@ -14,40 +14,48 @@ import {
   Link,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function ItemTable() {
+const mapperType = {
+  PRODUCT: "Sản phẩm",
+  SERVICE: "Dịch vụ",
+  SERVICE_PACK : "Gói dịch vụ"
+}
+
+function ItemTable({studioInfor, setStudioInfor}) {
+  const axiosPrivate = useAxiosPrivate();
+  const [totalItem, setTotalItem] = useState(0);
+  const [itemList, setItemList] = useState([]);
+  const [ordering, setOrdering] = useState("")
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const navigate = useNavigate();
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
-  const itemList = [
-    {
-      no: 1,
-      name: "Chụp ảnh gia đình",
-      type: "Dịch vụ",
-      category: "Gia đình",
-      star: "4.8",
-      min_price: "200",
-      max_price: "400",
-    },
-    {
-      no: 2,
-      name: "Chụp ảnh gia đình",
-      type: "Dịch vụ",
-      category: "Gia đình",
-      star: "4.8",
-      min_price: "200",
-      max_price: "400",
-    },
-  ];
+
+  useEffect(() => {
+    var params = {
+      limit : limit,
+      offset : (page - 1) * limit,
+      studio : studioInfor.code_name,
+      ordering : ordering
+    }
+    axiosPrivate.get('/item/', {params : params}).then((res) => {
+      setItemList(res.data.results);
+      setTotalItem(res.data.count);
+    }).catch((res) => {
+      console.log(res.data);
+    });
+  }, [page, ordering]);
 
   const sortTypes = [
-    "Mới nhất",
-    "Cũ nhất",
-    "Đánh giá cao nhất",
-    "Giá cao nhất",
-  ];
+    {value : '-created_at', label : 'Mới nhất'},
+    {value : 'created_at', label : 'Cũ nhất'},
+    {value : '-star', label : 'Đánh giá cao nhất'},
+    {value : 'star', label : 'Đánh giá thấp nhất'},
+  ]
 
   return (
     <Paper
@@ -65,7 +73,7 @@ function ItemTable() {
               Xếp hạng sản phẩm
             </div>
             <div className="flex gap-5 text-sm items-center">
-              <div className="leading-[150%] text-zinc-500">Tổng số : 20</div>
+              <div className="leading-[150%] text-zinc-500">Tổng số : {totalItem}</div>
               <Link
                 variant="text"
                 component="button"
@@ -98,10 +106,11 @@ function ItemTable() {
                 fontSize: "14px",
               },
             }}
+            onChange={(e) => setOrdering(e.target.value)}
           >
-            {sortTypes.map((option, index) => (
-              <MenuItem key={index} value={option}>
-                {option}
+            {sortTypes.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
               </MenuItem>
             ))}
           </TextField>
@@ -134,9 +143,10 @@ function ItemTable() {
                   <TableRow
                     key={i}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    onClick={() => navigate(`/item/detail/${item.id}`)}
                   >
                     <TableCell component="th" scope="row">
-                      {item.no}
+                      {item.id}
                     </TableCell>
                     <TableCell align="left">
                       <div className="items-stretch flex gap-5">
@@ -152,12 +162,12 @@ function ItemTable() {
                     </TableCell>
                     <TableCell align="left">
                       <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
-                        {item?.type}
+                        {mapperType[item.type]}
                       </div>
                     </TableCell>
                     <TableCell align="left">
                       <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
-                        {item?.category}
+                        {item?.category?.title}
                       </div>
                     </TableCell>
                     <TableCell align="left">
@@ -168,6 +178,7 @@ function ItemTable() {
                         <Rating
                           name="read-only"
                           value={item?.star}
+                          precision={0.1}
                           readOnly
                           size="small"
                           sx={{ color: "#3F41A6" }}
@@ -179,7 +190,7 @@ function ItemTable() {
                         ? `${formatter.format(
                             item.min_price
                           )} - ${formatter.format(item.max_price)}`
-                        : ""}
+                        : formatter.format(item.fixed_price)}
                     </TableCell>
                   </TableRow>
                 ))
@@ -193,8 +204,8 @@ function ItemTable() {
         </TableContainer>
 
         <Pagination
-          count={3}
-          // onChange={getServiceForPage}
+          count={Math.ceil(totalItem / limit)}
+          onChange={(e, value) => setPage(value)}
           sx={{
             margin: "0 auto",
             width: "fit-content",
