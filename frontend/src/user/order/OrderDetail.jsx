@@ -200,7 +200,6 @@ function OrderDetail() {
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
-    const [openRating, setOpenRating] = useState(false);
 
     return (
       <React.Fragment>
@@ -922,7 +921,6 @@ function OrderDetail() {
         open={openRating}
         setOpen={setOpenRating}
         orderItem={selectedItem}
-        // setSuccessRate={setSuccessRate}
       />
 
       {/* Paying */}

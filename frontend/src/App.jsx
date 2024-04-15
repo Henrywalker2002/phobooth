@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
-import Home from "./user/Home";
+import Home from "./user/home/Home";
 import Login from "./user/Login";
 import Signup from "./user/Signup";
 import ItemDetail from "./user/item_detail/ItemDetail";

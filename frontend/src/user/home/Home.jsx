@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import {
   Button,
   ButtonBase,
@@ -14,14 +14,16 @@ import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
-import axios from "../api/axios";
-import Err401Dialog from "../components/Err401Dialog";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import axios from "../../api/axios";
+import Err401Dialog from "../../components/Err401Dialog";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Carousel from "./Carousel";
+import { useCookies } from "react-cookie";
 
 function Home() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const [cookies] = useCookies(["accInfo"]);
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
 
   const [itemList, setItemList] = useState([]);
@@ -90,6 +92,7 @@ function Home() {
                   endIcon={
                     <FaArrowRight style={{ width: "18px", height: "18px" }} />
                   }
+                  onClick={() => navigate("/advanced-search/")}
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",
@@ -157,9 +160,13 @@ function Home() {
                           <ButtonBase>
                             <Button
                               variant="contained"
-                              onClick={() =>
-                                navigate(`/item/detail/${item.id}`)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+
+                                if (cookies?.userInfo?.username)
+                                  handleAddToCart(item.id);
+                                else setOpenErr401(true);
+                              }}
                               sx={{
                                 alignSelf: "center",
                                 borderRadius: "50%",
@@ -198,7 +205,7 @@ function Home() {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseSBar}
         message="Đã thêm vào giỏ hàng !"
       />

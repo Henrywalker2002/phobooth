@@ -14,12 +14,15 @@ import {
 import React, { useState, useEffect } from "react";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import { RiSearchLine } from "react-icons/ri";
 import AddIcon from "@mui/icons-material/Add";
 import { FaArrowRight } from "react-icons/fa6";
 import ItemPage from "./ItemPage";
-import axios from "../api/axios";
+import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Carousel({ handleAddToCart, setOpenErr401 }) {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [countStep, setCountStep] = useState(1);
@@ -112,6 +115,25 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
       <div className="w-full max-w-[1320px] mt-10 mb-14">
         <div className="gap-5 flex">
           <div className="flex flex-col justify-center items-stretch w-[18%]">
+            <Button
+              variant="contained"
+              startIcon={<RiSearchLine className="w-5 h-5 mx-auto" />}
+              onClick={() => navigate("/advanced-search/")}
+              sx={{
+                marginX: "auto",
+                marginBottom: "20px",
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "fit-content",
+                paddingX: "20px",
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Tìm kiếm nâng cao
+            </Button>
             <Paper>
               <MenuList dense sx={{ padding: 0 }}>
                 {categories.length > 0
@@ -136,7 +158,10 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                   : "Empty"}
 
                 <Divider />
-                <MenuItem sx={{ height: "50px" }}>
+                <MenuItem
+                  sx={{ height: "50px" }}
+                  onClick={() => navigate("/advanced-search/")}
+                >
                   <ListItemIcon>
                     <AddIcon fontSize="medium" />
                   </ListItemIcon>
@@ -152,6 +177,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                   endIcon={
                     <FaArrowRight style={{ width: "18px", height: "18px" }} />
                   }
+                  onClick={() => navigate("/advanced-search/")}
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",

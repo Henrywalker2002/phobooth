@@ -24,8 +24,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 const handleDate = (date) => {
   const newDate = new Date(date);
   return newDate.toLocaleDateString();
-
-}
+};
 
 function Home() {
   const [cookies] = useCookies(["accInfo"]);
@@ -33,6 +32,7 @@ function Home() {
   // local
   const [type, setType] = useState("service");
   const [studio, setStudio] = useState({});
+  const [filterVal, setFilterVal] = useState({});
 
   useEffect(() => {
     axiosPrivate
@@ -208,7 +208,7 @@ function Home() {
 
       {/* Tab loại sản phẩm */}
       <div className="flex gap-20 items-start my-5 w-fit mx-auto">
-        <Filter />
+        <Filter filterVal={filterVal} setFilterVal={setFilterVal} />
         <div>
           <TabContext value={type}>
             <Box>
@@ -260,15 +260,15 @@ function Home() {
 
             <TabPanel value="service">
               {/* Service List */}
-              <ItemList itemType={"service"} />
+              <ItemList itemType={"SERVICE"} filterVal={filterVal} />
             </TabPanel>
             <TabPanel value="product">
               {/* Product List */}
-              <ItemList itemType={"product"} />
+              <ItemList itemType={"PRODUCT"} filterVal={filterVal} />
             </TabPanel>
             <TabPanel value="service-pack">
               {/* Package List */}
-              <ItemList itemType={"service-pack"} />
+              <ItemList itemType={"SERVICE_PACK"} filterVal={filterVal} />
             </TabPanel>
           </TabContext>
         </div>

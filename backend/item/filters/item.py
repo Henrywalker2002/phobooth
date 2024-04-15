@@ -14,3 +14,6 @@ class ItemFilter(filter.FilterSet):
             ('star', 'star')
         )
     )
+    min_price = filter.NumberFilter(field_name="min_price", lookup_expr='gte')
+    max_price = filter.NumberFilter(field_name="max_price", lookup_expr='lte')
+    star = filter.NumberFilter(field_name="star", lookup_expr='gte')
