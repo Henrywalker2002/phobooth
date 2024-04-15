@@ -134,7 +134,11 @@ function Booking() {
   // update adress
   const handleUpdateAddress = (newAddr) => {
     console.log(newAddr);
-    setAddress(newAddr);
+    let updateAddr = {
+      ...address,
+      ...newAddr,
+    };
+    setAddress(updateAddr);
     setOpenEditAddr(false);
   };
 

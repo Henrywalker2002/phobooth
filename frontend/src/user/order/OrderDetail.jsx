@@ -24,6 +24,7 @@ import {
   AlertTitle,
   Tooltip,
 } from "@mui/material";
+import { FaArrowRight } from "react-icons/fa6";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
@@ -161,11 +162,11 @@ function OrderDetail() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/payment/?order=${id}&limit=2&offset=0`)
+      .get(`/payment/?order=${id}&limit=1&offset=0`)
       .then((res) => {
         // console.log(res.data);
         let count = res.data.count;
-        setPageCount(Math.ceil(count / 2));
+        setPageCount(Math.ceil(count / 1));
         setRequestList(res.data.results);
       })
       .catch((err) => {
@@ -174,12 +175,12 @@ function OrderDetail() {
   }, []);
 
   const getReqsForPage = (e, page) => {
-    let offset = 2 * (page - 1);
+    let offset = 1 * (page - 1);
     axiosPrivate
-      .get(`/payment/?order=${id}&limit=2&offset=${offset}`)
+      .get(`/payment/?order=${id}&limit=1&offset=${offset}`)
       .then((res) => {
         console.log(res.data);
-        let currCount = Math.ceil(res.data.count / 2);
+        let currCount = Math.ceil(res.data.count / 1);
         if (currCount !== pageCount) setPageCount(currCount);
         setRequestList(res.data.results);
       })
@@ -451,15 +452,15 @@ function OrderDetail() {
             {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
-                {/* payment request + complain*/}
-                <div className="flex flex-col w-[437px]">
+                {/* payment request + complain + demo*/}
+                <div className="flex flex-col w-[437px] gap-12">
                   {/* payment request */}
                   <div className="items-stretch flex flex-col px-5">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Yêu cầu thanh toán mới nhất
                     </div>
 
-                    <div className="flex flex-col mt-3 gap-5 h-[240px]">
+                    <div className="flex flex-col my-3 h-fit">
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -467,14 +468,14 @@ function OrderDetail() {
                                 <Paper
                                   key={req.id}
                                   sx={{
-                                    width: "430px",
+                                    width: "fit-content",
                                     border: "0.5px solid #d6d3d1",
                                     alignItems: "stretch",
                                     display: "flex",
                                     justifyContent: "space-between",
                                     gap: "30px",
                                     borderRadius: "8px",
-                                    padding: "15px",
+                                    padding: "10px 15px",
                                   }}
                                 >
                                   <div className="items-stretch flex grow  flex-col py-px gap-2.5">
@@ -536,14 +537,14 @@ function OrderDetail() {
                                   }}
                                   key={req.id}
                                   sx={{
-                                    width: "430px",
+                                    width: "fit-content",
                                     border: "0.5px solid #d6d3d1",
                                     alignItems: "stretch",
                                     display: "flex",
                                     justifyContent: "space-between",
                                     gap: "20px",
                                     borderRadius: "8px",
-                                    padding: "10px",
+                                    padding: "10px 15px",
                                     cursor: "pointer",
                                   }}
                                 >
@@ -580,7 +581,7 @@ function OrderDetail() {
                         count={pageCount}
                         onChange={getReqsForPage}
                         sx={{
-                          margin: "10px auto",
+                          margin: "0 auto",
                           width: "fit-content",
                           "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                             {
@@ -600,22 +601,22 @@ function OrderDetail() {
                       {order.complain !== null ? (
                         <Paper
                           sx={{
-                            width: "330px",
+                            width: "fit-content",
                             border: "0.5px solid #d6d3d1",
                             alignItems: "stretch",
                             display: "flex",
                             justifyContent: "space-between",
                             gap: "20px",
                             borderRadius: "8px",
-                            padding: "10px",
+                            padding: "10px 15px",
                             cursor: "pointer",
                           }}
                         >
-                          <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                          <div className="items-stretch flex grow basis-[0%] flex-col gap-1 pr-12 py-px max-md:pr-5">
                             <div className="text-zinc-500 text-base font-medium leading-6">
                               {order?.complain?.title}
                             </div>
-                            <div className="flex items-stretch gap-2.5 mt-2">
+                            <div className="flex items-stretch gap-2.5">
                               <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
                                 Ngày gửi :
                               </div>
@@ -625,7 +626,7 @@ function OrderDetail() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex justify-start mt-1.5">
+                            <div className="flex justify-start">
                               <Button
                                 variant="text"
                                 onClick={() =>
@@ -670,6 +671,35 @@ function OrderDetail() {
                         "Chưa có khiếu nại!"
                       )}
                     </div>
+                  </div>
+                  {/* Demo */}
+                  <div className="items-stretch flex flex-col px-5 gap-2">
+                    <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
+                      Thành phẩm
+                    </div>
+                    <Button
+                      startIcon={
+                        <FaArrowRight
+                          style={{ width: "18px", height: "16px" }}
+                        />
+                      }
+                      onClick={() => navigate(`/order/${id}/demo`)}
+                      sx={{
+                        textTransform: "none",
+                        color: "#3F41A6",
+                        width: "fit-content",
+                        padding: "5px 5px",
+                        height: "35px",
+                        borderRadius: "5px",
+                        fontSize: "15px",
+                        "&:hover": {
+                          color: "#1A237E",
+                          bgcolor: "transparent",
+                        },
+                      }}
+                    >
+                      Xem thành phẩm
+                    </Button>
                   </div>
                 </div>
 

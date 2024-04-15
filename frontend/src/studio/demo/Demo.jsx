@@ -77,62 +77,119 @@ function Demo() {
       {navbarType === "studio" ? <StudioNavbar /> : <NavBar />}
 
       {/* Breadcumbs */}
-      <Breadcrumbs
-        separator={
-          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
-        }
-        aria-label="breadcrumb"
-        sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
-        }}
-      >
-        <Link
-          component="button"
-          underline="none"
-          key="1"
-          sx={{ color: "#808080" }}
-          // href="/"
-          onClick={() => navigate("/studio", { replace: true })}
-        >
-          <HomeOutlinedIcon />
-        </Link>
-
-        <Link
-          component="button"
-          underline="none"
-          key="2"
-          color="inherit"
-          // href="/orders"
-          onClick={() => navigate("/studio/orders", { replace: true })}
-        >
-          Quản lý đơn hàng
-        </Link>
-
-        <Link
-          component="button"
-          underline="none"
-          key="3"
-          color="inherit"
-          // href="/orders"
-          onClick={() =>
-            navigate(`/studio/order/detail/${id}`, { replace: true })
+      {navbarType === "studio" ? (
+        <Breadcrumbs
+          separator={
+            <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
           }
-        >
-          Đơn hàng #{id}
-        </Link>
-
-        <Typography
-          key="4"
+          aria-label="breadcrumb"
           sx={{
-            fontSize: "16px",
-            color: "#3F41A6",
-            fontWeight: "500",
+            marginTop: "30px",
+            paddingLeft: "120px",
           }}
         >
-          Cập nhật thành phẩm
-        </Typography>
-      </Breadcrumbs>
+          <Link
+            component="button"
+            underline="none"
+            key="1"
+            sx={{ color: "#808080" }}
+            // href="/"
+            onClick={() => navigate("/studio", { replace: true })}
+          >
+            <HomeOutlinedIcon />
+          </Link>
+
+          <Link
+            component="button"
+            underline="none"
+            key="2"
+            color="inherit"
+            // href="/orders"
+            onClick={() => navigate("/studio/orders", { replace: true })}
+          >
+            Quản lý đơn hàng
+          </Link>
+
+          <Link
+            component="button"
+            underline="none"
+            key="3"
+            color="inherit"
+            // href="/orders"
+            onClick={() =>
+              navigate(`/studio/order/detail/${id}`, { replace: true })
+            }
+          >
+            Đơn hàng #{id}
+          </Link>
+
+          <Typography
+            key="4"
+            sx={{
+              fontSize: "16px",
+              color: "#3F41A6",
+              fontWeight: "500",
+            }}
+          >
+            Cập nhật thành phẩm
+          </Typography>
+        </Breadcrumbs>
+      ) : (
+        <Breadcrumbs
+          separator={
+            <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+          }
+          aria-label="breadcrumb"
+          sx={{
+            marginTop: "30px",
+            paddingLeft: "120px",
+          }}
+        >
+          <Link
+            component="button"
+            underline="none"
+            key="1"
+            sx={{ color: "#808080" }}
+            // href="/"
+            onClick={() => navigate("/", { replace: true })}
+          >
+            <HomeOutlinedIcon />
+          </Link>
+
+          <Link
+            component="button"
+            underline="none"
+            key="2"
+            color="inherit"
+            // href="/orders"
+            onClick={() => navigate("/orders", { replace: true })}
+          >
+            Quản lý đơn hàng
+          </Link>
+
+          <Link
+            component="button"
+            underline="none"
+            key="3"
+            color="inherit"
+            // href="/orders"
+            onClick={() => navigate(`/order/detail/${id}`, { replace: true })}
+          >
+            Đơn hàng #{id}
+          </Link>
+
+          <Typography
+            key="4"
+            sx={{
+              fontSize: "16px",
+              color: "#3F41A6",
+              fontWeight: "500",
+            }}
+          >
+            Xem thành phẩm
+          </Typography>
+        </Breadcrumbs>
+      )}
 
       <div className="flex gap-20 items-start px-[80px]">
         <Album

@@ -122,7 +122,12 @@ function Album({
           >
             <Badge
               badgeContent={
-                <IconButton onClick={() => handleDeleteImg(item)}>
+                <IconButton
+                  onClick={() => handleDeleteImg(item)}
+                  sx={{
+                    display: narbarType === "studio" ? "button" : "none",
+                  }}
+                >
                   <HighlightOffIcon
                     sx={{
                       color: "#78716C",
@@ -132,7 +137,6 @@ function Album({
               }
               sx={{
                 bgcolor: "transparent",
-                maxHeight: "90px",
               }}
             >
               <img
