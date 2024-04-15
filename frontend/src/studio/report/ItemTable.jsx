@@ -19,14 +19,14 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 const mapperType = {
   PRODUCT: "Sản phẩm",
   SERVICE: "Dịch vụ",
-  SERVICE_PACK : "Gói dịch vụ"
-}
+  SERVICE_PACK: "Gói dịch vụ",
+};
 
-function ItemTable({studioInfor, setStudioInfor}) {
+function ItemTable({ studioInfor }) {
   const axiosPrivate = useAxiosPrivate();
   const [totalItem, setTotalItem] = useState(0);
   const [itemList, setItemList] = useState([]);
-  const [ordering, setOrdering] = useState("")
+  const [ordering, setOrdering] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
   const navigate = useNavigate();
@@ -37,32 +37,37 @@ function ItemTable({studioInfor, setStudioInfor}) {
 
   useEffect(() => {
     var params = {
-      limit : limit,
-      offset : (page - 1) * limit,
-      studio : studioInfor.code_name,
-      ordering : ordering
-    }
-    axiosPrivate.get('/item/', {params : params}).then((res) => {
-      setItemList(res.data.results);
-      setTotalItem(res.data.count);
-    }).catch((res) => {
-      console.log(res.data);
-    });
+      limit: limit,
+      offset: (page - 1) * limit,
+      studio: studioInfor.code_name,
+      ordering: ordering,
+    };
+    axiosPrivate
+      .get("/item/", { params: params })
+      .then((res) => {
+        console.log(res);
+        setItemList(res.data.results);
+        setTotalItem(res.data.count);
+      })
+      .catch((res) => {
+        console.log(res.data);
+      });
   }, [page, ordering]);
 
   const sortTypes = [
-    {value : '-created_at', label : 'Mới nhất'},
-    {value : 'created_at', label : 'Cũ nhất'},
-    {value : '-star', label : 'Đánh giá cao nhất'},
-    {value : 'star', label : 'Đánh giá thấp nhất'},
-  ]
+    { value: "-created_at", label: "Mới nhất" },
+    { value: "created_at", label: "Cũ nhất" },
+    { value: "-star", label: "Đánh giá cao nhất" },
+    { value: "star", label: "Đánh giá thấp nhất" },
+  ];
 
   return (
     <Paper
       elevation={2}
       sx={{
-        maxWidth: "1000px",
-        margin: "20px auto",
+        width: "100%",
+        maxWidth: "1250px",
+        marginX: " auto",
         border: "0.5px solid #d6d3d1",
       }}
     >
@@ -73,7 +78,9 @@ function ItemTable({studioInfor, setStudioInfor}) {
               Xếp hạng sản phẩm
             </div>
             <div className="flex gap-5 text-sm items-center">
-              <div className="leading-[150%] text-zinc-500">Tổng số : {totalItem}</div>
+              <div className="leading-[150%] text-zinc-500">
+                Tổng số : {totalItem}
+              </div>
               <Link
                 variant="text"
                 component="button"
@@ -96,7 +103,7 @@ function ItemTable({studioInfor, setStudioInfor}) {
           <TextField
             id="outlined-select-currency"
             select
-            defaultValue="Mới nhất"
+            defaultValue="-created_at"
             sx={{
               "& .MuiInputBase-input": {
                 width: "180px",
@@ -115,24 +122,26 @@ function ItemTable({studioInfor, setStudioInfor}) {
             ))}
           </TextField>
         </div>
-        <TableContainer component={Paper} sx={{ width: "900px" }}>
+        <TableContainer component={Paper} sx={{ width: "100%" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead sx={{ bgcolor: "#E2E5FF" }}>
               <TableRow>
-                <TableCell sx={{ color: "#3F41A6" }}>STT</TableCell>
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell sx={{ color: "#3F41A6", width: "5%" }}>
+                  STT
+                </TableCell>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "30%" }}>
                   Tên sản phẩm
                 </TableCell>
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "15%" }}>
                   Phân loại
                 </TableCell>
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "15%" }}>
                   Danh mục
                 </TableCell>
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "15%" }}>
                   Đánh giá
                 </TableCell>
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "20%" }}>
                   Giá
                 </TableCell>
               </TableRow>
@@ -155,7 +164,7 @@ function ItemTable({studioInfor, setStudioInfor}) {
                           srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
                           className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
                         />
-                        <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow whitespace-nowrap my-auto">
+                        <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow truncate my-auto">
                           {item.name}
                         </div>
                       </div>
