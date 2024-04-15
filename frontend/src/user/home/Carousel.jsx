@@ -18,7 +18,7 @@ import { RiSearchLine } from "react-icons/ri";
 import AddIcon from "@mui/icons-material/Add";
 import { FaArrowRight } from "react-icons/fa6";
 import ItemPage from "./ItemPage";
-import axios from "../api/axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 function Carousel({ handleAddToCart, setOpenErr401 }) {

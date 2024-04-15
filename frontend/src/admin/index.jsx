@@ -17,7 +17,7 @@ import { FaStar } from "react-icons/fa";
 import axios from "../api/axios";
 import Err401Dialog from "../components/Err401Dialog";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import Carousel from "../user/Carousel";
+import Carousel from "../user/home/Carousel";
 
 export function AdminHome() {
   const axiosPrivate = useAxiosPrivate();

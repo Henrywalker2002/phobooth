@@ -29,7 +29,7 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
-        queryset = queryset.order_by("modified_at", "item__studio_id")
+        queryset = queryset.order_by( "item__studio_id", "modified_at")
 
         
         page = self.paginate_queryset(queryset)

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -9,6 +9,7 @@ import ItemList from "./ItemList";
 
 function AdvancedSearch() {
   const navigate = useNavigate();
+  const [filterVal, setFilterVal] = useState({});
   return (
     <div>
       <Navbar />
@@ -48,8 +49,8 @@ function AdvancedSearch() {
       </Breadcrumbs>
 
       <div className="flex gap-20 items-start px-[125px] my-5">
-        <Filter />
-        <ItemList />
+        <Filter filterVal={filterVal} setFilterVal={setFilterVal} />
+        <ItemList filterVal={filterVal} />
       </div>
     </div>
   );

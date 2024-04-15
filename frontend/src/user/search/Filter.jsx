@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { translateType } from "../../util/Translate";
 import {
-  Checkbox,
+  Radio,
   Chip,
   FormControlLabel,
   FormGroup,
@@ -9,7 +9,9 @@ import {
   Slider,
   TextField,
   styled,
+  Button,
 } from "@mui/material";
+import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import { useEffect } from "react";
 import axios from "../../api/axios";
 
@@ -57,7 +59,7 @@ const PriceSlider = styled(Slider)({
   },
 });
 
-function Filter() {
+function Filter({ filterVal, setFilterVal }) {
   const itemType = ["SERVICE", "PRODUCT", "SERVICE_PACK"];
   const ratings = [
     { value: 5, label: "5.0" },
@@ -78,11 +80,18 @@ function Filter() {
 
   const handlePriceRangeSlider = (event, newValue) => {
     setPriceRange(newValue);
+    setFilterVal({
+      ...filterVal,
+      min_price: newValue[0],
+      max_price: newValue[1],
+    });
   };
   const handlePriceRangeInput = (e, index) => {
     let newRange = [...priceRange];
     newRange[index] = e.target.value;
     setPriceRange(newRange);
+    if (index === 0) setFilterVal({ ...filterVal, min_price: e.target.value });
+    else setFilterVal({ ...filterVal, max_price: e.target.value });
   };
 
   const formatter = new Intl.NumberFormat("vi-VN", {
@@ -106,6 +115,23 @@ function Filter() {
 
   return (
     <div className="max-w-[300px] flex flex-col gap-5 ">
+      <Button
+        variant="contained"
+        startIcon={<FilterListOffIcon />}
+        onClick={() => setFilterVal({})}
+        sx={{
+          textTransform: "none",
+          bgcolor: "#3F41A6",
+          width: "fit-content",
+          paddingX: "15px",
+          borderRadius: "20px",
+          "&:hover": {
+            bgcolor: "#3949AB",
+          },
+        }}
+      >
+        Xóa bộ lọc
+      </Button>
       {/* Phân loại */}
       <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
         <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
@@ -115,14 +141,19 @@ function Filter() {
           {itemType.map((type, i) => (
             <FormControlLabel
               key={i}
+              value={type}
+              onChange={(e) =>
+                setFilterVal({ ...filterVal, type: e.target.value })
+              }
               control={
-                <Checkbox
+                <Radio
                   size="small"
                   sx={{
                     "&.Mui-checked": {
                       color: "#3F41A6",
                     },
                   }}
+                  checked={(filterVal?.type ?? null) === type}
                 />
               }
               label={translateType(type)}
@@ -147,14 +178,19 @@ function Filter() {
           {categories?.map((category, i) => (
             <FormControlLabel
               key={i}
+              value={category.code_name}
+              onChange={(e) =>
+                setFilterVal({ ...filterVal, category: e.target.value })
+              }
               control={
-                <Checkbox
+                <Radio
                   size="small"
                   sx={{
                     "&.Mui-checked": {
                       color: "#3F41A6",
                     },
                   }}
+                  checked={(filterVal?.category ?? null) === category.code_name}
                 />
               }
               label={category.title}
@@ -248,14 +284,19 @@ function Filter() {
           {ratings.map((rating, i) => (
             <FormControlLabel
               key={i}
+              value={rating.value}
+              onClick={(e) => {
+                setFilterVal({ ...filterVal, star: e.target.value });
+              }}
               control={
-                <Checkbox
+                <Radio
                   size="small"
                   sx={{
                     "&.Mui-checked": {
                       color: "#3F41A6",
                     },
                   }}
+                  checked={(filterVal?.star ?? null) == rating.value}
                 />
               }
               label={

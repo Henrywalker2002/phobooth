@@ -8,11 +8,14 @@ import {
   MenuItem,
   Pagination,
   TextField,
+  Snackbar,
 } from "@mui/material";
 import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
+// import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+// import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function ItemList({ itemType, filterVal }) {
   const [cookies] = useCookies(["accInfo"]);
@@ -20,8 +23,11 @@ function ItemList({ itemType, filterVal }) {
     style: "currency",
     currency: "VND",
   });
+  // const navigate = useNavigate();
+  // const axiosPrivate = useAxiosPrivate();
   //   local
   const [itemList, setItemList] = useState([]);
+  // const [openSBar, setOpenSBar] = useState(false);
   // pagination
   const itemsPage = 9;
   const [itemsCount, setItemsCount] = useState(1);
@@ -69,6 +75,37 @@ function ItemList({ itemType, filterVal }) {
     }
     return "Chưa cập nhật";
   };
+
+  // Add to cart
+  // const handleAddToCart = (id) => {
+  //   axiosPrivate
+  //     .post(
+  //       "/cart/",
+  //       { item: id, number: 1 },
+  //       {
+  //         headers: {
+  //           ...axiosPrivate.defaults.headers,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       // console.log(res);
+  //       setOpenSBar(true);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  // Close SnackBar Success
+  // const handleCloseSBar = (e, reason) => {
+  //   if (reason === "clickaway") {
+  //     return;
+  //   }
+
+  //   setOpenSBar(false);
+  // };
   return (
     <div>
       <div className="mx-auto my-3 flex justify-between items-center w-[800px]">
@@ -152,7 +189,7 @@ function ItemList({ itemType, filterVal }) {
                   </CardMedia>
                   <CardContent sx={{ padding: "15px" }}>
                     <div className="relative flex gap-5">
-                      <div className="flex flex-col items-stretch w-[165px]">
+                      <div className="flex flex-col items-stretch w-full">
                         <div className="flex-nowrap w-full justify-center truncate text-yellow-950 text-[17px] font-semibold leading-7 tracking-wider ">
                           {item?.name}
                         </div>
@@ -160,16 +197,15 @@ function ItemList({ itemType, filterVal }) {
                           {displayPrice(item)}
                         </div>
                       </div>
-                      <div>
+                      {/* <div>
                         <Button
                           variant="contained"
-                          // onClick={(e) => {
-                          //   e.stopPropagation();
+                          onClick={(e) => {
+                            e.stopPropagation();
 
-                          //   if (cookies?.userInfo?.username)
-                          //     handleAddToCart(item.id);
-                          //   else setOpenErr401(true);
-                          // }}
+                            if (cookies?.userInfo?.username)
+                              handleAddToCart(item.id);
+                          }}
                           sx={{
                             alignSelf: "center",
                             borderRadius: "50%",
@@ -192,7 +228,7 @@ function ItemList({ itemType, filterVal }) {
                             }}
                           />
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </CardContent>
                 </CardActionArea>
@@ -217,6 +253,15 @@ function ItemList({ itemType, filterVal }) {
             },
         }}
       />
+
+      {/* Add to cart successfully */}
+      {/* <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseSBar}
+        message="Đã thêm vào giỏ hàng !"
+      /> */}
     </div>
   );
 }

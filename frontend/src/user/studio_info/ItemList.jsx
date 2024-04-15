@@ -8,18 +8,26 @@ import {
   MenuItem,
   Pagination,
   TextField,
+  Snackbar,
 } from "@mui/material";
 import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function ItemList({ code_name, itemType, filterVal }) {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+  const navigate = useNavigate();
+  const [cookies] = useCookies(["accInfo"]);
+  const axiosPrivate = useAxiosPrivate();
   //   local
   const [itemList, setItemList] = useState([]);
+  const [openSBar, setOpenSBar] = useState(false);
   // pagination
   const itemsPage = 9;
   const [itemsCount, setItemsCount] = useState(1);
@@ -67,6 +75,37 @@ function ItemList({ code_name, itemType, filterVal }) {
     }
     return "Chưa cập nhật";
   };
+
+  // Add to cart
+  const handleAddToCart = (id) => {
+    axiosPrivate
+      .post(
+        "/cart/",
+        { item: id, number: 1 },
+        {
+          headers: {
+            ...axiosPrivate.defaults.headers,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        setOpenSBar(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // Close SnackBar Success
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSBar(false);
+  };
   return (
     <div>
       <div className="flex justify-between items-center w-[800px]">
@@ -111,7 +150,7 @@ function ItemList({ code_name, itemType, filterVal }) {
                 key={index}
               >
                 <CardActionArea
-                // onClick={() => navigate("/item/detail/" + item.id)}
+                  onClick={() => navigate("/item/detail/" + item.id)}
                 >
                   <CardMedia
                     component="div"
@@ -161,13 +200,12 @@ function ItemList({ code_name, itemType, filterVal }) {
                       <div>
                         <Button
                           variant="contained"
-                          // onClick={(e) => {
-                          //   e.stopPropagation();
+                          onClick={(e) => {
+                            e.stopPropagation();
 
-                          //   if (cookies?.userInfo?.username)
-                          //     handleAddToCart(item.id);
-                          //   else setOpenErr401(true);
-                          // }}
+                            if (cookies?.userInfo?.username)
+                              handleAddToCart(item.id);
+                          }}
                           sx={{
                             alignSelf: "center",
                             borderRadius: "50%",
@@ -214,6 +252,15 @@ function ItemList({ code_name, itemType, filterVal }) {
               bgcolor: "#E2E5FF",
             },
         }}
+      />
+
+      {/* Add to cart successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseSBar}
+        message="Đã thêm vào giỏ hàng !"
       />
     </div>
   );

@@ -7,40 +7,48 @@ import {
   CardMedia,
   MenuItem,
   Pagination,
+  Snackbar,
   TextField,
 } from "@mui/material";
 import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function ItemList() {
+function ItemList({ filterVal }) {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+  const navigate = useNavigate();
+  const [cookies] = useCookies(["accInfo"]);
+  const axiosPrivate = useAxiosPrivate();
   //   local
   const [itemList, setItemList] = useState([]);
+  const [openSBar, setOpenSBar] = useState(false);
   // pagination
   const itemsPage = 12;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {
     axios
-      .get(`/item/?limit=${itemsPage}&offset=0`)
+      .get(`/item/?limit=${itemsPage}&offset=0`, { params: filterVal })
       .then((res) => {
         console.log(res.data);
         setItemsCount(Math.ceil(res.data.count / itemsPage));
         setItemList(res.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [filterVal]);
 
   // get item for each page
   const getItemForPage = (e, page) => {
     console.log(page);
     let offset = itemsPage * (page - 1);
     axios
-      .get(`/item/?limit=${itemsPage}&offset=${offset}`)
+      .get(`/item/?limit=${itemsPage}&offset=${offset}`, { params: filterVal })
       .then((res) => {
         console.log(res.data);
         let currCount = Math.ceil(res.data.count / itemsPage);
@@ -60,6 +68,37 @@ function ItemList() {
       )}`;
     }
     return "Chưa cập nhật";
+  };
+
+  // Add to cart
+  const handleAddToCart = (id) => {
+    axiosPrivate
+      .post(
+        "/cart/",
+        { item: id, number: 1 },
+        {
+          headers: {
+            ...axiosPrivate.defaults.headers,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        setOpenSBar(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // Close SnackBar Success
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSBar(false);
   };
   return (
     <div>
@@ -104,7 +143,7 @@ function ItemList() {
               key={index}
             >
               <CardActionArea
-              // onClick={() => navigate("/item/detail/" + item.id)}
+                onClick={() => navigate("/item/detail/" + item.id)}
               >
                 <CardMedia
                   component="div"
@@ -158,13 +197,12 @@ function ItemList() {
                     <div>
                       <Button
                         variant="contained"
-                        // onClick={(e) => {
-                        //   e.stopPropagation();
+                        onClick={(e) => {
+                          e.stopPropagation();
 
-                        //   if (cookies?.userInfo?.username)
-                        //     handleAddToCart(item.id);
-                        //   else setOpenErr401(true);
-                        // }}
+                          if (cookies?.userInfo?.username)
+                            handleAddToCart(item.id);
+                        }}
                         sx={{
                           alignSelf: "center",
                           borderRadius: "50%",
@@ -208,6 +246,15 @@ function ItemList() {
               bgcolor: "#E2E5FF",
             },
         }}
+      />
+
+      {/* Add to cart successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseSBar}
+        message="Đã thêm vào giỏ hàng !"
       />
     </div>
   );
