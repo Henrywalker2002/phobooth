@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from complain_forum.serializers import ReadReplySerializer
+from complain.filter import ComplainFilter
 
 
 class ComplainViewSet(BaseGenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
@@ -18,6 +19,7 @@ class ComplainViewSet(BaseGenericViewSet, ListModelMixin, CreateModelMixin, Retr
         "retrieve": ReadCompainSerializer
     }
     permission_classes = (CompainPermission,)
+    filterset_class = ComplainFilter
     
     def get_queryset(self):
         if self.action == "list":
