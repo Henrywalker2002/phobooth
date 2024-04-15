@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminNavbar from "../../components/AdminNavbar";
 import {
   Breadcrumbs,
@@ -22,29 +22,74 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { RiSearchLine } from "react-icons/ri";
 import TransferDialog from "./TransferDialog";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+
+const handleDate = (date) => {
+  const d = new Date(date);
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+};
 
 function Requests() {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
-  const transferList = [
-    {
-      no: 1,
-      studio: "Studio Demo",
-      amount: "3000000",
-      requestedDate: "10-11-2023",
-      status: "PENDING",
-    },
-    {
-      no: 2,
-      studio: "Studio Demo",
-      amount: "5000000",
-      requestedDate: "05-11-2023",
-      status: "RESOLVED",
-    },
-  ];
+  const axiosPrivate = useAxiosPrivate();
+  const [transferList, setTransferList] = useState([]);
   const [openTransfer, setOpenTransfer] = useState(false);
+  const [totalItem, setTotalItem] = useState(0);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState('-created_at');
+  const limit = 20;
+
+  useEffect(() => {
+    let params = {
+      limit: limit,
+      offset: (page - 1) * limit,
+    }
+    if (filter) {
+      if (filter === "PENDING" || filter === "DONE") {
+        params.status = filter;
+      }
+      else if (filter === "-created_at" || filter === "created_at") {
+        params.ordering = filter;
+      }
+      else {
+        params.search = filter;
+      }
+    }
+    axiosPrivate
+      .get("/draw-money/", {
+        params: params,
+      })
+      .then((res) => {
+        setTransferList(res.data.results);
+        setTotalItem(res.data.count);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [page, filter]);
+
+  const handClickTransfer = (id) => {
+    setSelectedRequest(id);
+    setOpenTransfer(true);
+  }
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      setPage(1);
+      setFilter(e.target.value);
+    }
+  }
+
+  const filterData = [
+    {value : "-created_at", label : "Mới nhất"},
+    {value : "created_at", label : "Cũ nhất"},
+    {value : "PENDING", label : "Chưa chuyển"},
+    {value : "DONE", label : "Đã chuyển"},
+  ]
   return (
     <div>
       <AdminNavbar />
@@ -92,7 +137,7 @@ function Requests() {
         <TextField
           id="outlined-item-type"
           select
-          defaultValue={"Mới nhất"}
+          defaultValue={"-created_at"}
           sx={{
             width: "150px",
             // height: "50px",
@@ -102,11 +147,16 @@ function Requests() {
               padding: "8px 12px",
             },
           }}
+          onChange={(e) => {
+            setPage(1)
+            setFilter(e.target.value)
+          }}
         >
-          <MenuItem value={"Mới nhất"}>Mới nhất</MenuItem>
-          <MenuItem value={"Cũ nhất"}>Cũ nhất</MenuItem>
-          <MenuItem value={"Chưa chuyển"}>Chưa chuyển</MenuItem>
-          <MenuItem value={"Đã chuyển"}>Đã chuyển</MenuItem>
+          {filterData.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
         </TextField>
 
         <TextField
@@ -133,6 +183,7 @@ function Requests() {
           }}
           placeholder="Tìm kiếm"
           variant="outlined"
+          onKeyDown={handleSearch}
         />
       </div>
 
@@ -168,11 +219,11 @@ function Requests() {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {request.no}
+                    {request.id}
                   </TableCell>
                   <TableCell align="left">
                     <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow my-auto truncate max-w-[200px]">
-                      {request.studio}
+                      {request.studio.friendly_name}
                     </div>
                   </TableCell>
 
@@ -180,12 +231,14 @@ function Requests() {
                     {formatter.format(request.amount)}
                   </TableCell>
 
-                  <TableCell align="left">{request.requestedDate}</TableCell>
+                  <TableCell align="left">
+                    {handleDate(request.created_at)}
+                  </TableCell>
                   <TableCell align="left">
                     {request.status === "PENDING" ? (
                       <Button
                         variant="text"
-                        onClick={() => setOpenTransfer(true)}
+                        onClick={() => handClickTransfer(request.id)}
                         sx={{
                           color: "#3F41A6",
                           textTransform: "none",
@@ -216,7 +269,7 @@ function Requests() {
 
       {/* Pagination  */}
       <Pagination
-        count={3}
+        count={Math.ceil(totalItem / limit)}
         sx={{
           margin: "0 auto",
           width: "fit-content",
@@ -225,10 +278,17 @@ function Requests() {
               bgcolor: "#E2E5FF",
             },
         }}
+        onChange={(e, value) => setPage(value)}
       />
 
       {/* Transfer Dialog */}
-      <TransferDialog open={openTransfer} setOpen={setOpenTransfer} />
+      <TransferDialog
+        open={openTransfer}
+        setOpen={setOpenTransfer}
+        tranferList={transferList}
+        setTransferList={setTransferList}
+        requestId={selectedRequest}
+      />
     </div>
   );
 }

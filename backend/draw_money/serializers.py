@@ -47,7 +47,7 @@ class ReadSummrayDrawMoneySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DrawMoney
-        fields = ["id", "studio", "amount", "status", "transation_id"]
+        fields = ["id", "studio", "amount", "status", "transation_id", "created_at"]
 
 class ReadDetailDrawMoneySerializer(serializers.ModelSerializer):
 
@@ -55,4 +55,4 @@ class ReadDetailDrawMoneySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DrawMoney
-        fields = ["id", "studio", "amount", "status", "transation_id"]
+        fields = ["id", "studio", "amount", "status", "transation_id", "created_at"]

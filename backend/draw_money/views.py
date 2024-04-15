@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from draw_money.permission import DrawMoneyPermission
 from django.db import transaction
+from draw_money.filter import DrawMoneyFilter
 
 
 class DrawMoneyViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin):
@@ -13,7 +14,8 @@ class DrawMoneyViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, Upd
     serializer_class = {"list": ReadSummrayDrawMoneySerializer, "retrieve": ReadDetailDrawMoneySerializer,
                         "create": CreateDrawMoneySerializer, "default": UpdateDrawMoneySerializer}
     permission_classes = [DrawMoneyPermission]
-    filterset_fields = ["status", "studio__code_name"]
+    filterset_class = DrawMoneyFilter
+    search_fields = ["studio__code_name", "studio__friendly_name"]
     
     @transaction.atomic
     def create(self, request, *args, **kwargs):
