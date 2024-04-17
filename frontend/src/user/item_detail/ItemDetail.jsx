@@ -10,6 +10,7 @@ import {
   Typography,
   Tab,
   Box,
+  Rating,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { FaArrowRight } from "react-icons/fa6";
@@ -25,9 +26,8 @@ import axios from "../../api/axios";
 import Err401Dialog from "../../components/Err401Dialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
-import ItemRatings from "./ItemRatings";
 import ImgList from "./ImgList";
-import RateOfItem from "../../components/RateOfProduct";
+import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
 import logo from "../../assets/logo2.png";
 
@@ -173,7 +173,14 @@ function ItemDetail(props) {
                 <div className="justify-center text-indigo-800 text-base font-medium tracking-wider self-center my-auto">
                   {item.star}
                 </div>
-                <FaStar style={{ color: "#3F41A6", width: "17px" }} />
+                <Rating
+                  name="read-only"
+                  value={Number(item.star)}
+                  precision={0.1}
+                  readOnly
+                  size="small"
+                  sx={{ color: "#3F41A6" }}
+                />
                 <div className="text-zinc-400 text-xl font-medium leading-8 self-stretch">
                   •
                 </div>
@@ -380,60 +387,6 @@ function ItemDetail(props) {
       </div>
 
       {/* Mô tả + Đánh giá */}
-      {/* <TabContext value={infoType}>
-        <Box sx={{ marginTop: "50px" }}>
-          <TabList
-            onChange={handleChangeTab}
-            centered
-            sx={{
-              "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
-                bgcolor: "#3F41A6",
-                width: "90px",
-              },
-            }}
-          >
-            <Tab
-              label="Mô tả"
-              value="description"
-              sx={{
-                textTransform: "none",
-                fontSize: "20px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                  fontWeight: "550",
-                },
-              }}
-            />
-            <Tab
-              label="Đánh giá"
-              value="rating"
-              sx={{
-                textTransform: "none",
-                fontSize: "20px",
-                "&.Mui-selected": {
-                  color: "#3F41A6",
-                  fontWeight: "550",
-                },
-              }}
-            />
-          </TabList>
-        </Box>
-        <TabPanel value="description">
-          <div className="text-lg leading-8 text-zinc-500 px-[90px]">
-            Mauris pretium elit a dui pulvinar, in ornare sapien euismod. Nullam
-            interdum nisl ante, id feugiat quam euismod commodo. Sed ultrices
-            lectus ut iaculis rhoncus. Aenean non dignissim justo, at fermentum
-            turpis. Sed molestie, ligula ut molestie ultrices, tellus ligula
-            viverra neque, malesuada consectetur diam sapien volutpat risus.
-            Quisque eget tortor lobortis, facilisis metus eu, elementum est.
-            Nunc sit amet erat quis ex convallis suscipit. ur ridiculus mus.
-          </div>
-        </TabPanel>
-        <TabPanel value="rating">
-          <ItemRatings />
-        </TabPanel>
-      </TabContext> */}
-
       <RateOfItem
         item_id={id}
         star={item.star}
