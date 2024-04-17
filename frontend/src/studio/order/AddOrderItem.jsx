@@ -19,14 +19,26 @@ import {
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import AddOrderItemInfo from "./AddOrderItemInfo";
+import { translateType } from "../../util/Translate";
 
 function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
   const axiosPrivate = useAxiosPrivate();
   const item_types = ["Dịch vụ", "Hàng hóa"];
-  const [itemTyp, setItemTyp] = useState("");
+  const [itemTyp, setItemTyp] = useState("Dịch vụ");
   const [serviceList, setServiceList] = useState({});
   const [productList, setProductList] = useState([]);
   const [selectedList, setSelectedList] = useState([]);
+  const [openUpdateInfo, setOpenUpdateInfo] = useState(false);
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
+  useEffect(() => {
+    setItemTyp("Dịch vụ");
+    setSelectedList([]);
+  }, [open]);
 
   useEffect(() => {
     axiosPrivate
@@ -50,30 +62,26 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
 
   const updateSelectedList = (item) => {
     let newList = [...selectedList];
-    newList.push({ item: item.id, order: orderId, quantity: 1 });
+    newList.push({
+      item: item,
+      order: orderId,
+      quantity: 1,
+      price: item.min_price ?? item.fixed_price,
+    });
     setSelectedList(newList);
   };
 
   const removeSelectedList = (itemId) => {
-    const newList = selectedList.filter((item) => item !== itemId);
+    const newList = selectedList.filter(
+      (order_item) => order_item.item.id !== itemId
+    );
+    console.log(newList);
     setSelectedList(newList);
   };
 
-  const handleAddItem = () => {
-    // console.log(selectedList);
-    for (let item of selectedList) {
-      // console.log(item);
-      axiosPrivate
-        .post("/order-item/", item)
-        .then((res) => {
-          // console.log(res);
-          getOrderDetail();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    setOpen(false);
+  const handleSaveList = () => {
+    console.log(selectedList);
+    setOpenUpdateInfo(true);
   };
 
   return (
@@ -93,19 +101,19 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
     >
       <DialogTitle>DANH SÁCH SẢN PHẨM CỦA STUDIO</DialogTitle>
       <DialogContent dividers={true}>
-        <div className="w-[900px] h-[50px] flex gap-10 mx-auto">
+        <div className="w-fit h-[50px] flex gap-20 mx-auto">
           {/* Selector */}
           <TextField
             id="outlined-item-type"
             select
             defaultValue="Dịch vụ"
             sx={{
-              height: "50px",
               "& .MuiInputBase-input": {
                 width: "150px",
-                height: "50px",
+                height: "40px",
                 boxSizing: "border-box",
-                paddingY: "13px",
+                paddingY: "9px",
+                fontSize: "14px",
               },
             }}
           >
@@ -121,33 +129,31 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
           </TextField>
 
           {/* Search */}
-          <div className="flex gap-5 items-center w-fit mx-auto my-3">
-            <TextField
-              id="input-with-icon-textfield"
-              placeholder="Tìm kiếm"
-              sx={{
-                "& .MuiInputBase-input": {
-                  padding: "10px 12px",
-                  width: "330px",
-                  height: "40px",
-                  boxSizing: "border-box",
-                },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "30px",
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton>
-                      <RiSearchLine className="w-5 h-5" />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-            />
-          </div>
+          <TextField
+            id="input-with-icon-textfield"
+            placeholder="Tìm kiếm"
+            sx={{
+              "& .MuiInputBase-input": {
+                padding: "10px 12px",
+                width: "400px",
+                height: "40px",
+                boxSizing: "border-box",
+              },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "30px",
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton sx={{ padding: 0 }}>
+                    <RiSearchLine className="w-5 h-5" />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            variant="outlined"
+          />
         </div>
 
         {/* Tables */}
@@ -155,7 +161,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
           <TableContainer
             component={Paper}
             sx={{
-              width: "900px",
+              width: "70%",
               margin: "20px auto",
               border: "1px solid #d6d3d1",
             }}
@@ -166,14 +172,22 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                   <TableCell>
                     {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
                   </TableCell>
-                  <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
+                  <TableCell sx={{ color: "#3F41A6", width: "40%" }}>
+                    SẢN PHẨM
+                  </TableCell>
 
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%" }}
+                  >
                     DANH MỤC
                   </TableCell>
 
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    GIÁ (VNĐ)
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%" }}
+                  >
+                    GIÁ THAM KHẢO
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -213,12 +227,14 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
                           {item.category?.title}
                         </div>
                       </TableCell>
-                      <TableCell align="left">{item.fixed_price}</TableCell>
+                      <TableCell align="left">
+                        {formatter.format(item.fixed_price)}
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -233,7 +249,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
           <TableContainer
             component={Paper}
             sx={{
-              width: "900px",
+              width: "90%",
               margin: "20px auto",
               border: "1px solid #d6d3d1",
             }}
@@ -252,7 +268,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                   </TableCell>
 
                   <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    GIÁ (VNĐ)
+                    GIÁ THAM KHẢO
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -292,18 +308,19 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                          {item.type}
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                          {translateType(item.type)}
                         </div>
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {item.category?.title}
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        {item.min_price} - {item.max_price}
+                        {formatter.format(item.min_price)} -{" "}
+                        {formatter.format(item.max_price)}
                       </TableCell>
                     </TableRow>
                   ))
@@ -342,7 +359,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
 
           <Button
             variant="contained"
-            onClick={() => handleAddItem()}
+            onClick={() => handleSaveList()}
             sx={{
               textTransform: "none",
               bgcolor: "#3F41A6",
@@ -356,6 +373,15 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
           >
             Lưu thay đổi
           </Button>
+
+          <AddOrderItemInfo
+            open={openUpdateInfo}
+            setOpen={setOpenUpdateInfo}
+            selectedList={selectedList}
+            setSelectedList={setSelectedList}
+            getOrderDetail={getOrderDetail}
+            setOpenAddOrderItem={setOpen}
+          />
         </div>
       </DialogContent>
     </Dialog>
