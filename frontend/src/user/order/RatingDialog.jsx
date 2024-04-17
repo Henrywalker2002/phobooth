@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { v4 as uuidv4 } from "uuid";
@@ -20,10 +20,16 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function RatingDialog({ open, setOpen, orderItem }) {
   const [imgList, setImgList] = useState([]);
-  const [data, setData] = useState({ star: 5});
+  const [data, setData] = useState({ star: 5 });
   const axiosPrivate = useAxiosPrivate();
   const [error, setError] = useState(null);
   const [successRate, setSuccessRate] = useState(false);
+
+  useEffect(() => {
+    setData({ star: 5 });
+    setImgList([]);
+    setError(null);
+  }, [open]);
   //   image list
   const handleUpdateImgList = (e) => {
     let imgFiles = e.target.files;
@@ -58,95 +64,97 @@ function RatingDialog({ open, setOpen, orderItem }) {
       formData.append("pictures", img.img_file, img.img_file.name);
     }
     formData.append("order_item", orderItem.id);
-    axiosPrivate.post("/rate/", formData, { headers : { 'Content-Type': 'multipart/form-data'}})
-    .then(res => {
-      console.log(res.data);
-      setSuccessRate(true);
-      setOpen(false);
-    })
-    .catch(err => {
-      console.log(err);
-      var data = err.response.data;
-      if (data.order_item) {
-        setError("Bạn đã đánh giá sản phẩm này rồi!");
-      }
-    })
-  }
+    axiosPrivate
+      .post("/rate/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setSuccessRate(true);
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        var data = err.response.data;
+        if (data.order_item) {
+          setError("Bạn đã đánh giá sản phẩm này rồi!");
+        }
+      });
+  };
 
   const handleClose = () => {
     setOpen(false);
     setError(null);
-  }
+  };
 
   return (
     <Dialog open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
-      <DialogTitle>
-        <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
-          <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-            Đánh giá
+        <DialogTitle>
+          <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
+            <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
+              Đánh giá
+            </div>
+            <IconButton
+              onClick={() => {
+                setImgList([]);
+                setOpen(false);
+              }}
+              sx={{ padding: 0 }}
+            >
+              <FaXmark />
+            </IconButton>
           </div>
-          <IconButton
-            onClick={() => {
-              setImgList([]);
-              setOpen(false);
-            }}
-            sx={{ padding: 0 }}
-          >
-            <FaXmark />
-          </IconButton>
-        </div>
-      </DialogTitle>
-      <DialogContent
-        dividers={true}
-        sx={{ "&::-webkit-scrollbar": { display: "none" } }}
-      >
-        {error ? (
-          <Alert severity="error" sx={{ marginBottom: "10px" }}>
-            {error}
-          </Alert>
-        ) : null}
-        {successRate ? (
-          <Alert
-            sx={{ maxWidth: "1000px", marginX: "auto" }}
-            severity="success"
-            color="success"
-          >
-            Cảm ơn bạn đã đánh giá sản phẩm!
-          </Alert>
-        ) : null}
-        <div className="min-w-[350px]  bg-white flex flex-col items-stretch rounded-lg border-solid">
-          <div className="flex w-full justify-start gap-4 items-center">
-            <img
-              loading="lazy"
-              src={
-                orderItem?.item?.picture
-                  ? orderItem?.item?.picture
-                  : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
-              }
-              className="aspect-square object-contain object-center w-[60px] h-[60px] rounded-lg overflow-hidden shrink-0 max-w-full"
-            />
-            <div className=" flex grow basis-[0%] flex-col py-1">
-              <div className="justify-center text-yellow-950 text-lg font-semibold">
-                {orderItem?.item?.name}
-              </div>
-              <div className="min-w-fit z-[1] flex justify-start gap-3 mt-2.5 items-start">
-                <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch  px-2 py-1">
-                  {translateType(orderItem?.item?.type)}
+        </DialogTitle>
+        <DialogContent
+          dividers={true}
+          sx={{ "&::-webkit-scrollbar": { display: "none" } }}
+        >
+          {error ? (
+            <Alert severity="error" sx={{ marginBottom: "10px" }}>
+              {error}
+            </Alert>
+          ) : null}
+          {successRate ? (
+            <Alert
+              sx={{ maxWidth: "1000px", marginX: "auto" }}
+              severity="success"
+              color="success"
+            >
+              Cảm ơn bạn đã đánh giá sản phẩm!
+            </Alert>
+          ) : null}
+          <div className="min-w-[350px]  bg-white flex flex-col items-stretch rounded-lg border-solid">
+            <div className="flex w-full justify-start gap-4 items-center">
+              <img
+                loading="lazy"
+                src={
+                  orderItem?.item?.picture
+                    ? orderItem?.item?.picture
+                    : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
+                }
+                className="aspect-square object-contain object-center w-[60px] h-[60px] rounded-lg overflow-hidden shrink-0 max-w-full"
+              />
+              <div className=" flex grow basis-[0%] flex-col py-1">
+                <div className="justify-center text-yellow-950 text-lg font-semibold">
+                  {orderItem?.item?.name}
                 </div>
-                <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch  px-2 py-1">
-                  {orderItem?.item?.category?.title}
+                <div className="min-w-fit z-[1] flex justify-start gap-3 mt-2.5 items-start">
+                  <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch  px-2 py-1">
+                    {translateType(orderItem?.item?.type)}
+                  </div>
+                  <div className="min-w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch  px-2 py-1">
+                    {orderItem?.item?.category?.title}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
 
             <div className="self-stretch flex items-stretch gap-[130px]">
               <div className="flex basis-[0%] flex-col items-stretch">
                 <div className="flex gap-3 items-center my-3">
                   <div className="text-zinc-900 text-sm leading-5">
-                    Đánh giá 
+                    Đánh giá
                   </div>
                   <Rating
                     name="star"
@@ -164,7 +172,7 @@ function RatingDialog({ open, setOpen, orderItem }) {
                   required
                   name="comment"
                   onChange={handleChange}
-                  value = {data.comment}
+                  value={data.comment}
                   multiline
                   rows={3}
                   sx={{
@@ -257,47 +265,47 @@ function RatingDialog({ open, setOpen, orderItem }) {
                 </div>
               </div>
             </div>
-        </div>
-      </DialogContent>
+          </div>
+        </DialogContent>
 
-      <DialogActions>
-        <div className="flex gap-5 justify-center mx-auto my-2">
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "fit-content",
-              padding: "5px 20px",
+        <DialogActions>
+          <div className="flex gap-5 justify-center mx-auto my-2">
+            <Button
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                border: "1px solid #3F41A6",
+                color: "#3F41A6",
+                width: "fit-content",
+                padding: "5px 20px",
 
-              borderRadius: "20px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            Hủy
-          </Button>
+                borderRadius: "20px",
+                "&:hover": {
+                  border: "1px solid #3949AB",
+                },
+              }}
+            >
+              Hủy
+            </Button>
 
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{
-              textTransform: "none",
-              bgcolor: "#3F41A6",
-              width: "fit-content",
-              padding: "5px 20px",
-              borderRadius: "20px",
-              "&:hover": {
-                bgcolor: "#3949AB",
-              },
-            }}
-          >
-            Lưu
-          </Button>
-        </div>
-      </DialogActions>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "fit-content",
+                padding: "5px 20px",
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Lưu
+            </Button>
+          </div>
+        </DialogActions>
       </form>
     </Dialog>
   );
