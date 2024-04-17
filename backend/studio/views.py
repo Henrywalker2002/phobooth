@@ -51,7 +51,8 @@ class StudioViewSet(BaseModelViewSet):
         role = Role.objects.filter(code_name="studio")
         if role:
             user.role.remove(role.first())
-        studio.delete()
+        studio.is_deleted = True
+        studio.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def update(self, request, *args, **kwargs):
