@@ -189,6 +189,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                       color: "#1A237E",
                       bgcolor: "transparent",
                     },
+                    marginBottom: "20px"
                   }}
                 >
                   Xem tất cả
@@ -257,6 +258,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                       "&.MuiMobileStepper-dotActive": {
                         bgcolor: "#3F41A6",
                       },
+                      marginTop: "20px",
                     }}
                   />
                 </div>

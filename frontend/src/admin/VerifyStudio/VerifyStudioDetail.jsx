@@ -231,14 +231,18 @@ export default function VerifyStudioDetail() {
               />
             </Grid>
           </Grid>
-          <div className="text-zinc-900 text-sm leading-5 mt-10">
+          <div className="text-zinc-900 text-md leading-5 mt-10">
             Giấy phép kinh doanh/Chứng minh đăng kí doanh nghiệp
           </div>
 
-          <div className="w-fit mx-auto">
+          <div className="w-fit mx-auto" style = {{
+                border : "1px solid #E0E0E0",
+                marginTop : "20px",
+              }}>
             <Document
               file={studio.license}
               onLoadSuccess={onDocumentLoadSuccess}
+
             >
               <Page pageNumber={pageNumber} />
             </Document>
@@ -255,12 +259,13 @@ export default function VerifyStudioDetail() {
               activeStep={pageNumber - 1}
               sx={{
                 bgcolor: "transparent",
-                width: "fit-content",
+                width: "auto",
                 margin: "0",
                 color: "#3F41A6",
                 "&.MuiMobileStepper-dotActive": {
                   bgcolor: "#3F41A6",
                 },
+                padding: "0",
               }}
             />
             <IconButton onClick={nextPage} disabled={pageNumber >= numPages}>
@@ -268,7 +273,7 @@ export default function VerifyStudioDetail() {
             </IconButton>
           </div>
         </div>
-        <div className="flex  gap-5 ml-4 my-5 self-start">
+        <div className="flex  gap-5 ml-4 my-5 self-start justify-center">
           <Button
             variant="outlined"
             sx={{
