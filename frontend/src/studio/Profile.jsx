@@ -336,9 +336,9 @@ function Profile() {
               <Alert
                 sx={{ bgcolor: "background.paper", border: "none" }}
                 variant="outlined"
-                severity={studioInfo?.is_verified ? "success" : "error"}
+                severity={studioInfo?.is_verified || studioInfo?.type === "PHOTOGRAPHER" ? "success" : "error"}
               >
-                {studioInfo?.is_verified ? "Đã xác thực" : "Chưa xác thực"}
+                {studioInfo?.type==="PHOTOGRAPHER" ? "Thợ chụp ảnh" : studioInfo?.is_verified ? "Đã xác thực" : "Chưa xác thực"}
               </Alert>
 
               <Button

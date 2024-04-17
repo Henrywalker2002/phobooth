@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Navbar from "../../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import {
+  Box,
   Breadcrumbs,
   Button,
   Divider,
@@ -309,15 +310,21 @@ function ComplainDetail() {
         Phản hồi khiếu nại
       </div>
       <div className="flex items-center flex-col text-center justify-center gap-5 my-5">
-        <div
-          className="max-h-screen text-left w-800 flex flex-col gap-5 rounded-lg"
+        <Box
+          sx={{
+            "::-webkit-scrollbar": {
+              display: "none",
+            },
+            display: relies.length > 0 ? "box" : "none",
+          }}
+          className="max-h-screen text-left w-800 overflow-y-scroll snap-start border-2 border-indigo-800 p-5 rounded-lg flex flex-col gap-5"
           onScroll={handleLoadMoreResponse}
         >
           {relies.map((reply, i) => {
             return <ResponseText reply={reply} />;
           })}
           <div ref={endOfMessagesRef} />
-        </div>
+        </Box>
 
         <Paper
           sx={{

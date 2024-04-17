@@ -18,6 +18,7 @@ class User(AbstractBaseUser):
     avatar = models.ImageField(upload_to="avatars/", null=True)
     google_id = models.IntegerField(null=True)
     facebook_id = models.IntegerField(null=True)
+    is_deleted = models.BooleanField(default=False)
     own_studio = models.OneToOneField(
         to="studio.Studio", on_delete=models.SET_NULL, null=True, default=None, related_name="owner"
     )

@@ -31,7 +31,7 @@ class UserViewSet(BaseModelViewSet):
     lookup_url_kwarg = "id"
     
     def get_queryset(self):
-        return self.queryset.filter(role__code_name__in=["customer", "studio"]).distinct()
+        return self.queryset.filter(role__code_name__in=["customer", "studio"], is_deleted = False).distinct()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -113,7 +113,7 @@ class StaffViewSet(BaseModelViewSet):
     lookup_field = "username"
     
     def get_queryset(self):
-        return self.queryset.filter(role__code_name__in=["staff", "admin"])
+        return self.queryset.filter(role__code_name__in=["staff", "admin"], is_deleted = False).distinct()
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
