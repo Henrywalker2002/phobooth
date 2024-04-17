@@ -313,6 +313,7 @@ function Demo() {
                   <Comment
                     commentList={commentList}
                     setCommentList={setCommentList}
+                    image_demo={currentDemo}
                   />
                 </TabPanel>
               </TabContext>
