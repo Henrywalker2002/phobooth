@@ -58,12 +58,16 @@ function AddOrderItemInfo({
   };
 
   //   Check disable for add btn
-  const checkDisableAddBtn = () => {
-    for (let order_item of selectedList) {
+  const checkDisableAddBtn = (list) => {
+    console.log(list);
+    for (let order_item of list) {
       if (
-        !checkPrice(order_item.price) &&
+        !checkPrice(order_item.price) ||
         !checkQuantity(order_item.quantity)
       ) {
+        console.log(
+          checkPrice(order_item.price) && checkQuantity(order_item.quantity)
+        );
         return true;
       }
     }
@@ -104,6 +108,7 @@ function AddOrderItemInfo({
       onClose={() => {
         setSelectedList([]);
         setOpen(false);
+        setOpenAddOrderItem(false);
       }}
       sx={{
         "& .MuiDialog-paper": {
@@ -268,7 +273,7 @@ function AddOrderItemInfo({
 
           <Button
             variant="contained"
-            disabled={checkDisableAddBtn}
+            disabled={checkDisableAddBtn(selectedList)}
             onClick={() => handleAddItem()}
             sx={{
               textTransform: "none",

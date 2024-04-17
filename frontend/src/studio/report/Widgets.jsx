@@ -167,7 +167,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
                   Số dư
                 </div>
                 <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                  {formatter.format(studioInfor.account_balance)}
+                  {formatter.format(studioInfor.account_balance ?? 0)}
                 </div>
                 <Button
                   startIcon={
