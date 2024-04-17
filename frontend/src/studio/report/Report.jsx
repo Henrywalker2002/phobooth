@@ -13,16 +13,19 @@ import { useCookies } from "react-cookie";
 function Report() {
   const navigate = useNavigate();
   const [studioInfor, setStudioInfor] = useState({});
-  const [cookies, setCookie] = useCookies(["userInfo"]);
+  const [cookies] = useCookies(["userInfo"]);
   const axiosPrivate = useAxiosPrivate();
   var studioCodeName = cookies?.userInfo?.studio?.code_name;
 
   useEffect(() => {
-    axiosPrivate.get(`/studio/${studioCodeName}`).then((res) => {
-      setStudioInfor(res.data);
-    }).catch((res) => {
-      console.log(res.data);
-    });
+    axiosPrivate
+      .get(`/studio/${studioCodeName}`)
+      .then((res) => {
+        setStudioInfor(res.data);
+      })
+      .catch((res) => {
+        console.log(res.data);
+      });
   }, []);
   return (
     <div>
@@ -64,11 +67,12 @@ function Report() {
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap ">
         Báo cáo kinh doanh
       </div>
-      <Widgets studioInfor={studioInfor} setStudioInfor={setStudioInfor}/>
-      <div className="w-full flex flex-col gap-5 items-center">
-        <ItemTable studioInfor={studioInfor} setStudioInfor={setStudioInfor}/>
+      <div className="w-full flex flex-col gap-10 items-center px-[80px] my-8">
+        <Widgets studioInfor={studioInfor} setStudioInfor={setStudioInfor} />
 
-        <ComplainTable studioInfor={setStudioInfor}/>
+        <ItemTable studioInfor={studioInfor} />
+
+        <ComplainTable />
       </div>
     </div>
   );
