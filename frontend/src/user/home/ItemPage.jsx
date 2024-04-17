@@ -61,8 +61,13 @@ function ItemPage({ itemList, handleAddToCart, setOpenErr401 }) {
                     <div className="flex-nowrap w-full justify-center truncate text-yellow-950 text-[17px] font-semibold leading-7 tracking-wider ">
                       {item?.name}
                     </div>
+                    <div className="flex-nowrap w-full justify-center text-yellow-950 text-[15px] leading-5 tracking-wide whitespace-nowrap mt-1"
+                    style={{color: "#3F41A6", fontWeight: "600"}}
+                    >
+                      Giá: {item?.fixed_price ? item?.fixed_price : `${item?.min_price} - ${item?.max_price}`} VNĐ
+                    </div>
                     <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                      Studio: {item?.studio?.friendly_name}
+                      Cửa hàng: {item?.studio?.friendly_name}
                     </div>
                   </div>
                   <div>

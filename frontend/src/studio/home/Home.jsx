@@ -96,17 +96,22 @@ function Home() {
                   ? studio?.avatar
                   : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
               }
-              sx={{ width: 70, height: 70 }}
+              sx={{ width: 110, height: 110 }}
             />
             <div className="flex flex-col items-stretch">
-              <div className="flex flex-col items-stretch gap-4 justify-center">
+              <div className="flex flex-col items-stretch justify-center">
                 <div className="flex gap-3 items-center">
-                  <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
+                  <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider" >
                     {studio?.friendly_name}
                   </div>
-                  <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                  {studio?.is_verified && <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />}
                 </div>
-
+                <div style={{color:' #848484',
+                    fontSize: '13px',
+                    marginBottom: '5px',
+                    fontWeight: 600}}>
+                  {studio?.type === "STUDIO" ? "Studio" : "Thợ chụp ảnh"}
+                </div>
                 <div className="flex items-stretch justify-start gap-2">
                   <Button
                     variant="outlined"
@@ -151,7 +156,7 @@ function Home() {
           </div>
           <div className="flex justify-start gap-16 my-auto px-4 py-4">
             <div className="flex flex-col justify-center gap-5">
-              <div className="flex justify-between w-[350px]">
+              <div className="flex justify-between w-[280px]">
                 <div className="justify-center text-[#787282] text-xl tracking-wider">
                   Đánh giá
                 </div>
@@ -159,15 +164,15 @@ function Home() {
                   {studio.star}
                 </div>
               </div>
-              <div className="flex justify-between w-[350px]">
+              <div className="flex justify-between w-[280px]">
                 <div className="justify-center text-[#787282] text-xl tracking-wider">
                   Sản phẩm
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  35
+                  {studio.total_items ? studio.total_items : 0}
                 </div>
               </div>
-              <div className="flex justify-between w-[350px]">
+              <div className="flex justify-between w-[280]">
                 <div className="justify-center text-[#787282] text-xl tracking-wider whitespace-nowrap">
                   Tham gia
                 </div>
@@ -176,8 +181,8 @@ function Home() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-center gap-5">
-              <div className="flex justify-between w-[350px]">
+            <div className="flex flex-col  gap-5">
+              <div className="flex justify-between w-[280px]">
                 <div className="justify-center text-[#787282] text-xl tracking-wider">
                   Người theo dõi
                 </div>
@@ -185,20 +190,12 @@ function Home() {
                   4.9k
                 </div>
               </div>
-              <div className="flex justify-between w-[350px]">
+              <div className="flex justify-between w-[280px]">
                 <div className="justify-center text-[#787282] text-xl tracking-wider whitespace-nowrap">
                   Đơn thành công
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
                   {studio.number_order_completed}
-                </div>
-              </div>
-              <div className="flex justify-between w-[350px]">
-                <div className="justify-center text-[#787282] text-xl tracking-wider whitespace-nowrap">
-                  Trạng thái
-                </div>
-                <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                  {studio.is_verified ? "Đã xác thực" : "Chưa xác thực"}
                 </div>
               </div>
             </div>

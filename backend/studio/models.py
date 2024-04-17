@@ -3,6 +3,11 @@ from django.db import models
 from address.models import Address
 
 
+class StudioTypeChoices(models.TextChoices):
+    STUDIO = 'STUDIO', 'STUDIO'
+    PHOTOGRAPHER = 'PHOTOGRAPHER', 'PHOTOGRAPHER'
+
+
 class Studio(BaseModel):
     code_name = models.CharField(max_length=255, null=False, unique=True)
     friendly_name = models.CharField(max_length=255, null=False)
@@ -21,6 +26,7 @@ class Studio(BaseModel):
     number_rate = models.IntegerField(default=0)
     account_name = models.CharField(max_length=255, null=True, blank=True)
     account_balance = models.IntegerField(default=0)
+    type = models.CharField(max_length=255, choices=StudioTypeChoices.choices, default=StudioTypeChoices.STUDIO)
     @property
     def total_item(self):
         return self.items.count()
