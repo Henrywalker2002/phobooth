@@ -48,6 +48,11 @@ function Register() {
   const [openErr401, setOpenErr401] = useState(false);
   const [openOtherErr, setOpenOtherErr] = useState(false);
 
+  const type=  [
+    {label : "Studio", value :"STUDIO"},
+    {label : "Thợ chụp ảnh", value :"PHOTOGRAPHER"},
+  ]
+
   useEffect(() => {
     axios
       .get("province/")
@@ -226,14 +231,14 @@ function Register() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Đăng kí Studio
+          Đăng kí cửa hàng
         </div>
         <Divider />
         <form onSubmit={handleRegister}>
           <div className="self-stretch flex items-stretch  gap-[130px] mt-5">
             <div className="flex basis-[0%] flex-col items-stretch ml-4">
               <div className="text-zinc-900 text-sm leading-5">
-                Tên Studio *
+                Tên cửa hàng *
               </div>
               <TextField
                 required
@@ -254,7 +259,7 @@ function Register() {
               />
 
               <div className="text-zinc-900 text-sm leading-5">
-                Tên người dùng *
+                Mã cửa hàng *
               </div>
               <TextField
                 required
@@ -275,7 +280,7 @@ function Register() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4">
-                Email (Studio) *
+                Email đăng ký cửa hàng *
               </div>
               <TextField
                 required
@@ -299,7 +304,7 @@ function Register() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
-                Số điện thoại (Studio) *
+                Số điện thoại đăng ký cửa hàng *
               </div>
               <TextField
                 required
@@ -318,6 +323,32 @@ function Register() {
                   marginY: "10px",
                 }}
               />
+               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+                Hình thức *
+              </div>
+              <TextField
+                    required
+                    variant="outlined"
+                    name="type"
+                    value={studioInfo.type}
+                    onChange={updateStudioInfo}
+                    defaultValue="STUDIO"
+                    select
+                    error={errMsg.type ? true : false}
+                    helperText={
+                      errMsg.type ?? ""
+                    }
+                    sx={{
+                      width: "350px",
+                      marginY: "8px",
+                    }}
+                  >
+                    {type.map((type, index) => (
+                      <MenuItem key={type.value} value={type.value}>
+                        {type.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
             </div>
 
             <div className="flex basis-[0%] flex-col items-stretch mt-9 ml-5 self-start">
@@ -370,7 +401,7 @@ function Register() {
 
           <div className="flex flex-col ml-4">
             <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
-              Địa chỉ Studio *
+              Địa chỉ cửa hàng *
               <IconButton onClick={handleAddAddress}>
                 <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
               </IconButton>

@@ -54,7 +54,6 @@ function Album({
       .delete(`/demo/${item.id}/`)
       .then((res) => {
         setImageList(imageList.filter((img) => img.id !== item.id));
-        setTotalImage(totalImage - 1);
       })
       .then((err) => {
         console.log(err);
@@ -67,8 +66,9 @@ function Album({
         width: "fit-content",
         margin: "40px 30px",
         minWidth: "300px",
-        height: "800px",
-
+        height: "700px",
+        overflowY: "scroll",
+        overflowX: "hidden",
         border: "1px solid #d6d3d1",
       }}
     >
@@ -137,6 +137,7 @@ function Album({
               }
               sx={{
                 bgcolor: "transparent",
+                height: "108px",
               }}
             >
               <img

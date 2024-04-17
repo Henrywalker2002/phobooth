@@ -7,13 +7,13 @@ from role.models import Role
 from user.models import User
 from address.serializers import AddressSerializer
 from address.models import Address
-        
-        
+
+
 class StudioSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
-        fields = ['id', 'code_name', 'friendly_name', "is_verified", "avatar", 
-                  "star", "number_order_completed", 'created_at']
+        fields = ['id', 'code_name', 'friendly_name', "is_verified", "avatar",
+                  "star", "number_order_completed", 'created_at', 'type']
 
 
 class StudioSerializer(serializers.ModelSerializer):
@@ -21,76 +21,80 @@ class StudioSerializer(serializers.ModelSerializer):
     is_verified = serializers.BooleanField(read_only=True)
     tax_code = serializers.CharField(read_only=True)
     address = AddressSerializer(required=True)
-    
+
     def validate_code_name(self, value):
         pattern = re.compile(r'[a-zA-Z][a-zA-Z0-9_]*')
         if re.match(pattern, value):
             return value
-        raise serializers.ValidationError("Code name must start with a letter and only contain letters, numbers and underscore")
-    
+        raise serializers.ValidationError(
+            "Code name must start with a letter and only contain letters, numbers and underscore")
+
     def validate_phone(self, value):
         pattern = re.compile(r'0[0-9]*')
         if re.match(pattern, value):
             return value
-        raise serializers.ValidationError("Phone number must start with 0 and only contain numbers")
-        
+        raise serializers.ValidationError(
+            "Phone number must start with 0 and only contain numbers")
+
     @transaction.atomic
     def create(self, validated_data):
         address_data = validated_data.pop('address')
         address = Address.objects.create(**address_data)
-        studio = Studio.objects.create(address = address,**validated_data)
+        studio = Studio.objects.create(address=address, **validated_data)
         user = get_current_user()
         user.own_studio = studio
-        role = Role.objects.get(code_name = "studio")
+        role = Role.objects.get(code_name="studio")
         user.role.add(role)
         user.save()
         return studio
-    
-    
+
     class Meta:
         model = Studio
-        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar"]
-        
+        fields = ['id', "code_name", 'friendly_name', 'phone', 'email',
+                  'description', 'tax_code', 'is_verified', 'address', "avatar", 'type']
+
 
 class StudioUpdateSerializer(StudioSerializer):
-    
+
     address = AddressSerializer()
-    
+
     def validate(self, attrs):
         if 'bank_bin' in attrs:
             if 'account_number' not in attrs:
-                raise serializers.ValidationError("Bank bin must be used with account number")
+                raise serializers.ValidationError(
+                    "Bank bin must be used with account number")
             else:
-                #validate bank account
-                pass 
+                # validate bank account
+                pass
         if 'account_number' in attrs:
             if 'bank_bin' not in attrs:
-                raise serializers.ValidationError("Account number must be used with bank bin")
+                raise serializers.ValidationError(
+                    "Account number must be used with bank bin")
         return attrs
-    
+
     class Meta:
         model = Studio
-        fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar", "bank_bin", "account_number", "account_name"]
-    
+        fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code',
+                  'is_verified', 'address', "avatar", "bank_bin", "account_number", "account_name"]
+
 
 class StudioDetailSerializer(serializers.ModelSerializer):
-    
+
     address = serializers.StringRelatedField(read_only=True)
-    
+
     class Meta:
         model = Studio
 
-        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified', 'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item"]
-
+        fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified',
+                  'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item", 'type']
 
 
 class AddEmployeeSerializer(serializers.Serializer):
-    
+
     email = serializers.EmailField()
-    
+
     def validate_email(self, value):
-        user = User.objects.filter(email = value)
+        user = User.objects.filter(email=value)
         if user:
             return user
         raise serializers.ValidationError("User not found")
-    

@@ -69,7 +69,8 @@ INSTALLED_APPS = [
     'complain_forum',
     'versatileimagefield',
     'demo',
-    'rate'
+    'rate',
+    'draw_money',
 ]
 
 MIDDLEWARE = [
@@ -175,7 +176,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'base.pagination.BasePagination',
+    'DEFAULT_PAGINATION_CLASS': 'base.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 

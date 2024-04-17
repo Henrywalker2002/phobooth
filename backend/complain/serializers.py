@@ -37,13 +37,13 @@ class ReadCompainSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Complain
-        fields = ['id', 'staff_resolved', 'user', 'order', 'title', 'type', 'description', 'status', 'pictures', 'created_at', ]
+        fields = ['id', 'staff_resolved', 'user', 'order', 'title', 'type', 'description', 'status', 'pictures', 'created_at', 'modified_at']
 
 class ComplainSummarySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Complain
-        fields = ['id', 'title', 'status', 'type', 'description', 'created_at', ]
+        fields = ['id', 'title', 'status', 'type', 'description', 'created_at', 'modified_at']
 
 
 class UpdateComplainSerializer(serializers.ModelSerializer):

@@ -16,6 +16,7 @@ import LocalActivityOutlinedIcon from "@mui/icons-material/LocalActivityOutlined
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -285,6 +286,18 @@ export default function AdminNavbar() {
                   <VerifiedUserOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Quản lý xác thực Studio</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/admin/transfer");
+                }}
+              >
+                <ListItemIcon>
+                  <CurrencyExchangeIcon
+                    sx={{ width: "23px", height: "23px" }}
+                  />
+                </ListItemIcon>
+                <ListItemText>Chuyển tiền cho Studio</ListItemText>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>

@@ -347,7 +347,7 @@ function Categories() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell>No Complain</TableCell>
+                    <TableCell>No Category</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -454,7 +454,7 @@ function Categories() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell>No Complain</TableCell>
+                    <TableCell>No Category</TableCell>
                   </TableRow>
                 )}
               </TableBody>

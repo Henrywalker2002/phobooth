@@ -235,7 +235,7 @@ function StudioNavbar() {
                 </ListItemIcon>
                 <ListItemText>Quản lý khuyến mãi</ListItemText>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={() => navigate("/studio/report")}>
                 <ListItemIcon>
                   <InsertChartOutlinedRoundedIcon
                     sx={{ width: "20px", height: "20px" }}
