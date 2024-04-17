@@ -12,8 +12,10 @@ import {
   ImageList,
   Dialog,
   DialogContent,
+  Tab,
 } from "@mui/material";
 import axios from "../api/axios";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 // Styled button component
 const StyledButton = styled("button")(({ selected }) => ({
@@ -63,15 +65,13 @@ const handleDate = (date) => {
   return newDate.toLocaleDateString();
 };
 
-const RateComponent = ( 
-  {
-    rate,
-    open,
-    setOpen,
-    selectedImage,
-    setSelectedImage
-  }
-) => {
+const RateComponent = ({
+  rate,
+  open,
+  setOpen,
+  selectedImage,
+  setSelectedImage,
+}) => {
   const handleImageClick = (image) => {
     setSelectedImage(image);
     setOpen(true);
@@ -136,6 +136,11 @@ const RateComponent = (
 
 function RateOfItem({ item_id, star, description }) {
   const [selectedButton, setSelectedButton] = useState("description");
+  const [infoType, setInfoType] = useState("description");
+
+  const handleChangeTab = (event, newValue) => {
+    setInfoType(newValue);
+  };
 
   // Các hàm xử lý khi nhấn các nút
   const handleDescriptionClick = () => {
@@ -151,69 +156,103 @@ function RateOfItem({ item_id, star, description }) {
   };
 
   return (
-    <Box sx={{ padding: "10px 10vh", position: "relative", zIndex: "0" }}>
-      {/* Div bao bọc chứa các button và đường gạch chân */}
-      <ButtonWrapper>
-        {/* Mỗi button sử dụng component StyledButton */}
-        <StyledButton
-          selected={selectedButton === "description"}
-          onClick={handleDescriptionClick}
+    // <Box sx={{ padding: "10px 10vh", position: "relative", zIndex: "0" }}>
+    //   {/* Div bao bọc chứa các button và đường gạch chân */}
+    //   <ButtonWrapper>
+    //     {/* Mỗi button sử dụng component StyledButton */}
+    //     <StyledButton
+    //       selected={selectedButton === "description"}
+    //       onClick={handleDescriptionClick}
+    //     >
+    //       Mô tả
+    //     </StyledButton>
+    //     <StyledButton
+    //       selected={selectedButton === "info"}
+    //       onClick={handleInfoClick}
+    //     >
+    //       Thông tin
+    //     </StyledButton>
+    //     <StyledButton
+    //       selected={selectedButton === "rating"}
+    //       onClick={handleRatingClick}
+    //     >
+    //       Đánh giá
+    //     </StyledButton>
+    //   </ButtonWrapper>
+    //   <div>
+    //     {selectedButton === "description" && (
+    //       <Description description={description} />
+    //     )}
+    //     {selectedButton === "info" && <Info />}
+    //     {selectedButton === "rating" && <Rated star={star} item_id={item_id} />}
+    //   </div>
+    // </Box>
+    <TabContext value={infoType}>
+      <Box sx={{ marginTop: "50px" }}>
+        <TabList
+          onChange={handleChangeTab}
+          centered
+          sx={{
+            "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+              bgcolor: "#3F41A6",
+              width: "90px",
+            },
+          }}
         >
-          Mô tả
-        </StyledButton>
-        <StyledButton
-          selected={selectedButton === "info"}
-          onClick={handleInfoClick}
-        >
-          Thông tin
-        </StyledButton>
-        <StyledButton
-          selected={selectedButton === "rating"}
-          onClick={handleRatingClick}
-        >
-          Đánh giá
-        </StyledButton>
-      </ButtonWrapper>
-      <div>
-        {selectedButton === "description" && (
-          <Description description={description} />
-        )}
-        {selectedButton === "info" && <Info />}
-        {selectedButton === "rating" && <Rated star={star} item_id={item_id} />}
-      </div>
-    </Box>
+          <Tab
+            label="Mô tả"
+            value="description"
+            sx={{
+              textTransform: "none",
+              fontSize: "20px",
+              "&.Mui-selected": {
+                color: "#3F41A6",
+                fontWeight: "550",
+              },
+            }}
+          />
+          <Tab
+            label="Đánh giá"
+            value="rating"
+            sx={{
+              textTransform: "none",
+              fontSize: "20px",
+              "&.Mui-selected": {
+                color: "#3F41A6",
+                fontWeight: "550",
+              },
+            }}
+          />
+        </TabList>
+      </Box>
+      <TabPanel value="description">
+        <Description description={description} />
+      </TabPanel>
+      <TabPanel value="rating">
+        <Rated star={star} item_id={item_id} />
+      </TabPanel>
+    </TabContext>
   );
 }
 
 // Component hiển thị khi các nút được chọn
 function Description({ description }) {
-  if (!description) return <Box></Box>;
+  if (!description)
+    return (
+      <div className="text-lg leading-8 text-zinc-500 px-[90px]">
+        Chưa có mô tả
+      </div>
+    );
   let array = description.split("\n");
   return (
     <Box sx={{ padding: "30px 0" }}>
       {array.map((text) => {
-        return <Title1>{text}</Title1>;
+        return (
+          <div className="text-lg leading-8 text-zinc-500 px-[90px]">
+            {text}
+          </div>
+        );
       })}
-    </Box>
-  );
-}
-
-function Info() {
-  return (
-    <Box sx={{ padding: "30px 0" }}>
-      <Title1>
-        Maecenas lacinia felis nec placerat sollicitudin. Quisque placerat dolor
-        at scelerisque imperdiet. Phasellus tristique felis dolor.
-      </Title1>
-      <Title2>
-        Mauris pretium elit a dui pulvinar, in ornare sapien euismod. Nullam
-        interdum nisl ante, id feugiat quam euismod commodo. Sed ultrices lectus
-        ut iaculis rhoncus. Aenean non dignissim justo, at fermentum turpis. Sed
-        molestie, ligula ut molestie ultrices, tellus ligula viverra neque,
-        malesuada consectetur diam sapien volutpat risus. Quisque eget tortor
-        lobortis, facilisis metus eu, elementum est. Nunc sit amet erat quis ex
-        convallis suscipit. ur ridiculus mus.
-      </Title2>
     </Box>
   );
 }

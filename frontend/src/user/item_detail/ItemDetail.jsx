@@ -12,9 +12,9 @@ import {
   Box,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { FaArrowRight } from "react-icons/fa6";
 import { GoHome } from "react-icons/go";
 import { FaStar } from "react-icons/fa";
-import { FaCircleCheck } from "react-icons/fa6";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
@@ -27,6 +27,9 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 import ItemRatings from "./ItemRatings";
 import ImgList from "./ImgList";
+import RateOfItem from "../../components/RateOfProduct";
+import { translateType } from "../../util/Translate";
+import logo from "../../assets/logo2.png";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -38,6 +41,11 @@ function ItemDetail(props) {
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
   const [infoType, setInfoType] = useState("description");
+
+  const handleDate = (date) => {
+    const newDate = new Date(date);
+    return newDate.toLocaleDateString();
+  };
 
   useEffect(() => {
     axios
@@ -86,7 +94,7 @@ function ItemDetail(props) {
     setOpenSBar(false);
   };
 
-  const list0 = ["Hàng hóa khác của Studio", "Tương tự"];
+  const list0 = ["Sản phẩm khác của Studio", "Tương tự"];
   const list1 = [1, 2, 3, 4];
   return (
     <div>
@@ -105,7 +113,7 @@ function ItemDetail(props) {
             />
           </Link>
           <Link component="button" href="#" underline="none" color="#999999">
-            Dịch vụ
+            {translateType(item?.type)}
           </Link>
           <Typography color="#3F41A6">{item?.category?.title}</Typography>
         </Breadcrumbs>
@@ -174,20 +182,19 @@ function ItemDetail(props) {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {item?.min_price || "1.000.000"}Đ -{" "}
-                {item?.max_price || "2.000.000"}Đ
+                {item.fixed_price ?? `${item.min_price} - ${item.max_price}`} Đ
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
                   Phân loại :
                 </div>
-                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                  Dịch vụ
+                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch  px-2 py-1">
+                  {translateType(item?.type)}
                 </div>
                 <div className="text-zinc-900 text-sm leading-5 my-auto">
                   Lĩnh vực :
                 </div>
-                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch grow px-2 py-1">
+                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
                   {item?.category?.title}
                 </div>
               </div>
@@ -195,36 +202,7 @@ function ItemDetail(props) {
               <div className="text-zinc-500 text-sm leading-5 self-stretch mt-3">
                 {item?.description + " "}
               </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
-                <FaCircleCheck className="text-indigo-800 w-5" />
-                <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </div>
-              </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
-                <FaCircleCheck className="text-indigo-800 w-5" />
-                <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  Pellentesque diam volutpat commodo sed egestas egestas
-                  fringilla phasellus.
-                </div>
-              </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
-                <FaCircleCheck className="text-indigo-800 w-5" />
-                <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  Dolor sit amet consectetur adipiscing elit. Est ullamcorper
-                  eget nulla facilisi etiam dignissim diam.
-                </div>
-              </div>
-              <div className="items-stretch self-stretch flex justify-between gap-2 mt-2">
-                <FaCircleCheck className="text-indigo-800 w-5" />
-                <div className="text-zinc-500 text-sm leading-5 grow shrink basis-auto max-md:max-w-full">
-                  Diam quam nulla porttitor massa id.
-                </div>
-              </div>
-              <div className="text-indigo-800 text-base font-bold self-stretch whitespace-nowrap mt-3">
-                Xem thêm
-              </div>
+
               <div className="justify-start items-stretch self-stretch flex gap-5 mt-5 px-px py-5 ">
                 <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
                   <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
@@ -302,14 +280,14 @@ function ItemDetail(props) {
                 <div className="flex flex-col items-center w-3/12">
                   <img
                     loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/a03459bc5fde60d2f75cb8b03f2ccbad49b23f0228eae68d9dde7986fe045e7d?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                    src={item.studio?.avatar ?? logo}
                     className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
                   />
                 </div>
                 <div className="flex flex-col items-stretch w-9/12">
                   <div className="flex flex-col items-stretch gap-2 justify-center">
                     <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
-                      Studio Demo
+                      {item.studio?.friendly_name}
                     </div>
                     <div className="flex items-stretch justify-start gap-2">
                       <Button
@@ -365,7 +343,7 @@ function ItemDetail(props) {
                       Đánh giá
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                      4.9
+                      {item.studio?.star}
                     </div>
                   </div>
                   <div className="flex justify-between w-[300px]">
@@ -373,7 +351,7 @@ function ItemDetail(props) {
                       Đơn thành công
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                      100
+                      {item.studio?.number_order_completed}
                     </div>
                   </div>
                 </div>
@@ -391,7 +369,7 @@ function ItemDetail(props) {
                       Tham gia
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider self-start">
-                      6 năm trước
+                      {handleDate(item.studio?.created_at)}
                     </div>
                   </div>
                 </div>
@@ -402,7 +380,7 @@ function ItemDetail(props) {
       </div>
 
       {/* Mô tả + Đánh giá */}
-      <TabContext value={infoType}>
+      {/* <TabContext value={infoType}>
         <Box sx={{ marginTop: "50px" }}>
           <TabList
             onChange={handleChangeTab}
@@ -441,7 +419,6 @@ function ItemDetail(props) {
           </TabList>
         </Box>
         <TabPanel value="description">
-          {/* Mô tả */}
           <div className="text-lg leading-8 text-zinc-500 px-[90px]">
             Mauris pretium elit a dui pulvinar, in ornare sapien euismod. Nullam
             interdum nisl ante, id feugiat quam euismod commodo. Sed ultrices
@@ -453,10 +430,15 @@ function ItemDetail(props) {
           </div>
         </TabPanel>
         <TabPanel value="rating">
-          {/* Đánh giá */}
           <ItemRatings />
         </TabPanel>
-      </TabContext>
+      </TabContext> */}
+
+      <RateOfItem
+        item_id={id}
+        star={item.star}
+        description={item.description}
+      />
 
       {/* Các danh sách */}
       <div className="my-20 flex flex-col gap-14">
@@ -466,16 +448,26 @@ function ItemDetail(props) {
               <div className="text-zinc-900 text-2xl font-semibold leading-10">
                 {item}
               </div>
-              <div className="justify-center items-stretch flex gap-3 rounded-[43px] self-start">
-                <div className="text-indigo-800 text-base font-medium leading-6">
-                  Xem tất cả
-                </div>
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/380e1367-dcf6-4446-9a58-cf7dcfd60245?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="aspect-[1.25] object-contain object-center w-[15px] overflow-hidden shrink-0 max-w-full self-start"
-                />
-              </div>
+              <Button
+                endIcon={
+                  <FaArrowRight style={{ width: "18px", height: "18px" }} />
+                }
+                onClick={() => navigate("/advanced-search/")}
+                sx={{
+                  textTransform: "none",
+                  color: "#3F41A6",
+                  width: "140px",
+                  height: "35px",
+                  borderRadius: "5px",
+                  fontSize: "15px",
+                  "&:hover": {
+                    color: "#1A237E",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                Xem tất cả
+              </Button>
             </div>
             <div className="w-[90%] mt-2 px-5">
               <div className="flex justify-between">

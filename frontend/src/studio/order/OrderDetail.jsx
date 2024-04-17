@@ -169,9 +169,13 @@ function OrderDetail(props) {
 
   const DelIconButton = ({ row }) => {
     // console.log(row);
-    if (order.status !== "ORDERED") {
+    if (order.status !== "ORDERED" && order.status !== "IN_PROCESS") {
       return (
-        <Tooltip title={"Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt'"}>
+        <Tooltip
+          title={
+            "Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt' và 'Đang tiến hành'"
+          }
+        >
           <span>
             <IconButton disabled>
               <MdDeleteOutline
@@ -198,10 +202,12 @@ function OrderDetail(props) {
   };
 
   const AddButton = () => {
-    if (order.status !== "ORDERED") {
+    if (order.status !== "ORDERED" && order.status !== "IN_PROCESS") {
       return (
         <Tooltip
-          title={"Bạn chỉ được thêm sản phẩm khi đơn đang trạng thái 'Đã đặt'"}
+          title={
+            "Bạn chỉ được thêm sản phẩm khi đơn đang trạng thái 'Đã đặt' và 'Đang tiến hành'"
+          }
         >
           <span>
             <Button
@@ -306,7 +312,7 @@ function OrderDetail(props) {
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
             <EditIconButton row={row} />
-            <DelIconButton row={row} />
+            {/* <DelIconButton row={row} /> */}
           </TableCell>
         </TableRow>
         <TableRow>

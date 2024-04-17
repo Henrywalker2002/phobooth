@@ -1,7 +1,7 @@
 import React from "react";
 import { Rating, Button, Divider, Pagination } from "@mui/material";
 
-function ItemRatings() {
+function ItemRatings({ star, item_id }) {
   return (
     <div className="mt-5 px-[140px] flex justify-between">
       {/* Filter Rating */}
@@ -9,111 +9,43 @@ function ItemRatings() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
             <div className="text-base text-indigo-800 font-medium tracking-wider">
-              4.9
+              {averageRating}
             </div>
             <Rating
               name="read-only"
-              value={5}
+              value={averageRating}
+              precision={0.1}
               readOnly
               size="small"
               sx={{ color: "#3F41A6" }}
             />
           </div>
           <div className="justify-center text-black text-base font-medium tracking-wider">
-            100 Đánh Giá
+            {count} Đánh Giá
           </div>
         </div>
         <div className="flex flex-wrap w-full gap-x-10 gap-y-5">
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            Tất cả
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            5 sao (18)
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            4 sao (18)
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            3 sao (18)
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            2 sao (18)
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "123px",
-              borderRadius: "4px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            1 sao (18)
-          </Button>
+          {["Tất cả", "5 sao", "4 sao", "3 sao", "2 sao", "1 sao"].map(
+            (rating, i) => (
+              <Button
+                onClick={() => handleRatingSelect(rating)}
+                key={i}
+                variant="outlined"
+                sx={{
+                  textTransform: "none",
+                  border: "1px solid #3F41A6",
+                  color: "#3F41A6",
+                  width: "123px",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    border: "1px solid #3949AB",
+                  },
+                }}
+              >
+                {rating}
+              </Button>
+            )
+          )}
         </div>
       </div>
       {/* Cmt */}
