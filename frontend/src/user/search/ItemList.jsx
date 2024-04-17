@@ -102,8 +102,8 @@ function ItemList({ filterVal }) {
   };
   return (
     <div>
-      <div className="mx-auto flex justify-between items-center w-[800px]">
-        <div className="flex gap-2 items-center">
+      <div className="mx-auto flex justify-between  w-[700px]">
+        <div className="flex gap-2">
           <div className=" text-zinc-500">Sắp xếp theo :</div>
           <TextField
             id="outlined-item-type"
@@ -128,13 +128,13 @@ function ItemList({ filterVal }) {
           </TextField>
         </div>
         <div className="text-base leading-6 text-stone-500">
-          <span className="font-semibold leading-5 text-zinc-900">
+          <span className="font-semibold leading-5 text-zinc-700">
             {itemList.count}
           </span>{" "}
           <span className="text-stone-500">kết quả tìm kiếm</span>
         </div>
       </div>
-      <div className="flex self-center mx-auto my-5 w-fit max-w-[810px]">
+      <div className="flex self-center mx-auto my-5 w-fit ">
         <div className="flex flex-wrap justify-start gap-8 items-center">
           {itemList?.results?.map((item, index) => (
             <Card

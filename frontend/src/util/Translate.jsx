@@ -129,3 +129,10 @@ export const translateRole = (role) => {
   if (role == "admin") return "Quản lý";
   else if (role == "staff") return "Nhân viên";
 };
+
+export const translateComplainType = (type) => {
+  if (type === "REFUND") return "Hoàn tiền";
+  else if (type === "OTHER") return "Loại khác";
+
+  return "";
+};

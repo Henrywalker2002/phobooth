@@ -51,6 +51,7 @@ class ItemImageViewSet(BaseGenericViewSet, CreateModelMixin, DestroyModelMixin):
         
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        self.perform_destroy(instance)
+        instance.is_deleted = True
+        instance.save()
         data = self.get_serializer(instance.item, is_item = True).data
         return Response(data = data, status=status.HTTP_200_OK)

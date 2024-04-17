@@ -43,6 +43,9 @@ class BaseModelViewSet(BaseGenericViewSet, viewsets.ModelViewSet):
     for create and update action, input serializer is key create , update and output is retrieve 
     """
 
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted = False)
+    
     def create(self, request, *args, **kwargs):
         """
         Override to get different input and output serializer
@@ -69,3 +72,9 @@ class BaseModelViewSet(BaseGenericViewSet, viewsets.ModelViewSet):
         
         serializer_return = self.get_serializer(instance = instance, is_get = True)
         return Response(data = serializer_return.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_deleted = True
+        instance.save()
+        return Response(status = status.HTTP_204_NO_CONTENT)
