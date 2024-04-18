@@ -29,6 +29,23 @@ function Signup() {
 
   useEffect(() => {
     userRef.current.focus();
+    (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
+
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "451257137461387",
+        xfbml: true,
+        version: "v12.0",
+      });
+    };
   }, []);
 
   const handleSignup = async (e) => {
@@ -72,6 +89,78 @@ function Signup() {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+
+  const handleFacebookLogin = () => {
+    FB.login(function (response) {
+      if (response.authResponse) {
+        axios.post("/fb-login/", { access_token: response.authResponse.accessToken }).then((response) => {
+          setCookie(
+            "userInfo",
+            {
+              ...response?.data,
+              password: pwd,
+            },
+            { path: "/" }
+          );
+          console.log(response?.data);
+    
+          setUser("");
+          setPwd("");
+          if (
+            response.data.role[0].code_name === "admin" ||
+            response.data.role[0].code_name === "staff"
+          )
+            navigate("/admin", { replace: true });
+          else navigate(from, { replace: true });
+        }).catch((err) => {
+          if (err.status === 400) {
+            console.log(err.response.data.message)
+          }
+        })
+      } else {
+        console.log("User cancelled login or did not fully authorize.");
+      }
+    });
+  };
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [user, pwd]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    var loginInfo = JSON.stringify({
+      username: user,
+      password: pwd,
+    });
+
+    try {
+      const response = await axios.post(LOGIN_URL, loginInfo, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(response?.data);
+      setCookie(
+        "userInfo",
+        {
+          ...response?.data,
+          password: pwd,
+        },
+        { path: "/" }
+      );
+
+      setUser("");
+      setPwd("");
+      if (
+        response.data.role[0].code_name === "admin" ||
+        response.data.role[0].code_name === "staff"
+      )
+        navigate("/admin", { replace: true });
+      else navigate(from, { replace: true });
+    } catch (err) {
+      setErrMsg(err.response.data.messsage);
+      // errRef.current.focus();
+    }
   };
   return (
     <div className="bg-white">
@@ -164,6 +253,7 @@ function Signup() {
                     borderColor: "#787282",
                   },
                 }}
+                onClick={handleFacebookLogin}
               >
                 Đăng kí với Facebook
               </Button>

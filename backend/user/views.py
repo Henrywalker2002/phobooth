@@ -1,7 +1,7 @@
 from user.serializers import (
     UserSerializer, LoginSerializer, UserSignUpSerializer, UserDetailSerializer,
-    CreateStaffSerilizer, UpdateUserSerializer, StaffSummarySerializer, 
-    UpdateStaffSerializer, UserSummarySerializer)
+    CreateStaffSerilizer, UpdateUserSerializer, StaffSummarySerializer,
+    UpdateStaffSerializer, UserSummarySerializer, FbLoginSerializer)
 from user.models import User
 from base.views import BaseModelViewSet, BaseGenericViewSet
 from django.db import transaction
@@ -18,20 +18,21 @@ from address.models import Address
 import json
 from django.http.request import QueryDict
 from user.filter import StaffFilter
+import requests
 
 
 class UserViewSet(BaseModelViewSet):
 
     serializer_class = {"default": UserSerializer, "sign_up": UserSignUpSerializer,
-                        "retrieve": UserDetailSerializer, "update": UpdateUserSerializer, 
+                        "retrieve": UserDetailSerializer, "update": UpdateUserSerializer,
                         "partial_update": UpdateUserSerializer, "list": UserSummarySerializer}
     queryset = User.objects.all()
     permission_classes = [UserPermission]
     lookup_field = "id"
     lookup_url_kwarg = "id"
-    
+
     def get_queryset(self):
-        return self.queryset.filter(role__code_name__in=["customer", "studio"], is_deleted = False).distinct()
+        return self.queryset.filter(role__code_name__in=["customer", "studio"], is_deleted=False).distinct()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -56,13 +57,13 @@ class UserViewSet(BaseModelViewSet):
         user.set_password(user.password)
         user.save()
 
-        return Response(data=self.get_serializer(user, is_get=True).data, status=status.HTTP_201_CREATED)       
+        return Response(data=self.get_serializer(user, is_get=True).data, status=status.HTTP_201_CREATED)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        
+
         if isinstance(request.data, QueryDict):
             data = request.data.dict()
         else:
@@ -73,48 +74,49 @@ class UserViewSet(BaseModelViewSet):
                 address = json.loads(address)
                 data['address'] = address
             except Exception as e:
-                return Response(data = {"error": "Invalid address format"}, status=status.HTTP_400_BAD_REQUEST)
-        
+                return Response(data={"error": "Invalid address format"}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        
+
         save_flag = False
         if 'password' in serializer.validated_data:
             instance.set_password(serializer.validated_data.pop("password"))
             save_flag = True
-        
+
         if 'address' in serializer.validated_data:
             address = serializer.validated_data.pop("address", None)
             if address:
                 address = Address.objects.create(**address)
                 instance.address = address
                 save_flag = True
-                    
+
         if save_flag:
             instance.save()
         self.perform_update(serializer)
-            
+
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
-            
+
         data = self.get_serializer(instance, is_get=True).data
         return Response(data)
 
+
 class StaffViewSet(BaseModelViewSet):
-    serializer_class = {"default": UserSerializer, "create": CreateStaffSerilizer, 
-                        "retrieve": UserDetailSerializer, "list" : StaffSummarySerializer,
-                        "update": UpdateStaffSerializer, "partial_update": UpdateStaffSerializer,}
+    serializer_class = {"default": UserSerializer, "create": CreateStaffSerilizer,
+                        "retrieve": UserDetailSerializer, "list": StaffSummarySerializer,
+                        "update": UpdateStaffSerializer, "partial_update": UpdateStaffSerializer, }
     queryset = User.objects.all()
     permission_classes = [StaffPermission]
     filterset_class = StaffFilter
     search_fields = ["@username", "@full_name", "@email"]
     lookup_field = "username"
-    
+
     def get_queryset(self):
-        return self.queryset.filter(role__code_name__in=["staff", "admin"], is_deleted = False).distinct()
-    
+        return self.queryset.filter(role__code_name__in=["staff", "admin"], is_deleted=False).distinct()
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -129,27 +131,29 @@ class StaffViewSet(BaseModelViewSet):
         user.role.set([role])
         data = StaffSummarySerializer(user).data
         return Response(data=data, status=status.HTTP_201_CREATED)
-    
+
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         if 'role' in serializer.validated_data:
             role = serializer.validated_data.pop("role")
-            if not self.request.user.role.filter(code_name= "admin").exists():
-                self.permission_denied(request, message="You don't have permission to change role", code=403)
+            if not self.request.user.role.filter(code_name="admin").exists():
+                self.permission_denied(
+                    request, message="You don't have permission to change role", code=403)
             role = Role.objects.filter(code_name=role)
             if not role:
                 return Response(data={"message": "something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             role = role.first()
             instance.role.set([role])
         if 'password' in serializer.validated_data:
-           password = serializer.validated_data.pop("password") 
-           instance.set_password(password)
-           instance.save() 
-        
+            password = serializer.validated_data.pop("password")
+            instance.set_password(password)
+            instance.save()
+
         self.perform_update(serializer)
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
@@ -162,7 +166,7 @@ class StaffViewSet(BaseModelViewSet):
 
 class AuthenticationViewSet(BaseGenericViewSet):
     serializer_class = {"default": LoginSerializer,
-                        "retrieve": UserDetailSerializer}
+                        "retrieve": UserDetailSerializer, "fb_login": FbLoginSerializer}
     permission_classes = [permissions.AllowAny]
 
     def get_permissions(self):
@@ -187,6 +191,36 @@ class AuthenticationViewSet(BaseGenericViewSet):
             return Response(user_data, status=status.HTTP_200_OK)
         return Response({"message": "wrong username or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    @action(methods=['post'], detail=False, url_path="fb-login")
+    @transaction.atomic
+    def fb_login(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        access_token = serializer.validated_data.get("access_token")
+
+        response = requests.get(f"https://graph.facebook.com/v19.0/me?fields=id,name,email",
+                                headers={"Authorization": f"Bearer {access_token}"})
+        response = response.json()
+        if "error" in response:
+            return Response(data={"message": "Invalid access token"}, status=status.HTTP_400_BAD_REQUEST)
+        fb_id = response.get("id")
+        user = User.objects.filter(facebook_id=fb_id).first()
+        if not user:
+            if User.objects.filter(email=response.get("email")).exists():
+                return Response(data={"message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            role = Role.objects.filter(code_name="customer")
+            if not role:
+                return Response(data={"message": "something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            role = role.first()
+            user = User.objects.create(
+                username=fb_id, email=response.get("email"), full_name=response.get("name"), facebook_id=fb_id)
+            user.role.set([role])
+        token = RefreshToken.for_user(user)
+        user_data = self.get_serializer(user, is_get=True).data
+        user_data["access"] = str(token.access_token)
+        user_data["refresh"] = str(token)
+        return Response(user_data, status=status.HTTP_200_OK)
+        
     @action(methods=['post'], detail=False, url_path="logout")
     def logout(self, request):
         logout(request)
