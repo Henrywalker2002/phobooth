@@ -28,7 +28,8 @@ import StudioNavbar from "../../components/StudioNavbar";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Filter from "./Filter";
-import { translateOrderStatus } from "../../util/Translate";
+import { translateOrderStatus, translateType } from "../../util/Translate";
+import { DateFormatter } from "../../util/Format";
 
 function Orders() {
   // Collapsible table
@@ -139,10 +140,10 @@ function Orders() {
           <TableCell component="th" scope="row">
             {row.id}
           </TableCell>
-          <TableCell align="left">{row.created_at.substring(0, 10)}</TableCell>
+          <TableCell align="left">{DateFormatter(row.created_at)}</TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
               {translateOrderStatus(row.status)}
             </div>
           </TableCell>
@@ -250,7 +251,9 @@ function Orders() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{detailedRow.item?.type}</TableCell>
+                        <TableCell>
+                          {translateType(detailedRow.item?.type)}
+                        </TableCell>
                         <TableCell align="left">
                           {detailedRow.item?.category?.title}
                         </TableCell>

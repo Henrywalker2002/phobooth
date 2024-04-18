@@ -29,12 +29,11 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { daysleftCount, isBefore } from "../../util/Compare";
-import dayjs from "dayjs";
 import CancelInOrders from "./CancelInOrders";
-
 import Filter from "./Filter";
-import { translateOrderStatus } from "../../util/Translate";
+import { translateOrderStatus, translateType } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
+import { DateFormatter } from "../../util/Format";
 
 function Orders() {
   const navigate = useNavigate();
@@ -189,7 +188,7 @@ function Orders() {
           </TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-center rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-center rounded bg-indigo-100 self-stretch px-2 py-1">
               {translateOrderStatus(row.status)}
             </div>
           </TableCell>
@@ -295,7 +294,9 @@ function Orders() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{detailedRow.item?.type}</TableCell>
+                        <TableCell>
+                          {translateType(detailedRow.item?.type)}
+                        </TableCell>
                         <TableCell align="left">
                           {detailedRow.item?.category?.title}
                         </TableCell>
@@ -363,13 +364,14 @@ function Orders() {
                               Thời hạn :
                             </div>
                             <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
-                              {dayjs(recentRequest.expiration_date).format(
-                                "DD-MM-YYYY"
-                              )}
+                              {DateFormatter(recentRequest.expiration_date)}
                             </div>
                             <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                              Còn {daysleftCount(recentRequest.expiration_date)}{" "}
-                              ngày
+                              {daysleftCount(recentRequest.expiration_date) < 0
+                                ? "Quá hạn"
+                                : `Còn ${daysleftCount(
+                                    recentRequest.expiration_date
+                                  )} ngày`}
                             </div>
                           </div>
                         </div>
@@ -405,19 +407,19 @@ function Orders() {
                     {row.complain !== null ? (
                       <Paper
                         sx={{
-                          width: "330px",
+                          width: "fit-content",
                           border: "0.5px solid #d6d3d1",
                           alignItems: "stretch",
                           display: "flex",
                           justifyContent: "space-between",
                           gap: "20px",
                           borderRadius: "8px",
-                          padding: "10px",
+                          padding: "15px",
                           cursor: "pointer",
                         }}
                       >
                         <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
-                          <div className="text-zinc-500 text-base font-medium leading-6">
+                          <div className="text-zinc-500 text-base font-semibold leading-6">
                             {row?.complain?.title}
                           </div>
                           <div className="flex items-stretch gap-2.5 mt-2">
@@ -425,9 +427,7 @@ function Orders() {
                               Ngày gửi :
                             </div>
                             <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
-                              {dayjs(row?.complain?.created_at).format(
-                                "DD-MM-YYYY"
-                              )}
+                              {DateFormatter(row?.complain?.created_at)}
                             </div>
                           </div>
                           <div className="flex justify-start mt-1.5">
@@ -663,13 +663,13 @@ function Orders() {
         onClose={handleCloseCancelSBar}
         message={statusMsg}
       />
-        
-        {/* Rating Dialog */}
-        <RatingDialog
-          open={openRating}
-          setOpen={setOpenRating}
-          orderItem={selectedOrderItem}
-        />
+
+      {/* Rating Dialog */}
+      <RatingDialog
+        open={openRating}
+        setOpen={setOpenRating}
+        orderItem={selectedOrderItem}
+      />
     </div>
   );
 }
