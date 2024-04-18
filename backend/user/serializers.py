@@ -79,6 +79,8 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=128)
     password = serializers.CharField(max_length=128, write_only=True)
 
+class FbLoginSerializer(serializers.Serializer):
+    access_token = serializers.CharField(max_length=500)
 
 class CreateStaffSerilizer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

@@ -59,7 +59,7 @@ function Navbar() {
 
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
-      setUserInfo(cookies?.userInfo?.username);
+      setUserInfo(cookies?.userInfo?.full_name);
     } else setUserInfo("");
   }, []);
 

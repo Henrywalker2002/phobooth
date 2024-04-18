@@ -31,7 +31,57 @@ function Login() {
 
   useEffect(() => {
     userRef.current.focus();
+    (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
+
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "451257137461387",
+        xfbml: true,
+        version: "v12.0",
+      });
+    };
   }, []);
+
+  const handleFacebookLogin = () => {
+    FB.login(function (response) {
+      if (response.authResponse) {
+        axios.post("/fb-login/", { access_token: response.authResponse.accessToken }).then((response) => {
+          setCookie(
+            "userInfo",
+            {
+              ...response?.data,
+              password: pwd,
+            },
+            { path: "/" }
+          );
+          console.log(response?.data);
+    
+          setUser("");
+          setPwd("");
+          if (
+            response.data.role[0].code_name === "admin" ||
+            response.data.role[0].code_name === "staff"
+          )
+            navigate("/admin", { replace: true });
+          else navigate(from, { replace: true });
+        }).catch((err) => {
+          if (err.status === 400) {
+            console.log(err.response.data.message)
+          }
+        })
+      } else {
+        console.log("User cancelled login or did not fully authorize.");
+      }
+    });
+  };
 
   useEffect(() => {
     setErrMsg("");
@@ -178,6 +228,7 @@ function Login() {
                     borderColor: "#787282",
                   },
                 }}
+                onClick={handleFacebookLogin}
               >
                 Đăng nhập với Facebook
               </Button>
