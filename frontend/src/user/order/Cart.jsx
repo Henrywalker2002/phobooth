@@ -174,6 +174,11 @@ function Cart() {
         console.log(err);
       });
   };
+  const handleDelete= (id)=>{
+    axiosPrivate.delete(`/cart/${id}/`).then((res)=>{
+      window.location.reload()
+    })
+  }
 
   return (
     <div>
@@ -346,6 +351,7 @@ function Cart() {
                           </TableCell>
                           <TableCell>
                             <IconButton
+                              onClick={()=>handleDelete(row.id)}
                               sx={{
                                 padding: 0,
                                 border: "0.5px solid #d6d3d1",
@@ -384,6 +390,10 @@ function Cart() {
                       />
                       <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
                         {lst.studio?.friendly_name}
+                        
+                      <div style={{color: "#848484", fontSize: "14px"}}>
+                        {lst.studio?.type=="STUDIO"?"Studio":"Thợ chụp ảnh"}
+                      </div>
                       </div>
                     </div>
                     <div className="flex items-stretch justify-between gap-5 mt-4">
@@ -408,6 +418,7 @@ function Cart() {
                       <Button
                         variant="outlined"
                         startIcon={<MdStorefront />}
+                        onClick={()=>navigate(`/studio/${lst.studio.code_name}`)}
                         sx={{
                           borderRadius: "4px",
                           borderColor: "#1A093E",

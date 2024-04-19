@@ -11,6 +11,7 @@ import {
   Tab,
   Box,
   Rating,
+  Alert
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { FaArrowRight } from "react-icons/fa6";
@@ -41,22 +42,31 @@ function ItemDetail(props) {
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
   const [infoType, setInfoType] = useState("description");
+  const [list1, setLits1] = useState([])
 
   const handleDate = (date) => {
     const newDate = new Date(date);
     return newDate.toLocaleDateString();
   };
 
-  useEffect(() => {
+  useEffect(() => { 
+
     axios
       .get("/item/" + id + "/")
       .then((res) => {
         console.log(res.data);
         setItem(res.data);
+        axios.get(`/item/`,{params: {
+          studio: res.data.studio.code_name, 
+          limit: 4
+        }}).then((res)=>{
+          setLits1(res.data.results)
+        })
       })
       .catch((err) => {
         console.log(err);
       });
+
   }, []);
 
   const handleChangeTab = (event, newValue) => {
@@ -95,7 +105,7 @@ function ItemDetail(props) {
   };
 
   const list0 = ["Sản phẩm khác của Studio", "Tương tự"];
-  const list1 = [1, 2, 3, 4];
+  // const list1 = [1, 2, 3, 4];
   return (
     <div>
       <Navbar />
@@ -181,12 +191,6 @@ function ItemDetail(props) {
                   size="small"
                   sx={{ color: "#3F41A6" }}
                 />
-                <div className="text-zinc-400 text-xl font-medium leading-8 self-stretch">
-                  •
-                </div>
-                <div className="justify-center text-black text-base font-medium tracking-wider">
-                  100 Đánh Giá
-                </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
                 {item.fixed_price ?? `${item.min_price} - ${item.max_price}`} Đ
@@ -295,6 +299,9 @@ function ItemDetail(props) {
                   <div className="flex flex-col items-stretch gap-2 justify-center">
                     <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
                       {item.studio?.friendly_name}
+                      <div style={{color: "#848484", fontSize: "14px"}}>
+                      {item.studio?.type=="STUDIO"?"Studio":"Thợ chụp ảnh"}
+                    </div>
                     </div>
                     <div className="flex items-stretch justify-start gap-2">
                       <Button
@@ -441,7 +448,7 @@ function ItemDetail(props) {
                         <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                           <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                             <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                              4.8
+                              {item.star}
                             </div>
                             <img
                               loading="lazy"
@@ -454,10 +461,10 @@ function ItemDetail(props) {
                       <div className="relative flex items-stretch gap-5 mt-3">
                         <div className="flex flex-col items-stretch w-fit">
                           <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                            Chụp ảnh gia đình
+                            {item.title}
                           </div>
                           <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                            Studio: PhotoHN
+                            {`Studio: ${item.studio.friendly_name}`}
                           </div>
                         </div>
                         <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
@@ -483,8 +490,12 @@ function ItemDetail(props) {
         open={openSBar}
         autoHideDuration={3000}
         onClose={handleCloseSBar}
-        message="Đã thêm vào giỏ hàng !"
-      />
+      >
+        <Alert onClose={handleCloseSBar} severity="success">
+        Đã thêm vào giỏ hàng !
+        </Alert>
+      </Snackbar>
+        
 
       {/* Err 401 Dialog */}
       <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
