@@ -1,6 +1,5 @@
 import React from "react";
 import { Paper, Avatar, Rating, Button, Snackbar } from "@mui/material";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { RiBarChartFill } from "react-icons/ri";
 import StarIcon from "@mui/icons-material/Star";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -8,66 +7,40 @@ import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import { FaArrowRight } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-function Widgets( {studioInfor, setStudioInfor} ) {
+function Widgets({ studioInfor, setStudioInfor }) {
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
   const [openSBar, setOpenSBar] = React.useState(false);
-  const [messageBar, setMessageBar] = React.useState('');
+  const [messageBar, setMessageBar] = React.useState("");
   const axiosPrivate = useAxiosPrivate();
 
   const handleDrawMoney = () => {
-    axiosPrivate.post('/draw-money/', {}).then((res) => {
-      setOpenSBar(true);
-      setMessageBar('Rút tiền thành công');
-      setStudioInfor({...studioInfor, account_balance: 0});
-    }).catch((res) => {
-      console.log(res.data);
-      if (res.data.status === 400) {
-        if ("non_field_errors" in res.data && res.data.non_field_errors[0].includes('account number') ) {
-          setOpenSBar(true);
-          setMessageBar('Chưa có thông tin tài khoản ngân hàng');
+    axiosPrivate
+      .post("/draw-money/", {})
+      .then((res) => {
+        setOpenSBar(true);
+        setMessageBar("Rút tiền thành công");
+        setStudioInfor({ ...studioInfor, account_balance: 0 });
+      })
+      .catch((res) => {
+        console.log(res.data);
+        if (res.data.status === 400) {
+          if (
+            "non_field_errors" in res.data &&
+            res.data.non_field_errors[0].includes("account number")
+          ) {
+            setOpenSBar(true);
+            setMessageBar("Chưa có thông tin tài khoản ngân hàng");
+          }
         }
-      }
-    });
+      });
   };
 
   return (
-    <div className="flex gap-5 px-5 py-2.5 my-5">
-      {/* <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
-        <Paper
-          elevation={2}
-          sx={{
-            borderRadius: "8px",
-            height: "90px",
-            border: "0.5px solid #d6d3d1",
-          }}
-        >
-          <div className="flex py-2 px-3 w-full items-center h-full">
-            <div className="flex gap-4 self-center items-center w-fit h-fit my-auto">
-              <Avatar sx={{ color: "#3F41A6", bgcolor: "#E2E5FF" }}>
-                <AttachMoneyIcon />
-              </Avatar>
-              <div className="flex flex-col my-auto">
-                <div className="text-sm font-medium tracking-tight leading-6 text-slate-400">
-                  Doanh thu
-                </div>
-                <div className="flex gap-1 items-end">
-                  <div className="text-xl font-semibold tracking-tight text-indigo-900">
-                    {formatter.format(3000000000)}
-                  </div>
-                  <div className="text-xs tracking-tight leading-5 text-slate-400">
-                    / tháng
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Paper>
-      </div> */}
-
-      <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
+    <div className="w-full flex justify-evenly">
+      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -106,7 +79,7 @@ function Widgets( {studioInfor, setStudioInfor} ) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
+      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -143,7 +116,7 @@ function Widgets( {studioInfor, setStudioInfor} ) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
+      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -175,7 +148,7 @@ function Widgets( {studioInfor, setStudioInfor} ) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/5 max-w-[280px] max-h-[100px]">
+      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -194,7 +167,7 @@ function Widgets( {studioInfor, setStudioInfor} ) {
                   Số dư
                 </div>
                 <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                  {studioInfor.account_balance}
+                  {formatter.format(studioInfor.account_balance ?? 0)}
                 </div>
                 <Button
                   startIcon={
@@ -211,7 +184,7 @@ function Widgets( {studioInfor, setStudioInfor} ) {
                       color: "#1A237E",
                     },
                   }}
-                  disabled = {studioInfor.account_balance < 10000}
+                  disabled={studioInfor.account_balance < 10000}
                   onClick={handleDrawMoney}
                 >
                   Rút tiền
@@ -221,11 +194,12 @@ function Widgets( {studioInfor, setStudioInfor} ) {
           </div>
         </Paper>
       </div>
+
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
         autoHideDuration={2000}
-        message= {messageBar}
+        message={messageBar}
       />
     </div>
   );

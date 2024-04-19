@@ -65,6 +65,7 @@ urlpatterns = [
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('login/', AuthenticationViewSet.as_view({'post': 'login'}), name='login'),
     path('logout/', TokenBlacklistView.as_view(), name='logout'),
+    path('fb-login/', AuthenticationViewSet.as_view({'post': 'fb_login'}), name='fb-login'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

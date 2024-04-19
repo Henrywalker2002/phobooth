@@ -37,7 +37,7 @@ import EditOrderItem from "./EditOrderItem";
 import DeleteOrderItem from "./DeleteOrderItem";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Payment from "./Payment";
-import { translateErrStatusOrder } from "../../util/Translate";
+import { translateErrStatusOrder, translateType } from "../../util/Translate";
 
 function OrderDetail(props) {
   // global
@@ -169,9 +169,13 @@ function OrderDetail(props) {
 
   const DelIconButton = ({ row }) => {
     // console.log(row);
-    if (order.status !== "ORDERED") {
+    if (order.status !== "ORDERED" && order.status !== "IN_PROCESS") {
       return (
-        <Tooltip title={"Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt'"}>
+        <Tooltip
+          title={
+            "Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt' và 'Đang tiến hành'"
+          }
+        >
           <span>
             <IconButton disabled>
               <MdDeleteOutline
@@ -198,10 +202,12 @@ function OrderDetail(props) {
   };
 
   const AddButton = () => {
-    if (order.status !== "ORDERED") {
+    if (order.status !== "ORDERED" && order.status !== "IN_PROCESS") {
       return (
         <Tooltip
-          title={"Bạn chỉ được thêm sản phẩm khi đơn đang trạng thái 'Đã đặt'"}
+          title={
+            "Bạn chỉ được thêm sản phẩm khi đơn đang trạng thái 'Đã đặt' và 'Đang tiến hành'"
+          }
         >
           <span>
             <Button
@@ -293,12 +299,12 @@ function OrderDetail(props) {
             </div>
           </TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-              {row.item?.type}
+            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
+              {translateType(row.item?.type)}
             </div>
           </TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
               {row.item?.category?.title}
             </div>
           </TableCell>
@@ -306,7 +312,7 @@ function OrderDetail(props) {
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
             <EditIconButton row={row} />
-            <DelIconButton row={row} />
+            {/* <DelIconButton row={row} /> */}
           </TableCell>
         </TableRow>
         <TableRow>

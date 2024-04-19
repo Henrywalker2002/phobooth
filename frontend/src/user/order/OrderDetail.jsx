@@ -452,15 +452,17 @@ function OrderDetail() {
             {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
+
                 {/* payment request + complain + demo*/}
                 <div className="flex flex-col w-[437px] gap-12">
                   {/* payment request */}
-                  <div className="items-stretch flex flex-col px-5">
+                  <div className="items-stretch flex flex-col px-5 gap-2">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Yêu cầu thanh toán mới nhất
                     </div>
 
                     <div className="flex flex-col my-3 h-fit">
+
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -542,9 +544,11 @@ function OrderDetail() {
                                     alignItems: "stretch",
                                     display: "flex",
                                     justifyContent: "space-between",
-                                    gap: "20px",
+                                    gap: "30px",
                                     borderRadius: "8px",
+
                                     padding: "10px 15px",
+
                                     cursor: "pointer",
                                   }}
                                 >
@@ -576,7 +580,7 @@ function OrderDetail() {
                     </div>
 
                     {/* Pagination */}
-                    {requestList.length > 0 ? (
+                    {requestList.length > 0 && (
                       <Pagination
                         count={pageCount}
                         onChange={getReqsForPage}
@@ -589,7 +593,7 @@ function OrderDetail() {
                             },
                         }}
                       />
-                    ) : null}
+                    )}
                   </div>
                   {/* Complain */}
                   <div className="items-stretch flex flex-col px-5">
@@ -597,7 +601,7 @@ function OrderDetail() {
                       Khiếu nại
                     </div>
 
-                    <div className="flex flex-col mt-2 gap-5">
+                    <div className="flex flex-col mt-2 gap-5 h-[120px]">
                       {order.complain !== null ? (
                         <Paper
                           sx={{
@@ -608,7 +612,9 @@ function OrderDetail() {
                             justifyContent: "space-between",
                             gap: "20px",
                             borderRadius: "8px",
+
                             padding: "10px 15px",
+
                             cursor: "pointer",
                           }}
                         >
@@ -680,7 +686,9 @@ function OrderDetail() {
                     <Button
                       startIcon={
                         <FaArrowRight
+
                           style={{ width: "18px", height: "16px" }}
+
                         />
                       }
                       onClick={() => navigate(`/order/${id}/demo`)}
@@ -688,7 +696,9 @@ function OrderDetail() {
                         textTransform: "none",
                         color: "#3F41A6",
                         width: "fit-content",
-                        padding: "5px 5px",
+
+                        padding: "5px",
+
                         height: "35px",
                         borderRadius: "5px",
                         fontSize: "15px",
@@ -696,6 +706,7 @@ function OrderDetail() {
                           color: "#1A237E",
                           bgcolor: "transparent",
                         },
+
                       }}
                     >
                       Xem thành phẩm
@@ -735,7 +746,7 @@ function OrderDetail() {
                         <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
                           {order.total_price == null
                             ? "Chưa cập nhật"
-                            : order.total_price}
+                            : formatter.format(order.total_price)}
                         </div>
                       </div>
                       <div className="justify-between items-stretch flex gap-5 py-3">
@@ -754,7 +765,7 @@ function OrderDetail() {
                         <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
                           {order.discount_price == null
                             ? "Chưa có"
-                            : order.discount_price}
+                            : formatter.format(order.discount_price)}
                         </div>
                       </div>
                       <div className="justify-between items-stretch flex gap-5 py-3">
@@ -764,7 +775,7 @@ function OrderDetail() {
                         <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
                           {order.discount_price == null
                             ? "Chưa có"
-                            : order.discount_price}
+                            : formatter.format(order.discount_price)}
                         </div>
                       </div>
                       <div className="bg-neutral-200 shrink-0 h-px" />
@@ -776,7 +787,7 @@ function OrderDetail() {
                         <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
                           {order.total_price == null
                             ? "Chưa cập nhật"
-                            : order.total_price}
+                            : formatter.format(order.total_price)}
                         </div>
                       </div>
                       <div className="bg-neutral-200 shrink-0 h-0.5" />
@@ -786,7 +797,7 @@ function OrderDetail() {
                         </div>
                         <div className="text-indigo-800 text-sm font-medium leading-5 whitespace-nowrap">
                           {order.amount_paid > 0 ? "-" : ""}
-                          {order.amount_paid}
+                          {formatter.format(order.amount_paid)}
                         </div>
                       </div>
 
@@ -796,7 +807,9 @@ function OrderDetail() {
                           Còn lại
                         </div>
                         <div className="text-indigo-800 text-lg font-semibold leading-7 whitespace-nowrap">
-                          {order.total_price - order.amount_paid}
+                          {formatter.format(
+                            order.total_price - order.amount_paid
+                          )}
                         </div>
                       </div>
                     </div>
@@ -831,10 +844,19 @@ function OrderDetail() {
           </TableContainer>
 
           {/* Thông tin vận chuyển */}
-          <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
-            <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
-              Thông tin vận chuyển
+          <Paper
+            sx={{
+              width: "950px",
+              margin: "10px auto",
+              border: "1.5px solid #d6d3d1",
+              paddingBottom: "20px",
+            }}
+            elevation={2}
+          >
+            <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start ">
+              Thông tin cơ bản
             </div>
+            <Divider />
             <div className="flex w-full flex-col items-stretch mt-7 px-9">
               <div className="flex items-stretch justify-between gap-10">
                 <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
@@ -846,6 +868,8 @@ function OrderDetail() {
                     {order?.customer?.full_name ?? "Chưa cập nhật"}
                   </div>
                 </div>
+              </div>
+              <div className="flex items-stretch justify-between gap-5 mt-6 ">
                 <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
                   <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                     số điện thoại
@@ -882,28 +906,83 @@ function OrderDetail() {
                     </div>
                   </div>
                 </div>
-                <div className="w-[450px] flex justify-start">
-                  <div className="max-w-[200px] items-stretch flex basis-[0%] flex-col self-start">
-                    <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                      hàng hóa vận chuyển
+              </div>
+
+              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
+                trạng thái vận chuyển
+              </div>
+              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 mt-1 px-2.5 py-1 self-start">
+                Chưa vận chuyển
+              </div>
+              <Button
+                disabled={order.status === "CANCELED" ? true : false}
+                variant="contained"
+                sx={{
+                  marginTop: "30px",
+                  textTransform: "none",
+                  borderRadius: "43px",
+                  color: "#F6F5FB",
+                  bgcolor: "#3F41A6",
+                  width: "130px",
+                  "&:hover": {
+                    bgcolor: "#3F41A6B2",
+                  },
+                }}
+              >
+                Lưu thông tin
+              </Button>
+            </div>
+          </Paper>
+          {/* <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
+            <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
+              Thông tin vận chuyển
+            </div>
+            <div className="flex w-full flex-col items-stretch mt-7 px-9">
+              <div className="flex items-stretch justify-between gap-10">
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                    Tên khách hàng
+                  </div>
+
+                  <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
+                    {order?.customer?.full_name ?? "Chưa cập nhật"}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-stretch justify-between gap-5 mt-6 ">
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+                    số điện thoại
+                  </div>
+                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                    Chưa cập nhật
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-stretch justify-between gap-5 mt-6 ">
+                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                    Địa chỉ
+                  </div>
+
+                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                    {order?.address?.street},{" "}
+                    {order?.address?.ward.name_with_type},{" "}
+                    {order?.address?.district.name_with_type},{" "}
+                    {order?.address?.province.name_with_type}
+                  </div>
+
+                  <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                      className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
+                    />
+                    <div className="text-zinc-500 text-sm leading-5 my-auto">
+                      Phí vận chuyển :
                     </div>
-                    <div className="items-stretch border flex w-full flex-col mt-1 pl-3 pr-7 py-1.5 rounded-lg border-solid border-neutral-200 max-md:pr-5">
-                      <div className="items-stretch flex justify-between gap-5 pr-5 py-1">
-                        <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                          Khung ảnh :
-                        </div>
-                        <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
-                          x 1
-                        </div>
-                      </div>
-                      <div className="items-stretch flex justify-between gap-5 pr-2 py-1">
-                        <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
-                          Ảnh in :
-                        </div>
-                        <div className="text-indigo-950 text-opacity-80 text-sm leading-5 whitespace-nowrap">
-                          x 10
-                        </div>
-                      </div>
+                    <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
+                      20,000
                     </div>
                   </div>
                 </div>
@@ -933,7 +1012,7 @@ function OrderDetail() {
                 Lưu thông tin
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
         <UpdateHistory />
       </div>
