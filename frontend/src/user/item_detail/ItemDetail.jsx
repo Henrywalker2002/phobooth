@@ -12,6 +12,7 @@ import {
   Box,
   Rating,
   Alert,
+  Avatar,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { FaArrowRight } from "react-icons/fa6";
@@ -292,10 +293,10 @@ function ItemDetail(props) {
             <div className="flex flex-col items-start justify-center w-[43%] ml-5">
               <div className="gap-5 flex ml-8">
                 <div className="flex flex-col items-center w-3/12">
-                  <img
-                    loading="lazy"
+                  <Avatar
+                    alt={item.studio?.friendly_name}
                     src={item.studio?.avatar ?? logo}
-                    className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
+                    sx={{ width: 70, height: 70 }}
                   />
                 </div>
                 <div className="flex flex-col items-stretch w-9/12">

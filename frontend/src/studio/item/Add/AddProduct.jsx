@@ -749,7 +749,7 @@ function AddProduct({ categories, setOpenSBar }) {
           </div>
 
           {/* Variation */}
-          <div className="flex flex-col items-start pb-2.5 mt-8 bg-white rounded-lg border border-solid border-slate-100 max-md:max-w-full">
+          <div className="flex flex-col items-start gap-1 pb-2.5 mt-8 bg-white ">
             <Button
               sx={{
                 textTransform: "none",
@@ -760,7 +760,7 @@ function AddProduct({ categories, setOpenSBar }) {
                 },
               }}
               onClick={() => createVariation(optList1, optList2)}
-              startIcon={<FaArrowRight />}
+              startIcon={<FaArrowRight className="w-5 h-4" />}
             >
               Tạo tất cả các biến thể của sản phẩm
             </Button>
