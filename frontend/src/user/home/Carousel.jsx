@@ -21,7 +21,7 @@ import ItemPage from "./ItemPage";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
-function Carousel({ handleAddToCart, setOpenErr401 }) {
+function Carousel({ handleAddToCart }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -189,7 +189,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                       color: "#1A237E",
                       bgcolor: "transparent",
                     },
-                    marginBottom: "20px"
+                    marginBottom: "20px",
                   }}
                 >
                   Xem tất cả
@@ -227,7 +227,6 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                     <ItemPage
                       itemList={itemList.results}
                       handleAddToCart={handleAddToCart}
-                      setOpenErr401={setOpenErr401}
                     />
 
                     <IconButton
@@ -255,7 +254,7 @@ function Carousel({ handleAddToCart, setOpenErr401 }) {
                       width: "fit-content",
                       margin: "0 auto",
                       color: "#3F41A6",
-                      "&.MuiMobileStepper-dotActive": {
+                      ".css-26w9jf-MuiMobileStepper-dot": {
                         bgcolor: "#3F41A6",
                       },
                       marginTop: "20px",

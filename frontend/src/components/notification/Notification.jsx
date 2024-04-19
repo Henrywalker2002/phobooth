@@ -14,6 +14,9 @@ import {
   DialogContent,
   MenuItem,
   MenuList,
+  Popover,
+  AppBar,
+  Toolbar,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -132,101 +135,108 @@ function NotificationList({ anchorNoti, handleClose }) {
   }, []);
 
   return (
-    <Dialog
+    <Popover
       anchorEl={anchorNoti}
       open={open}
       onClose={handleClose}
-      transformOrigin={{ horizontal: "right", vertical: "bottom" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      keepMounted
-      PaperProps={{
-        style: {
-          width: "auto",
-          minWidth: "450px",
-          margin: "16px",
-          borderRadius: "5px",
-          position: "absolute",
-          top: "50%",
-          left: "60%",
-          transform: "translate(-50%, -50%)",
-        },
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
       }}
-      BackdropProps={{
-        invisible: true,
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right",
       }}
-      // disablebackdropclick
+      sx={{
+        width: "auto",
+        minWidth: "450px",
+        margin: "16px",
+        borderRadius: "5px",
+      }}
     >
-      <DialogTitle sx={{ padding: "14px 20px" }}>
-        <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-          Thông báo
-        </div>
-      </DialogTitle>
-
-      <DialogContent
-        dividers={true}
+      <Box
         sx={{
-          "&::-webkit-scrollbar": { display: "none" },
-          padding: "5px 10px",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          "::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
       >
-        <MenuList sx={{ minWidth: "450px", bgcolor: "background.paper" }}>
-          {notifications.map((notification, i) => (
-            <Box key={i}>
-              <Notification
-                id={notification.id}
-                image={notification.image}
-                title={notification.title}
-                message={notification.message}
-                timestamp={notification.timestamp}
-                is_read={notification.is_read}
-                redirect_url={notification.redirect_url}
-                navigate={navigate}
-                axiosPrivate={axiosPrivate}
-              />
-              {i !== notifications.length - 1 && <Divider />}
-            </Box>
-          ))}
-        </MenuList>
-      </DialogContent>
+        <DialogTitle
+          sx={{ padding: "14px 20px", position: "sticky", top: 0, zIndex: 1 }}
+        >
+          <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
+            Thông báo
+          </div>
+        </DialogTitle>
 
-      <DialogActions>
-        <Button
-          autoFocus
-          onClick={() =>
-            handle_read_all(axiosPrivate, notifications, setNotifications)
-          }
+        <DialogContent
+          dividers={true}
           sx={{
-            textTransform: "none",
-            color: "#3F41A6",
-            width: "fit-content",
-            padding: "5px 20px",
-            fontWeight: "600",
-            "&:hover": {
-              bgcolor: "#E2E5FF",
-            },
+            "::-webkit-scrollbar": { display: "none" },
+            padding: "5px 10px",
           }}
         >
-          Đánh dấu đã đọc tất cả
-        </Button>
+          <MenuList sx={{ minWidth: "450px", bgcolor: "background.paper" }}>
+            {notifications.map((notification, i) => (
+              <Box key={i}>
+                <Notification
+                  id={notification.id}
+                  image={notification.image}
+                  title={notification.title}
+                  message={notification.message}
+                  timestamp={notification.timestamp}
+                  is_read={notification.is_read}
+                  redirect_url={notification.redirect_url}
+                  navigate={navigate}
+                  axiosPrivate={axiosPrivate}
+                />
+                {i !== notifications.length - 1 && <Divider />}
+              </Box>
+            ))}
+          </MenuList>
+        </DialogContent>
 
-        <Button
-          autoFocus
-          onClick={() => navigate("/notification")}
-          sx={{
-            textTransform: "none",
-            color: "#3F41A6",
-            width: "fit-content",
-            padding: "5px 20px",
-            fontWeight: "600",
-            "&:hover": {
-              bgcolor: "#E2E5FF",
-            },
-          }}
-        >
-          Xem tất cả
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogActions>
+          <Button
+            autoFocus
+            onClick={() =>
+              handle_read_all(axiosPrivate, notifications, setNotifications)
+            }
+            sx={{
+              textTransform: "none",
+              color: "#3F41A6",
+              width: "fit-content",
+              padding: "5px 20px",
+              fontWeight: "600",
+              "&:hover": {
+                bgcolor: "#E2E5FF",
+              },
+            }}
+          >
+            Đánh dấu đã đọc tất cả
+          </Button>
+
+          <Button
+            autoFocus
+            onClick={() => navigate("/notification")}
+            sx={{
+              textTransform: "none",
+              color: "#3F41A6",
+              width: "fit-content",
+              padding: "5px 20px",
+              fontWeight: "600",
+              "&:hover": {
+                bgcolor: "#E2E5FF",
+              },
+            }}
+          >
+            Xem tất cả
+          </Button>
+        </DialogActions>
+      </Box>
+    </Popover>
   );
 }
 

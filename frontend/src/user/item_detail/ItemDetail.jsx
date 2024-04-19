@@ -11,7 +11,8 @@ import {
   Tab,
   Box,
   Rating,
-  Alert
+  Alert,
+  Avatar,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { FaArrowRight } from "react-icons/fa6";
@@ -31,6 +32,7 @@ import ImgList from "./ImgList";
 import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
 import logo from "../../assets/logo2.png";
+import ItemCard from "../../components/ItemCard";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -42,31 +44,33 @@ function ItemDetail(props) {
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
   const [infoType, setInfoType] = useState("description");
-  const [list1, setLits1] = useState([])
+  const [list1, setLits1] = useState([]);
 
   const handleDate = (date) => {
     const newDate = new Date(date);
     return newDate.toLocaleDateString();
   };
 
-  useEffect(() => { 
-
+  useEffect(() => {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
         console.log(res.data);
         setItem(res.data);
-        axios.get(`/item/`,{params: {
-          studio: res.data.studio.code_name, 
-          limit: 4
-        }}).then((res)=>{
-          setLits1(res.data.results)
-        })
+        axios
+          .get(`/item/`, {
+            params: {
+              studio: res.data.studio.code_name,
+              limit: 4,
+            },
+          })
+          .then((res) => {
+            setLits1(res.data.results);
+          });
       })
       .catch((err) => {
         console.log(err);
       });
-
   }, []);
 
   const handleChangeTab = (event, newValue) => {
@@ -289,19 +293,21 @@ function ItemDetail(props) {
             <div className="flex flex-col items-start justify-center w-[43%] ml-5">
               <div className="gap-5 flex ml-8">
                 <div className="flex flex-col items-center w-3/12">
-                  <img
-                    loading="lazy"
+                  <Avatar
+                    alt={item.studio?.friendly_name}
                     src={item.studio?.avatar ?? logo}
-                    className="aspect-[0.94] object-contain object-center w-[70px] overflow-hidden shrink-0 max-w-full grow max-md:mt-7"
+                    sx={{ width: 70, height: 70 }}
                   />
                 </div>
                 <div className="flex flex-col items-stretch w-9/12">
                   <div className="flex flex-col items-stretch gap-2 justify-center">
                     <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
                       {item.studio?.friendly_name}
-                      <div style={{color: "#848484", fontSize: "14px"}}>
-                      {item.studio?.type=="STUDIO"?"Studio":"Thợ chụp ảnh"}
-                    </div>
+                      <div style={{ color: "#848484", fontSize: "14px" }}>
+                        {item.studio?.type == "STUDIO"
+                          ? "Studio"
+                          : "Thợ chụp ảnh"}
+                      </div>
                     </div>
                     <div className="flex items-stretch justify-start gap-2">
                       <Button
@@ -404,7 +410,7 @@ function ItemDetail(props) {
       <div className="my-20 flex flex-col gap-14">
         {list0.map((item, index) => (
           <div className="flex flex-col items-center" key={index}>
-            <div className="justify-between items-stretch flex w-[90%] gap-5 px-5">
+            <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">
               <div className="text-zinc-900 text-2xl font-semibold leading-10">
                 {item}
               </div>
@@ -432,51 +438,12 @@ function ItemDetail(props) {
             <div className="w-[90%] mt-2 px-5">
               <div className="flex justify-between">
                 {list1.map((item, index) => (
-                  <div className="flex flex-col items-stretch" key={index}>
-                    <div className="flex-col shadow duration-150 rounded-xl fill-[linear-gradient(180deg,rgba(255,255,255,0.40)_0%,rgba(255,255,255,0.70)_100%)] backdrop-blur-[2px] overflow-hidden relative flex aspect-[1.1991150442477876] grow items-stretch pl-5 pr-5 py-4">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/48957126-3c09-4848-810e-309e6cd0dd36?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                        className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
-                      />
-                      <div className="flex-col relative overflow-hidden flex aspect-[1.673913043478261] pt-2.5 pb-12 px-3 rounded-xl">
-                        <img
-                          loading="lazy"
-                          srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                          className="absolute z-[-1] h-full w-full object-cover object-center inset-0"
-                        />
-                        <div className="relative w-[50px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
-                          <div className="items-stretch bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
-                            <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide">
-                              {item.star}
-                            </div>
-                            <img
-                              loading="lazy"
-                              src="https://cdn.builder.io/api/v1/image/assets/TEMP/b4ff626f-53ac-40f9-bd1b-af46fad5efe3?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                              className="aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="relative flex items-stretch gap-5 mt-3">
-                        <div className="flex flex-col items-stretch w-fit">
-                          <div className="justify-center text-yellow-950 text-lg font-semibold leading-7 tracking-wider">
-                            {item.title}
-                          </div>
-                          <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                            {`Studio: ${item.studio.friendly_name}`}
-                          </div>
-                        </div>
-                        <div className="justify-center items-center bg-indigo-800 self-center flex aspect-square flex-col my-auto p-2 rounded-[64px]">
-                          <img
-                            loading="lazy"
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/450e45db-6664-465a-bd91-2ed5c035a952?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[15px] overflow-hidden"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ItemCard
+                    key={index}
+                    item={item}
+                    handleAddToCart={handleAddToCart}
+                    setOpenErr401={setOpenErr401}
+                  />
                 ))}
               </div>
             </div>
@@ -492,10 +459,9 @@ function ItemDetail(props) {
         onClose={handleCloseSBar}
       >
         <Alert onClose={handleCloseSBar} severity="success">
-        Đã thêm vào giỏ hàng !
+          Đã thêm vào giỏ hàng !
         </Alert>
       </Snackbar>
-        
 
       {/* Err 401 Dialog */}
       <Err401Dialog open={openErr401} setOpen={setOpenErr401} />

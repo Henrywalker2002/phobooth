@@ -282,7 +282,7 @@ function Profile() {
 
       <Paper
         sx={{
-          width: "800px",
+          width: "65%",
           margin: "10px auto",
           border: "1px solid #d6d3d1",
         }}
@@ -292,8 +292,8 @@ function Profile() {
         </div>
         <Divider />
         <form onSubmit={handleUpdateProfile}>
-          <div className="self-stretch flex items-stretch  gap-[130px] mt-5">
-            <div className="flex basis-[0%] flex-col items-stretch ml-4">
+          <div className="self-stretch flex items-stretch  justify-between mt-5">
+            <div className="flex w-1/2 flex-col items-stretch ml-4">
               <div className="text-zinc-900 text-sm leading-5">Họ và tên *</div>
               <TextField
                 required
@@ -447,52 +447,54 @@ function Profile() {
               />
             </div>
 
-            <div className="flex basis-[0%] flex-col items-stretch mt-9 ml-5 self-start">
-              <Avatar
-                alt="studio-logo"
-                src={
-                  avt.avt_preview
-                    ? avt.avt_preview
-                    : cookies.userInfo.avatar
-                    ? cookies.userInfo.avatar
-                    : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
-                }
-                sx={{ width: 140, height: 140 }}
-              />
-
-              <Button
-                component="label"
-                variant="outlined"
-                sx={{
-                  textTransform: "none",
-                  border: "2px solid #3F41A6",
-                  color: "#3F41A6",
-                  width: "140px",
-                  marginTop: "10px",
-                  borderRadius: "20px",
-                  "&:hover": {
-                    border: "2px solid #3949AB",
-                  },
-                }}
-              >
-                Chọn hình ảnh
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleUpdateAvt}
-                  style={{
-                    clip: "rect(0 0 0 0)",
-                    clipPath: "inset(50%)",
-                    height: 1,
-                    overflow: "hidden",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    whiteSpace: "nowrap",
-                    width: 1,
-                  }}
+            <div className="w-1/2">
+              <div className="flex flex-col justify-center items-center w-full h-1/2">
+                <Avatar
+                  alt="user-logo"
+                  src={
+                    avt.avt_preview
+                      ? avt.avt_preview
+                      : cookies.userInfo.avatar
+                      ? cookies.userInfo.avatar
+                      : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
+                  }
+                  sx={{ width: 140, height: 140 }}
                 />
-              </Button>
+
+                <Button
+                  component="label"
+                  variant="outlined"
+                  sx={{
+                    textTransform: "none",
+                    border: "2px solid #3F41A6",
+                    color: "#3F41A6",
+                    width: "140px",
+                    marginTop: "10px",
+                    borderRadius: "20px",
+                    "&:hover": {
+                      border: "2px solid #3949AB",
+                    },
+                  }}
+                >
+                  Chọn hình ảnh
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUpdateAvt}
+                    style={{
+                      clip: "rect(0 0 0 0)",
+                      clipPath: "inset(50%)",
+                      height: 1,
+                      overflow: "hidden",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      whiteSpace: "nowrap",
+                      width: 1,
+                    }}
+                  />
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -505,7 +507,7 @@ function Profile() {
             </div>
             {addresses.length > 1 ? (
               addresses.map((address, index) => (
-                <div className="flex items-center gap-5" key={index}>
+                <div className="flex items-center gap-6" key={index}>
                   <TextField
                     id="outlined-select-provinces"
                     label="Tỉnh thành"
@@ -517,7 +519,7 @@ function Profile() {
                       errMsg.address?.province ? errMsg.address.province[0] : ""
                     }
                     sx={{
-                      width: "150px",
+                      width: "200px",
                       marginY: "10px",
                     }}
                   >
@@ -551,7 +553,7 @@ function Profile() {
                       errMsg.address?.district ? errMsg.address.district[0] : ""
                     }
                     sx={{
-                      width: "150px",
+                      width: "200px",
                       marginY: "10px",
                     }}
                   >
@@ -586,7 +588,7 @@ function Profile() {
                       errMsg.address?.ward ? errMsg.address.ward[0] : ""
                     }
                     sx={{
-                      width: "150px",
+                      width: "200px",
                       marginY: "10px",
                     }}
                   >
@@ -617,7 +619,7 @@ function Profile() {
                       "& .MuiInputLabel-root": {
                         // lineHeight: "0.95em",
                       },
-                      width: "200px",
+                      width: "250px",
                       marginY: "10px",
                     }}
                   />
@@ -631,7 +633,7 @@ function Profile() {
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-6">
                 <TextField
                   label="Tỉnh thành"
                   value={addresses[0]?.province ? addresses[0].province : ""}
@@ -642,7 +644,7 @@ function Profile() {
                     errMsg.address?.province ? errMsg.address.province[0] : ""
                   }
                   sx={{
-                    width: "150px",
+                    width: "200px",
                     marginY: "10px",
                   }}
                 >
@@ -675,7 +677,7 @@ function Profile() {
                     errMsg.address?.district ? errMsg.address.district[0] : ""
                   }
                   sx={{
-                    width: "150px",
+                    width: "200px",
                     marginY: "10px",
                   }}
                 >
@@ -712,7 +714,7 @@ function Profile() {
                     errMsg.address?.ward ? errMsg.address.ward[0] : ""
                   }
                   sx={{
-                    width: "150px",
+                    width: "200px",
                     marginY: "10px",
                   }}
                 >
@@ -736,7 +738,7 @@ function Profile() {
                     errMsg.address?.street ? errMsg.address.street[0] : ""
                   }
                   sx={{
-                    width: "200px",
+                    width: "250px",
                     marginY: "10px",
                   }}
                 />
