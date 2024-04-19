@@ -60,3 +60,13 @@ class ImageDemoCommentViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMix
         
         return super().list(request, *args, **kwargs)
     
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        
+        self.perform_create(serializer)
+        instance = serializer.instance
+        
+        serializer_return = self.get_serializer(instance = instance, is_get = True)
+        headers = self.get_success_headers(serializer_return.data)
+        return Response(data = serializer_return.data, status= status.HTTP_201_CREATED, headers= headers)

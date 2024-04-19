@@ -143,7 +143,7 @@ function Demo() {
           sx={{
             marginTop: "30px",
 
-            paddingLeft: "70px",
+            paddingLeft: "120px",
           }}
         >
           <Link
@@ -192,11 +192,10 @@ function Demo() {
         </Breadcrumbs>
       )}
 
-      <div className="flex gap-20 items-start px-[80px] mt-5">
+      <div className="flex gap-20 items-start px-[80px]">
         <Album
           imageList={imageList}
           setImageList={setImageList}
-          currentDemo={currentDemo}
           setCurrentDemo={setCurrentDemo}
           narbarType={navbarType}
           order_id={id}
@@ -212,6 +211,7 @@ function Demo() {
           </div>
 
           {/* Slider */}
+
           {imageList.length > 0 && (
             <Slider
               currentDemo={currentDemo}
@@ -224,94 +224,102 @@ function Demo() {
           )}
 
           {/* Info + Cmt */}
-
-          {imageList.length > 0 && (
-            <TabContext value={infoType}>
-              <Box>
-                <TabList
-                  onChange={handleChangeTab}
-                  centered
-                  sx={{
-                    "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
-                      bgcolor: "#3F41A6",
-                      width: "90px",
-                    },
-                  }}
-                >
-                  <Tab
-                    label="THÔNG TIN CHUNG"
-                    value="basic"
+          <div className="flex flex-col w-full">
+            {imageList.length > 0 && (
+              <TabContext value={infoType}>
+                <Box>
+                  <TabList
+                    onChange={handleChangeTab}
+                    centered
                     sx={{
-                      textTransform: "none",
-                      fontSize: "15px",
-                      "&.Mui-selected": {
-                        color: "#3F41A6",
-                        fontWeight: "550",
+                      "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                        bgcolor: "#3F41A6",
+                        width: "90px",
                       },
                     }}
-                  />
-                  <Tab
-                    label="BÌNH LUẬN"
-                    value="cmt"
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "15px",
-                      "&.Mui-selected": {
-                        color: "#3F41A6",
-                        fontWeight: "550",
-                      },
-                    }}
-                  />
-                </TabList>
-              </Box>
-              <TabPanel value="basic">
-                <div className="flex flex-col items-start text-sm max-w-[912px] gap-2.5">
-                  <div className="flex gap-3 tracking-wide">
-                    <div className="font-medium text-zinc-900">Tiêu đề :</div>
-                    <div className="text-stone-500">{currentDemo.title}</div>
-                  </div>
-                  <div className="flex gap-3 tracking-wide">
-                    <div className="font-medium text-zinc-900">
-                      Thời gian cập nhật :
+                  >
+                    <Tab
+                      label="THÔNG TIN CHUNG"
+                      value="basic"
+                      sx={{
+                        textTransform: "none",
+                        fontSize: "15px",
+                        "&.Mui-selected": {
+                          color: "#3F41A6",
+                          fontWeight: "550",
+                        },
+                      }}
+                    />
+                    <Tab
+                      label="BÌNH LUẬN"
+                      value="cmt"
+                      sx={{
+                        textTransform: "none",
+                        fontSize: "15px",
+                        "&.Mui-selected": {
+                          color: "#3F41A6",
+                          fontWeight: "550",
+                        },
+                      }}
+                    />
+                  </TabList>
+                </Box>
+                <TabPanel value="basic" sx={{ width: "100%" }}>
+                  <div className="flex flex-col items-start text-sm w-full gap-2.5">
+                    <div className="flex gap-3 tracking-wide">
+                      <div className="font-medium text-zinc-900">Tiêu đề :</div>
+                      <div className="text-stone-500">{currentDemo.title}</div>
                     </div>
-                    <div className="text-stone-500">
-                      {handleDate(currentDemo.created_at)}
+                    <div className="flex gap-3 tracking-wide">
+                      <div className="font-medium text-zinc-900">
+                        Thời gian cập nhật :
+                      </div>
+                      <div className="text-stone-500">
+                        {handleDate(currentDemo.created_at)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3 tracking-wide">
-                    <div className="font-medium text-zinc-900">
-                      Kích thước :
+                    <div className="flex gap-3 tracking-wide">
+                      <div className="font-medium text-zinc-900">
+                        Kích thước :
+                      </div>
+                      <div className=" text-stone-500">{`${currentDemo.width} x ${currentDemo.height}`}</div>
                     </div>
-                    <div className=" text-stone-500">{`${currentDemo.width} x ${currentDemo.height}`}</div>
-                  </div>
-                  <div className="flex gap-2.5 tracking-wide">
-                    <div className="font-medium text-zinc-900">
-                      Dung lượng :
+                    <div className="flex gap-2.5 tracking-wide">
+                      <div className="font-medium text-zinc-900">
+                        Dung lượng :
+                      </div>
+                      <div className=" text-stone-500">
+                        {currentDemo.size} B
+                      </div>
                     </div>
-                    <div className=" text-stone-500">{currentDemo.size} B</div>
-                  </div>
-                  <div className="flex gap-2.5 tracking-wide">
-                    <div className="font-medium text-zinc-900">Định dạng :</div>
-                    <div className=" text-stone-500">{currentDemo.format}</div>
-                  </div>
-                  <div className="flex flex-col gap-1 tracking-wide">
-                    <div className="font-medium text-zinc-900">Mô tả :</div>
-                    <div className="text-stone-500">
-                      {currentDemo.description}
+                    <div className="flex gap-2.5 tracking-wide">
+                      <div className="font-medium text-zinc-900">
+                        Định dạng :
+                      </div>
+                      <div className=" text-stone-500">
+                        {currentDemo.format}
+                      </div>
                     </div>
-                  </div>
+                    <div className="flex flex-col gap-1 tracking-wide">
+                      <div className="font-medium text-zinc-900">Mô tả :</div>
+                      <div className="text-stone-500">
+                        {currentDemo.description}
+                      </div>
+                    </div>
 
-                  <div className="self-stretch mt-5 w-full border border-solid bg-neutral-200 border-neutral-200 min-h-[1px] max-md:max-w-full" />
-                </div>
-              </TabPanel>
-              <TabPanel value="cmt">
-                <Comment
-                  commentList={commentList}
-                  setCommentList={setCommentList}
-                />
-              </TabPanel>
-            </TabContext>
-          )}
+                    {/* <div className="self-stretch mt-2 w-full border border-solid bg-neutral-200 border-neutral-200 min-h-[1px] max-md:max-w-full" /> */}
+                  </div>
+                </TabPanel>
+                <TabPanel value="cmt">
+                  <Comment
+                    commentList={commentList}
+                    setCommentList={setCommentList}
+                    image_demo={currentDemo}
+                  />
+                </TabPanel>
+              </TabContext>
+            )}
+          </div>
         </div>
       </div>
     </div>

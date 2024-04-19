@@ -16,7 +16,6 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 function Album({
   imageList,
   setImageList,
-  currentDemo,
   setCurrentDemo,
   narbarType,
   order_id,
@@ -98,26 +97,37 @@ function Album({
       <Divider />
 
       <ImageList
-        sx={{ width: "fit-content", height: "fit-content", padding: "17px" }}
+        sx={{
+          width: "fit-content",
+          height: "92%",
+          padding: "17px",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          "::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
         cols={2}
-        gap={12}
+        gap={20}
+        rowHeight={120}
       >
         {imageList?.map((item) => (
           <ImageListItem
             key={item.id}
             sx={{
-              width: "138px",
-              height: "105px",
+              width: "135px",
               border: "1px solid #E0E0E0",
               borderRadius: "5px",
-              "& .MuiImageListItem-img": {
-                height: "119px",
-              },
             }}
           >
             <Badge
               badgeContent={
-                <IconButton onClick={() => handleDeleteImg(item)}>
+                <IconButton
+                  onClick={() => handleDeleteImg(item)}
+                  sx={{
+                    display: narbarType === "studio" ? "button" : "none",
+                  }}
+                >
                   <HighlightOffIcon
                     sx={{
                       color: "#78716C",
@@ -131,10 +141,8 @@ function Album({
               }}
             >
               <img
-                width="108"
-                height="89"
-                className="rounded-[5px]"
-                src={`${item.image?.thumbnail}`}
+                className="w-full h-[120px] rounded object-cover"
+                src={item.image?.thumbnail}
                 alt={item.title}
                 loading="lazy"
                 onClick={() => setCurrentDemo(item)}

@@ -452,15 +452,17 @@ function OrderDetail() {
             {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
-                {/* payment request + complain*/}
-                <div className="flex flex-col w-[437px] gap-8">
+
+                {/* payment request + complain + demo*/}
+                <div className="flex flex-col w-[437px] gap-12">
                   {/* payment request */}
                   <div className="items-stretch flex flex-col px-5 gap-2">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Yêu cầu thanh toán mới nhất
                     </div>
 
-                    <div className="flex flex-col mt-3 gap-5 h-[120px]">
+                    <div className="flex flex-col my-3 h-fit">
+
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -475,7 +477,7 @@ function OrderDetail() {
                                     justifyContent: "space-between",
                                     gap: "30px",
                                     borderRadius: "8px",
-                                    padding: "15px",
+                                    padding: "10px 15px",
                                   }}
                                 >
                                   <div className="items-stretch flex grow  flex-col py-px gap-2.5">
@@ -544,7 +546,9 @@ function OrderDetail() {
                                     justifyContent: "space-between",
                                     gap: "30px",
                                     borderRadius: "8px",
-                                    padding: "15px",
+
+                                    padding: "10px 15px",
+
                                     cursor: "pointer",
                                   }}
                                 >
@@ -608,15 +612,17 @@ function OrderDetail() {
                             justifyContent: "space-between",
                             gap: "20px",
                             borderRadius: "8px",
-                            padding: "15px",
+
+                            padding: "10px 15px",
+
                             cursor: "pointer",
                           }}
                         >
-                          <div className="items-stretch flex grow basis-[0%] flex-col pr-12 py-px max-md:pr-5">
+                          <div className="items-stretch flex grow basis-[0%] flex-col gap-1 pr-12 py-px max-md:pr-5">
                             <div className="text-zinc-500 text-base font-medium leading-6">
                               {order?.complain?.title}
                             </div>
-                            <div className="flex items-stretch gap-2.5 mt-2">
+                            <div className="flex items-stretch gap-2.5">
                               <div className="text-zinc-500 text-sm leading-5 whitespace-nowrap">
                                 Ngày gửi :
                               </div>
@@ -626,7 +632,7 @@ function OrderDetail() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex justify-start mt-1.5">
+                            <div className="flex justify-start">
                               <Button
                                 variant="text"
                                 onClick={() =>
@@ -680,7 +686,9 @@ function OrderDetail() {
                     <Button
                       startIcon={
                         <FaArrowRight
-                          style={{ width: "18px", height: "18px" }}
+
+                          style={{ width: "18px", height: "16px" }}
+
                         />
                       }
                       onClick={() => navigate(`/order/${id}/demo`)}
@@ -688,7 +696,9 @@ function OrderDetail() {
                         textTransform: "none",
                         color: "#3F41A6",
                         width: "fit-content",
+
                         padding: "5px",
+
                         height: "35px",
                         borderRadius: "5px",
                         fontSize: "15px",
@@ -696,7 +706,7 @@ function OrderDetail() {
                           color: "#1A237E",
                           bgcolor: "transparent",
                         },
-                        marginBottom: "20px",
+
                       }}
                     >
                       Xem thành phẩm

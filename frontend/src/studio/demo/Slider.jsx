@@ -3,7 +3,14 @@ import { Box, IconButton, MobileStepper } from "@mui/material";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 
-function Slider({ step, setStep, currentDemo, setCurrentDemo, imageList, maxSteps}) {
+function Slider({
+  step,
+  setStep,
+  currentDemo,
+  setCurrentDemo,
+  imageList,
+  maxSteps,
+}) {
   const handleNext = () => {
     setCurrentDemo(imageList[step + 1]);
     setStep((prevStep) => prevStep + 1);
@@ -14,7 +21,7 @@ function Slider({ step, setStep, currentDemo, setCurrentDemo, imageList, maxStep
     setStep((prevStep) => prevStep - 1);
   };
   return (
-    <div className="flex flex-col gap-3 self-center w-full">
+    <div className="flex flex-col gap-3 self-center w-[1000px]">
       <Box
         sx={{
           display: "flex",
@@ -22,7 +29,8 @@ function Slider({ step, setStep, currentDemo, setCurrentDemo, imageList, maxStep
           alignItems: "center",
           alignContent: "center",
           justifyContent: "center",
-          height: "fit-content",
+          height: "400px",
+          width: "100%",
         }}
       >
         <IconButton
@@ -39,11 +47,13 @@ function Slider({ step, setStep, currentDemo, setCurrentDemo, imageList, maxStep
         </IconButton>
 
         {/* Image */}
-        <img
-          loading="lazy"
-          srcSet={currentDemo?.image?.full_size}
-          className="max-w-[912px] max-h-[600px]"
-        />
+        <div className="w-full h-full border border-[#E0E0E0] rounded">
+          <img
+            loading="lazy"
+            srcSet={currentDemo?.image?.full_size}
+            className="w-full h-full rounded object-contain"
+          />
+        </div>
 
         <IconButton
           sx={{
@@ -60,7 +70,7 @@ function Slider({ step, setStep, currentDemo, setCurrentDemo, imageList, maxStep
       </Box>
 
       {/* pagination */}
-      <div className="flex max-w-[140px] mx-auto">
+      <div className="flex max-w-[150px] mx-auto">
         <IconButton onClick={handleBack} disabled={step === 0}>
           <KeyboardArrowLeftOutlinedIcon sx={{ color: "#3F41A6" }} />
         </IconButton>

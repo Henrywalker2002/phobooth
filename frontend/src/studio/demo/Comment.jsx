@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Paper, Divider, TextField, Button } from "@mui/material";
 import { IoIosSend } from "react-icons/io";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function handleDate(created_at) {
   const date = new Date(created_at);
-  return `${date.getDate()} Tháng ${date.getMonth() + 1} ${date.getFullYear()}`
+  return `${date.getDate()} Tháng ${date.getMonth() + 1} ${date.getFullYear()}`;
 }
 
 function OneComment({ comment }) {
@@ -23,13 +24,37 @@ function OneComment({ comment }) {
       </div>
       <Divider sx={{ marginTop: "10px" }} />
     </div>
-    )
+  );
 }
 
-function Comment({commentList, setCommentList}) {
+function Comment({ commentList, setCommentList, image_demo }) {
+  const [data, setData] = useState({ image_demo: image_demo.id });
+  const [error, setError] = useState({});
+  const axiosPrivate = useAxiosPrivate();
+
+  const hanldeSend = () => {
+    if (!data.text) {
+      setError({ text: "Nhận xét không được để trống" });
+      return;
+    }
+    setError({});
+    axiosPrivate
+      .post("/demo-comment/", data)
+      .then((res) => {
+        setCommentList([...commentList, res.data]);
+        setData({ ...data, text: "" });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
   return (
     <div className="flex flex-col gap-5">
-
       {commentList.map((comment, index) => {
         return <OneComment key={index} comment={comment} />;
       })}
@@ -43,13 +68,17 @@ function Comment({commentList, setCommentList}) {
       >
         <div className="flex flex-col p-2.5 bg-white rounded gap-2">
           <TextField
-            name="reply"
+            name="text"
             multiline
             rows={2}
+            value = {data.text ?? ""}
+            error={error.text ? true : false}
+            helperText={error.text ?? ""}
             placeholder="Để lại nhận xét của bạn..."
             sx={{
               width: "100%",
             }}
+            onChange={handleChange}
           />
 
           <div className="flex gap-5 justify-end">
@@ -66,6 +95,7 @@ function Comment({commentList, setCommentList}) {
                   bgcolor: "#3949AB",
                 },
               }}
+              onClick={hanldeSend}
             >
               Gửi
             </Button>
