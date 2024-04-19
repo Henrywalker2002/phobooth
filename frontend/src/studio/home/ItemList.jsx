@@ -193,7 +193,7 @@ function ItemList({ itemType, filterVal }) {
                         <div className="flex-nowrap w-full justify-center truncate text-yellow-950 text-[17px] font-semibold leading-7 tracking-wider ">
                           {item?.name}
                         </div>
-                        <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
+                        <div className="justify-center text-indigo-800 font-semibold text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
                           {displayPrice(item)}
                         </div>
                       </div>

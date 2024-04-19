@@ -19,6 +19,7 @@ import Err401Dialog from "../../components/Err401Dialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Carousel from "./Carousel";
 import { useCookies } from "react-cookie";
+import ItemCard from "../../components/ItemCard";
 
 function Home() {
   const axiosPrivate = useAxiosPrivate();
@@ -74,16 +75,13 @@ function Home() {
       <Navbar />
 
       {/* content */}
-      <Carousel
-        handleAddToCart={handleAddToCart}
-        setOpenErr401={setOpenErr401}
-      />
+      <Carousel handleAddToCart={handleAddToCart} />
 
       {/* Các danh sách */}
-      <div className="my-20 flex flex-col gap-14 max-sm:hidden">
+      <div className="my-10 flex flex-col gap-10 max-sm:hidden">
         {list2.map((item, index) => (
           <div className="flex flex-col items-center" key={index}>
-            <div className="justify-between items-stretch flex w-[90%] gap-5 px-5">
+            <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">
               <div className="text-zinc-900 text-2xl font-semibold leading-10">
                 {item}
               </div>
@@ -113,97 +111,11 @@ function Home() {
             <div className="w-[90%] mt-2 px-5">
               <div className="flex justify-between">
                 {itemList.map((item, index) => (
-                  <Card sx={{ maxWidth: 345 }} key={index}>
-                    <CardActionArea
-                      onClick={() => navigate("/item/detail/" + item.id)}
-                    >
-                      <CardMedia
-                        component="div"
-                        style={{
-                          height: 130,
-                          width: 245,
-                          padding: "15px 15px 0 15px",
-                        }}
-                      >
-                        <div className="flex-col relative overflow-hidden flex">
-                          <img
-                            loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3349430a-2d42-4d16-933a-51fb7bbacf0b?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="h-[115px] w-[216px] object-cover object-center inset-0"
-                          />
-                          <div className="absolute top-2 left-3 w-[52px] h-[35px] backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
-                            <div className="items-center justify-center bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
-                              <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide mx-[1px]">
-                                {item?.star}
-                              </div>
-                              <FaStar
-                                style={{
-                                  width: 13,
-                                  height: 13,
-                                  color: "#ffa534",
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </CardMedia>
-                      <CardContent sx={{ padding: "15px" }}>
-                        <div className="relative flex gap-5">
-                          <div className="flex flex-col items-stretch w-[165px]">
-                            <div className="justify-center truncate text-yellow-950 text-[17px] font-semibold leading-7 tracking-wider">
-                              {item?.name}
-                            </div>
-                            <div
-                              className="flex-nowrap w-full justify-center text-yellow-950 text-[15px] leading-5 tracking-wide whitespace-nowrap mt-1"
-                              style={{ color: "#3F41A6", fontWeight: "600" }}
-                            >
-                              Giá:{" "}
-                              {item?.fixed_price
-                                ? item?.fixed_price
-                                : `${item?.min_price} - ${item?.max_price}`}{" "}
-                              VNĐ
-                            </div>
-                            <div className="justify-center text-yellow-950 text-sm leading-5 tracking-wide whitespace-nowrap mt-1">
-                              Studio: {item?.studio?.friendly_name}
-                            </div>
-                          </div>
-                          <ButtonBase>
-                            <Button
-                              variant="contained"
-                              onClick={(e) => {
-                                e.stopPropagation();
-
-                                if (cookies?.userInfo?.username)
-                                  handleAddToCart(item.id);
-                                else setOpenErr401(true);
-                              }}
-                              sx={{
-                                alignSelf: "center",
-                                borderRadius: "50%",
-                                color: "#F6F5FB",
-                                bgcolor: "#3F41A6",
-                                width: "30px",
-                                height: "30px",
-                                minWidth: 0,
-                                padding: "0",
-
-                                "&:hover": {
-                                  bgcolor: "#3F41A6B2",
-                                },
-                              }}
-                            >
-                              <PiShoppingCartSimpleFill
-                                style={{
-                                  width: "16px",
-                                  height: "16px",
-                                }}
-                              />
-                            </Button>
-                          </ButtonBase>
-                        </div>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
+                  <ItemCard
+                    key={index}
+                    item={item}
+                    handleAddToCart={handleAddToCart}
+                  />
                 ))}
               </div>
             </div>
