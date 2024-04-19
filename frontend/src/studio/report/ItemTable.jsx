@@ -52,7 +52,7 @@ function ItemTable({ studioInfor }) {
       .catch((res) => {
         console.log(res.data);
       });
-  }, [page, ordering]);
+  }, [page, ordering, studioInfor]);
 
   const sortTypes = [
     { value: "-created_at", label: "Mới nhất" },
@@ -205,7 +205,7 @@ function ItemTable({ studioInfor }) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell>No item</TableCell>
+                  {/* <TableCell>Chưa có sản phẩm</TableCell> */}
                 </TableRow>
               )}
             </TableBody>
