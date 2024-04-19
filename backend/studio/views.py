@@ -11,6 +11,7 @@ from address.models import Address
 from rest_framework.decorators import action
 from user.models import User
 from user.serializers import UserSummarySerializer
+from item.execute import create_transport_service
 
 
 class StudioViewSet(BaseModelViewSet):
@@ -36,6 +37,7 @@ class StudioViewSet(BaseModelViewSet):
         serializer.is_valid(raise_exception=True)
         try:
             serializer.save()
+            create_transport_service(serializer.instance)
         except Role.DoesNotExist:
             return Response(data={"detail": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
