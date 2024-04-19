@@ -21,7 +21,7 @@ const handleDate = (modified_at) => {
   return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 };
 
-function ComplainTable() {
+function ComplainTable({studioInfor}) {
   const sortTypes = [
     { value: "-modified_at", label: "Mới nhất" },
     { value: "modified_at", label: "Cũ nhất" },
@@ -40,6 +40,7 @@ function ComplainTable() {
     let params = {
       limit: limit,
       offset: (page - 1) * limit,
+      studio: studioInfor.code_name,
     };
     if (filter) {
       if (filter == "IN_PROGRESS" || filter == "RESOLVED") {
@@ -57,7 +58,7 @@ function ComplainTable() {
       .catch((res) => {
         console.log(res.data);
       });
-  }, [page, filter]);
+  }, [page, filter,studioInfor]);
   return (
     <Paper
       elevation={2}
@@ -168,7 +169,7 @@ function ComplainTable() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell>No item</TableCell>
+                  {/* <TableCell>Không có khiếu nại</TableCell> */}
                 </TableRow>
               )}
             </TableBody>

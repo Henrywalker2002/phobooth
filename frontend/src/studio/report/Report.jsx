@@ -72,7 +72,7 @@ function Report() {
 
         <ItemTable studioInfor={studioInfor} />
 
-        <ComplainTable />
+        <ComplainTable studioInfor= {studioInfor}/>
       </div>
     </div>
   );

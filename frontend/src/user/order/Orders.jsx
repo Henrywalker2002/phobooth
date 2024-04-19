@@ -71,7 +71,9 @@ function Orders() {
     if (filterVal.date_end) {
       slug += `&date_end=${filterVal?.date_end}`;
     }
-    console.log(slug);
+    if (filterVal.search) {
+      slug += `&search=${filterVal?.search}`
+    }
     return slug;
   };
 
@@ -81,7 +83,6 @@ function Orders() {
     axiosPrivate
       .get(slug)
       .then((res) => {
-        console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
         setDefaultPage(1);
@@ -99,7 +100,6 @@ function Orders() {
     axiosPrivate
       .get(slug)
       .then((res) => {
-        console.log(res.data);
         let currCount = Math.ceil(res.data.count / 5);
         if (currCount !== pageCount) setPageCount(currCount);
         setDefaultPage(page);
@@ -485,6 +485,14 @@ function Orders() {
       </React.Fragment>
     );
   }
+  const handleSearch = (e)=>{
+    if (e.key=="Enter"){
+      if (e.target.value) {
+        setFilterVal({...filterVal,search: e.target.value});
+        e.target.value=""
+      }
+    }
+  }
 
   return (
     <div>
@@ -547,6 +555,7 @@ function Orders() {
               borderRadius: "30px",
             },
           }}
+          onKeyDown={handleSearch}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -615,7 +624,7 @@ function Orders() {
             ) : (
               <TableRow>
                 <TableCell />
-                <TableCell>Chưa có đơn hàng</TableCell>
+                {/* <TableCell>Chưa có đơn hàng</TableCell> */}
               </TableRow>
             )}
           </TableBody>
