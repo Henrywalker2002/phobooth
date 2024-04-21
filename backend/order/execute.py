@@ -1,9 +1,9 @@
 from datetime import timedelta
 from payment.models import PaymentMethodChoices, PaymentStatusChoices
-from order.models import Order, OrderStatusChoice
+from order.models import Order, OrderStatusChoice, OrderItem, OrderItemStatusChoice
 from studio.models import Studio
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.utils import timezone
 
 
@@ -29,7 +29,23 @@ def check_order_and_pay():
         order.done_payment = True
         order_lst.append(order)
         studio_lst.append(studio)
-    
+
     Order.objects.bulk_update(order_lst, ["done_payment"])
     Studio.objects.bulk_update(studio_lst, ["account_balance"])
-        
+
+
+@transaction.atomic
+def check_order_item():
+    order_items = OrderItem.objects.filter(status=OrderItemStatusChoice.PENDING,
+                                           created_at__lt=timezone.now() - timedelta(days=3)).all()
+    order_lst = []
+    for order_item in order_items:
+        order = order_item.order
+        order.total_price = OrderItem.objects.filter(order=order, status=OrderItemStatusChoice.ACCEPTED).aggregate(
+            total_price=Sum(F('price') * F('quantity')))['total_price']
+        if order.total_price:
+            order.total_price = order.total_price + order_item.price * order_item.quantity
+        order_lst.append(order)
+        order_item.status = OrderItemStatusChoice.ACCEPTED
+    Order.objects.bulk_update(order_lst, ["total_price"])
+    OrderItem.objects.bulk_update(order_items, ["status"])
