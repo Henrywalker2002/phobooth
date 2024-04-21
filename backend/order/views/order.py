@@ -1,5 +1,5 @@
 from base.views import BaseModelViewSet
-from order.models import Order, OrderItem, OrderStatusChoice
+from order.models import Order, OrderItem, OrderStatusChoice, OrderItemStatusChoice
 from order.serializers.order import (
     CreateOrderSerializer, ReadOrderSerializer, 
     UpdateOrderSerializer, OrderSummarySerializer)
@@ -13,6 +13,7 @@ import datetime
 from notification.execute import NotificationService
 from address.models import Address
 from order.filter import OrderFilter
+from django.db.models import Sum, F
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -86,6 +87,12 @@ class OrderViewSet(BaseModelViewSet):
         
         if serializer.validated_data.get('status') == OrderStatusChoice.IN_PROCESS:
             NotificationService.studio_accept_order(instance)
+            order_items = instance.order_item.all()
+            for order_item in order_items:
+                order_item.status = OrderItemStatusChoice.ACCEPTED
+            OrderItem.objects.bulk_update(order_items, ["status"])
+            instance.total_price = OrderItem.objects.filter(order=instance, status=OrderItemStatusChoice.ACCEPTED).aggregate(
+            total_price=Sum(F('price') * F('quantity')))['total_price']
         elif serializer.validated_data.get('status') == OrderStatusChoice.CANCELED:
             if request.user == instance.customer:
                 NotificationService.user_cancel_order(instance)

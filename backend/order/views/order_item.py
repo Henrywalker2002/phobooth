@@ -1,5 +1,5 @@
 from base.views import BaseModelViewSet
-from order.models import OrderItem
+from order.models import OrderItem, OrderItemStatusChoice
 from order.serializers.order import ReadOrderSerializer
 from order.serializers.order_item import AppendOrderItemSerializer, UpdateOrderItemSerializer, ReadOrderItemSerializer
 from django.db import transaction
@@ -31,7 +31,7 @@ class OrderItemViewSet(BaseModelViewSet):
     def update_order_price(self, order):
         queryset = self.get_queryset()
         old_price = order.total_price
-        order.total_price = queryset.filter(order=order).aggregate(
+        order.total_price = queryset.filter(order=order, status= OrderItemStatusChoice.ACCEPTED).aggregate(
             total_price=Sum(F('price') * F('quantity')))['total_price']
         order.save()
         create_order_price_history(order, old_price, order.total_price)
