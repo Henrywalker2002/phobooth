@@ -6,13 +6,12 @@ import {
   TextField,
   Button,
   MenuItem,
-
   IconButton,
 } from "@mui/material";
 import axios from "../../api/axios";
 import { FaXmark } from "react-icons/fa6";
 
-function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
+function EditAddress({ open, setOpen, address, handleChangeAddress }) {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -20,7 +19,6 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
 
   // setup address
   useEffect(() => {
-
     axios
       .get("province/?limit=63&offset=0")
       .then((res) => {
@@ -30,8 +28,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
 
       .then(() => {
         axios
-
-          .get(`province/${address?.province?.code_name}/`)
+          .get(`province/${address.province.code_name}/`)
 
           .then((res) => {
             // console.log(res);
@@ -40,7 +37,6 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
           })
           .then((distlist) => {
             setWards(
-
               distlist?.find((dist) => dist.code === address.district.code)
                 ?.wards
             );
@@ -56,9 +52,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
     console.log(address);
     console.log(districts);
     console.log(wards);
-
-  }, []);
-
+  }, [open]);
 
   const handleUpdateProv = async (prov) => {
     try {
@@ -76,7 +70,6 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
   };
 
   const handleUpdateDist = (district) => {
-
     setWards(districts?.find((dist) => dist.code === district.code)?.wards);
     setNewAddress({
       ...newAddress,
@@ -98,7 +91,6 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
         },
       }}
     >
-
       <DialogTitle>
         <div className=" shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
@@ -205,7 +197,7 @@ function EditAddress({ open, setOpen, address, handleUpdateAddress }) {
           <Button
             variant="contained"
             onClick={() => {
-              handleUpdateAddress(newAddress);
+              handleChangeAddress(newAddress);
             }}
             sx={{
               textTransform: "none",

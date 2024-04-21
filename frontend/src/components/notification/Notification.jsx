@@ -15,8 +15,6 @@ import {
   MenuItem,
   MenuList,
   Popover,
-  AppBar,
-  Toolbar,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -112,7 +110,7 @@ function Notification({
   );
 }
 
-function NotificationList({ anchorNoti, handleClose }) {
+function NotificationList({ anchorNoti, handleClose, role }) {
   const open = Boolean(anchorNoti);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -220,7 +218,11 @@ function NotificationList({ anchorNoti, handleClose }) {
 
           <Button
             autoFocus
-            onClick={() => navigate("/notification")}
+            onClick={() =>
+              navigate("/notification", {
+                state: { role: role },
+              })
+            }
             sx={{
               textTransform: "none",
               color: "#3F41A6",

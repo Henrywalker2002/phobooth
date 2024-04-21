@@ -8,16 +8,12 @@ import {
   Link,
   Snackbar,
   Typography,
-  Tab,
-  Box,
   Rating,
   Alert,
   Avatar,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { FaArrowRight } from "react-icons/fa6";
 import { GoHome } from "react-icons/go";
-import { FaStar } from "react-icons/fa";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
@@ -43,7 +39,6 @@ function ItemDetail(props) {
   const [quantity, setQuantity] = useState(1);
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
-  const [infoType, setInfoType] = useState("description");
   const [list1, setLits1] = useState([]);
 
   const handleDate = (date) => {
@@ -72,10 +67,6 @@ function ItemDetail(props) {
         console.log(err);
       });
   }, []);
-
-  const handleChangeTab = (event, newValue) => {
-    setInfoType(newValue);
-  };
 
   // Add to cart
   const handleAddToCart = (id) => {

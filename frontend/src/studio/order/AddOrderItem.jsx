@@ -60,6 +60,15 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
       .catch((err) => console.log(err));
   }, []);
 
+  //   check selected item in selectList
+  const isSelectedItem = (itemId) => {
+    const result = selectedList?.find(
+      (order_item) => order_item.item.id === itemId
+    );
+    if (result) return true;
+    return false;
+  };
+
   const updateSelectedList = (item) => {
     let newList = [...selectedList];
     newList.push({
@@ -90,6 +99,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
       onClose={() => {
         setSelectedList([]);
         setOpen(false);
+        setOpenUpdateInfo(false);
       }}
       sx={{
         "& .MuiDialog-paper": {
@@ -100,290 +110,295 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
       }}
     >
       <DialogTitle>DANH SÁCH SẢN PHẨM CỦA STUDIO</DialogTitle>
-      <DialogContent dividers={true}>
-        <div className="w-fit h-[50px] flex gap-20 mx-auto">
-          {/* Selector */}
-          <TextField
-            id="outlined-item-type"
-            select
-            defaultValue="Dịch vụ"
-            sx={{
-              "& .MuiInputBase-input": {
-                width: "150px",
-                height: "40px",
-                boxSizing: "border-box",
-                paddingY: "9px",
-                fontSize: "14px",
-              },
-            }}
-          >
-            {item_types.map((option, index) => (
-              <MenuItem
-                key={index}
-                value={option}
-                onClick={() => setItemTyp(option)}
-              >
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+      {!openUpdateInfo && (
+        <DialogContent dividers={true}>
+          <div className="w-fit h-[50px] flex gap-20 mx-auto">
+            {/* Selector */}
+            <TextField
+              id="outlined-item-type"
+              select
+              defaultValue="Dịch vụ"
+              sx={{
+                "& .MuiInputBase-input": {
+                  width: "150px",
+                  height: "40px",
+                  boxSizing: "border-box",
+                  paddingY: "9px",
+                  fontSize: "14px",
+                },
+              }}
+            >
+              {item_types.map((option, index) => (
+                <MenuItem
+                  key={index}
+                  value={option}
+                  onClick={() => setItemTyp(option)}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
 
-          {/* Search */}
-          <TextField
-            id="input-with-icon-textfield"
-            placeholder="Tìm kiếm"
-            sx={{
-              "& .MuiInputBase-input": {
-                padding: "10px 12px",
-                width: "400px",
-                height: "40px",
-                boxSizing: "border-box",
-              },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "30px",
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton sx={{ padding: 0 }}>
-                    <RiSearchLine className="w-5 h-5" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            variant="outlined"
-          />
-        </div>
+            {/* Search */}
+            <TextField
+              id="input-with-icon-textfield"
+              placeholder="Tìm kiếm"
+              sx={{
+                "& .MuiInputBase-input": {
+                  padding: "10px 12px",
+                  width: "400px",
+                  height: "40px",
+                  boxSizing: "border-box",
+                },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "30px",
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton sx={{ padding: 0 }}>
+                      <RiSearchLine className="w-5 h-5" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
+            />
+          </div>
 
-        {/* Tables */}
-        {itemTyp === "Hàng hóa" ? (
-          <TableContainer
-            component={Paper}
-            sx={{
-              width: "70%",
-              margin: "20px auto",
-              border: "1px solid #d6d3d1",
-            }}
-          >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead sx={{ bgcolor: "#E2E5FF" }}>
-                <TableRow>
-                  <TableCell>
-                    {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
-                  </TableCell>
-                  <TableCell sx={{ color: "#3F41A6", width: "40%" }}>
-                    SẢN PHẨM
-                  </TableCell>
-
-                  <TableCell
-                    align="left"
-                    sx={{ color: "#3F41A6", width: "25%" }}
-                  >
-                    DANH MỤC
-                  </TableCell>
-
-                  <TableCell
-                    align="left"
-                    sx={{ color: "#3F41A6", width: "25%" }}
-                  >
-                    GIÁ THAM KHẢO
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {productList?.length > 0 ? (
-                  productList.map((item) => (
-                    <TableRow
-                      key={item.id}
-                      // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell sx={{ width: "42px" }}>
-                        <Checkbox
-                          onChange={(e) => {
-                            e.target.checked
-                              ? updateSelectedList(item)
-                              : removeSelectedList(item.id);
-                          }}
-                          inputProps={{ "aria-label": "controlled" }}
-                          sx={{
-                            "&.Mui-checked": {
-                              color: "#3F41A6",
-                            },
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        <div className="items-stretch flex gap-5">
-                          <img
-                            loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
-                          />
-                          <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                            {item.name}
-                          </div>
-                        </div>
-                      </TableCell>
-
-                      <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                          {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
-                          {item.category?.title}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        {formatter.format(item.fixed_price)}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+          {/* Tables */}
+          {itemTyp === "Hàng hóa" ? (
+            <TableContainer
+              component={Paper}
+              sx={{
+                width: "70%",
+                margin: "20px auto",
+                border: "1px solid #d6d3d1",
+              }}
+            >
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                   <TableRow>
-                    <TableCell>Chưa có hàng hóa</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <TableContainer
-            component={Paper}
-            sx={{
-              width: "90%",
-              margin: "20px auto",
-              border: "1px solid #d6d3d1",
-            }}
-          >
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead sx={{ bgcolor: "#E2E5FF" }}>
-                <TableRow>
-                  <TableCell>
-                    {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
-                  </TableCell>
-                  <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
-                  <TableCell sx={{ color: "#3F41A6" }}>PHÂN LOẠI</TableCell>
+                    <TableCell>
+                      {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
+                    </TableCell>
+                    <TableCell sx={{ color: "#3F41A6", width: "40%" }}>
+                      SẢN PHẨM
+                    </TableCell>
 
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    DANH MỤC
-                  </TableCell>
-
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    GIÁ THAM KHẢO
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {serviceList?.length > 0 ? (
-                  serviceList.map((item) => (
-                    <TableRow
-                      key={item.id}
-                      // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    <TableCell
+                      align="left"
+                      sx={{ color: "#3F41A6", width: "25%" }}
                     >
-                      <TableCell sx={{ width: "42px" }}>
-                        <Checkbox
-                          onChange={(e) => {
-                            e.target.checked
-                              ? updateSelectedList(item)
-                              : removeSelectedList(item.id);
-                          }}
-                          inputProps={{ "aria-label": "controlled" }}
-                          sx={{
-                            "&.Mui-checked": {
-                              color: "#3F41A6",
-                            },
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        <div className="items-stretch flex gap-5">
-                          <img
-                            loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
-                          />
-                          <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                            {item.name}
-                          </div>
-                        </div>
-                      </TableCell>
+                      DANH MỤC
+                    </TableCell>
 
-                      <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                          {translateType(item.type)}
-                        </div>
-                      </TableCell>
-
-                      <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                          {item.category?.title}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        {formatter.format(item.min_price)} -{" "}
-                        {formatter.format(item.max_price)}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell>Chưa có dịch vụ</TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{ color: "#3F41A6", width: "25%" }}
+                    >
+                      GIÁ THAM KHẢO
+                    </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+                </TableHead>
+                <TableBody>
+                  {productList?.length > 0 ? (
+                    productList.map((item) => (
+                      <TableRow
+                        key={item.id}
+                        // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      >
+                        <TableCell sx={{ width: "42px" }}>
+                          <Checkbox
+                            onChange={(e) => {
+                              e.target.checked
+                                ? updateSelectedList(item)
+                                : removeSelectedList(item.id);
+                            }}
+                            checked={isSelectedItem(item.id)}
+                            inputProps={{ "aria-label": "controlled" }}
+                            sx={{
+                              "&.Mui-checked": {
+                                color: "#3F41A6",
+                              },
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          <div className="items-stretch flex gap-5">
+                            <img
+                              loading="lazy"
+                              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                            />
+                            <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
+                              {item.name}
+                            </div>
+                          </div>
+                        </TableCell>
 
-        {/* Btn action */}
-        <div className="flex gap-5 my-5 mx-auto w-fit">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setSelectedList([]);
-              setOpen(false);
-            }}
-            sx={{
-              textTransform: "none",
-              border: "1px solid #3F41A6",
-              color: "#3F41A6",
-              width: "80px",
+                        <TableCell align="left">
+                          <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
+                            {item.category?.title}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          {formatter.format(item.fixed_price)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell>Chưa có hàng hóa</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <TableContainer
+              component={Paper}
+              sx={{
+                width: "90%",
+                margin: "20px auto",
+                border: "1px solid #d6d3d1",
+              }}
+            >
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead sx={{ bgcolor: "#E2E5FF" }}>
+                  <TableRow>
+                    <TableCell>
+                      {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
+                    </TableCell>
+                    <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
+                    <TableCell sx={{ color: "#3F41A6" }}>PHÂN LOẠI</TableCell>
 
-              borderRadius: "20px",
-              "&:hover": {
-                border: "1px solid #3949AB",
-              },
-            }}
-          >
-            Hủy
-          </Button>
+                    <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      DANH MỤC
+                    </TableCell>
 
-          <Button
-            variant="contained"
-            onClick={() => handleSaveList()}
-            sx={{
-              textTransform: "none",
-              bgcolor: "#3F41A6",
-              width: "120px",
+                    <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      GIÁ THAM KHẢO
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {serviceList?.length > 0 ? (
+                    serviceList.map((item) => (
+                      <TableRow
+                        key={item.id}
+                        // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      >
+                        <TableCell sx={{ width: "42px" }}>
+                          <Checkbox
+                            onChange={(e) => {
+                              e.target.checked
+                                ? updateSelectedList(item)
+                                : removeSelectedList(item.id);
+                            }}
+                            checked={isSelectedItem(item.id)}
+                            inputProps={{ "aria-label": "controlled" }}
+                            sx={{
+                              "&.Mui-checked": {
+                                color: "#3F41A6",
+                              },
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          <div className="items-stretch flex gap-5">
+                            <img
+                              loading="lazy"
+                              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
+                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                            />
+                            <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
+                              {item.name}
+                            </div>
+                          </div>
+                        </TableCell>
 
-              borderRadius: "20px",
-              "&:hover": {
-                bgcolor: "#3949AB",
-              },
-            }}
-          >
-            Lưu thay đổi
-          </Button>
+                        <TableCell align="left">
+                          <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            {translateType(item.type)}
+                          </div>
+                        </TableCell>
 
-          <AddOrderItemInfo
-            open={openUpdateInfo}
-            setOpen={setOpenUpdateInfo}
-            selectedList={selectedList}
-            setSelectedList={setSelectedList}
-            getOrderDetail={getOrderDetail}
-            setOpenAddOrderItem={setOpen}
-          />
-        </div>
-      </DialogContent>
+                        <TableCell align="left">
+                          <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            {item.category?.title}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          {formatter.format(item.min_price)} -{" "}
+                          {formatter.format(item.max_price)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell>Chưa có dịch vụ</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+
+          {/* Btn action */}
+          <div className="flex gap-5 my-5 mx-auto w-fit">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setSelectedList([]);
+                setOpen(false);
+              }}
+              sx={{
+                textTransform: "none",
+                border: "1px solid #3F41A6",
+                color: "#3F41A6",
+                width: "80px",
+
+                borderRadius: "20px",
+                "&:hover": {
+                  border: "1px solid #3949AB",
+                },
+              }}
+            >
+              Hủy
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={() => handleSaveList()}
+              sx={{
+                textTransform: "none",
+                bgcolor: "#3F41A6",
+                width: "120px",
+
+                borderRadius: "20px",
+                "&:hover": {
+                  bgcolor: "#3949AB",
+                },
+              }}
+            >
+              Lưu thay đổi
+            </Button>
+          </div>
+        </DialogContent>
+      )}
+      {openUpdateInfo && (
+        <AddOrderItemInfo
+          open={openUpdateInfo}
+          setOpen={setOpenUpdateInfo}
+          selectedList={selectedList}
+          setSelectedList={setSelectedList}
+          getOrderDetail={getOrderDetail}
+          setOpenAddOrderItem={setOpen}
+        />
+      )}
     </Dialog>
   );
 }

@@ -237,10 +237,11 @@ function Payment({ order, setOrder }) {
     <Paper
       sx={{
         width: "1200px",
-        margin: "10px auto",
+        margin: "30px auto",
         border: "1px solid #d6d3d1",
         paddingBottom: "20px",
       }}
+      elevation={3}
     >
       <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start max-md:max-w-full max-md:px-5">
         Yêu cầu thanh toán

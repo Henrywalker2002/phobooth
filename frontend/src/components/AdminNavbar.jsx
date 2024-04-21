@@ -27,6 +27,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
 import { translateRole } from "../util/Translate";
+import NotificationList from "./notification/Notification";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
   display: "none",
@@ -75,6 +76,16 @@ export default function AdminNavbar() {
   // Open Menu
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
+  };
+
+  // notification handle
+  const [anchorNoti, setAnchorNoti] = useState(null);
+  // const open = Boolean(anchorEl);
+  const handleNotificationClick = (event) => {
+    setAnchorNoti(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setAnchorNoti(null);
   };
 
   return (
@@ -209,7 +220,7 @@ export default function AdminNavbar() {
           </div>
         ) : (
           <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
-            <IconButton>
+            <IconButton onClick={handleNotificationClick}>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>
 
@@ -314,6 +325,13 @@ export default function AdminNavbar() {
             </Menu>
           </div>
         )}
+
+        {/* Notification */}
+        <NotificationList
+          anchorNoti={anchorNoti}
+          handleClose={handleNotificationClose}
+          role={"admin"}
+        />
       </div>
     </AppBar>
   );

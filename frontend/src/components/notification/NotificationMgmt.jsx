@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../Navbar";
 import {
   Breadcrumbs,
   Button,
@@ -21,10 +21,12 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { RiSearchLine } from "react-icons/ri";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
-import { useNavigate } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import handleContentNotification from "../components/notification/handleContentNotification";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import handleContentNotification from "./handleContentNotification";
 import CircleIcon from "@mui/icons-material/Circle";
+import StudioNavbar from "../StudioNavbar";
+import AdminNavbar from "../AdminNavbar";
 
 function Row(props) {
   const navigate = useNavigate();
@@ -64,6 +66,7 @@ function Row(props) {
 
 function NotificationMgmt() {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const axiosPrivate = useAxiosPrivate();
   const [notifications, setNotifications] = useState([]);
   const [pageCount, setPageCount] = useState(1);
@@ -108,7 +111,13 @@ function NotificationMgmt() {
 
   return (
     <div>
-      <Navbar />
+      {state?.role === "admin" ? (
+        <AdminNavbar />
+      ) : state?.role === "studio" ? (
+        <StudioNavbar />
+      ) : (
+        <Navbar />
+      )}
 
       {/* Breadcumbs */}
       <Breadcrumbs
@@ -128,7 +137,12 @@ function NotificationMgmt() {
           key="1"
           sx={{ color: "#808080" }}
           // href="/"
-          onClick={() => navigate("/", { replace: true })}
+          onClick={() => {
+            if (state?.role === "admin") navigate("/admin", { replace: true });
+            else if (state?.role === "studio")
+              navigate("/studio", { replace: true });
+            else navigate("/", { replace: true });
+          }}
         >
           <HomeOutlinedIcon />
         </Link>

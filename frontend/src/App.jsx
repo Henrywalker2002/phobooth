@@ -34,7 +34,7 @@ import ComplainDetailAdmin from "./admin/complains/ComplainDetail";
 import Complains from "./admin/complains/Complains";
 import StudioDetail from "./user/studio_info/StudioDetail";
 import Categories from "./admin/categories/Categories";
-import NotificationMgmt from "./user/NotificationMgmt";
+import NotificationMgmt from "./components/notification/NotificationMgmt";
 import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
 import StudioReport from "./studio/report/Report";
@@ -97,7 +97,6 @@ function App() {
             <Route path="/order/detail/:id" element={<OrderDetail />} />
             <Route path="/complain/detail/:id" element={<ComplainDetail />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/notification" element={<NotificationMgmt />} />
 
             {/* Studio */}
 
@@ -145,6 +144,7 @@ function App() {
           {/* Everyone */}
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
+          <Route path="/notification" element={<NotificationMgmt />} />
           <Route path="/" element={<Home />} />
           {/* Studio Detail dành cho user xem */}
           <Route path="/studio/:code_name" element={<StudioDetail />} />
