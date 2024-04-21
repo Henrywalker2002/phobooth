@@ -23,8 +23,10 @@ import {
   Alert,
   AlertTitle,
   Tooltip,
+  Avatar,
 } from "@mui/material";
 import { FaArrowRight } from "react-icons/fa6";
+import EditIcon from "@mui/icons-material/Edit";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
@@ -42,6 +44,8 @@ import CreateComplain from "./complain/CreateComplain";
 import { translateOrderStatus, translateType } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
 import UpdateHistory from "./UpdateHistory";
+import EditAddress from "./EditAddress";
+import no_avt from "../../assets/no_img.jpg";
 
 function OrderDetail() {
   // global
@@ -51,10 +55,11 @@ function OrderDetail() {
   // dialog + Snackbar
   const [openCancel, setOpenCancel] = useState(false);
   const [openCancelSBar, setOpenCancelSBar] = useState(false);
+  const [openAddrSBar, setOpenAddrSBar] = useState(false);
   const [openDetailReq, setOpenDetailReq] = useState(false);
   const [openPayingReq, setOpenPayingReq] = useState(false);
   const [openCreateComplain, setOpenCreateComplain] = useState(false);
-
+  const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openRating, setOpenRating] = useState(false);
   // local
   const [reload, setReload] = useState(false);
@@ -65,11 +70,50 @@ function OrderDetail() {
   const [statusMsg, setStatusMsg] = useState("");
   const [selectedReq, setSelectedReq] = useState({});
   const [selectedItem, setSelectedItem] = useState({});
+  const [address, setAddress] = useState({ ...order.address });
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
+  // update adress
+  const handleChangeAddress = (newAddr) => {
+    console.log(newAddr);
+    let updateAddr = {
+      ...address,
+      ...newAddr,
+    };
+    let data = {
+      address: {
+        id: updateAddr.id,
+        street: updateAddr.street,
+        ward: updateAddr.ward.code,
+        district: updateAddr.district.code,
+        province: updateAddr.province.code,
+      },
+    };
+    console.log(data);
+    axiosPrivate
+      .patch(`/order/${id}/`, data)
+      .then((res) => {
+        console.log(res.data);
+        setReload(true);
+        setOpenEditAddr(false);
+        setOpenAddrSBar(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // Close Cancel Order SnackBar Success/Err
+  const handleCloseAddrSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenAddrSBar(false);
+  };
 
   // button component
   const CancelButton = () => {
@@ -153,6 +197,7 @@ function OrderDetail() {
       .then((res) => {
         console.log(res.data);
         setOrder(res.data);
+        setAddress(res.data.address);
         setReload(false);
       })
       .catch((err) => {
@@ -194,7 +239,7 @@ function OrderDetail() {
     if (reason === "clickaway") {
       return;
     }
-    setOpenStatusSbar(false);
+    setOpenCancelSBar(false);
   };
 
   // Collapsible table
@@ -351,9 +396,24 @@ function OrderDetail() {
             }}
           >
             <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-16 py-4 rounded-lg">
-              <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
-                {order?.studio?.friendly_name}
+              <div className="w-full flex items-center gap-3">
+                <Avatar
+                  alt={order?.studio?.friendly_name}
+                  src={order?.studio?.avatar ?? no_avt}
+                  sx={{ width: 50, height: 50 }}
+                />
+                <div className="flex flex-col justify-center">
+                  <div className="text-lg font-semibold tracking-wider text-indigo-800">
+                    {order?.studio?.friendly_name}
+                  </div>
+                  <div className="text-zinc-900 text-sm tracking-wider">
+                    {order?.studio?.type == "STUDIO"
+                      ? "Studio"
+                      : "Thợ chụp ảnh"}
+                  </div>
+                </div>
               </div>
+
               <div className="text-neutral-600 text-sm leading-5 self-center whitespace-nowrap my-auto">
                 {order?.order_item?.length} sản phẩm
               </div>
@@ -452,7 +512,6 @@ function OrderDetail() {
             {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
-
                 {/* payment request + complain + demo*/}
                 <div className="flex flex-col w-[437px] gap-12">
                   {/* payment request */}
@@ -462,7 +521,6 @@ function OrderDetail() {
                     </div>
 
                     <div className="flex flex-col my-3 h-fit">
-
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -686,9 +744,7 @@ function OrderDetail() {
                     <Button
                       startIcon={
                         <FaArrowRight
-
                           style={{ width: "18px", height: "16px" }}
-
                         />
                       }
                       onClick={() => navigate(`/order/${id}/demo`)}
@@ -706,7 +762,6 @@ function OrderDetail() {
                           color: "#1A237E",
                           bgcolor: "transparent",
                         },
-
                       }}
                     >
                       Xem thành phẩm
@@ -848,18 +903,17 @@ function OrderDetail() {
             sx={{
               width: "950px",
               margin: "10px auto",
-              border: "1.5px solid #d6d3d1",
-              paddingBottom: "20px",
+              border: "1px solid #d6d3d1",
             }}
-            elevation={2}
+            elevation={3}
           >
             <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start ">
               Thông tin cơ bản
             </div>
             <Divider />
-            <div className="flex w-full flex-col items-stretch mt-7 px-9">
+            <div className="flex w-full flex-col items-stretch my-7 px-9">
               <div className="flex items-stretch justify-between gap-10">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                <div className="max-w-full items-stretch flex grow basis-[0%] flex-col">
                   <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                     Tên khách hàng
                   </div>
@@ -870,7 +924,7 @@ function OrderDetail() {
                 </div>
               </div>
               <div className="flex items-stretch justify-between gap-5 mt-6 ">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
+                <div className="max-w-full items-stretch flex grow basis-[0%] flex-col">
                   <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
                     số điện thoại
                   </div>
@@ -879,140 +933,35 @@ function OrderDetail() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-stretch justify-between gap-5 mt-6 ">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
-                    Địa chỉ
+              <div className="flex flex-col max-w-full gap-2.5 mt-6 ">
+                <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                  Địa chỉ nhận hàng
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-fit text-sm font-medium leading-5 text-zinc-900">
+                    {address?.street}, {address?.ward?.name_with_type},{" "}
+                    {address?.district?.name_with_type},{" "}
+                    {address?.province?.name_with_type}
                   </div>
-
-                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                    {order?.address?.street},{" "}
-                    {order?.address?.ward.name_with_type},{" "}
-                    {order?.address?.district.name_with_type},{" "}
-                    {order?.address?.province.name_with_type}
-                  </div>
-
-                  <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                      className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
-                    />
-                    <div className="text-zinc-500 text-sm leading-5 my-auto">
-                      Phí vận chuyển :
-                    </div>
-                    <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
-                      20,000
-                    </div>
-                  </div>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    onClick={() => {
+                      setOpenEditAddr(true);
+                    }}
+                  >
+                    <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                  </IconButton>
                 </div>
               </div>
 
               <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
                 trạng thái vận chuyển
               </div>
-              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 mt-1 px-2.5 py-1 self-start">
+              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 mt-1 px-2.5 py-1 self-start">
                 Chưa vận chuyển
               </div>
-              <Button
-                disabled={order.status === "CANCELED" ? true : false}
-                variant="contained"
-                sx={{
-                  marginTop: "30px",
-                  textTransform: "none",
-                  borderRadius: "43px",
-                  color: "#F6F5FB",
-                  bgcolor: "#3F41A6",
-                  width: "130px",
-                  "&:hover": {
-                    bgcolor: "#3F41A6B2",
-                  },
-                }}
-              >
-                Lưu thông tin
-              </Button>
             </div>
           </Paper>
-          {/* <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
-            <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
-              Thông tin vận chuyển
-            </div>
-            <div className="flex w-full flex-col items-stretch mt-7 px-9">
-              <div className="flex items-stretch justify-between gap-10">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                    Tên khách hàng
-                  </div>
-
-                  <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
-                    {order?.customer?.full_name ?? "Chưa cập nhật"}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-stretch justify-between gap-5 mt-6 ">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                    số điện thoại
-                  </div>
-                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                    Chưa cập nhật
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-stretch justify-between gap-5 mt-6 ">
-                <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
-                    Địa chỉ
-                  </div>
-
-                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                    {order?.address?.street},{" "}
-                    {order?.address?.ward.name_with_type},{" "}
-                    {order?.address?.district.name_with_type},{" "}
-                    {order?.address?.province.name_with_type}
-                  </div>
-
-                  <div className="items-stretch flex gap-2 mt-1 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                      className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
-                    />
-                    <div className="text-zinc-500 text-sm leading-5 my-auto">
-                      Phí vận chuyển :
-                    </div>
-                    <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
-                      20,000
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
-                trạng thái vận chuyển
-              </div>
-              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 mt-1 px-2.5 py-1 self-start">
-                Chưa vận chuyển
-              </div>
-              <Button
-                disabled={order.status === "CANCELED" ? true : false}
-                variant="contained"
-                sx={{
-                  marginTop: "30px",
-                  textTransform: "none",
-                  borderRadius: "43px",
-                  color: "#F6F5FB",
-                  bgcolor: "#3F41A6",
-                  width: "130px",
-                  "&:hover": {
-                    bgcolor: "#3F41A6B2",
-                  },
-                }}
-              >
-                Lưu thông tin
-              </Button>
-            </div>
-          </div> */}
         </div>
         <UpdateHistory />
       </div>
@@ -1064,6 +1013,23 @@ function OrderDetail() {
         autoHideDuration={2000}
         onClose={handleCloseCancelSBar}
         message={statusMsg}
+      />
+
+      {/* Edit Address */}
+      <EditAddress
+        open={openEditAddr}
+        setOpen={setOpenEditAddr}
+        address={address}
+        handleChangeAddress={handleChangeAddress}
+      />
+
+      {/* Update Info successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openAddrSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseAddrSBar}
+        message="Cập nhật địa chỉ thành công!"
       />
     </div>
   );

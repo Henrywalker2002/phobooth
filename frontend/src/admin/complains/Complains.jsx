@@ -1,5 +1,4 @@
 import React from "react";
-import StaffNavbar from "../../components/StaffNavbar";
 import {
   Breadcrumbs,
   Link,

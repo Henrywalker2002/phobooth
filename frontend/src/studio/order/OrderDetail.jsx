@@ -21,6 +21,8 @@ import {
   Alert,
   AlertTitle,
   Tooltip,
+  Divider,
+  Avatar,
 } from "@mui/material";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -38,6 +40,7 @@ import DeleteOrderItem from "./DeleteOrderItem";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Payment from "./Payment";
 import { translateErrStatusOrder, translateType } from "../../util/Translate";
+import no_avt from "../../assets/no_img.jpg";
 
 function OrderDetail(props) {
   // global
@@ -388,7 +391,6 @@ function OrderDetail(props) {
         sx={{
           width: "1200px",
           margin: "30px auto",
-          marginBottom: "50px",
           border: "0.5px solid #d6d3d1",
         }}
       >
@@ -544,86 +546,78 @@ function OrderDetail(props) {
       </TableContainer>
 
       {/* Thông tin vận chuyển */}
-      <div className="max-w-[1200px] w-full mx-auto my-10 border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pb-5 rounded-lg border-solid">
-        <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white w-full justify-center pl-6 pr-16 py-5 rounded-lg items-start">
-          Thông tin vận chuyển
+      <Paper
+        sx={{
+          width: "1200px",
+          margin: "30px auto",
+          border: "1px solid #d6d3d1",
+        }}
+        elevation={3}
+      >
+        <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start max-md:max-w-full max-md:px-5">
+          Thông tin khách hàng
         </div>
-        <div className="flex w-full flex-col items-stretch mt-7 px-9">
-          <div className="flex items-stretch justify-between gap-10">
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
-                Tên khách hàng
+        <Divider />
+        <div className="flex flex-col w-full gap-4 my-7 px-9">
+          <div className="w-full flex items-center gap-3">
+            <Avatar
+              alt={order?.customer?.username}
+              src={order?.customer?.avatar ?? no_avt}
+              sx={{ width: 55, height: 55 }}
+            />
+            <div className="flex flex-col justify-around">
+              <div className="text-lg font-semibold tracking-wider text-indigo-800">
+                {order?.customer?.username}
               </div>
-              <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
-                {order?.customer?.full_name ?? "Chưa cập nhật"}
-              </div>
-            </div>
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
-                số điện thoại
-              </div>
-              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                Chưa cập nhật
+              <div className="text-sm  tracking-wide text-zinc-900">
+                Khách hàng
               </div>
             </div>
           </div>
-          <div className="flex items-stretch justify-between gap-5 mt-6 ">
-            <div className="max-w-[450px] items-stretch flex grow basis-[0%] flex-col">
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
-                Địa chỉ
-              </div>
-
-              <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
-                {order?.address?.street}, {order?.address?.ward.name_with_type},{" "}
-                {order?.address?.district.name_with_type},{" "}
-                {order?.address?.province.name_with_type}
-              </div>
-
-              <div className="items-stretch flex gap-2 mt-2 pr-20 max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/da55b028eb8eefc7a61e4d1e5ccc2031cf3efeae8bb767ce6ad3a7eb23e6b619?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                  className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full my-auto"
-                />
-                <div className="text-zinc-500 text-sm leading-5 my-auto">
-                  Phí vận chuyển :
+          <div className="flex w-full gap-10 items-stretch ">
+            <div className="w-1/2 flex flex-col items-start gap-5">
+              <div className="w-full items-stretch flex flex-col gap-1">
+                <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
+                  Tên khách hàng
                 </div>
-                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 aspect-[2.1379310344827585] px-2 py-1">
-                  20,000
+                <div className="w-full text-base font-normal leading-5 text-indigo-800">
+                  {order?.customer?.full_name ?? "Chưa cập nhật"}
+                </div>
+              </div>
+              <div className="w-full items-stretch flex flex-col gap-1">
+                <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                  Địa chỉ giao hàng
+                </div>
+
+                <div className="w-full text-base font-normal leading-5 text-zinc-900">
+                  {order?.address?.street},{" "}
+                  {order?.address?.ward.name_with_type},{" "}
+                  {order?.address?.district.name_with_type},{" "}
+                  {order?.address?.province.name_with_type}
                 </div>
               </div>
             </div>
-            <div className="w-[450px] flex justify-start items-start">
-              <div className="max-w-[200px] items-stretch flex basis-[0%] flex-col self-start gap-3">
-                <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap self-start">
-                  trạng thái vận chuyển
+            <div className="w-1/2 flex flex-col items-start gap-5 ">
+              <div className="w-full items-stretch flex flex-col gap-1">
+                <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
+                  số điện thoại
                 </div>
-                <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2.5 py-1 self-start">
-                  Chưa vận chuyển
+                <div className="w-full text-base font-normal leading-5 text-zinc-900">
+                  Chưa cập nhật
+                </div>
+              </div>
+              <div className="w-full items-stretch flex flex-col gap-1">
+                <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
+                  Email
+                </div>
+                <div className="w-full text-base font-normal leading-5 text-zinc-900">
+                  {order?.customer?.email ?? "Chưa cập nhật"}
                 </div>
               </div>
             </div>
           </div>
-
-          <Button
-            disabled={order.status === "CANCELED" ? true : false}
-            variant="contained"
-            sx={{
-              marginTop: "30px",
-              textTransform: "none",
-              borderRadius: "43px",
-              color: "#F6F5FB",
-              bgcolor: "#3F41A6",
-              width: "130px",
-              "&:hover": {
-                bgcolor: "#3F41A6B2",
-              },
-            }}
-          >
-            Lưu thông tin
-          </Button>
         </div>
-      </div>
+      </Paper>
 
       {/* Payment Request */}
       <Payment order={order} setOrder={setOrder} />

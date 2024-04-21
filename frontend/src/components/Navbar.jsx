@@ -438,6 +438,7 @@ function Navbar() {
         <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
+          role={"customer"}
         />
       </div>
     </AppBar>
