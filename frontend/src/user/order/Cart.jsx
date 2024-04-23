@@ -23,14 +23,15 @@ import {
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
-import { RiSubtractFill } from "react-icons/ri";
-import { IoIosAdd } from "react-icons/io";
+// import { RiSubtractFill } from "react-icons/ri";
+// import { IoIosAdd } from "react-icons/io";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../../context/CartProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateType } from "../../util/Translate";
 
 function Cart() {
   const axiosPrivate = useAxiosPrivate();
@@ -132,53 +133,80 @@ function Cart() {
     } else setOpenNoItemALert(true);
   };
 
-  const handleSelectItem = (e, row, studio) => {
+  const handleSelectItem = (row, studio) => {
     let selectedLst = order_item.find((lst) => lst.studio.id === studio.id);
     if (!selectedLst) {
-      let newOrderItem = [...order_item, { studio: studio, items: [row] }];
+      let newOrderItem = [...order_item];
+      newOrderItem.push({ studio: studio, items: [row] });
       set_order_item(newOrderItem);
     } else {
-      if (e.target.checked) {
-        selectedLst.items.push(row);
-      } else {
-        let new_items;
-        new_items = selectedLst.items.filter(
-          (item) => item.item.id !== row.item.id
-        );
-        selectedLst.items = new_items;
-      }
+      let new_order_item = order_item.map((lst) => {
+        if (lst.studio.id === studio.id) {
+          let newList = { ...lst };
+          newList.items.push(row);
+          return newList;
+        } else return lst;
+      });
+      set_order_item(new_order_item);
     }
-
     // console.log("order_item", order_item);
   };
 
-  const handleChangeNumber = (row, op) => {
-    let number = row?.number;
-    if (op === "-") number--;
-    else number++;
-
-    let updateData = { ...row, number: number };
-
-    axiosPrivate
-      .put(`/cart/${row.id}/`, updateData, {
-        headers: {
-          ...axiosPrivate.defaults.headers,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        // setItems(res.data.results);
-      })
-      .catch((err) => {
-        console.log(err);
+  const handleRemoveItem = (studioId, rowId) => {
+    let selectedLst = order_item.find((lst) => lst.studio.id === studioId);
+    if (selectedLst) {
+      let new_order_item = order_item.map((lst) => {
+        if (lst.studio.id === studioId) {
+          let new_items = lst.items.filter((item) => item.id !== rowId);
+          let newLst = { ...lst, items: new_items };
+          return newLst;
+        } else return lst;
       });
+      set_order_item(new_order_item);
+    }
   };
-  const handleDelete= (id)=>{
-    axiosPrivate.delete(`/cart/${id}/`).then((res)=>{
-      window.location.reload()
-    })
-  }
+
+  //   check selected item in selectList
+  const isSelectedItem = (itemId, studioId) => {
+    let selectLst = order_item?.find((lst) => lst.studio.id === studioId);
+    if (selectLst) {
+      let result = selectLst.items.find(
+        (order_item) => order_item.id === itemId
+      );
+      // console.log(selectLst, result);
+      if (result) return true;
+      else return false;
+    } else return false;
+  };
+
+  // const handleChangeNumber = (row, op) => {
+  //   let number = row?.number;
+  //   if (op === "-") number--;
+  //   else number++;
+
+  //   let updateData = { ...row, number: number };
+
+  //   axiosPrivate
+  //     .put(`/cart/${row.id}/`, updateData, {
+  //       headers: {
+  //         ...axiosPrivate.defaults.headers,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       // console.log(res);
+  //       // setItems(res.data.results);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  const handleDelete = (id) => {
+    axiosPrivate.delete(`/cart/${id}/`).then((res) => {
+      window.location.reload();
+    });
+  };
 
   return (
     <div>
@@ -268,8 +296,11 @@ function Cart() {
                           <TableCell sx={{ width: "42px" }}>
                             <Checkbox
                               onChange={(e) =>
-                                handleSelectItem(e, row, lst.studio)
+                                e.target.checked
+                                  ? handleSelectItem(row, lst.studio)
+                                  : handleRemoveItem(row.id, lst.studio.id)
                               }
+                              checked={isSelectedItem(row.id, lst.studio.id)}
                               inputProps={{ "aria-label": "Checkbox demo" }}
                               sx={{
                                 "&.Mui-checked": {
@@ -296,7 +327,7 @@ function Cart() {
                           </TableCell>
                           <TableCell align="left">
                             <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                              {row.item?.type}
+                              {translateType(row.item?.type)}
                             </div>
                           </TableCell>
                           <TableCell align="left">
@@ -305,7 +336,7 @@ function Cart() {
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
+                            {/* <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
                               <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                                 <IconButton
                                   color="primary"
@@ -337,6 +368,9 @@ function Cart() {
                                   />
                                 </IconButton>
                               </div>
+                            </div> */}
+                            <div className="text-zinc-900 text-sm leading-6">
+                              {row.number}
                             </div>
                           </TableCell>
                           <TableCell
@@ -351,7 +385,7 @@ function Cart() {
                           </TableCell>
                           <TableCell>
                             <IconButton
-                              onClick={()=>handleDelete(row.id)}
+                              onClick={() => handleDelete(row.id)}
                               sx={{
                                 padding: 0,
                                 border: "0.5px solid #d6d3d1",
@@ -390,10 +424,12 @@ function Cart() {
                       />
                       <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
                         {lst.studio?.friendly_name}
-                        
-                      <div style={{color: "#848484", fontSize: "14px"}}>
-                        {lst.studio?.type=="STUDIO"?"Studio":"Thợ chụp ảnh"}
-                      </div>
+
+                        <div style={{ color: "#848484", fontSize: "14px" }}>
+                          {lst.studio?.type == "STUDIO"
+                            ? "Studio"
+                            : "Thợ chụp ảnh"}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-stretch justify-between gap-5 mt-4">
@@ -418,7 +454,9 @@ function Cart() {
                       <Button
                         variant="outlined"
                         startIcon={<MdStorefront />}
-                        onClick={()=>navigate(`/studio/${lst.studio.code_name}`)}
+                        onClick={() =>
+                          navigate(`/studio/${lst.studio.code_name}`)
+                        }
                         sx={{
                           borderRadius: "4px",
                           borderColor: "#1A093E",
