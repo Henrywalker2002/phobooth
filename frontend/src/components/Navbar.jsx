@@ -62,7 +62,6 @@ function Navbar() {
       setUserInfo(cookies?.userInfo?.full_name);
     } else setUserInfo("");
   }, []);
-
   // profile nav
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -377,18 +376,32 @@ function Navbar() {
               }}
             >
               <MenuItem
-                onClick={() => navigate("/profile")}
+                // onClick={() => navigate("/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",
                   fontWeight: "500",
                   lineHeight: "25px",
                   fontStyle: "normal",
+                  "&:hover": {
+                    backgroundColor: "transparent !important", // Ngăn chặn màu nền khi hover
+                  },
                 }}
               >
+                {cookies.userInfo.avatar ? (
+                  <Avatar alt="avt" src={cookies.userInfo.avatar} style={{ marginRight: "15px" }} />
+                ) : (
+                  <FaRegCircleUser style={{ marginRight: "15px" }} />
+                )}
                 {userInfo}
               </MenuItem>
               <Divider />
+              <MenuItem onClick={() => navigate("/profile")}>
+                <ListItemIcon>
+                  <FaRegCircleUser className="w-5 h-5" />
+                </ListItemIcon>
+                <ListItemText>Thông tin cá nhân</ListItemText>
+              </MenuItem>
               <MenuItem
                 onClick={() => {
                   // kiểm tra đã có tài khoản studio chưa

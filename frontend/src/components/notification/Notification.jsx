@@ -1,22 +1,17 @@
 import * as React from "react";
-import handleContentNotification from "./handleContentNotification";
-import { useNavigate } from "react-router-dom";
 import {
-  Dialog,
   Divider,
   ListItemText,
   ListItemAvatar,
   Avatar,
   Box,
-  DialogTitle,
-  Button,
-  DialogActions,
-  DialogContent,
+  Menu,
   MenuItem,
-  MenuList,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import CircleIcon from "@mui/icons-material/Circle";
+import handleContentNotification from "./handleContentNotification";
+import { useNavigate } from "react-router-dom";
 
 function NotificationContent({ title, message, timestamp }) {
   return (
@@ -61,7 +56,7 @@ function handle_read_all(axiosPrivate, notifications, setNotifications) {
     });
 }
 
-function Notification({
+function NotificationItem({
   id,
   image,
   title,
@@ -72,21 +67,17 @@ function Notification({
   navigate,
   axiosPrivate,
 }) {
-  // console.log(typeof image);
   return (
     <MenuItem
-      // alignItems="flex-start"
       onClick={() =>
         handle_redirect_url(id, is_read, redirect_url, navigate, axiosPrivate)
       }
     >
-      {/* {image} */}
       <ListItemAvatar>
         <Avatar sx={{ color: "#3F41A6", bgcolor: "#E2E5FF" }}>
           {image.icon}
         </Avatar>
       </ListItemAvatar>
-      {/* <ListItemIcon>{image}</ListItemIcon> */}
       <ListItemText>
         <NotificationContent
           title={title}
@@ -94,7 +85,6 @@ function Notification({
           timestamp={timestamp}
         />
       </ListItemText>
-
       {!is_read && (
         <CircleIcon
           sx={{
@@ -110,21 +100,20 @@ function Notification({
 }
 
 function NotificationList({ anchorNoti, handleClose }) {
-  const open = Boolean(anchorNoti);
+  const [notifications, setNotifications] = React.useState([]);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
-  const [notifications, setNotifications] = React.useState([]);
 
   React.useEffect(() => {
     axiosPrivate
       .get("/notification/")
       .then((response) => {
-        var results = response.data.results;
-        // console.log(results);
+        const results = response.data.results;
         setNotifications(
-          results.map((notification) => handleContentNotification(notification))
+          results.map((notification) =>
+            handleContentNotification(notification)
+          )
         );
-        console.log(notifications);
       })
       .catch((error) => {
         console.log(error);
@@ -132,47 +121,22 @@ function NotificationList({ anchorNoti, handleClose }) {
   }, []);
 
   return (
-    <Dialog
+    <Menu
       anchorEl={anchorNoti}
-      open={open}
+      open={Boolean(anchorNoti)}
       onClose={handleClose}
-      transformOrigin={{ horizontal: "right", vertical: "bottom" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      keepMounted
-      PaperProps={{
-        style: {
-          width: "auto",
-          minWidth: "450px",
-          margin: "16px",
-          borderRadius: "5px",
-          position: "absolute",
-          top: "50%",
-          left: "60%",
-          transform: "translate(-50%, -50%)",
-        },
-      }}
-      BackdropProps={{
-        invisible: true,
-      }}
-      // disablebackdropclick
     >
-      <DialogTitle sx={{ padding: "14px 20px" }}>
-        <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-          Thông báo
-        </div>
-      </DialogTitle>
-
-      <DialogContent
-        dividers={true}
-        sx={{
-          "&::-webkit-scrollbar": { display: "none" },
-          padding: "5px 10px",
-        }}
-      >
-        <MenuList sx={{ minWidth: "450px", bgcolor: "background.paper" }}>
+      {notifications.length === 0 ? (
+        <Box>
+          <MenuItem >
+            <p>Không có thông báo</p>
+          </MenuItem>
+        </Box>
+      ) : (
+        <>
           {notifications.map((notification, i) => (
             <Box key={i}>
-              <Notification
+              <NotificationItem
                 id={notification.id}
                 image={notification.image}
                 title={notification.title}
@@ -186,47 +150,16 @@ function NotificationList({ anchorNoti, handleClose }) {
               {i !== notifications.length - 1 && <Divider />}
             </Box>
           ))}
-        </MenuList>
-      </DialogContent>
-
-      <DialogActions>
-        <Button
-          autoFocus
-          onClick={() =>
-            handle_read_all(axiosPrivate, notifications, setNotifications)
-          }
-          sx={{
-            textTransform: "none",
-            color: "#3F41A6",
-            width: "fit-content",
-            padding: "5px 20px",
-            fontWeight: "600",
-            "&:hover": {
-              bgcolor: "#E2E5FF",
-            },
-          }}
-        >
-          Đánh dấu đã đọc tất cả
-        </Button>
-
-        <Button
-          autoFocus
-          onClick={() => navigate("/notification")}
-          sx={{
-            textTransform: "none",
-            color: "#3F41A6",
-            width: "fit-content",
-            padding: "5px 20px",
-            fontWeight: "600",
-            "&:hover": {
-              bgcolor: "#E2E5FF",
-            },
-          }}
-        >
-          Xem tất cả
-        </Button>
-      </DialogActions>
-    </Dialog>
+          <Divider />
+          <MenuItem onClick={() => handle_read_all(axiosPrivate, notifications, setNotifications)}>
+            Đánh dấu đã đọc tất cả
+          </MenuItem>
+          <MenuItem onClick={() => navigate("/notification")}>
+            Xem tất cả
+          </MenuItem>
+        </>
+      )}
+    </Menu>
   );
 }
 
