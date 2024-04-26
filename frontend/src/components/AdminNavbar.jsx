@@ -54,7 +54,7 @@ export default function AdminNavbar() {
 
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
-      setUserInfo(cookies?.userInfo?.username);
+      setUserInfo(cookies?.userInfo);
       console.log(cookies?.userInfo);
     } else setUserInfo("");
   }, []);
@@ -77,15 +77,15 @@ export default function AdminNavbar() {
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
   };
-    // notification handle
-    const [anchorNoti, setAnchorNoti] = useState(null);
-    // const open = Boolean(anchorEl);
-    const handleNotificationClick = (event) => {
-      setAnchorNoti(event.currentTarget);
-    };
-    const handleNotificationClose = () => {
-      setAnchorNoti(null);
-    };
+  // notification handle
+  const [anchorNoti, setAnchorNoti] = useState(null);
+  // const open = Boolean(anchorEl);
+  const handleNotificationClick = (event) => {
+    setAnchorNoti(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setAnchorNoti(null);
+  };
   return (
     <AppBar
       position="static"
@@ -243,7 +243,7 @@ export default function AdminNavbar() {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem
+              {/* <MenuItem
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",
@@ -253,8 +253,40 @@ export default function AdminNavbar() {
                 }}
               >
                 {userInfo}
+              </MenuItem> */}
+
+              <MenuItem
+                // onClick={() => navigate("/profile")}
+                sx={{
+                  color: "#3F41A6",
+                  fontSize: "20px",
+                  fontWeight: "500",
+                  lineHeight: "25px",
+                  fontStyle: "normal",
+                  "&:hover": {
+                    backgroundColor: "transparent !important", // Ngăn chặn màu nền khi hover
+                  },
+                }}
+              >
+                {userInfo.avatar ? (
+                  <Avatar
+                    alt="avt"
+                    src={studioInfo.avatar}
+                    style={{ marginRight: "15px" }}
+                  />
+                ) : (
+                  <FaRegCircleUser style={{ marginRight: "15px" }} />
+                )}
+                {userInfo.full_name}
               </MenuItem>
               <Divider />
+
+              <MenuItem>
+                <ListItemIcon>
+                  <FaRegCircleUser className="w-5 h-5" />
+                </ListItemIcon>
+                <ListItemText>Thông tin cá nhân</ListItemText>
+              </MenuItem> 
               <MenuItem
                 onClick={() => {
                   navigate("/admin/manage-account");
