@@ -23,6 +23,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import InsertChartOutlinedRoundedIcon from "@mui/icons-material/InsertChartOutlinedRounded";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useCookies } from "react-cookie";
+import NotificationList from "./notification/Notification";
 
 function StudioNavbar() {
   const navigate = useNavigate();
@@ -50,6 +51,15 @@ function StudioNavbar() {
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
+    // notification handle
+    const [anchorNoti, setAnchorNoti] = useState(null);
+    // const open = Boolean(anchorEl);
+    const handleNotificationClick = (event) => {
+      setAnchorNoti(event.currentTarget);
+    };
+    const handleNotificationClose = () => {
+      setAnchorNoti(null);
+    };
   return (
     <AppBar
       position="static"
@@ -167,7 +177,7 @@ function StudioNavbar() {
           </div>
         ) : (
           <div className="action-gr flex items-center justify-evenly w-60">
-            <IconButton>
+            <IconButton onClick={handleNotificationClick}>
               <NotificationsNoneOutlinedIcon sx={{ color: "#666666" }} />
             </IconButton>
 
@@ -252,6 +262,10 @@ function StudioNavbar() {
             </Menu>
           </div>
         )}
+         <NotificationList
+          anchorNoti={anchorNoti}
+          handleClose={handleNotificationClose}
+        />
       </div>
     </AppBar>
   );
