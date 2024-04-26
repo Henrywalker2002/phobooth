@@ -11,6 +11,8 @@ import {
   Rating,
   Alert,
   Avatar,
+  ImageListItem,
+  ImageListItemBar
 } from "@mui/material";
 import { FaArrowRight } from "react-icons/fa6";
 import { GoHome } from "react-icons/go";
@@ -29,6 +31,8 @@ import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
 import logo from "../../assets/logo2.png";
 import ItemCard from "../../components/ItemCard";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -40,6 +44,22 @@ function ItemDetail(props) {
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
   const [list1, setLits1] = useState([]);
+
+  const [chooseIndex, setChooseIndex] = useState(0);
+   // Hàm xử lý khi click vào nút "Xem thêm"
+   const handleClickChoose = (id) => {
+    setChooseIndex(id);
+    
+  };
+
+  const [startIndex, setStartIndex] = useState(1);
+   // Hàm xử lý khi click vào nút "Xem thêm"
+  const handleClickNext = () => {
+    setStartIndex(startIndex + 1);
+  };
+  const handleClickBack = () => {
+    setStartIndex(startIndex - 1);
+  };
 
   const handleDate = (date) => {
     const newDate = new Date(date);
@@ -129,41 +149,78 @@ function ItemDetail(props) {
             <div className="flex grow flex-col items-stretch mt-1.5 w-[420px]">
               <img
                 loading="lazy"
-                srcSet={item?.pictures ? item?.pictures[0]?.picture : null}
+                srcSet={item?.pictures ? item?.pictures[chooseIndex]?.picture : null}
                 className="object-cover object-center w-full overflow-hidden h-[370px] rounded-lg"
               />
               <div className="mt-3">
                 <div className="flex items-stretch justify-between">
                   <div className="flex flex-col w-[120px] ">
+                  <ImageListItem style={{ height: "120px", position: "relative"}} key={1}> 
                     <img
                       loading="lazy"
                       srcSet={
-                        item?.pictures ? item?.pictures[1]?.picture : null
+                        item?.pictures ? item?.pictures[startIndex]?.picture : null
                       }
                       className="rounded-lg w-full h-[120px] object-cover overflow-hidden shrink-0 max-w-full grow"
+                      onClick={()=>handleClickChoose(startIndex)}
                     />
+                    
+                    {startIndex > 1 && (
+                        <ImageListItemBar
+                        style={{ position: "absolute", top: "30px", right: "90px", height: "60px", padding: 0 }}
+                          actionIcon={
+                            <IconButton
+                              sx={{ color: 'rgba(255, 255, 255, 0.54)', fontSize: "14px" }}
+                              aria-label={`info about `}
+                              onClick={handleClickBack}
+                            >
+                              <ArrowBackIosIcon style={{ width: "20px", color: "#fff"}}/>
+                            </IconButton>
+                          }
+                        />
+                      )}  
+                      </ImageListItem>
                   </div>
                   <div className="flex flex-col w-[120px] ">
                     <img
                       loading="lazy"
                       srcSet={
-                        item?.pictures ? item?.pictures[2]?.picture : null
+                        item?.pictures ? item?.pictures[startIndex+1]?.picture : null
                       }
                       className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
-                    />
+                      onClick={()=>handleClickChoose(startIndex+1)}
+                    /> 
                   </div>
                   <div className="flex flex-col w-[120px] ">
-                    {item?.pictures?.length > 4 ? (
-                      <ImgList pictures={item.pictures} />
-                    ) : (
+                    <ImageListItem style={{ height: "120px", position: "relative"}} key={3}>
                       <img
                         loading="lazy"
                         srcSet={
-                          item?.pictures ? item?.pictures[3]?.picture : null
+                          item?.pictures ? item?.pictures[startIndex+2]?.picture : null
                         }
                         className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
+                        onClick={()=>handleClickChoose(startIndex+2)}
                       />
-                    )}
+                      {startIndex+3 < item?.pictures?.length && (
+                        <ImageListItemBar
+                          style={{ position: "absolute", top: "30px", left: "90px", height: "60px", padding: 0 }}
+                          actionIcon={
+                            <IconButton
+                              aria-label={`info about `}
+                              onClick={handleClickNext}
+                            >
+                              <ArrowForwardIosIcon style={{ width: "20px", color: "#fff"}}/>
+                            </IconButton>
+                          }
+                        />
+                        
+                      )}                      
+                    </ImageListItem>
+                    <style jsx>{`
+                      .MuiImageListItemBar-titleWrap {
+                        padding: 0; /* Loại bỏ padding */
+                      }
+                    `}</style>
                   </div>
                 </div>
               </div>

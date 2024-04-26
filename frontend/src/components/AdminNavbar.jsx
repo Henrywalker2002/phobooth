@@ -77,17 +77,15 @@ export default function AdminNavbar() {
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
   };
-
-  // notification handle
-  const [anchorNoti, setAnchorNoti] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleNotificationClick = (event) => {
-    setAnchorNoti(event.currentTarget);
-  };
-  const handleNotificationClose = () => {
-    setAnchorNoti(null);
-  };
-
+    // notification handle
+    const [anchorNoti, setAnchorNoti] = useState(null);
+    // const open = Boolean(anchorEl);
+    const handleNotificationClick = (event) => {
+      setAnchorNoti(event.currentTarget);
+    };
+    const handleNotificationClose = () => {
+      setAnchorNoti(null);
+    };
   return (
     <AppBar
       position="static"
@@ -325,12 +323,9 @@ export default function AdminNavbar() {
             </Menu>
           </div>
         )}
-
-        {/* Notification */}
         <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
-          role={"admin"}
         />
       </div>
     </AppBar>

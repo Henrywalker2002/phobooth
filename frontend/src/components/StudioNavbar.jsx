@@ -51,16 +51,15 @@ function StudioNavbar() {
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
-
-  // notification handle
-  const [anchorNoti, setAnchorNoti] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleNotificationClick = (event) => {
-    setAnchorNoti(event.currentTarget);
-  };
-  const handleNotificationClose = () => {
-    setAnchorNoti(null);
-  };
+    // notification handle
+    const [anchorNoti, setAnchorNoti] = useState(null);
+    // const open = Boolean(anchorEl);
+    const handleNotificationClick = (event) => {
+      setAnchorNoti(event.currentTarget);
+    };
+    const handleNotificationClose = () => {
+      setAnchorNoti(null);
+    };
   return (
     <AppBar
       position="static"
@@ -263,12 +262,9 @@ function StudioNavbar() {
             </Menu>
           </div>
         )}
-
-        {/* Notification */}
-        <NotificationList
+         <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
-          role={"studio"}
         />
       </div>
     </AppBar>
