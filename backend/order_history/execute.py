@@ -18,7 +18,7 @@ class OrderItemChange:
                 if getattr(self, attr) is not None:
                     dict[attr] = getattr(self, attr)
         return dict
-    
+
 def create_order_price_history(order, old_price, new_price):
 
     if order.status == OrderStatusChoice.ORDERED:
@@ -60,6 +60,6 @@ def create_order_item_history(new_instance, type, old_instance=None):
         if old_value.__dict__():
             order_history = OrderHistory.objects.create(order = new_instance.order, order_item = new_instance, 
                                     fields = "order_item", old_value = old_value.__dict__(), new_value = new_value.__dict__())
-    if order_history:
-        MediaService.create_email_for_order_change(order_history)
+    # if order_history:
+    #     MediaService.create_email_for_order_change(order_history)
                        
