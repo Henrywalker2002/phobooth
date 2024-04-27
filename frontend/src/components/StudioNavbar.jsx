@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Avatar
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -51,16 +52,15 @@ function StudioNavbar() {
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
-
-  // notification handle
-  const [anchorNoti, setAnchorNoti] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleNotificationClick = (event) => {
-    setAnchorNoti(event.currentTarget);
-  };
-  const handleNotificationClose = () => {
-    setAnchorNoti(null);
-  };
+    // notification handle
+    const [anchorNoti, setAnchorNoti] = useState(null);
+    // const open = Boolean(anchorEl);
+    const handleNotificationClick = (event) => {
+      setAnchorNoti(event.currentTarget);
+    };
+    const handleNotificationClose = () => {
+      setAnchorNoti(null);
+    };
   return (
     <AppBar
       position="static"
@@ -204,18 +204,33 @@ function StudioNavbar() {
               }}
             >
               <MenuItem
-                onClick={() => navigate("/studio/profile")}
+                // onClick={() => navigate("/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",
                   fontWeight: "500",
                   lineHeight: "25px",
                   fontStyle: "normal",
+                  "&:hover": {
+                    backgroundColor: "transparent !important", // Ngăn chặn màu nền khi hover
+                  },
                 }}
               >
+                {studioInfo.avatar ? (
+                  <Avatar alt="avt" src={studioInfo.avatar} style={{ marginRight: "15px" }} />
+                ) : (
+                  <FaRegCircleUser style={{ marginRight: "15px" }} />
+                )}
                 {studioInfo.friendly_name}
               </MenuItem>
+              
               <Divider />
+              <MenuItem onClick={() => navigate("/studio/profile")}>
+                <ListItemIcon>
+                  <FaRegCircleUser className="w-5 h-5" />
+                </ListItemIcon>
+                <ListItemText>Thông tin cá nhân</ListItemText>
+              </MenuItem> 
               <MenuItem
                 onClick={() => {
                   navigate("/");
@@ -263,12 +278,9 @@ function StudioNavbar() {
             </Menu>
           </div>
         )}
-
-        {/* Notification */}
-        <NotificationList
+         <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
-          role={"studio"}
         />
       </div>
     </AppBar>

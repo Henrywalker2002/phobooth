@@ -50,7 +50,7 @@ const Logo = styled(PhotoCameraIcon)(({ theme }) => ({
   },
 }));
 
-function Navbar() {
+function StaffNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [userInfo, setUserInfo] = useState("");
@@ -62,8 +62,9 @@ function Navbar() {
       setUserInfo(cookies?.userInfo?.full_name);
     } else setUserInfo("");
   }, []);
+
   // profile nav
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,7 +72,6 @@ function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const handleLogout = () => {
     removeCookie("userInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
@@ -82,16 +82,15 @@ function Navbar() {
   const toggleMenu = () => {
     setOpenMenu(!openMenu);
   };
-
-  // notification handle
-  const [anchorNoti, setAnchorNoti] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleNotificationClick = (event) => {
-    setAnchorNoti(event.currentTarget);
-  };
-  const handleNotificationClose = () => {
-    setAnchorNoti(null);
-  };
+      // notification handle
+      const [anchorNoti, setAnchorNoti] = useState(null);
+      // const open = Boolean(anchorEl);
+      const handleNotificationClick = (event) => {
+        setAnchorNoti(event.currentTarget);
+      };
+      const handleNotificationClose = () => {
+        setAnchorNoti(null);
+      };
 
   return (
     <AppBar
@@ -241,22 +240,7 @@ function Navbar() {
             </div>
           </div>
           <div className="self-center max-sm:hidden">
-            <Button
-              startIcon={<HiOutlineMenu />}
-              sx={{
-                textTransform: "none",
-                color: "#787282",
-                width: "140px",
-                height: "35px",
-                borderRadius: "5px",
-                fontSize: "17.5px",
-                "&:hover": {
-                  color: "#3F41A6",
-                },
-              }}
-            >
-              Danh mục
-            </Button>
+            <div className="text-[#787282] text-[19px]">Quản trị viên</div>
           </div>
         </div>
 
@@ -376,32 +360,18 @@ function Navbar() {
               }}
             >
               <MenuItem
-                // onClick={() => navigate("/profile")}
+                onClick={() => navigate("/profile")}
                 sx={{
                   color: "#3F41A6",
                   fontSize: "20px",
                   fontWeight: "500",
                   lineHeight: "25px",
                   fontStyle: "normal",
-                  "&:hover": {
-                    backgroundColor: "transparent !important", // Ngăn chặn màu nền khi hover
-                  },
                 }}
               >
-                {cookies.userInfo.avatar ? (
-                  <Avatar alt="avt" src={cookies.userInfo.avatar} style={{ marginRight: "15px" }} />
-                ) : (
-                  <FaRegCircleUser style={{ marginRight: "15px" }} />
-                )}
                 {userInfo}
               </MenuItem>
               <Divider />
-              <MenuItem onClick={() => navigate("/profile")}>
-                <ListItemIcon>
-                  <FaRegCircleUser className="w-5 h-5" />
-                </ListItemIcon>
-                <ListItemText>Thông tin cá nhân</ListItemText>
-              </MenuItem>
               <MenuItem
                 onClick={() => {
                   // kiểm tra đã có tài khoản studio chưa
@@ -417,13 +387,6 @@ function Navbar() {
                   <BiStore style={{ width: "20px", height: "20px" }} />
                 </ListItemIcon>
                 <ListItemText>Kênh Studio</ListItemText>
-              </MenuItem>
-
-              <MenuItem onClick={() => navigate("/advanced-search/")}>
-                <ListItemIcon>
-                  <RiSearchLine className="w-5 h-5" />
-                </ListItemIcon>
-                <ListItemText>Tìm kiếm nâng cao</ListItemText>
               </MenuItem>
               <MenuItem onClick={() => navigate("/orders")}>
                 <ListItemIcon>
@@ -446,16 +409,13 @@ function Navbar() {
             </Menu>
           </div>
         )}
-
-        {/* Notification */}
         <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
-          role={"customer"}
         />
       </div>
     </AppBar>
   );
 }
 
-export default Navbar;
+export default StaffNavbar;
