@@ -45,7 +45,7 @@ function Orders() {
 
   const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
-  const [cancelId, setCancelId] = useState();
+  const [cancelId, setCancelId] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
@@ -72,7 +72,7 @@ function Orders() {
       slug += `&date_end=${filterVal?.date_end}`;
     }
     if (filterVal.search) {
-      slug += `&search=${filterVal?.search}`
+      slug += `&search=${filterVal?.search}`;
     }
     return slug;
   };
@@ -110,17 +110,12 @@ function Orders() {
       });
   };
 
-  const handleOpenCancel = (id) => {
-    setCancelId(id);
-    setOpenCancel(true);
-  };
-
   // Close Cancel Order SnackBar Success/Err
   const handleCloseCancelSBar = (e, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpenStatusSbar(false);
+    setOpenCancelSBar(false);
   };
 
   function Row(props) {
@@ -202,8 +197,9 @@ function Orders() {
               <Button
                 variant="outlined"
                 onClick={(e) => {
-                  e.stopImmediatePropagation();
-                  handleOpenCancel(row.id);
+                  e.stopPropagation();
+                  setCancelId(row.id);
+                  setOpenCancel(true);
                 }}
                 sx={{
                   borderRadius: "43px",
@@ -220,25 +216,7 @@ function Orders() {
               >
                 Hủy đơn
               </Button>
-            ) : row.status === "CANCELED" ? null : (
-              <Button
-                variant="outlined"
-                sx={{
-                  borderRadius: "43px",
-                  borderColor: "#3F41A6",
-                  color: "#3F41A6",
-                  padding: "0 5px",
-                  textTransform: "none",
-                  width: "100px",
-                  "&:hover": {
-                    bgcolor: "#F6F5FB",
-                    borderColor: "#3F41A6",
-                  },
-                }}
-              >
-                Hoàn thành
-              </Button>
-            )}
+            ) : null}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -485,14 +463,14 @@ function Orders() {
       </React.Fragment>
     );
   }
-  const handleSearch = (e)=>{
-    if (e.key=="Enter"){
+  const handleSearch = (e) => {
+    if (e.key == "Enter") {
       if (e.target.value) {
-        setFilterVal({...filterVal,search: e.target.value});
-        e.target.value=""
+        setFilterVal({ ...filterVal, search: e.target.value });
+        e.target.value = "";
       }
     }
-  }
+  };
 
   return (
     <div>
@@ -662,6 +640,7 @@ function Orders() {
         setOrders={setOrders}
         setStatusMsg={setStatusMsg}
         setOpenCancelSBar={setOpenCancelSBar}
+        setDefaultPage={setDefaultPage}
       />
 
       {/* Cancel successfully */}

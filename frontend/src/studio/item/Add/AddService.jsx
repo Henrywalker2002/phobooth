@@ -662,7 +662,8 @@ function AddService({ categories, setOpenSBar }) {
             textTransform: "none",
             border: "1px solid #3F41A6",
             color: "#3F41A6",
-            width: "120px",
+            width: "fit-content",
+            padding: "5px 15px",
 
             borderRadius: "20px",
             "&:hover": {
@@ -679,7 +680,8 @@ function AddService({ categories, setOpenSBar }) {
           sx={{
             textTransform: "none",
             bgcolor: "#3F41A6",
-            width: "140px",
+            width: "fit-content",
+            padding: "5px 15px",
             borderRadius: "20px",
             "&:hover": {
               bgcolor: "#3949AB",

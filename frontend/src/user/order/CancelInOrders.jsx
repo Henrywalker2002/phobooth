@@ -10,6 +10,7 @@ function CancelInOrders({
   setOrders,
   setStatusMsg,
   setOpenCancelSBar,
+  setDefaultPage,
 }) {
   const axiosPrivate = useAxiosPrivate();
 
@@ -33,6 +34,12 @@ function CancelInOrders({
           .then((res) => {
             console.log(res.data);
             setOrders(res?.data.results);
+            setStatusMsg("Hủy đơn hàng thành công!");
+          })
+          .then(() => {
+            setOpen(false);
+            setOpenCancelSBar(true);
+            setDefaultPage(1);
           })
           .catch((err) => {
             console.log(err);

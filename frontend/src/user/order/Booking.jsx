@@ -132,7 +132,7 @@ function Booking() {
   };
 
   // update adress
-  const handleUpdateAddress = (newAddr) => {
+  const handleChangeAddress = (newAddr) => {
     console.log(newAddr);
     let updateAddr = {
       ...address,
@@ -426,7 +426,7 @@ function Booking() {
         open={openEditAddr}
         setOpen={setOpenEditAddr}
         address={address}
-        handleUpdateAddress={handleUpdateAddress}
+        handleChangeAddress={handleChangeAddress}
       />
 
       {/* Address Alert */}

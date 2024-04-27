@@ -298,7 +298,7 @@ function Cart() {
                               onChange={(e) =>
                                 e.target.checked
                                   ? handleSelectItem(row, lst.studio)
-                                  : handleRemoveItem(row.id, lst.studio.id)
+                                  : handleRemoveItem(lst.studio.id, row.id)
                               }
                               checked={isSelectedItem(row.id, lst.studio.id)}
                               inputProps={{ "aria-label": "Checkbox demo" }}
