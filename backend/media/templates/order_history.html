@@ -1,19 +1,62 @@
 {% load dict_key %}
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
 <body>
-    <h1> History change </h1>
+    <p>Dear {{user.full_name}},</p>
     <table>
         <tr>
-            <th>Fields</th>
-            <th>Value</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
         </tr>
-        {% for key in new_value %}
-        <tr>
-            <td>{{ key }}</td>
-            <td>{{ new_value|dict_key:key }}</td>
-        </tr>
+        {% for item_change in list %}
+            <tr>
+                <td>{{ item_change.item_name }}</td>
+                <td>{{ item_change.quantity }}</td>
+                <td>{{ item_change.price }}</td>
+            </tr>
         {% endfor %}
     </table>
+    <p>Nếu bạn không đồng ý với sản phẩm này vui lòng ấn "từ chối" trong <a href= {{link}}>chi tiết đơn hàng</a> trên website của chúng tôi</p>
+    <p>Trân trọng,</p>
 </body>
 </html>

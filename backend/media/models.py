@@ -23,6 +23,7 @@ class MediaStatusChoices(models.TextChoices):
 class Media(BaseModel):
     media_from = models.JSONField()
     media_to = models.JSONField()
+    title = models.TextField()
     content = models.TextField()
     content_type = models.CharField(
         max_length=128, choices=MediaContentTypeChoices.choices, default=MediaContentTypeChoices.TEXT_PLAIN)

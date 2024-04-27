@@ -14,6 +14,7 @@ class OrderHistory(BaseModel):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, default=None, null = True)
     status = models.CharField(
         max_length=255, choices=OrderHistoryStatusChoices.choices, default=OrderHistoryStatusChoices.PENDING)
+    is_created_mail = models.BooleanField(default=False)
     denied_reason = models.TextField(null=True, default=None)
     fields = models.CharField(max_length=255, )
     old_value = models.JSONField(null=True, default=None)
