@@ -32,10 +32,12 @@ import { useNavigate } from "react-router-dom";
 import CartContext from "../../context/CartProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { translateType } from "../../util/Translate";
+import { useCookies } from "react-cookie";
 
 function Cart() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const [cookies] = useCookies(["accInfo"]);
   const [openNoItemAlert, setOpenNoItemALert] = useState(false);
   const [items, setItems] = React.useState([]);
   const [order_item, set_order_item] = useState([]);
@@ -128,7 +130,14 @@ function Cart() {
   const handleBooking = () => {
     if (checkOrderItemExisted()) {
       let updateOrderLst = order_item.filter((lst) => lst.items.length > 0);
-      setItemLists(updateOrderLst);
+      setItemLists(
+        updateOrderLst.map((lst) => {
+          return {
+            ...lst,
+            address: { ...cookies.userInfo.address },
+          };
+        })
+      );
       navigate("/booking");
     } else setOpenNoItemALert(true);
   };
@@ -326,12 +335,12 @@ function Cart() {
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                               {translateType(row.item?.type)}
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                               {row?.item?.category?.title}
                             </div>
                           </TableCell>

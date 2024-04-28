@@ -205,9 +205,9 @@ function Orders() {
                   borderRadius: "43px",
                   borderColor: "#3F41A6",
                   color: "#3F41A6",
-                  padding: "0 5px",
+                  padding: "0 15px",
                   textTransform: "none",
-                  width: "100px",
+                  width: "fit-content",
                   "&:hover": {
                     bgcolor: "#F6F5FB",
                     borderColor: "#3F41A6",

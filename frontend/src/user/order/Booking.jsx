@@ -30,13 +30,14 @@ import { useCookies } from "react-cookie";
 import EditAddress from "./EditAddress";
 
 import AddressAlert from "./AddressAlert";
+import { translateType } from "../../util/Translate";
 
 function Booking() {
   const navigate = useNavigate();
   const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
   const { itemLists, setItemLists } = useContext(CartContext);
-
+  const [selectedItemList, setSelectedItemList] = useState({});
   const [address, setAddress] = useState({ ...cookies.userInfo.address });
   const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openAddrAlert, setOpenAddrAlert] = useState(false);
@@ -51,6 +52,7 @@ function Booking() {
     if (!cookies.userInfo.address) {
       setOpenAddrAlert(true);
     }
+    console.log("itemLists", itemLists);
   }, []);
 
   const getTotalPrice = (lst, typ) => {
@@ -100,11 +102,11 @@ function Booking() {
           order_item: order_item,
           note: itemLst.note,
           address: {
-            id: address.id,
-            street: address.street,
-            ward: address.ward.code,
-            district: address.district.code,
-            province: address.province.code,
+            id: itemLst.address.id,
+            street: itemLst.address.street,
+            ward: itemLst.address.ward.code,
+            district: itemLst.address.district.code,
+            province: itemLst.address.province.code,
           },
         };
 
@@ -131,14 +133,23 @@ function Booking() {
     navigate("/cart");
   };
 
-  // update adress
+  // update address
   const handleChangeAddress = (newAddr) => {
     console.log(newAddr);
-    let updateAddr = {
-      ...address,
-      ...newAddr,
-    };
-    setAddress(updateAddr);
+    let newItemList = itemLists.map((lst) => {
+      return lst.studio.id === selectedItemList.studio.id
+        ? {
+            studio: lst.studio,
+            items: lst.items,
+            address: {
+              ...lst.address,
+              ...newAddr,
+            },
+          }
+        : lst;
+    });
+
+    setItemLists(newItemList);
     setOpenEditAddr(false);
   };
 
@@ -254,12 +265,12 @@ function Booking() {
                     </div>
                   </TableCell>
                   <TableCell align="left">
-                    <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {row.item?.type}
+                    <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      {translateType(row.item?.type)}
                     </div>
                   </TableCell>
                   <TableCell align="left">
-                    <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                    <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                       {row.item?.category?.title}
                     </div>
                   </TableCell>
@@ -350,13 +361,15 @@ function Booking() {
                 </AlertTitle>
                 <div className="flex items-start gap-2">
                   <div className=" text-stone-500 text-base leading-6">
-                    {address?.street}, {address?.ward?.name_with_type},{" "}
-                    {address?.district?.name_with_type},{" "}
-                    {address?.province?.name_with_type}
+                    {itemList?.address?.street},{" "}
+                    {itemList?.address?.ward?.name_with_type},{" "}
+                    {itemList?.address?.district?.name_with_type},{" "}
+                    {itemList?.address?.province?.name_with_type}
                   </div>
                   <IconButton
                     sx={{ padding: 0 }}
                     onClick={() => {
+                      setSelectedItemList(itemList);
                       setOpenEditAddr(true);
                     }}
                   >
@@ -425,7 +438,7 @@ function Booking() {
       <EditAddress
         open={openEditAddr}
         setOpen={setOpenEditAddr}
-        address={address}
+        address={selectedItemList.address}
         handleChangeAddress={handleChangeAddress}
       />
 

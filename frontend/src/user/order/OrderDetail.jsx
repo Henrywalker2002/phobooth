@@ -28,8 +28,8 @@ import {
 import { FaArrowRight } from "react-icons/fa6";
 import EditIcon from "@mui/icons-material/Edit";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ColoredStep } from "../../styles/Styles";
@@ -245,23 +245,16 @@ function OrderDetail() {
   // Collapsible table
   function Row(props) {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
 
     return (
       <React.Fragment>
         <TableRow sx={{ borderBottom: "unset" }}>
           <TableCell sx={{ maxWidth: "50px" }}>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? (
-                <KeyboardArrowDownIcon />
-              ) : (
-                <KeyboardArrowRightOutlinedIcon />
-              )}
-            </IconButton>
+            {row.status === "ACCEPTED" ? (
+              <CheckCircleIcon color="success" />
+            ) : row.status === "REJECTED" ? (
+              <CancelIcon color="error" />
+            ) : null}
           </TableCell>
           <TableCell component="th" scope="row">
             <div className="items-stretch flex gap-5">
@@ -312,20 +305,6 @@ function OrderDetail() {
                 Đánh giá
               </Button>
             ) : null}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <div className="flex flex-col gap-3 my-5 ml-16">
-                  <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
-                    Thông tin thêm
-                  </div>
-                  {/* Nội dung thông tin thêm */}
-                </div>
-              </Box>
-            </Collapse>
           </TableCell>
         </TableRow>
       </React.Fragment>
@@ -971,7 +950,9 @@ function OrderDetail() {
             </div>
           </Paper>
         </div>
-        <UpdateHistory />
+        {Object.keys(order).length && (
+          <UpdateHistory order={order} setOrderReload={setReload} />
+        )}
       </div>
 
       {/* Create Complain */}

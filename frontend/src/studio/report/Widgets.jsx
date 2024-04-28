@@ -16,6 +16,8 @@ function Widgets({ studioInfor, setStudioInfor }) {
   const [messageBar, setMessageBar] = React.useState("");
   const axiosPrivate = useAxiosPrivate();
 
+  console.log(studioInfor);
+
   const handleDrawMoney = () => {
     axiosPrivate
       .post("/draw-money/", {})
@@ -68,11 +70,6 @@ function Widgets({ studioInfor, setStudioInfor }) {
                     đơn
                   </div>
                 </div>
-                {/* have not handled yet */}
-                {/* <div className="flex gap-1.5 text-xs tracking-tight leading-5">
-                  <div className="font-bold text-teal-500">+23%</div>
-                  <div className="text-slate-400">kể từ tháng trước</div>
-                </div> */}
               </div>
             </div>
           </div>

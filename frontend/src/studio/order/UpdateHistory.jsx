@@ -6,32 +6,22 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
-  Button,
   Snackbar,
   Pagination,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import EastIcon from "@mui/icons-material/East";
-import Reject from "./Reject";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import no_avt from "../../assets/blank-avatar.png";
-import {
-  CurrencyFormatter,
-  TimeDateFormatter,
-  TimeDateFormatterAfterXDays,
-} from "../../util/Format";
+import { CurrencyFormatter } from "../../util/Format";
 
 function UpdateHistory({ order, setOrderReload }) {
   const axiosPrivate = useAxiosPrivate();
-  const [openReject, setOpenReject] = useState(false);
-  const [openSBar, setOpenSBar] = useState(false);
-  const [msg, setMsg] = useState("");
   const [reload, setReload] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
 
   const [histList, setHistList] = useState([]);
-  const [selectedNoti, setSelectedNoti] = useState({});
   const [count, setCount] = useState(0);
   console.log(order);
 
@@ -67,36 +57,8 @@ function UpdateHistory({ order, setOrderReload }) {
       });
   };
 
-  // handle Accept Change
-  const handleAcceptChange = (histId) => {
-    axiosPrivate
-      .patch(`/order-history/${histId}/`, {
-        status: "ACCEPTED",
-      })
-      .then((res) => {
-        console.log(res.data);
-
-        setMsg("Chấp nhận thay đổi thành công!");
-        setOpenSBar(true);
-        setOrderReload(true);
-        setReload(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  // Close Reject/Accept SnackBar Success/Err
-  const handleCloseSBar = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setDefaultPage(1);
-    setOpenSBar(false);
-  };
-
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-[30%] items-center">
       <Paper
         sx={{
           width: "fit-content",
@@ -190,77 +152,22 @@ function UpdateHistory({ order, setOrderReload }) {
                       </div>
                     </div>
                   )}
-                  {hist?.status === "PENDING" ? (
-                    <div className="flex flex-col gap-3">
-                      <div className="flex gap-2 text-sm leading-6">
-                        <div className="flex gap-1 flex-col text-black">
-                          <div>Thời gian cập nhật :</div>
-                          <div className="">Thời hạn phản hồi :</div>
-                        </div>
-                        <div className="flex gap-1 flex-col self-start text-stone-500">
-                          <div>{TimeDateFormatter(hist?.created_at)}</div>
-                          <div>
-                            {TimeDateFormatterAfterXDays(hist?.created_at, 3)}
-                          </div>
-                        </div>
+                  <div className="flex gap-3 items-center text-sm leading-6 mt-4">
+                    <div className=" text-zinc-900">Trạng thái :</div>
+                    {hist?.status === "REJECTED" ? (
+                      <div className="w-fit h-fit text-red-500 text-sm leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                        Đã từ chối
                       </div>
-
-                      <div className="flex gap-3 justify-center">
-                        <Button
-                          variant="outlined"
-                          onClick={() => {
-                            setSelectedNoti(hist);
-                            setOpenReject(true);
-                          }}
-                          sx={{
-                            textTransform: "none",
-                            border: "1px solid #3F41A6",
-                            color: "#3F41A6",
-                            width: "fit-content",
-                            padding: "3px 13px",
-                            fontSize: "12px",
-                            borderRadius: "20px",
-                            "&:hover": {
-                              border: "1px solid #3949AB",
-                            },
-                          }}
-                        >
-                          Từ chối
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => handleAcceptChange(hist.id)}
-                          sx={{
-                            textTransform: "none",
-                            borderRadius: "20px",
-                            color: "#F6F5FB",
-                            bgcolor: "#3F41A6",
-                            width: "fit-content",
-                            padding: "3px 13px",
-                            fontSize: "12px",
-                            "&:hover": {
-                              bgcolor: "#3949AB",
-                            },
-                          }}
-                        >
-                          Chấp nhận
-                        </Button>
+                    ) : hist?.status === "REJECTED" ? (
+                      <div className="w-fit h-fit text-green-600 text-sm leading-5 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                        Đã chấp nhận
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-3 items-center text-sm leading-6 mt-4">
-                      <div className=" text-zinc-900">Trạng thái :</div>
-                      {hist?.status === "REJECTED" ? (
-                        <div className="w-fit h-fit text-red-500 text-sm leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 px-3 flex justify-center self-center">
-                          Đã từ chối
-                        </div>
-                      ) : (
-                        <div className="w-fit h-fit text-green-600 text-sm leading-5 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 px-3 flex justify-center self-center">
-                          Đã chấp nhận
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    ) : (
+                      <div className="w-fit h-fit text-yellow-600 text-sm leading-5 whitespace-nowrap rounded bg-yellow-400 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+                        Đang chờ
+                      </div>
+                    )}
+                  </div>
                 </ListItemText>
               </ListItem>
             ))
@@ -270,27 +177,6 @@ function UpdateHistory({ order, setOrderReload }) {
             </div>
           )}
         </List>
-
-        {/* Reject Dialog */}
-        <Reject
-          open={openReject}
-          setOpen={setOpenReject}
-          noti={selectedNoti}
-          studio={order.studio}
-          setOpenSBar={setOpenSBar}
-          setMsg={setMsg}
-          setReload={setReload}
-          setOrderReload={setOrderReload}
-        />
-
-        {/* Snackbar */}
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={openSBar}
-          autoHideDuration={2000}
-          onClose={handleCloseSBar}
-          message={msg}
-        />
       </Paper>
 
       {/* Pagination */}

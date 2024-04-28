@@ -272,11 +272,10 @@ export default function AdminNavbar() {
                   <Avatar
                     alt="avt"
                     src={studioInfo.avatar}
-                    style={{ marginRight: "15px" }}
+                    style={{ marginRight: "10px" }}
                   />
-                ) : (
-                  <FaRegCircleUser style={{ marginRight: "15px" }} />
-                )}
+                ) : // (<FaRegCircleUser style={{ marginRight: "10px" }} />)
+                null}
                 {userInfo.full_name}
               </MenuItem>
               <Divider />
@@ -286,7 +285,7 @@ export default function AdminNavbar() {
                   <FaRegCircleUser className="w-5 h-5" />
                 </ListItemIcon>
                 <ListItemText>Thông tin cá nhân</ListItemText>
-              </MenuItem> 
+              </MenuItem>
               <MenuItem
                 onClick={() => {
                   navigate("/admin/manage-account");

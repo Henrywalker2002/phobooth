@@ -8,7 +8,7 @@ import {
   Menu,
   MenuItem,
   TextField,
-  Avatar
+  Avatar,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -52,15 +52,15 @@ function StudioNavbar() {
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
-    // notification handle
-    const [anchorNoti, setAnchorNoti] = useState(null);
-    // const open = Boolean(anchorEl);
-    const handleNotificationClick = (event) => {
-      setAnchorNoti(event.currentTarget);
-    };
-    const handleNotificationClose = () => {
-      setAnchorNoti(null);
-    };
+  // notification handle
+  const [anchorNoti, setAnchorNoti] = useState(null);
+  // const open = Boolean(anchorEl);
+  const handleNotificationClick = (event) => {
+    setAnchorNoti(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setAnchorNoti(null);
+  };
   return (
     <AppBar
       position="static"
@@ -217,20 +217,24 @@ function StudioNavbar() {
                 }}
               >
                 {studioInfo.avatar ? (
-                  <Avatar alt="avt" src={studioInfo.avatar} style={{ marginRight: "15px" }} />
+                  <Avatar
+                    alt="avt"
+                    src={studioInfo.avatar}
+                    style={{ marginRight: "10px" }}
+                  />
                 ) : (
-                  <FaRegCircleUser style={{ marginRight: "15px" }} />
+                  <FaRegCircleUser style={{ marginRight: "10px" }} />
                 )}
                 {studioInfo.friendly_name}
               </MenuItem>
-              
+
               <Divider />
               <MenuItem onClick={() => navigate("/studio/profile")}>
                 <ListItemIcon>
                   <FaRegCircleUser className="w-5 h-5" />
                 </ListItemIcon>
                 <ListItemText>Thông tin cá nhân</ListItemText>
-              </MenuItem> 
+              </MenuItem>
               <MenuItem
                 onClick={() => {
                   navigate("/");
@@ -278,7 +282,7 @@ function StudioNavbar() {
             </Menu>
           </div>
         )}
-         <NotificationList
+        <NotificationList
           anchorNoti={anchorNoti}
           handleClose={handleNotificationClose}
         />
