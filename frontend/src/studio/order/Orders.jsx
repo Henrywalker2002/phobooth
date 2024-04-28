@@ -17,6 +17,7 @@ import {
   Pagination,
   TextField,
   InputAdornment,
+  Snackbar,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
@@ -30,6 +31,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Filter from "./Filter";
 import { translateOrderStatus, translateType } from "../../util/Translate";
 import { DateFormatter } from "../../util/Format";
+import CancelInOrders from "./CancelInOrders";
 
 function Orders() {
   // Collapsible table
@@ -37,7 +39,11 @@ function Orders() {
   const navigate = useNavigate();
   // dialog
   const [openFilter, setOpenFilter] = useState(false);
+  const [openAction, setOpenAction] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+  const [openActionSBar, setOpenActionSBar] = useState(false);
   // local
+  const [selectedRow, setSelectedRow] = useState({});
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
   const [orders, setOrders] = useState([]);
@@ -110,6 +116,14 @@ function Orders() {
     return "Chưa cập nhật";
   }
 
+  // Close Cancel/Completet Order SnackBar Success/Err
+  const handleCloseActionSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenActionSBar(false);
+  };
+
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = useState(false);
@@ -156,13 +170,18 @@ function Orders() {
             {row.status === "ORDERED" ? (
               <Button
                 variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedRow({ id: row.id, action: "CANCELED" });
+                  setOpenAction(true);
+                }}
                 sx={{
                   borderRadius: "43px",
                   borderColor: "#3F41A6",
                   color: "#3F41A6",
-                  padding: "0 5px",
+                  padding: "0 15px",
                   textTransform: "none",
-                  width: "100px",
+                  width: "fit-content",
                   "&:hover": {
                     bgcolor: "#F6F5FB",
                     borderColor: "#3F41A6",
@@ -174,13 +193,18 @@ function Orders() {
             ) : row.status === "CANCELED" ? null : (
               <Button
                 variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedRow({ id: row.id, action: "COMPLETED" });
+                  setOpenAction(true);
+                }}
                 sx={{
                   borderRadius: "43px",
                   borderColor: "#3F41A6",
                   color: "#3F41A6",
-                  padding: "0 5px",
+                  padding: "0 15px",
                   textTransform: "none",
-                  width: "100px",
+                  width: "fit-content",
                   "&:hover": {
                     bgcolor: "#F6F5FB",
                     borderColor: "#3F41A6",
@@ -432,6 +456,26 @@ function Orders() {
               bgcolor: "#E2E5FF",
             },
         }}
+      />
+
+      {/* Action for Order */}
+      <CancelInOrders
+        open={openAction}
+        setOpen={setOpenAction}
+        row={selectedRow}
+        setOrders={setOrders}
+        setStatusMsg={setStatusMsg}
+        setOpenActionSBar={setOpenActionSBar}
+        setDefaultPage={setDefaultPage}
+      />
+
+      {/* Action successfully */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openActionSBar}
+        autoHideDuration={2000}
+        onClose={handleCloseActionSBar}
+        message={statusMsg}
       />
     </div>
   );

@@ -48,12 +48,14 @@ class OrderViewSet(BaseModelViewSet):
             address = Address(**address)
             if address != request.user.address:
                 address.save()
-                order.address = address
-                order.save()        
-                if not request.user.address:
-                    user = request.user 
-                    user.address = address
-                    user.save()
+            else:
+                address = request.user.address
+            order.address = address
+            order.save()        
+            if not request.user.address:
+                user = request.user 
+                user.address = address
+                user.save()
         else :
             if request.user.address:
                 order.address = request.user.address

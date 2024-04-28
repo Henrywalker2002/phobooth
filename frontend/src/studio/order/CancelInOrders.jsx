@@ -6,10 +6,10 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 function CancelInOrders({
   open,
   setOpen,
-  id,
+  row,
   setOrders,
   setStatusMsg,
-  setOpenCancelSBar,
+  setOpenActionSBar,
   setDefaultPage,
 }) {
   const axiosPrivate = useAxiosPrivate();
@@ -17,13 +17,14 @@ function CancelInOrders({
   // Open Status SnackBar Success/Err
   const handleOpenStatusSBar = (msg) => {
     setStatusMsg(translateErrStatusOrder(msg));
-    setOpenCancelSBar(true);
+    setOpenActionSBar(true);
+    setOpen(false);
   };
 
-  const handleCancelOrder = () => {
+  const handleActionOrder = () => {
     axiosPrivate
-      .patch(`/order/${id}/`, {
-        status: "CANCELED",
+      .patch(`/order/${row.id}/`, {
+        status: row.action,
       })
       .then((res) => {
         console.log(res.data);
@@ -34,12 +35,10 @@ function CancelInOrders({
           .then((res) => {
             console.log(res.data);
             setOrders(res?.data.results);
-            setStatusMsg("Hủy đơn hàng thành công!");
-          })
-          .then(() => {
-            setOpen(false);
-            setOpenCancelSBar(true);
-            setDefaultPage(1);
+
+            row.action === "CANCELED"
+              ? setStatusMsg("Hủy đơn hàng thành công!")
+              : setStatusMsg("Hoàn thành đơn hàng thành công!");
           })
           .catch((err) => {
             console.log(err);
@@ -47,7 +46,8 @@ function CancelInOrders({
       })
       .then(() => {
         setOpen(false);
-        setOpenCancelSBar(true);
+        setOpenActionSBar(true);
+        setDefaultPage(1);
       })
       .catch((err) => {
         console.log(err);
@@ -68,7 +68,10 @@ function CancelInOrders({
         },
       }}
     >
-      <DialogContent>Bạn có muốn hủy đơn hàng #{id} không?</DialogContent>
+      <DialogContent>
+        Bạn có muốn {row.action === "CANCELED" ? "hủy" : "hoàn thành"} đơn hàng
+        #{row.id} không?
+      </DialogContent>
       <DialogActions>
         <Button
           onClick={() => setOpen(false)}
@@ -83,7 +86,7 @@ function CancelInOrders({
         </Button>
         <Button
           variant="contained"
-          onClick={() => handleCancelOrder()}
+          onClick={() => handleActionOrder()}
           sx={{
             // textTransform: "none",
             bgcolor: "#3F41A6",
@@ -94,7 +97,7 @@ function CancelInOrders({
             },
           }}
         >
-          Hủy đơn
+          {row.action === "CANCELED" ? "Hủy đơn" : "Hoàn thành"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -389,9 +389,13 @@ function Navbar() {
                 }}
               >
                 {cookies.userInfo.avatar ? (
-                  <Avatar alt="avt" src={cookies.userInfo.avatar} style={{ marginRight: "15px" }} />
+                  <Avatar
+                    alt="avt"
+                    src={cookies.userInfo.avatar}
+                    style={{ marginRight: "10px" }}
+                  />
                 ) : (
-                  <FaRegCircleUser style={{ marginRight: "15px" }} />
+                  <FaRegCircleUser style={{ marginRight: "10px" }} />
                 )}
                 {userInfo}
               </MenuItem>

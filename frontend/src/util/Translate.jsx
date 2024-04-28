@@ -99,7 +99,7 @@ export const translateType = (typ) => {
   else if (typ === "PRODUCT") return "Hàng hóa";
   else if (typ === "ACCESSORY") return "Dịch vụ hỗ trợ";
   else if (typ === "SERVICE_PACK") return "Gói dịch vụ";
-  return "";
+  return typ;
 };
 
 export const translateErrCategory = (err) => {

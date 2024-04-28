@@ -28,8 +28,8 @@ import {
 import { FaArrowRight } from "react-icons/fa6";
 import EditIcon from "@mui/icons-material/Edit";
 import StickyNote2OutlinedIcon from "@mui/icons-material/StickyNote2Outlined";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { ColoredStep } from "../../styles/Styles";
@@ -245,23 +245,16 @@ function OrderDetail() {
   // Collapsible table
   function Row(props) {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
 
     return (
       <React.Fragment>
         <TableRow sx={{ borderBottom: "unset" }}>
           <TableCell sx={{ maxWidth: "50px" }}>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? (
-                <KeyboardArrowDownIcon />
-              ) : (
-                <KeyboardArrowRightOutlinedIcon />
-              )}
-            </IconButton>
+            {row.status === "ACCEPTED" ? (
+              <CheckCircleIcon color="success" />
+            ) : row.status === "REJECTED" ? (
+              <CancelIcon color="error" />
+            ) : null}
           </TableCell>
           <TableCell component="th" scope="row">
             <div className="items-stretch flex gap-5">
@@ -312,20 +305,6 @@ function OrderDetail() {
                 Đánh giá
               </Button>
             ) : null}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <div className="flex flex-col gap-3 my-5 ml-16">
-                  <div className="text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
-                    Thông tin thêm
-                  </div>
-                  {/* Nội dung thông tin thêm */}
-                </div>
-              </Box>
-            </Collapse>
           </TableCell>
         </TableRow>
       </React.Fragment>
@@ -387,6 +366,17 @@ function OrderDetail() {
 
       <div className="flex justify-between items-start mt-5 px-16">
         <div className="flex flex-col gap-5">
+          {/* Cancel Noti */}
+          {order.status === "CANCELED" && (
+            <Alert
+              sx={{ marginX: "auto", width: "950px" }}
+              severity="error"
+              color="warning"
+            >
+              Đơn hàng này đã được hủy.
+            </Alert>
+          )}
+
           {/* Order Detail */}
           <TableContainer
             component={Paper}
@@ -491,7 +481,7 @@ function OrderDetail() {
                 marginY: "50px",
               }}
             >
-              {order.status !== "CANCELED" ? (
+              {order.status !== "CANCELED" && (
                 <Stepper activeStep={getActiveStep(order)} alternativeLabel>
                   {steps.map((label, i) => (
                     <ColoredStep key={i}>
@@ -499,21 +489,13 @@ function OrderDetail() {
                     </ColoredStep>
                   ))}
                 </Stepper>
-              ) : (
-                <Alert
-                  sx={{ maxWidth: "1000px", marginX: "auto" }}
-                  severity="error"
-                  color="warning"
-                >
-                  Đơn hàng này đã được hủy.
-                </Alert>
               )}
             </Box>
             {/* payment request, complain + invoice */}
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
                 {/* payment request + complain + demo*/}
-                <div className="flex flex-col w-[437px] gap-12">
+                <div className="flex flex-col w-1/2 gap-12">
                   {/* payment request */}
                   <div className="items-stretch flex flex-col px-5 gap-2">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
@@ -530,7 +512,7 @@ function OrderDetail() {
                                   sx={{
                                     width: "fit-content",
                                     border: "0.5px solid #d6d3d1",
-                                    alignItems: "stretch",
+
                                     display: "flex",
                                     justifyContent: "space-between",
                                     gap: "30px",
@@ -538,7 +520,7 @@ function OrderDetail() {
                                     padding: "10px 15px",
                                   }}
                                 >
-                                  <div className="items-stretch flex grow  flex-col py-px gap-2.5">
+                                  <div className="items-stretch flex  flex-col py-px gap-2.5">
                                     <div className="text-zinc-500 text-base font-medium leading-6">
                                       Thanh toán lần {req.no}
                                     </div>
@@ -555,7 +537,7 @@ function OrderDetail() {
                                         )}
                                       </div>
                                       <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                                        {daysleftCount(req.expiration_date) > 0
+                                        {daysleftCount(req.expiration_date) >= 0
                                           ? `Còn ${daysleftCount(
                                               req.expiration_date
                                             )} ngày`
@@ -565,6 +547,9 @@ function OrderDetail() {
                                   </div>
                                   <Button
                                     variant="contained"
+                                    disabled={
+                                      daysleftCount(req.expiration_date) < 0
+                                    }
                                     onClick={() => {
                                       setSelectedReq(req);
                                       setOpenPayingReq(true);
@@ -577,8 +562,9 @@ function OrderDetail() {
                                       borderRadius: "43px",
                                       color: "#F6F5FB",
                                       bgcolor: "#3F41A6",
-                                      width: "102px",
-                                      height: "32px",
+                                      width: "fit-content",
+                                      padding: "5px 15px",
+
                                       "&:hover": {
                                         bgcolor: "#3F41A6B2",
                                       },
@@ -944,12 +930,13 @@ function OrderDetail() {
                     {address?.province?.name_with_type}
                   </div>
                   <IconButton
-                    sx={{ padding: 0 }}
+                    sx={{ padding: 0, color: "#3F41A6", fontSize: "22px" }}
                     onClick={() => {
                       setOpenEditAddr(true);
                     }}
+                    disabled={order.status === "CANCELED"}
                   >
-                    <EditIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                    <EditIcon />
                   </IconButton>
                 </div>
               </div>
@@ -963,7 +950,9 @@ function OrderDetail() {
             </div>
           </Paper>
         </div>
-        <UpdateHistory />
+        {Object.keys(order).length && (
+          <UpdateHistory order={order} setOrderReload={setReload} />
+        )}
       </div>
 
       {/* Create Complain */}

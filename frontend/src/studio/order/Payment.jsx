@@ -236,7 +236,7 @@ function Payment({ order, setOrder }) {
   return (
     <Paper
       sx={{
-        width: "1200px",
+        width: "100%",
         margin: "30px auto",
         border: "1px solid #d6d3d1",
         paddingBottom: "20px",

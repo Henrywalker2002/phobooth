@@ -75,7 +75,7 @@ class StudioUpdateSerializer(StudioSerializer):
     class Meta:
         model = Studio
         fields = ['id', 'friendly_name', 'phone', 'email', 'description', 'tax_code',
-                  'is_verified', 'address', "avatar", "bank_bin", "account_number", "account_name"]
+                  'is_verified', "avatar", "bank_bin", "account_number", "account_name"]
 
 
 class StudioDetailSerializer(serializers.ModelSerializer):
@@ -86,7 +86,8 @@ class StudioDetailSerializer(serializers.ModelSerializer):
         model = Studio
 
         fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified',
-                  'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item", 'type']
+                  'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item",
+                  "account_balance", "account_number", "account_name",  "bank_bin"]
 
 
 class AddEmployeeSerializer(serializers.Serializer):
