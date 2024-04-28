@@ -15,7 +15,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import no_avt from "../../assets/blank-avatar.png";
 import { CurrencyFormatter } from "../../util/Format";
 
-function UpdateHistory({ order, setOrderReload }) {
+function UpdateHistory({ order }) {
   const axiosPrivate = useAxiosPrivate();
   const [reload, setReload] = useState(false);
   const [pageCount, setPageCount] = useState(1);

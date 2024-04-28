@@ -4,6 +4,7 @@ import { RiBarChartFill } from "react-icons/ri";
 import StarIcon from "@mui/icons-material/Star";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { FaArrowRight } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
@@ -42,7 +43,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
 
   return (
     <div className="w-full flex justify-evenly">
-      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
+      <div className="flex flex-col w-1/5 max-w-[240px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -76,7 +77,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
+      <div className="flex flex-col w-1/5 max-w-[240px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -113,7 +114,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
+      <div className="flex flex-col w-1/5 max-w-[240px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -145,7 +146,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
         </Paper>
       </div>
 
-      <div className="flex flex-col w-1/4 max-w-[270px] max-h-[100px]">
+      <div className="flex flex-col w-1/5 max-w-[240px] max-h-[100px]">
         <Paper
           elevation={2}
           sx={{
@@ -157,7 +158,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
           <div className="flex py-2 px-3 w-full items-center h-full">
             <div className="flex gap-4 items-center w-fit">
               <Avatar sx={{ color: "#3F41A6", bgcolor: "#E2E5FF" }}>
-                <CurrencyExchangeIcon />
+                <PriceCheckIcon sx={{ fontSize: "26px" }} />
               </Avatar>
               <div className="flex flex-col">
                 <div className="text-sm font-medium tracking-tight leading-6 text-slate-400">
@@ -186,6 +187,33 @@ function Widgets({ studioInfor, setStudioInfor }) {
                 >
                   Rút tiền
                 </Button>
+              </div>
+            </div>
+          </div>
+        </Paper>
+      </div>
+
+      <div className="flex flex-col w-1/5 max-w-[240px] max-h-[100px]">
+        <Paper
+          elevation={2}
+          sx={{
+            borderRadius: "8px",
+            height: "90px",
+            border: "0.5px solid #d6d3d1",
+          }}
+        >
+          <div className="flex py-2 px-3 w-full items-center h-full">
+            <div className="flex gap-4 items-center w-fit">
+              <Avatar sx={{ color: "#3F41A6", bgcolor: "#E2E5FF" }}>
+                <CurrencyExchangeIcon />
+              </Avatar>
+              <div className="flex flex-col">
+                <div className="text-sm font-medium tracking-tight leading-6 text-slate-400">
+                  Số tiền tạm giữ
+                </div>
+                <div className="text-xl font-semibold tracking-tight  text-indigo-900">
+                  {formatter.format(studioInfor.account_balance ?? 0)}
+                </div>
               </div>
             </div>
           </div>

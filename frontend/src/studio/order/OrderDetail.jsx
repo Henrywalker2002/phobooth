@@ -48,7 +48,6 @@ function OrderDetail(props) {
   let { id } = useParams(props, "id");
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
-  const [reload, setReload] = useState(false);
   // Dialog
   const [openAddItem, setOpenAddItem] = useState(false);
   const [openEditItem, setOpenEditItem] = useState(false);
@@ -82,8 +81,7 @@ function OrderDetail(props) {
 
   useEffect(() => {
     getOrderDetail();
-    setReload(false);
-  }, [reload]);
+  }, []);
 
   // Open Status SnackBar Success/Err
   const handleOpenStatusSBar = (msg) => {
@@ -596,9 +594,7 @@ function OrderDetail(props) {
           <Payment order={order} setOrder={setOrder} />
         </div>
 
-        {Object.keys(order).length && (
-          <UpdateHistory order={order} setOrderReload={setReload} />
-        )}
+        {Object.keys(order).length && <UpdateHistory order={order} />}
       </div>
 
       {/* Update Status successfully */}
