@@ -199,7 +199,7 @@ function Carousel({ handleAddToCart }) {
               {isLoading ? (
                 <CircularProgress color="inherit" />
               ) : (
-                <div className="flex flex-col  gap-5">
+                <div className="flex flex-col mt-4 gap-5">
                   <Box
                     sx={{
                       display: "flex",

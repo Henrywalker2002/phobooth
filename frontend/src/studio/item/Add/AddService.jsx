@@ -104,13 +104,15 @@ function AddService({ categories, setOpenSBar }) {
   const handleAddItem = async (e) => {
     e.preventDefault();
     // check imgs are existed
-    if (imgList.length < 4 || imgList.length > 10) setOpenImgAlert(true);
+    if (imgList.length < 4 || imgList.length > 5) setOpenImgAlert(true);
     else if (checkPrice(service)) {
       // form-data
       let formData = new FormData();
 
       // pictures into formdata
       let picList = imgList?.map((img) => img.img_file);
+      console.log("imgList", imgList);
+      console.log("picList", picList);
       for (const pic of picList) {
         formData.append(`pictures`, pic, pic.name);
       }
@@ -150,7 +152,7 @@ function AddService({ categories, setOpenSBar }) {
   return (
     <form
       onSubmit={handleAddItem}
-      className="forms flex flex-col gap-5 items-center pb-5"
+      className="forms flex flex-col gap-2 items-center pb-5"
     >
       {/* Thông tin cơ bản */}
       <Paper
@@ -359,11 +361,10 @@ function AddService({ categories, setOpenSBar }) {
                     <div className="flex flex-col items-center">
                       <RiImageAddFill className="w-11 h-11" />
                       <div className="text-[10px] mt-1">Thêm hình ảnh</div>
-                      <div className="text-[10px]">({imgList.length}/10)</div>
+                      <div className="text-[10px]">({imgList.length}/5)</div>
                     </div>
 
                     <input
-                      required
                       type="file"
                       accept="image/*"
                       multiple
@@ -535,116 +536,6 @@ function AddService({ categories, setOpenSBar }) {
         </div>
       </Paper>
 
-      {/* Thông tin vận chuyển */}
-      <Paper
-        sx={{
-          width: "800px",
-          margin: "10px auto",
-          border: "1px solid #d6d3d1",
-          paddingBottom: "20px",
-        }}
-      >
-        <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start max-md:max-w-full max-md:px-5">
-          Vận chuyển
-        </div>
-        <Divider />
-        <div className="flex flex-col items-stretch mt-6 pl-7 pr-16 max-md:max-w-full max-md:px-5">
-          <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
-            Cân nặng dự kiến (Sau khi đóng gói)
-          </div>
-          <TextField
-            id="outlined-start-adornment"
-            name="weight"
-            value={service.weight ? service.weight : ""}
-            onChange={updateService}
-            error={errMsg?.weight ? true : false}
-            helperText={errMsg?.weight ? errMsg.weight[0] : ""}
-            sx={{
-              "& .MuiInputBase-input": {
-                height: "45px",
-                boxSizing: "border-box",
-              },
-              width: "180px",
-              marginY: "10px",
-            }}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">gr</InputAdornment>,
-            }}
-          />
-          <div className="text-zinc-900 text-sm leading-5 mt-8 max-md:max-w-full">
-            Kích thước dự kiến
-          </div>
-          <div className="items-stretch flex w-full justify-between gap-5 ">
-            <TextField
-              name="height"
-              value={service.height ? service.height : ""}
-              onChange={updateService}
-              error={errMsg?.height ? true : false}
-              helperText={errMsg?.height ? errMsg.height[0] : ""}
-              id="outlined-start-adornment"
-              placeholder="Cao"
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "180px",
-                marginY: "10px",
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">cm</InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              id="outlined-start-adornment"
-              name="length"
-              value={service.length ? service.length : ""}
-              onChange={updateService}
-              error={errMsg?.length ? true : false}
-              helperText={errMsg?.length ? errMsg.length[0] : ""}
-              placeholder="Dài"
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "180px",
-                marginY: "10px",
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">cm</InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              id="outlined-start-adornment"
-              placeholder="Rộng"
-              value={service.width ? service.width : ""}
-              name="width"
-              onChange={updateService}
-              error={errMsg?.width ? true : false}
-              helperText={errMsg?.width ? errMsg.width[0] : ""}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "180px",
-                marginY: "10px",
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">cm</InputAdornment>
-                ),
-              }}
-            />
-          </div>
-        </div>
-      </Paper>
-
       {/* Img Alert Dialog */}
       <ImgAlert
         open={openImgAlert}
@@ -656,7 +547,7 @@ function AddService({ categories, setOpenSBar }) {
       <ErrDialog open={openErr} setOpen={setOpenErr} />
 
       {/* Action Btn */}
-      <div className="flex  gap-5 ml-4 my-5 self-center">
+      <div className="flex  gap-5 ml-4 my-2 self-center">
         <Button
           variant="outlined"
           onClick={() => resetData()}

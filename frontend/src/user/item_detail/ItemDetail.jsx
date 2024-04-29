@@ -12,8 +12,10 @@ import {
   Alert,
   Avatar,
   ImageListItem,
-  ImageListItemBar
+  ImageListItemBar,
 } from "@mui/material";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { FaArrowRight } from "react-icons/fa6";
 import { GoHome } from "react-icons/go";
 import { RiSubtractFill } from "react-icons/ri";
@@ -31,8 +33,9 @@ import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
 import logo from "../../assets/logo2.png";
 import ItemCard from "../../components/ItemCard";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { CurrencyFormatter } from "../../util/Format";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -46,14 +49,13 @@ function ItemDetail(props) {
   const [list1, setLits1] = useState([]);
 
   const [chooseIndex, setChooseIndex] = useState(0);
-   // Hàm xử lý khi click vào nút "Xem thêm"
-   const handleClickChoose = (id) => {
+  // Hàm xử lý khi click vào nút "Xem thêm"
+  const handleClickChoose = (id) => {
     setChooseIndex(id);
-    
   };
 
   const [startIndex, setStartIndex] = useState(1);
-   // Hàm xử lý khi click vào nút "Xem thêm"
+  // Hàm xử lý khi click vào nút "Xem thêm"
   const handleClickNext = () => {
     setStartIndex(startIndex + 1);
   };
@@ -124,97 +126,158 @@ function ItemDetail(props) {
   return (
     <div>
       <Navbar />
-      <div className="introItem mt-5">
-        {/* Link */}
-        <Breadcrumbs aria-label="breadcrumb" sx={{ marginLeft: "130px" }}>
-          <Link
-            component="button"
-            underline="none"
-            color="inherit"
-            onClick={() => navigate("/", { replace: true })}
-          >
-            <GoHome
-              style={{ color: "#808080", width: "24px", height: "24px" }}
-            />
-          </Link>
-          <Link component="button" href="#" underline="none" color="#999999">
-            {translateType(item?.type)}
-          </Link>
-          <Typography color="#3F41A6">{item?.category?.title}</Typography>
-        </Breadcrumbs>
 
+      {/* Breadcumbs */}
+      <Breadcrumbs
+        separator={
+          <NavigateNextIcon fontSize="small" sx={{ color: "#808080" }} />
+        }
+        aria-label="breadcrumb"
+        sx={{
+          marginTop: "30px",
+          paddingLeft: "120px",
+          cursor: "pointer",
+        }}
+      >
+        <Link
+          component="button"
+          underline="none"
+          key="1"
+          sx={{ color: "#808080" }}
+          // href="/"
+          onClick={() => navigate("/", { replace: true })}
+        >
+          <HomeOutlinedIcon />
+        </Link>
+
+        <Typography
+          key="2"
+          sx={{
+            fontSize: "16px",
+            color: "#808080",
+            fontWeight: "500",
+          }}
+        >
+          {translateType(item?.type)}
+        </Typography>
+
+        <Typography
+          key="3"
+          sx={{
+            fontSize: "16px",
+            color: "#3F41A6",
+            fontWeight: "500",
+          }}
+        >
+          {item?.category?.title}
+        </Typography>
+      </Breadcrumbs>
+
+      <div className="introItem mt-5">
         {/* Content */}
         <div className="gap-5 flex mt-5">
           <div className="flex flex-col items-start w-[39%] ml-[200px]">
             <div className="flex grow flex-col items-stretch mt-1.5 w-[420px]">
               <img
                 loading="lazy"
-                srcSet={item?.pictures ? item?.pictures[chooseIndex]?.picture : null}
+                srcSet={
+                  item?.pictures ? item?.pictures[chooseIndex]?.picture : null
+                }
                 className="object-cover object-center w-full overflow-hidden h-[370px] rounded-lg"
               />
               <div className="mt-3">
                 <div className="flex items-stretch justify-between">
                   <div className="flex flex-col w-[120px] ">
-                  <ImageListItem style={{ height: "120px", position: "relative"}} key={1}> 
-                    <img
-                      loading="lazy"
-                      srcSet={
-                        item?.pictures ? item?.pictures[startIndex]?.picture : null
-                      }
-                      className="rounded-lg w-full h-[120px] object-cover overflow-hidden shrink-0 max-w-full grow"
-                      onClick={()=>handleClickChoose(startIndex)}
-                    />
-                    
-                    {startIndex > 1 && (
-                        <ImageListItemBar
-                        style={{ position: "absolute", top: "30px", right: "90px", height: "60px", padding: 0 }}
-                          actionIcon={
-                            <IconButton
-                              sx={{ color: 'rgba(255, 255, 255, 0.54)', fontSize: "14px" }}
-                              aria-label={`info about `}
-                              onClick={handleClickBack}
-                            >
-                              <ArrowBackIosIcon style={{ width: "20px", color: "#fff"}}/>
-                            </IconButton>
-                          }
-                        />
-                      )}  
-                      </ImageListItem>
-                  </div>
-                  <div className="flex flex-col w-[120px] ">
-                    <img
-                      loading="lazy"
-                      srcSet={
-                        item?.pictures ? item?.pictures[startIndex+1]?.picture : null
-                      }
-                      className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
-                      onClick={()=>handleClickChoose(startIndex+1)}
-                    /> 
-                  </div>
-                  <div className="flex flex-col w-[120px] ">
-                    <ImageListItem style={{ height: "120px", position: "relative"}} key={3}>
+                    <ImageListItem
+                      style={{ height: "120px", position: "relative" }}
+                      key={1}
+                    >
                       <img
                         loading="lazy"
                         srcSet={
-                          item?.pictures ? item?.pictures[startIndex+2]?.picture : null
+                          item?.pictures
+                            ? item?.pictures[startIndex]?.picture
+                            : null
+                        }
+                        className="rounded-lg w-full h-[120px] object-cover overflow-hidden shrink-0 max-w-full grow"
+                        onClick={() => handleClickChoose(startIndex)}
+                      />
+
+                      {startIndex > 1 && (
+                        <ImageListItemBar
+                          style={{
+                            position: "absolute",
+                            top: "30px",
+                            right: "90px",
+                            height: "60px",
+                            padding: 0,
+                          }}
+                          actionIcon={
+                            <IconButton
+                              sx={{
+                                color: "rgba(255, 255, 255, 0.54)",
+                                fontSize: "14px",
+                              }}
+                              aria-label={`info about `}
+                              onClick={handleClickBack}
+                            >
+                              <ArrowBackIosIcon
+                                style={{ width: "20px", color: "#fff" }}
+                              />
+                            </IconButton>
+                          }
+                        />
+                      )}
+                    </ImageListItem>
+                  </div>
+                  <div className="flex flex-col w-[120px] ">
+                    <img
+                      loading="lazy"
+                      srcSet={
+                        item?.pictures
+                          ? item?.pictures[startIndex + 1]?.picture
+                          : null
+                      }
+                      className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
+                      onClick={() => handleClickChoose(startIndex + 1)}
+                    />
+                  </div>
+                  <div className="flex flex-col w-[120px] ">
+                    <ImageListItem
+                      style={{ height: "120px", position: "relative" }}
+                      key={3}
+                    >
+                      <img
+                        loading="lazy"
+                        srcSet={
+                          item?.pictures
+                            ? item?.pictures[startIndex + 2]?.picture
+                            : null
                         }
                         className="rounded-lg w-full h-[120px] object-cover object-center overflow-hidden shrink-0 max-w-full grow"
-                        onClick={()=>handleClickChoose(startIndex+2)}
+                        onClick={() => handleClickChoose(startIndex + 2)}
                       />
-                      {startIndex+3 < item?.pictures?.length && (
+                      {startIndex + 3 < item?.pictures?.length && (
                         <ImageListItemBar
-                          style={{ position: "absolute", top: "30px", left: "90px", height: "60px", padding: 0 }}
+                          style={{
+                            position: "absolute",
+                            top: "30px",
+                            left: "90px",
+                            height: "60px",
+                            padding: 0,
+                          }}
                           actionIcon={
                             <IconButton
                               aria-label={`info about `}
                               onClick={handleClickNext}
                             >
-                              <ArrowForwardIosIcon style={{ width: "20px", color: "#fff"}}/>
+                              <ArrowForwardIosIcon
+                                style={{ width: "20px", color: "#fff" }}
+                              />
                             </IconButton>
                           }
                         />
-                        
-                      )}                      
+                      )}
                     </ImageListItem>
                     <style jsx>{`
                       .MuiImageListItemBar-titleWrap {
@@ -243,9 +306,16 @@ function ItemDetail(props) {
                   size="small"
                   sx={{ color: "#3F41A6" }}
                 />
+                <div className="text-xl leading-8 text-zinc-400">•</div>
+                <div className="text-base text-zinc-800">
+                  {item?.rates.length} Đánh giá
+                </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {item.fixed_price ?? `${item.min_price} - ${item.max_price}`} Đ
+                {CurrencyFormatter(item.fixed_price) ??
+                  `${CurrencyFormatter(item.min_price)} - ${CurrencyFormatter(
+                    item.max_price
+                  )}`}{" "}
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -261,12 +331,12 @@ function ItemDetail(props) {
                   {item?.category?.title}
                 </div>
               </div>
-              <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-5" />
-              <div className="text-zinc-500 text-sm leading-5 self-stretch mt-3">
+              {/* <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-5" /> */}
+              <div className="text-zinc-500 text-sm leading-5 self-stretch mt-5 border-y-[1px] border-neutral-200 py-3 min-h-[220px]">
                 {item?.description + " "}
               </div>
 
-              <div className="justify-start items-stretch self-stretch flex gap-5 mt-5 px-px py-5 ">
+              <div className="justify-start items-stretch self-stretch flex gap-5 px-px py-5 ">
                 <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
                   <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
                     <IconButton

@@ -190,7 +190,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
     console.log(imgList, newImgList, delImgList);
 
     let imgCount = imgList.length + newImgList.length;
-    if (imgCount < 4 || imgCount > 10) setOpenImgAlert(true);
+    if (imgCount < 4 || imgCount > 5) setOpenImgAlert(true);
     else if (checkPrice(newInfo)) {
       let updatedFlag = false;
       // add new img list
@@ -386,7 +386,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
                       <RiImageAddFill className="w-11 h-11" />
                       <div className="text-[10px] mt-1">Thêm hình ảnh</div>
                       <div className="text-[10px]">
-                        ({imgList.length + newImgList.length}/10)
+                        ({imgList.length + newImgList.length}/5)
                       </div>
                     </div>
 

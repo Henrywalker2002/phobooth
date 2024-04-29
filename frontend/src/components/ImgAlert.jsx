@@ -12,8 +12,7 @@ function ImgAlert({ open, setOpen, setAddImg }) {
       }}
     >
       <DialogContent>
-        Bạn cần cập nhật đủ hình ảnh minh họa cho sản phẩm (tối thiểu 4 hình,
-        tối đa 10 hình).
+        Bạn cần cập nhật đủ hình ảnh minh họa cho sản phẩm (từ 4-5 hình).
       </DialogContent>
       <DialogActions>
         <Button

@@ -48,7 +48,7 @@ function AdvancedSearch() {
         </Typography>
       </Breadcrumbs>
 
-      <div className="flex gap-20 items-start px-[125px] my-5">
+      <div className="flex justify-evenly items-start my-3">
         <Filter filterVal={filterVal} setFilterVal={setFilterVal} />
         <ItemList filterVal={filterVal} />
       </div>

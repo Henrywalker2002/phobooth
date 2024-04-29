@@ -103,15 +103,21 @@ function StudioDetail() {
             <div className="flex flex-col items-stretch">
               <div className="flex flex-col items-stretch justify-center">
                 <div className="flex gap-3 items-center">
-                  <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider" >
+                  <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
                     {studio?.friendly_name}
                   </div>
-                  {studio?.is_verified && <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />}
+                  {studio?.is_verified && (
+                    <VerifiedIcon sx={{ color: "#3F41A6", fontSize: "22px" }} />
+                  )}
                 </div>
-                <div style={{color:' #848484',
-                    fontSize: '13px',
-                    marginBottom: '5px',
-                    fontWeight: 600}}>
+                <div
+                  style={{
+                    color: " #848484",
+                    fontSize: "13px",
+                    marginBottom: "5px",
+                    fontWeight: 600,
+                  }}
+                >
                   {studio?.type === "STUDIO" ? "Studio" : "Thợ chụp ảnh"}
                 </div>
                 <div className="flex items-stretch justify-start gap-2">
