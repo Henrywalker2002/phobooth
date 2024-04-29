@@ -300,7 +300,7 @@ function Signup() {
                   aria-describedby="my-helper-text"
                 />
                 <FormHelperText
-                  id="component-helper-text"
+                  id="email-helper-text"
                   sx={{
                     display: errMsg.email ? "block" : "none",
                   }}
@@ -334,7 +334,7 @@ function Signup() {
                     </InputAdornment>
                   }
                 />
-                <FormHelperText id="component-helper-text">
+                <FormHelperText id="password-helper-text">
                   Mật khẩu có độ dài tối thiểu 8 ký tự
                 </FormHelperText>
               </FormControl>

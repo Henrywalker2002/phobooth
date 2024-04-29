@@ -153,7 +153,7 @@ function AddItem() {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
-        autoHideDuration={3000}
+        autoHideDuration={10000}
         onClose={handleCloseSBar}
         message="Thêm sản phẩm thành công !"
       />
