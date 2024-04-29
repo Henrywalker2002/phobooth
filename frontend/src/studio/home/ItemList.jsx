@@ -76,39 +76,9 @@ function ItemList({ itemType, filterVal }) {
     return "Chưa cập nhật";
   };
 
-  // Add to cart
-  // const handleAddToCart = (id) => {
-  //   axiosPrivate
-  //     .post(
-  //       "/cart/",
-  //       { item: id, number: 1 },
-  //       {
-  //         headers: {
-  //           ...axiosPrivate.defaults.headers,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       // console.log(res);
-  //       setOpenSBar(true);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // Close SnackBar Success
-  // const handleCloseSBar = (e, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-
-  //   setOpenSBar(false);
-  // };
   return (
-    <div>
-      <div className="mx-auto my-3 flex justify-between items-center w-[800px]">
+    <div className="w-[800px] flex flex-col gap-5">
+      <div className=" flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <div className=" text-zinc-500">Sắp xếp theo :</div>
           <TextField
@@ -140,8 +110,8 @@ function ItemList({ itemType, filterVal }) {
           <span className="text-stone-500">sản phẩm</span>
         </div>
       </div>
-      <div className="flex self-center mx-auto my-5 w-fit max-w-[810px]">
-        <div className="flex flex-wrap justify-start gap-8 items-center">
+      <div className="flex self-center mx-auto">
+        <div className="grid grid-cols-3 gap-7">
           {itemList?.results?.length > 0 ? (
             itemList?.results?.map((item, index) => (
               <Card

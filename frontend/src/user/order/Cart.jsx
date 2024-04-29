@@ -23,8 +23,6 @@ import {
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
-// import { RiSubtractFill } from "react-icons/ri";
-// import { IoIosAdd } from "react-icons/io";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -188,29 +186,6 @@ function Cart() {
     } else return false;
   };
 
-  // const handleChangeNumber = (row, op) => {
-  //   let number = row?.number;
-  //   if (op === "-") number--;
-  //   else number++;
-
-  //   let updateData = { ...row, number: number };
-
-  //   axiosPrivate
-  //     .put(`/cart/${row.id}/`, updateData, {
-  //       headers: {
-  //         ...axiosPrivate.defaults.headers,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       // console.log(res);
-  //       // setItems(res.data.results);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
   const handleDelete = (id) => {
     axiosPrivate.delete(`/cart/${id}/`).then((res) => {
       window.location.reload();
@@ -345,39 +320,6 @@ function Cart() {
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            {/* <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
-                              <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                                <IconButton
-                                  color="primary"
-                                  onClick={() => handleChangeNumber(row, "-")}
-                                >
-                                  <RiSubtractFill
-                                    style={{
-                                      color: "#666666",
-                                      width: "15px",
-                                      height: "15px",
-                                    }}
-                                  />
-                                </IconButton>
-                              </div>
-                              <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
-                                {row.number}
-                              </div>
-                              <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
-                                <IconButton
-                                  color="primary"
-                                  onClick={() => handleChangeNumber(row, "+")}
-                                >
-                                  <IoIosAdd
-                                    style={{
-                                      color: "#666666",
-                                      width: "15px",
-                                      height: "15px",
-                                    }}
-                                  />
-                                </IconButton>
-                              </div>
-                            </div> */}
                             <div className="text-zinc-900 text-sm leading-6">
                               {row.number}
                             </div>

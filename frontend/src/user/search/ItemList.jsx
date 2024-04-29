@@ -72,7 +72,7 @@ function ItemList({ filterVal }) {
     setOpenSBar(false);
   };
   return (
-    <div className="w-[70%]">
+    <div className="w-fit flex flex-col gap-5">
       <div className="flex justify-between">
         <div className="flex gap-2">
           <div className=" text-zinc-500">Sắp xếp theo :</div>
@@ -105,8 +105,8 @@ function ItemList({ filterVal }) {
           <span className="text-stone-500">kết quả tìm kiếm</span>
         </div>
       </div>
-      <div className="flex self-center mx-auto my-5 w-fit ">
-        <div className="flex flex-wrap justify-between gap-8 items-center">
+      <div className="flex self-center mx-auto ">
+        <div className="grid grid-cols-3 gap-10 grid-rows-4">
           {itemList?.results?.map((item, index) => (
             <ItemCard
               key={index}
