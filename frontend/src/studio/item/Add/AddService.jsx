@@ -200,6 +200,7 @@ function AddService({ categories, setOpenSBar }) {
                           required
                           variant="outlined"
                           name="min_price"
+                          id="min_price"
                           value={service.min_price ? service.min_price : ""}
                           onChange={updateService}
                           error={errMsg?.min_price ? true : false}
@@ -222,6 +223,7 @@ function AddService({ categories, setOpenSBar }) {
                           required
                           variant="outlined"
                           name="max_price"
+                          id="max_price"
                           value={service.max_price ? service.max_price : ""}
                           onChange={updateService}
                           error={errMsg?.max_price ? true : false}
