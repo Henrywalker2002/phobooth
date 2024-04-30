@@ -28,6 +28,7 @@ class ProductViewSet(BaseModelViewSet):
     def create(self, request, *args, **kwargs):
         if isinstance(request.data, QueryDict):
             data = request.data.dict()
+            data['pictures'] = request.FILES.getlist('pictures')
         else:
             data = request.data
         option = data.get("option", None)
