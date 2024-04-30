@@ -20,7 +20,8 @@ class OrderItemChange:
         return dict
 
 def create_order_price_history(order, old_price, new_price):
-
+    if old_price == new_price:
+        return
     if order.status == OrderStatusChoice.ORDERED:
         return
     

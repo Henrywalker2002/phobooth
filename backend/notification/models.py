@@ -21,6 +21,7 @@ class NotificationPrepositionalObjectChoices(models.TextChoices):
     FOR = "FOR", "FOR"
     TO = "TO", "TO"
     WITH = "WITH", "WITH"
+    IN = "IN", "IN"
 
 
 class Notification(BaseModel):

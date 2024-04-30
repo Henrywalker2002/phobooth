@@ -70,9 +70,17 @@ function handleContentNotification(notification) {
 
     image.icon = <CheckCircleTwoToneIcon />;
   } else if (notification.verb == NotificationTypeChoices.ACCEPTED) {
-    message = `${notification.subject} đã chấp nhận ${notification.direct_object}`;
-    if (notification.redirect_type == "ORDER") {
-      redirect_url = `/order/detail/${notification.redirect_id}`;
+    if (!notification.prepositional_object) {
+      message = `${notification.subject} đã chấp nhận ${notification.direct_object}`;
+      if (notification.redirect_type == "ORDER") {
+        redirect_url = `/order/detail/${notification.redirect_id}`;
+      }
+    }
+    else {
+      message = `${notification.subject} đã chấp nhận ${notification.direct_object} trong ${notification.context}`;
+      if (notification.redirect_type == "ORDER") {
+        redirect_url = `/studio/order/detail/${notification.redirect_id}`;
+      }
     }
     redirect_url = `/order/detail/${notification.redirect_id}`;
     image.icon = <HandshakeTwoToneIcon />;
@@ -94,7 +102,7 @@ function handleContentNotification(notification) {
   }
   return new Notification(
     notification.id,
-    notification.subject,
+    notification.direct_object,
     notification.verb,
     message,
     redirect_url,
