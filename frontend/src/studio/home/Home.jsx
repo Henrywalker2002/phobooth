@@ -169,7 +169,7 @@ function Home() {
                   Sản phẩm
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  {studio.total_items ? studio.total_items : 0}
+                  {studio.total_item ? studio.total_item : 0}
                 </div>
               </div>
               <div className="flex justify-between w-[280]">

@@ -217,7 +217,7 @@ class Command:
         return kwargs.get('store')
 
     def execute_assert_text(self, target, value, *args, **kwargs) -> dict:
-        if self.find_target(target).text != value:
+        if self.find_target(target).text != str(value):
             raise AssertException(CommandChoices.ASSERT_TEXT, target, value)
         return kwargs.get('store')
 

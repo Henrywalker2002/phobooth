@@ -1,6 +1,7 @@
 from base.models import BaseModel
 from django.db import models
 from address.models import Address
+from item.models import ItemTypeChoices
 
 
 class StudioTypeChoices(models.TextChoices):
@@ -29,8 +30,7 @@ class Studio(BaseModel):
     type = models.CharField(max_length=255, choices=StudioTypeChoices.choices, default=StudioTypeChoices.STUDIO)
     @property
     def total_item(self):
-        return self.items.count()
-
+        return self.items.exclude(type = ItemTypeChoices.ACCESSORY).count()
     
     def __eq__(self, other):
         return self.id == other.id

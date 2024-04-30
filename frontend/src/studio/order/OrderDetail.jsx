@@ -238,7 +238,7 @@ function OrderDetail(props) {
 
     return (
       <React.Fragment>
-        <TableRow sx={{ borderBottom: "unset" }}>
+        <TableRow sx={{ borderBottom: "unset" }} id = {row.item?.id}>
           <TableCell sx={{ maxWidth: "50px" }}>
             {row.status === "ACCEPTED" ? (
               <CheckCircleIcon color="success" />
