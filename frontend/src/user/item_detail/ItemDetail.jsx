@@ -308,7 +308,7 @@ function ItemDetail(props) {
                 />
                 <div className="text-xl leading-8 text-zinc-400">•</div>
                 <div className="text-base text-zinc-800">
-                  {item?.rates.length} Đánh giá
+                  {item?.rates?.length} Đánh giá
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
