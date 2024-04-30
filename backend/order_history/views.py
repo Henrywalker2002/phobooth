@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db import transaction
 from order.models import OrderItemStatusChoice
+from notification.execute import NotificationService
 
 
 class OrderHistoryViewSet(BaseGenericViewSet, ListModelMixin, UpdateModelMixin):
@@ -30,7 +31,19 @@ class OrderHistoryViewSet(BaseGenericViewSet, ListModelMixin, UpdateModelMixin):
                 order_item.status = OrderItemStatusChoice.REJECTED
                 order_item.denied_reason = serializer.validated_data.get('denied_reason')
                 order_item.save()
-        
+                NotificationService.user_deny_order_item(order_item)
+        elif serializer.validated_data.get('status') == OrderHistoryStatusChoices.ACCEPTED:
+            # send mail and add notification for studio
+            order_item = instance.order_item 
+            if order_item:
+                order_item.status = OrderItemStatusChoice.ACCEPTED
+                order_item.save()
+                NotificationService.user_accept_order_item(order_item)
+                order = order_item.order
+                if order:
+                    order.total_price += order_item.price * order_item.quantity
+                    order.save()
+
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.

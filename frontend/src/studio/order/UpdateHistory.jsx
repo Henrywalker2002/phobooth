@@ -158,7 +158,7 @@ function UpdateHistory({ order }) {
                       <div className="w-fit h-fit text-red-500 text-sm leading-5 whitespace-nowrap rounded bg-red-500 bg-opacity-20 py-1 px-3 flex justify-center self-center">
                         Đã từ chối
                       </div>
-                    ) : hist?.status === "REJECTED" ? (
+                    ) : hist?.status === "ACCEPTED" ? (
                       <div className="w-fit h-fit text-green-600 text-sm leading-5 whitespace-nowrap rounded bg-green-600 bg-opacity-20 py-1 px-3 flex justify-center self-center">
                         Đã chấp nhận
                       </div>
