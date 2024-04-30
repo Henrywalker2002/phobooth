@@ -207,6 +207,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                     productList.map((item) => (
                       <TableRow
                         key={item.id}
+                        id = {item.id}
                         // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       >
                         <TableCell sx={{ width: "42px" }}>
@@ -289,6 +290,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                     serviceList.map((item) => (
                       <TableRow
                         key={item.id}
+                        id = {item.id}
                         // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       >
                         <TableCell sx={{ width: "42px" }}>

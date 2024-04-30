@@ -1,6 +1,7 @@
 import time
 from selenium.webdriver.edge.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,6 +35,8 @@ class CommandChoices:
     WAIT_FOR_ELEMENT_NOT_PRESENT = 'wait_for_element_not_present'
     WAIT_FOR_ELEMENT_VISIBLE = 'wait_for_element_visible'
     WAIT_FOR_ELEMENT_NOT_VISIBLE = 'wait_for_element_not_visible'
+    SCROLL_TO = 'scroll_to'
+    INPUT_DATE = 'input_date'
 
     validate_settings = {
         OPEN: ['target'],
@@ -56,7 +59,9 @@ class CommandChoices:
         WAIT_FOR_ELEMENT_PRESENT: ['target', 'amount'],
         WAIT_FOR_ELEMENT_NOT_PRESENT: ['target', 'amount'],
         WAIT_FOR_ELEMENT_VISIBLE: ['target', 'amount'],
-        WAIT_FOR_ELEMENT_NOT_VISIBLE: ['target', 'amount']
+        WAIT_FOR_ELEMENT_NOT_VISIBLE: ['target', 'amount'],
+        SCROLL_TO: ['target'],
+        INPUT_DATE: ['target', 'value']
     }
 
     @staticmethod
@@ -242,26 +247,36 @@ class Command:
         element.send_keys(value)
         return kwargs.get('store')
 
-    def execute_pause(self, amount, *args, **kwargs) -> dict:
+    def execute_pause(self, amount = 5, *args, **kwargs) -> dict:
         time.sleep(amount)
         return kwargs.get('store')
 
-    def execute_wait_for_element_present(self, target, amount, *args, **kwargs) -> dict:
+    def execute_wait_for_element_present(self, target, amount = 5, *args, **kwargs) -> dict:
         present = self.get_present(target)
         WebDriverWait(self.driver, amount).until(present)
         return kwargs.get('store')
 
-    def execute_wait_for_element_not_present(self, target, amount, *args, **kwargs) -> dict:
+    def execute_wait_for_element_not_present(self, target, amount = 5, *args, **kwargs) -> dict:
         present = self.get_present(target)
         WebDriverWait(self.driver, amount).until_not(present)
         return kwargs.get('store')
 
-    def execute_wait_for_element_visible(self, target, amount, *args, **kwargs) -> dict:
+    def execute_wait_for_element_visible(self, target, amount = 5, *args, **kwargs) -> dict:
         located = self.get_located(target)
         WebDriverWait(self.driver, amount).until(located)
         return kwargs.get('store')
 
-    def execute_wait_for_element_not_visible(self, target, amount, *args, **kwargs) -> dict:
+    def execute_wait_for_element_not_visible(self, target, amount = 5, *args, **kwargs) -> dict:
         located = self.get_located(target)
         WebDriverWait(self.driver, amount).until_not(located)
+        return kwargs.get('store')
+    
+    def execute_scroll_to(self, target, *args, **kwargs) -> dict:
+        element = self.find_target(target)
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        return kwargs.get('store')
+
+    def execute_input_date(self, target, value, *args, **kwargs) -> dict:
+        element = self.find_target(target)
+        ActionChains(self.driver).move_to_element(element).click().send_keys(value).perform()
         return kwargs.get('store')
