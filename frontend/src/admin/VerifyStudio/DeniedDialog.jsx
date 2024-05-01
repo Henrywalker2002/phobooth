@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  Typography,
   TextField,
   DialogTitle,
   IconButton,
@@ -86,21 +85,7 @@ export default function DeniedDialog(props) {
             }}
           />
         </div>
-        <div>
-          {/* <Typography>Lý do từ chối: </Typography>
-          <TextField
-            style={{ width: "500px" }}
-            variant="outlined"
-            required
-            multiline
-            rows={4}
-            fullWidth
-            placeholder="Ghi lý do của bạn"
-            onChange={(event) => {
-              setPayload({ ...payload, denied_reason: event.target.value });
-            }}
-          /> */}
-        </div>
+        <div></div>
       </DialogContent>
       <DialogActions>
         <Button

@@ -855,8 +855,16 @@ function Profile() {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Cập nhật thông tin thành công"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật thông tin thành công
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

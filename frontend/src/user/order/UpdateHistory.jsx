@@ -9,6 +9,7 @@ import {
   Button,
   Snackbar,
   Pagination,
+  Alert,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import EastIcon from "@mui/icons-material/East";
@@ -33,15 +34,16 @@ function UpdateHistory({ order, setOrderReload }) {
   const [histList, setHistList] = useState([]);
   const [selectedNoti, setSelectedNoti] = useState({});
   const [count, setCount] = useState(0);
+  const itemsLimit = 4;
   console.log(order);
 
   useEffect(() => {
     axiosPrivate
-      .get(`/order-history/?order=${order.id}&limit=2&offset=0`)
+      .get(`/order-history/?order=${order.id}&limit=${itemsLimit}&offset=0`)
       .then((res) => {
         console.log(res.data);
         setCount(res.data.count);
-        setPageCount(Math.ceil(res.data.count / 2));
+        setPageCount(Math.ceil(res.data.count / itemsLimit));
         setHistList(res.data.results);
         setDefaultPage(1);
       })
@@ -52,13 +54,15 @@ function UpdateHistory({ order, setOrderReload }) {
   }, [reload]);
 
   const getHistForPage = (e, page) => {
-    let offset = 2 * (page - 1);
+    let offset = itemsLimit * (page - 1);
     axiosPrivate
-      .get(`/order-history/?order=${order.id}&limit=2&offset=${offset}`)
+      .get(
+        `/order-history/?order=${order.id}&limit=${itemsLimit}&offset=${offset}`
+      )
       .then((res) => {
         console.log(res.data);
         setCount(res.data.count);
-        let currCount = Math.ceil(res.data.count / 2);
+        let currCount = Math.ceil(res.data.count / itemsLimit);
         if (currCount !== pageCount) setPageCount(currCount);
         setHistList(res.data.results);
       })
@@ -77,6 +81,7 @@ function UpdateHistory({ order, setOrderReload }) {
         console.log(res.data);
 
         setMsg("Chấp nhận thay đổi thành công!");
+
         setOpenSBar(true);
         setOrderReload(true);
         setReload(true);
@@ -116,8 +121,7 @@ function UpdateHistory({ order, setOrderReload }) {
         <List
           sx={{
             width: "fit-content",
-            maxWidth: 400,
-            minHeight: "200px",
+
             bgcolor: "background.paper",
             padding: 0,
           }}
@@ -191,7 +195,7 @@ function UpdateHistory({ order, setOrderReload }) {
                     </div>
                   )}
                   {hist?.status === "PENDING" ? (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 mt-2">
                       <div className="flex gap-2 text-sm leading-6">
                         <div className="flex gap-1 flex-col text-black">
                           <div>Thời gian cập nhật :</div>
@@ -265,7 +269,7 @@ function UpdateHistory({ order, setOrderReload }) {
               </ListItem>
             ))
           ) : (
-            <div className="my-2 ml-5 text-sm text-neutral-400">
+            <div className="my-2 ml-5 text-sm text-neutral-400 h-[400px]">
               Chưa có cập nhật nào
             </div>
           )}
@@ -289,8 +293,16 @@ function UpdateHistory({ order, setOrderReload }) {
           open={openSBar}
           autoHideDuration={2000}
           onClose={handleCloseSBar}
-          message={msg}
-        />
+        >
+          <Alert
+            onClose={handleCloseSBar}
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            {msg}
+          </Alert>
+        </Snackbar>
       </Paper>
 
       {/* Pagination */}

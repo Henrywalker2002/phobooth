@@ -18,6 +18,7 @@ import {
   TextField,
   InputAdornment,
   Snackbar,
+  Alert,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
@@ -29,7 +30,7 @@ import StudioNavbar from "../../components/StudioNavbar";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Filter from "./Filter";
-import { translateOrderStatus, translateType } from "../../util/Translate";
+import { translateType } from "../../util/Translate";
 import { DateFormatter } from "../../util/Format";
 import CancelInOrders from "./CancelInOrders";
 
@@ -41,6 +42,7 @@ function Orders() {
   const [openFilter, setOpenFilter] = useState(false);
   const [openAction, setOpenAction] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
+  const [success, setSuccess] = useState(false);
   const [openActionSBar, setOpenActionSBar] = useState(false);
   // local
   const [selectedRow, setSelectedRow] = useState({});
@@ -122,11 +124,40 @@ function Orders() {
       return;
     }
     setOpenActionSBar(false);
+    setSuccess(false);
   };
 
   function Row(props) {
     const { row } = props;
     const [open, setOpen] = useState(false);
+
+    // Color for Status
+    const displayStatus = (status) => {
+      if (status === "ORDERED")
+        return (
+          <div className="w-fit text-yellow-600 text-sm leading-6 whitespace-nowrap rounded bg-yellow-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Đã đặt
+          </div>
+        );
+      else if (status === "IN_PROCESS")
+        return (
+          <div className="w-fit text-blue-600 text-sm leading-6 whitespace-nowrap rounded bg-blue-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Đang tiến hành
+          </div>
+        );
+      else if (status === "COMPLETED")
+        return (
+          <div className="w-fit text-green-600 text-sm leading-6 whitespace-nowrap rounded bg-green-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Hoàn thành
+          </div>
+        );
+      else if (status === "CANCELED")
+        return (
+          <div className="w-fit text-red-500 text-sm leading-6 whitespace-nowrap rounded bg-red-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Hủy đơn
+          </div>
+        );
+    };
 
     return (
       <React.Fragment>
@@ -156,11 +187,7 @@ function Orders() {
           </TableCell>
           <TableCell align="left">{DateFormatter(row.created_at)}</TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
-          <TableCell align="left">
-            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
-              {translateOrderStatus(row.status)}
-            </div>
-          </TableCell>
+          <TableCell align="left">{displayStatus(row.status)}</TableCell>
           <TableCell align="left">
             {row.total_price
               ? formatter.format(row.total_price)
@@ -465,6 +492,7 @@ function Orders() {
         row={selectedRow}
         setOrders={setOrders}
         setStatusMsg={setStatusMsg}
+        setSuccess={setSuccess}
         setOpenActionSBar={setOpenActionSBar}
         setDefaultPage={setDefaultPage}
       />
@@ -475,8 +503,16 @@ function Orders() {
         open={openActionSBar}
         autoHideDuration={2000}
         onClose={handleCloseActionSBar}
-        message={statusMsg}
-      />
+      >
+        <Alert
+          onClose={handleCloseActionSBar}
+          severity={success ? "success" : "error"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {statusMsg}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

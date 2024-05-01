@@ -576,7 +576,12 @@ function ItemDetail(props) {
         autoHideDuration={3000}
         onClose={handleCloseSBar}
       >
-        <Alert onClose={handleCloseSBar} severity="success">
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
           Đã thêm vào giỏ hàng !
         </Alert>
       </Snackbar>

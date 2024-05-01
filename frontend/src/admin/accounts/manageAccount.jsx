@@ -212,7 +212,8 @@ export default function AdminManageAccount() {
           sx={{
             textTransform: "none",
             bgcolor: "#3F41A6",
-            width: "165px",
+            width: "fit-content",
+            padding: "7px 20px",
             borderRadius: "20px",
             "&:hover": {
               bgcolor: "#3949AB",

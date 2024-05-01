@@ -336,9 +336,17 @@ function Profile() {
               <Alert
                 sx={{ bgcolor: "background.paper", border: "none" }}
                 variant="outlined"
-                severity={studioInfo?.is_verified || studioInfo?.type === "PHOTOGRAPHER" ? "success" : "error"}
+                severity={
+                  studioInfo?.is_verified || studioInfo?.type === "PHOTOGRAPHER"
+                    ? "success"
+                    : "error"
+                }
               >
-                {studioInfo?.type==="PHOTOGRAPHER" ? "Thợ chụp ảnh" : studioInfo?.is_verified ? "Đã xác thực" : "Chưa xác thực"}
+                {studioInfo?.type === "PHOTOGRAPHER"
+                  ? "Thợ chụp ảnh"
+                  : studioInfo?.is_verified
+                  ? "Đã xác thực"
+                  : "Chưa xác thực"}
               </Alert>
 
               <Button
@@ -562,8 +570,16 @@ function Profile() {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Cập nhật thông tin thành công"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật thông tin thành công!
+        </Alert>
+      </Snackbar>
 
       {/* Other errors */}
       <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />

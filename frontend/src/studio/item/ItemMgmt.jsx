@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Box,
   Breadcrumbs,
   Button,
@@ -594,8 +595,16 @@ function ItemMgmt() {
         open={openDelSBar}
         autoHideDuration={2000}
         onClose={handleCloseDelSBar}
-        message="Xóa sản phẩm thành công !"
-      />
+      >
+        <Alert
+          onClose={handleCloseDelSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Xóa sản phẩm thành công !
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

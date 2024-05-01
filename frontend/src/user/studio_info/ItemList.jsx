@@ -148,8 +148,16 @@ function ItemList({ code_name, itemType, filterVal }) {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Đã thêm vào giỏ hàng !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã thêm vào giỏ hàng !
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

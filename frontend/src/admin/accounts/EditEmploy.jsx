@@ -30,34 +30,6 @@ const positions = [
   { value: "staff", label: "Nhân viên" },
   { value: "admin", label: "Quản lý" },
 ];
-const ButCan = styled(Button)({
-  // display: inline-flex;
-  padding: "14px 32px",
-  justifyContent: "center",
-  // align-items: center;
-  // gap: 12px;
-  borderRadius: "43px",
-  border: "1px solid #3F41A6",
-  background: "#F6F5FB",
-  textTransform: "none",
-  color: "#000",
-  fontWeight: 600,
-  marginRight: "15px",
-});
-const ButAdd = styled(Button)({
-  // display: inline-flex;
-  padding: "14px 32px",
-  justifyContent: "center",
-  // align-items: center;
-  // gap: 12px;
-  color: "#fff",
-  borderRadius: "43px",
-  // border: '1px solid #3F41A6',
-  background: "#3F41A6",
-  textTransform: "none",
-  fontWeight: 600,
-  marginLeft: "15px",
-});
 
 export default function EditEmploy({
   open,

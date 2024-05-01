@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Avatar, Rating, Button, Snackbar } from "@mui/material";
+import { Paper, Avatar, Rating, Button, Snackbar, Alert } from "@mui/material";
 import { RiBarChartFill } from "react-icons/ri";
 import StarIcon from "@mui/icons-material/Star";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -7,6 +7,7 @@ import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { FaArrowRight } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useState } from "react";
 
 function Widgets({ studioInfor, setStudioInfor }) {
   const formatter = new Intl.NumberFormat("vi-VN", {
@@ -15,6 +16,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
   });
   const [openSBar, setOpenSBar] = React.useState(false);
   const [messageBar, setMessageBar] = React.useState("");
+  const [success, setSuccess] = useState(false);
   const axiosPrivate = useAxiosPrivate();
 
   console.log(studioInfor);
@@ -25,6 +27,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
       .then((res) => {
         setOpenSBar(true);
         setMessageBar("Rút tiền thành công");
+        setSuccess(true);
         setStudioInfor({ ...studioInfor, account_balance: 0 });
       })
       .catch((res) => {
@@ -35,10 +38,20 @@ function Widgets({ studioInfor, setStudioInfor }) {
             res.data.non_field_errors[0].includes("account number")
           ) {
             setOpenSBar(true);
+            setSuccess(false);
             setMessageBar("Chưa có thông tin tài khoản ngân hàng");
           }
         }
       });
+  };
+
+  // Close Draw Money SnackBar Success/Err
+  const handleCloseSBar = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSuccess(false);
+    setOpenSBar(false);
   };
 
   return (
@@ -224,8 +237,17 @@ function Widgets({ studioInfor, setStudioInfor }) {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
         autoHideDuration={2000}
-        message={messageBar}
-      />
+        onClose={handleCloseSBar}
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity={success === true ? "success" : "error"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {messageBar}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

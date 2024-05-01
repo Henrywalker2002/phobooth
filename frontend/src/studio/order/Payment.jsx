@@ -10,6 +10,7 @@ import {
   Button,
   Snackbar,
   Tooltip,
+  Alert,
 } from "@mui/material";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
 import AddIcon from "@mui/icons-material/Add";
@@ -384,8 +385,16 @@ function Payment({ order, setOrder }) {
         open={openSBar}
         autoHideDuration={3000}
         onClose={handleCloseSBar}
-        message="Cập nhật yêu cầu thành công"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật yêu cầu thành công !
+        </Alert>
+      </Snackbar>
 
       {/* Update Request */}
       <EditRequest

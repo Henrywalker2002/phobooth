@@ -173,8 +173,8 @@ function StaffFilter({ open, handleClose, filterVal, setFilterVal }) {
               textTransform: "none",
               border: "1px solid #3F41A6",
               color: "#3F41A6",
-              width: "120px",
-
+              width: "fit-content",
+              padding: "5px 15px",
               borderRadius: "20px",
               "&:hover": {
                 border: "1px solid #3949AB",

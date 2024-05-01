@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import StudioNavbar from "../../../components/StudioNavbar";
 import {
+  Alert,
   Breadcrumbs,
   // Divider,
   // InputAdornment,
@@ -126,122 +127,22 @@ function EditItem() {
         />
       )}
 
-      {/* Thông tin vận chuyển */}
-      {/* <Paper
-          sx={{
-            width: "800px",
-            margin: "10px auto",
-            border: "1px solid #d6d3d1",
-            paddingBottom: "20px",
-          }}
-        >
-          <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start max-md:max-w-full max-md:px-5">
-            Vận chuyển
-          </div>
-          <Divider />
-          <div className="flex flex-col items-stretch mt-6 pl-7 pr-16 max-md:max-w-full max-md:px-5">
-            <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap self-start">
-              Cân nặng dự kiến (Sau khi đóng gói)
-            </div>
-            <TextField
-              required={item?.type === "PRODUCT" ? true : false}
-              id="outlined-start-adornment"
-              name="weight"
-              //   value={transInfo.weight ? transInfo.weight : ""}
-              //   onChange={updateTransInfo}
-              sx={{
-                "& .MuiInputBase-input": {
-                  height: "45px",
-                  boxSizing: "border-box",
-                },
-                width: "180px",
-                marginY: "10px",
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">gr</InputAdornment>
-                ),
-              }}
-            />
-            <div className="text-zinc-900 text-sm leading-5 mt-8 max-md:max-w-full">
-              Kích thước dự kiến
-            </div>
-            <div className="items-stretch flex w-full justify-between gap-5 ">
-              <TextField
-                required={item?.type === "PRODUCT" ? true : false}
-                name="height"
-                // value={transInfo.height ? transInfo.height : ""}
-                // onChange={updateTransInfo}
-                id="outlined-start-adornment"
-                placeholder="Cao"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  width: "180px",
-                  marginY: "10px",
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">cm</InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                required={item?.type === "PRODUCT" ? true : false}
-                id="outlined-start-adornment"
-                name="length"
-                // value={transInfo.length ? transInfo.length : ""}
-                // onChange={updateTransInfo}
-                placeholder="Dài"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  width: "180px",
-                  marginY: "10px",
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">cm</InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                required={item?.type === "PRODUCT" ? true : false}
-                id="outlined-start-adornment"
-                placeholder="Rộng"
-                // value={transInfo.width ? transInfo.width : ""}
-                name="width"
-                // onChange={updateTransInfo}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    height: "45px",
-                    boxSizing: "border-box",
-                  },
-                  width: "180px",
-                  marginY: "10px",
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">cm</InputAdornment>
-                  ),
-                }}
-              />
-            </div>
-          </div>
-        </Paper> */}
-
-      {/* Add successfully */}
+      {/* Edit successfully */}
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Cập nhật sản phẩm thành công !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật sản phẩm thành công !
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

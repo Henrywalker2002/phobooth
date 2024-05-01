@@ -6,7 +6,6 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
-  Snackbar,
   Pagination,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -23,15 +22,16 @@ function UpdateHistory({ order }) {
 
   const [histList, setHistList] = useState([]);
   const [count, setCount] = useState(0);
+  const itemsLimit = 4;
   console.log(order);
 
   useEffect(() => {
     axiosPrivate
-      .get(`/order-history/?order=${order.id}&limit=2&offset=0`)
+      .get(`/order-history/?order=${order.id}&limit=${itemsLimit}&offset=0`)
       .then((res) => {
         console.log(res.data);
         setCount(res.data.count);
-        setPageCount(Math.ceil(res.data.count / 2));
+        setPageCount(Math.ceil(res.data.count / itemsLimit));
         setHistList(res.data.results);
         setDefaultPage(1);
       })
@@ -42,13 +42,15 @@ function UpdateHistory({ order }) {
   }, [reload]);
 
   const getHistForPage = (e, page) => {
-    let offset = 2 * (page - 1);
+    let offset = itemsLimit * (page - 1);
     axiosPrivate
-      .get(`/order-history/?order=${order.id}&limit=2&offset=${offset}`)
+      .get(
+        `/order-history/?order=${order.id}&limit=${itemsLimit}&offset=${offset}`
+      )
       .then((res) => {
         console.log(res.data);
         setCount(res.data.count);
-        let currCount = Math.ceil(res.data.count / 2);
+        let currCount = Math.ceil(res.data.count / itemsLimit);
         if (currCount !== pageCount) setPageCount(currCount);
         setHistList(res.data.results);
       })
@@ -78,8 +80,7 @@ function UpdateHistory({ order }) {
         <List
           sx={{
             width: "fit-content",
-            maxWidth: 400,
-            minHeight: "200px",
+
             bgcolor: "background.paper",
             padding: 0,
           }}
@@ -172,7 +173,7 @@ function UpdateHistory({ order }) {
               </ListItem>
             ))
           ) : (
-            <div className="my-2 ml-5 text-sm text-neutral-400">
+            <div className="my-2 ml-5 text-sm text-neutral-400 h-[400px]">
               Chưa có cập nhật nào
             </div>
           )}

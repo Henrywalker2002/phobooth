@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Breadcrumbs,
   Link,
   MenuItem,
@@ -155,8 +156,16 @@ function AddItem() {
         open={openSBar}
         autoHideDuration={10000}
         onClose={handleCloseSBar}
-        message="Thêm sản phẩm thành công !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Thêm sản phẩm thành công !
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

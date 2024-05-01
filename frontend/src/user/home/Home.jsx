@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import {
-  Button,
-  ButtonBase,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Snackbar,
-} from "@mui/material";
+import { Alert, Button, Snackbar } from "@mui/material";
 import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { PiShoppingCartSimpleFill } from "react-icons/pi";
-import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
 import Err401Dialog from "../../components/Err401Dialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Carousel from "./Carousel";
-import { useCookies } from "react-cookie";
 import ItemCard from "../../components/ItemCard";
 
 function Home() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
-  const [cookies] = useCookies(["accInfo"]);
   const list2 = ["Phổ biến", "Đề xuất", "Gần đây"];
 
   const [itemList, setItemList] = useState([]);
@@ -129,8 +117,16 @@ function Home() {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Đã thêm vào giỏ hàng !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã thêm vào giỏ hàng !
+        </Alert>
+      </Snackbar>
 
       {/* Err 401 Dialog */}
       <Err401Dialog open={openErr401} setOpen={setOpenErr401} />

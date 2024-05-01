@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import {
   Box,
-  Collapse,
   IconButton,
   Table,
   TableBody,
@@ -61,6 +60,7 @@ function OrderDetail() {
   const [openCreateComplain, setOpenCreateComplain] = useState(false);
   const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openRating, setOpenRating] = useState(false);
+  const [success, setSuccess] = useState(false);
   // local
   const [reload, setReload] = useState(false);
 
@@ -312,7 +312,7 @@ function OrderDetail() {
   }
 
   //   status process
-  const steps = ["Đã đặt", "Đang tiến hành", "Vận chuyển", "Hoàn thành"];
+  const steps = ["Đã đặt", "Đang tiến hành", "Hoàn thành"];
   // console.log(order?.order_item);
   return (
     <div>
@@ -897,55 +897,57 @@ function OrderDetail() {
               Thông tin cơ bản
             </div>
             <Divider />
-            <div className="flex w-full flex-col items-stretch my-7 px-9">
-              <div className="flex items-stretch justify-between gap-10">
-                <div className="max-w-full items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+
+            <div className="flex w-full gap-10 items-stretch my-5 px-8">
+              <div className="w-[60%] flex flex-col items-start gap-5">
+                <div className="w-full items-stretch flex flex-col gap-1">
+                  <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
                     Tên khách hàng
                   </div>
-
-                  <div className="mt-2.5 w-full text-base font-medium leading-6 text-indigo-800">
+                  <div className="w-full text-base font-normal leading-5 text-indigo-800">
                     {order?.customer?.full_name ?? "Chưa cập nhật"}
                   </div>
                 </div>
+                <div className="w-full items-stretch flex flex-col gap-1">
+                  <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
+                    Địa chỉ nhận hàng
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-fit text-sm font-medium leading-5 text-zinc-900">
+                      {address?.street}, {address?.ward?.name_with_type},{" "}
+                      {address?.district?.name_with_type},{" "}
+                      {address?.province?.name_with_type}
+                    </div>
+                    <IconButton
+                      sx={{ padding: 0, color: "#3F41A6", fontSize: "22px" }}
+                      onClick={() => {
+                        setOpenEditAddr(true);
+                      }}
+                      disabled={order.status === "CANCELED"}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-stretch justify-between gap-5 mt-6 ">
-                <div className="max-w-full items-stretch flex grow basis-[0%] flex-col">
-                  <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
+              <div className="w-[30%] flex flex-col items-start gap-5 ">
+                <div className="w-full items-stretch flex flex-col gap-1">
+                  <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
                     số điện thoại
                   </div>
-                  <div className="mt-2.5 w-full text-sm font-medium leading-5 text-zinc-900">
+                  <div className="w-full text-base font-normal leading-5 text-zinc-900">
                     Chưa cập nhật
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-col max-w-full gap-2.5 mt-6 ">
-                <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap max-md:max-w-full">
-                  Địa chỉ nhận hàng
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-fit text-sm font-medium leading-5 text-zinc-900">
-                    {address?.street}, {address?.ward?.name_with_type},{" "}
-                    {address?.district?.name_with_type},{" "}
-                    {address?.province?.name_with_type}
+                <div className="w-full items-stretch flex flex-col gap-1">
+                  <div className="text-neutral-400 text-xs font-medium leading-5 tracking-wide uppercase whitespace-nowrap">
+                    Email
                   </div>
-                  <IconButton
-                    sx={{ padding: 0, color: "#3F41A6", fontSize: "22px" }}
-                    onClick={() => {
-                      setOpenEditAddr(true);
-                    }}
-                    disabled={order.status === "CANCELED"}
-                  >
-                    <EditIcon />
-                  </IconButton>
+                  <div className="w-full text-base font-normal leading-5 text-zinc-900">
+                    {order?.customer?.email ?? "Chưa cập nhật"}
+                  </div>
                 </div>
-              </div>
-
-              <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap mt-9 self-start">
-                trạng thái vận chuyển
-              </div>
-              <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 mt-1 px-2.5 py-1 self-start">
-                Chưa vận chuyển
               </div>
             </div>
           </Paper>
@@ -1001,8 +1003,18 @@ function OrderDetail() {
         open={openCancelSBar}
         autoHideDuration={2000}
         onClose={handleCloseCancelSBar}
-        message={statusMsg}
-      />
+      >
+        <Alert
+          onClose={handleCloseCancelSBar}
+          severity={
+            statusMsg === "Hủy đơn hàng thành công!" ? "success" : "error"
+          }
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {statusMsg}
+        </Alert>
+      </Snackbar>
 
       {/* Edit Address */}
       <EditAddress
@@ -1016,10 +1028,18 @@ function OrderDetail() {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openAddrSBar}
-        autoHideDuration={2000}
+        autoHideDuration={4000}
         onClose={handleCloseAddrSBar}
-        message="Cập nhật địa chỉ thành công!"
-      />
+      >
+        <Alert
+          onClose={handleCloseAddrSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật địa chỉ thành công!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

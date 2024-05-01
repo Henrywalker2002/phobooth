@@ -11,7 +11,6 @@ import {
   TableRow,
   Paper,
   Button,
-  Checkbox,
   MenuItem,
   Breadcrumbs,
   Link,
@@ -59,7 +58,6 @@ function OrderDetail(props) {
   // local
   const [order, setOrder] = useState({});
   const [selectedItem, setSelectedItem] = useState({});
-  const [delivery, setDelivery] = useState(false);
   const [status, setStatus] = useState("ORDERED"); // [1, 2, 3]
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -125,18 +123,6 @@ function OrderDetail(props) {
     // console.log(item);
     setSelectedItem(item);
     setOpenEditItem(true);
-  };
-
-  // Delete Order Item Dialog
-  const handleOpenDelItem = (item) => {
-    setSelectedItem(item);
-    setOpenDelItem(true);
-  };
-
-  // Need Delivery
-  const handleNeedDelivery = (e) => {
-    if (e.target.checked) setDelivery(true);
-    else setDelivery(false);
   };
 
   // disable btn
@@ -406,20 +392,6 @@ function OrderDetail(props) {
                 <div className="flex justify-between px-16">
                   <div className="flex flex-col items-stretch gap-4 ">
                     <div className="flex grow flex-col items-stretch px-5 w-[300px]">
-                      <div className="items-center flex justify-between gap-4 pr-20">
-                        <div className="text-indigo-800 text-sm font-medium leading-4 tracking-wide uppercase grow whitespace-nowrap my-auto">
-                          Vận chuyển
-                        </div>
-                        <Checkbox
-                          sx={{
-                            "&.Mui-checked": {
-                              color: "#3F41A6",
-                            },
-                          }}
-                          onChange={handleNeedDelivery}
-                          inputProps={{ "aria-label": "Checkbox demo" }}
-                        />
-                      </div>
                       <div className="text-indigo-800 text-sm font-medium leading-4 tracking-wide uppercase whitespace-nowrap mt-4">
                         Trạng thái đơn hàng
                       </div>
@@ -442,9 +414,6 @@ function OrderDetail(props) {
                       >
                         <MenuItem value={"ORDERED"}>Đã đặt</MenuItem>
                         <MenuItem value={"IN_PROCESS"}>Đang tiến hành</MenuItem>
-                        {delivery ? (
-                          <MenuItem value={"SHIPPING"}>Vận chuyển</MenuItem>
-                        ) : null}
                         <MenuItem value={"COMPLETED"}>Hoàn thành</MenuItem>
                         {status == "ORDERED" ? (
                           <MenuItem value={"CANCELED"}>Hủy đơn</MenuItem>
@@ -603,8 +572,20 @@ function OrderDetail(props) {
         open={openStatusSBar}
         autoHideDuration={2000}
         onClose={handleCloseStatusSBar}
-        message={statusMsg}
-      />
+      >
+        <Alert
+          onClose={handleCloseStatusSBar}
+          severity={
+            statusMsg === "Cập nhật trạng thái thành công !"
+              ? "success"
+              : "error"
+          }
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {statusMsg}
+        </Alert>
+      </Snackbar>
 
       {/* Dialog Edit */}
       <EditOrderItem
