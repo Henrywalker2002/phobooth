@@ -45,6 +45,7 @@ function Reject({
       .then((res) => {
         console.log(res.data);
         setMsg("Từ chối cập nhật thành công!");
+
         setOpen(false);
         setOpenSBar(true);
         setReload(true);

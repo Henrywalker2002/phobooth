@@ -18,6 +18,7 @@ import {
   Box,
   Snackbar,
   Pagination,
+  Alert,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -178,7 +179,7 @@ function Categories() {
         Quản lý danh mục
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto my-5">
+      <div className="flex gap-5 items-center w-fit mx-auto my-5 ">
         <TextField
           id="input-with-icon-textfield"
           sx={{
@@ -213,7 +214,8 @@ function Categories() {
           sx={{
             textTransform: "none",
             bgcolor: "#3F41A6",
-            width: "165px",
+            width: "fit-content",
+            padding: "7px 20px",
             borderRadius: "20px",
             "&:hover": {
               bgcolor: "#3949AB",
@@ -265,7 +267,7 @@ function Categories() {
           {/* Service Table */}
           <TableContainer
             component={Paper}
-            sx={{ margin: "20px auto", maxWidth: "1000px" }}
+            sx={{ margin: "0 auto", maxWidth: "1000px" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -372,7 +374,7 @@ function Categories() {
           {/* Product Table */}
           <TableContainer
             component={Paper}
-            sx={{ margin: "20px auto", maxWidth: "1000px" }}
+            sx={{ margin: "0 auto", maxWidth: "1000px" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -506,8 +508,16 @@ function Categories() {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Cập nhật danh mục thành công !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật danh mục thành công !
+        </Alert>
+      </Snackbar>
 
       {/* Delete successfully */}
       <Snackbar
@@ -515,8 +525,16 @@ function Categories() {
         open={openDelSBar}
         autoHideDuration={2000}
         onClose={handleCloseDelSBar}
-        message="Xóa danh mục thành công !"
-      />
+      >
+        <Alert
+          onClose={handleCloseDelSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Xóa danh mục thành công !
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

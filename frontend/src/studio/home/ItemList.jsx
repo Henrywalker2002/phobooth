@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -8,14 +7,10 @@ import {
   MenuItem,
   Pagination,
   TextField,
-  Snackbar,
 } from "@mui/material";
-import { PiShoppingCartSimpleFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import axios from "../../api/axios";
-// import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-// import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function ItemList({ itemType, filterVal }) {
   const [cookies] = useCookies(["accInfo"]);
@@ -23,11 +18,10 @@ function ItemList({ itemType, filterVal }) {
     style: "currency",
     currency: "VND",
   });
-  // const navigate = useNavigate();
-  // const axiosPrivate = useAxiosPrivate();
+
   //   local
   const [itemList, setItemList] = useState([]);
-  // const [openSBar, setOpenSBar] = useState(false);
+
   // pagination
   const itemsPage = 9;
   const [itemsCount, setItemsCount] = useState(1);
@@ -223,15 +217,6 @@ function ItemList({ itemType, filterVal }) {
             },
         }}
       />
-
-      {/* Add to cart successfully */}
-      {/* <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={openSBar}
-        autoHideDuration={2000}
-        onClose={handleCloseSBar}
-        message="Đã thêm vào giỏ hàng !"
-      /> */}
     </div>
   );
 }

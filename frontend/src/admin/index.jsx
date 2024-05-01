@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AdminNavbar from "../components/AdminNavbar";
 import Footer from "../components/Footer";
 import {
+  Alert,
   Button,
   ButtonBase,
   Card,
@@ -63,7 +64,6 @@ export function AdminHome() {
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSBar(false);
   };
   return (
@@ -91,7 +91,8 @@ export function AdminHome() {
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",
-                    width: "140px",
+                    width: "fit-content",
+                    padding: "5px 15px",
                     height: "35px",
                     borderRadius: "5px",
                     fontSize: "15px",
@@ -198,8 +199,16 @@ export function AdminHome() {
         open={openSBar}
         autoHideDuration={3000}
         onClose={handleCloseSBar}
-        message="Đã thêm vào giỏ hàng !"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Đã thêm vào giỏ hàng !
+        </Alert>
+      </Snackbar>
 
       {/* Err 401 Dialog */}
       <Err401Dialog open={openErr401} setOpen={setOpenErr401} />

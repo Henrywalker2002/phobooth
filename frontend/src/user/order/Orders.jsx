@@ -19,6 +19,7 @@ import {
   Snackbar,
   TextField,
   InputAdornment,
+  Alert,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -31,9 +32,9 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { daysleftCount, isBefore } from "../../util/Compare";
 import CancelInOrders from "./CancelInOrders";
 import Filter from "./Filter";
-import { translateOrderStatus, translateType } from "../../util/Translate";
 import RatingDialog from "./RatingDialog";
 import { DateFormatter } from "../../util/Format";
+import { translateType } from "../../util/Translate";
 
 function Orders() {
   const navigate = useNavigate();
@@ -135,6 +136,34 @@ function Orders() {
       return "Chưa cập nhật";
     }
 
+    // Color for Status
+    const displayStatus = (status) => {
+      if (status === "ORDERED")
+        return (
+          <div className="w-fit text-yellow-600 text-sm leading-6 whitespace-nowrap rounded bg-yellow-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Đã đặt
+          </div>
+        );
+      else if (status === "IN_PROCESS")
+        return (
+          <div className="w-fit text-blue-600 text-sm leading-6 whitespace-nowrap rounded bg-blue-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Đang tiến hành
+          </div>
+        );
+      else if (status === "COMPLETED")
+        return (
+          <div className="w-fit text-green-600 text-sm leading-6 whitespace-nowrap rounded bg-green-300 bg-opacity-20 py-1 px-3 flex justify-center self-center">
+            Hoàn thành
+          </div>
+        );
+      else if (status === "CANCELED")
+        return (
+          <div className="w-fit text-red-500 text-sm leading-6 whitespace-nowrap rounded bg-red-300 bg-opacity-25 py-1 px-3 flex justify-center self-center">
+            Hủy đơn
+          </div>
+        );
+    };
+
     const getRecentRequest = () => {
       if (row.payment.length > 0) {
         let pendingReqs = row.payment.filter((req) => req.status === "PENDING");
@@ -182,11 +211,7 @@ function Orders() {
             </div>
           </TableCell>
           <TableCell align="left">{row.order_item.length}</TableCell>
-          <TableCell align="left">
-            <div className="w-fit h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-center rounded bg-indigo-100 self-stretch px-2 py-1">
-              {translateOrderStatus(row.status)}
-            </div>
-          </TableCell>
+          <TableCell align="left">{displayStatus(row.status)}</TableCell>
           <TableCell align="left">
             {row.total_price
               ? formatter.format(row.total_price)
@@ -649,8 +674,18 @@ function Orders() {
         open={openCancelSBar}
         autoHideDuration={2000}
         onClose={handleCloseCancelSBar}
-        message={statusMsg}
-      />
+      >
+        <Alert
+          onClose={handleCloseCancelSBar}
+          severity={
+            statusMsg === "Hủy đơn hàng thành công!" ? "success" : "error"
+          }
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {statusMsg}
+        </Alert>
+      </Snackbar>
 
       {/* Rating Dialog */}
       <RatingDialog

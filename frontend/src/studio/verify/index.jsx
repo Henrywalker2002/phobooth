@@ -9,6 +9,7 @@ import {
   Snackbar,
   Typography,
   Grid,
+  Alert,
 } from "@mui/material";
 import StudioNavbar from "../../components/StudioNavbar";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -263,8 +264,16 @@ export default function VerifyStudio() {
         open={openSBar}
         autoHideDuration={2000}
         onClose={handleCloseSBar}
-        message="Cập nhật thông tin thành công"
-      />
+      >
+        <Alert
+          onClose={handleCloseSBar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Cập nhật thông tin thành công !
+        </Alert>
+      </Snackbar>
       {/* Other errors */}
       <OtherErrDialog open={openOtherErr} setOpen={setOpenOtherErr} />
 

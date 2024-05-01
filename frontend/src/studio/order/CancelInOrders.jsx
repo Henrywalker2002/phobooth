@@ -9,6 +9,7 @@ function CancelInOrders({
   row,
   setOrders,
   setStatusMsg,
+  setSuccess,
   setOpenActionSBar,
   setDefaultPage,
 }) {
@@ -17,6 +18,7 @@ function CancelInOrders({
   // Open Status SnackBar Success/Err
   const handleOpenStatusSBar = (msg) => {
     setStatusMsg(translateErrStatusOrder(msg));
+    setSuccess(false);
     setOpenActionSBar(true);
     setOpen(false);
   };
@@ -45,6 +47,7 @@ function CancelInOrders({
           });
       })
       .then(() => {
+        setSuccess(true);
         setOpen(false);
         setOpenActionSBar(true);
         setDefaultPage(1);
