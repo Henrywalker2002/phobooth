@@ -12,7 +12,7 @@ class NotificationService:
         user = order.studio.owner 
         subject = order.customer.full_name
         verb = NotificationVerbChoices.CREATED
-        direct_object = f"order {order.id}"
+        direct_object = f"Đơn hàng {order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order.id
         
@@ -30,9 +30,9 @@ class NotificationService:
         user = payment.order.studio.owner
         subject = payment.order.customer.full_name
         verb = NotificationVerbChoices.PAID
-        direct_object = f"payment {payment.id}"
+        direct_object = f"Thanh toán {payment.id}"
         prepositional_object = NotificationPrepositionalObjectChoices.FOR
-        context = f"order {payment.order.id}"
+        context = f"Đơn hàng {payment.order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = payment.order.id
         
@@ -52,7 +52,7 @@ class NotificationService:
         user = order.customer
         subject = order.studio.friendly_name
         verb = NotificationVerbChoices.COMPLETED
-        direct_object = f"order {order.id}"
+        direct_object = f"Đơn hàng {order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order.id
         
@@ -70,9 +70,9 @@ class NotificationService:
         user = payment.order.customer
         subject = payment.order.studio.friendly_name
         verb = NotificationVerbChoices.CREATED
-        direct_object = f"payment {payment.id}"
+        direct_object = f"Thanh toán {payment.id}"
         prepositional_object = NotificationPrepositionalObjectChoices.FOR
-        context = f"order {payment.order.id}"
+        context = f"Đơn hàng {payment.order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = payment.order.id  
         
@@ -92,9 +92,9 @@ class NotificationService:
         user = order_item.order.customer
         subject = order_item.order.studio.friendly_name
         verb = NotificationVerbChoices.ADD
-        direct_object = f"item {order_item.item.name}"
+        direct_object = f"Sản phẩm {order_item.item.name}"
         prepositional_object = NotificationPrepositionalObjectChoices.TO
-        context = f"order {order_item.order.id}"
+        context = f"Đơn hàng {order_item.order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order_item.order.id
         
@@ -114,9 +114,9 @@ class NotificationService:
         user = order.customer
         subject = order.studio.friendly_name
         verb = NotificationVerbChoices.ACCEPTED
-        direct_object = f"order {order.id}"
+        direct_object = f"Đơn hàng {order.id}"
         prepositional_object = NotificationPrepositionalObjectChoices.WITH
-        context = f"price {order.total_price}"
+        context = f"Giá {order.total_price}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order.id
         
@@ -136,7 +136,7 @@ class NotificationService:
         user = order.customer 
         subject = order.studio.friendly_name
         verb = NotificationVerbChoices.DENIED
-        direct_object = f"order {order.id}"
+        direct_object = f"Đơn hàng {order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order.id
         
@@ -154,7 +154,7 @@ class NotificationService:
         user = order.studio.owner
         subject = order.customer.full_name
         verb = NotificationVerbChoices.CANCELED
-        direct_object = f"order {order.id}"
+        direct_object = f"Đơn hàng {order.id}"
         redirect_type = NotificationRedirectTypeChoices.ORDER
         redirect_id = order.id
         
@@ -163,6 +163,50 @@ class NotificationService:
             subject=subject,
             verb=verb,
             direct_object=direct_object,
+            redirect_type=redirect_type,
+            redirect_id=redirect_id
+        )
+    
+    @staticmethod
+    def user_accept_order_item(order_item : OrderItem):
+        user = order_item.order.studio.owner
+        subject = order_item.order.customer.full_name
+        verb = NotificationVerbChoices.ACCEPTED
+        direct_object = f"Sản phảm {order_item.item.name}"
+        prepositional_object = NotificationPrepositionalObjectChoices.IN
+        context = f"Đơn hàng {order_item.order.id}"
+        redirect_type = NotificationRedirectTypeChoices.ORDER
+        redirect_id = order_item.order.id
+        
+        Notification.objects.create(
+            user=user,
+            subject=subject,
+            verb=verb,
+            direct_object=direct_object,
+            prepositional_object=prepositional_object,
+            context=context,
+            redirect_type=redirect_type,
+            redirect_id=redirect_id
+        )
+    
+    @staticmethod
+    def user_deny_order_item(order_item : OrderItem):
+        user = order_item.order.studio.owner
+        subject = order_item.order.customer.full_name
+        verb = NotificationVerbChoices.DENIED
+        direct_object = f"Sản phẩm {order_item.item.name}"
+        prepositional_object = NotificationPrepositionalObjectChoices.IN
+        context = f"Đơn hàng {order_item.order.id}"
+        redirect_type = NotificationRedirectTypeChoices.ORDER
+        redirect_id = order_item.order.id
+        
+        Notification.objects.create(
+            user=user,
+            subject=subject,
+            verb=verb,
+            direct_object=direct_object,
+            prepositional_object=prepositional_object,
+            context=context,
             redirect_type=redirect_type,
             redirect_id=redirect_id
         )

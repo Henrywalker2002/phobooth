@@ -58,7 +58,7 @@ class OrderItemViewSet(BaseModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         order = serializer.instance.order
-        self.update_order_price(order)
+        # self.update_order_price(order)
         # update history and add notification
         create_order_item_history(serializer.instance, "add")
         NotificationService.studio_add_item_to_order(serializer.instance)
