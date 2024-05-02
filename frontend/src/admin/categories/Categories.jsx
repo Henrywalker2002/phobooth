@@ -361,7 +361,7 @@ function Categories() {
             count={serPageCount}
             onChange={getSerCategoryForPage}
             sx={{
-              margin: "0 auto",
+              margin: "10px auto",
               width: "fit-content",
               "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                 {
@@ -468,7 +468,7 @@ function Categories() {
             count={proPageCount}
             onChange={getProCategoryForPage}
             sx={{
-              margin: "0 auto",
+              margin: "10px auto",
               width: "fit-content",
               "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                 {

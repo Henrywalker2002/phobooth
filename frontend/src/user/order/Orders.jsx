@@ -345,7 +345,8 @@ function Orders() {
                     {recentRequest ? (
                       <Paper
                         sx={{
-                          width: "430px",
+                          width: "fit-content",
+                          minWidth: "350px",
                           border: "0.5px solid #d6d3d1",
                           alignItems: "stretch",
                           display: "flex",
@@ -369,34 +370,15 @@ function Orders() {
                             <div className="text-zinc-900 text-sm leading-5 self-center my-auto">
                               {DateFormatter(recentRequest.expiration_date)}
                             </div>
-                            <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center items-stretch rounded bg-red-500 bg-opacity-20 px-3">
-                              {daysleftCount(recentRequest.expiration_date) < 0
-                                ? "Quá hạn"
-                                : `Còn ${daysleftCount(
-                                    recentRequest.expiration_date
-                                  )} ngày`}
-                            </div>
                           </div>
                         </div>
-                        <Button
-                          variant="contained"
-                          sx={{
-                            justifyContent: "center",
-                            alignSelf: "center",
-                            fontSize: "13px",
-                            textTransform: "none",
-                            borderRadius: "43px",
-                            color: "#F6F5FB",
-                            bgcolor: "#3F41A6",
-                            width: "102px",
-                            height: "32px",
-                            "&:hover": {
-                              bgcolor: "#3F41A6B2",
-                            },
-                          }}
-                        >
-                          Thanh toán
-                        </Button>
+                        <div className="w-fit text-red-500 text-xs leading-5 whitespace-nowrap justify-center rounded bg-red-500 bg-opacity-20 self-center px-3 py-1">
+                          {daysleftCount(recentRequest.expiration_date) < 0
+                            ? "Quá hạn"
+                            : `Còn ${daysleftCount(
+                                recentRequest.expiration_date
+                              )} ngày`}
+                        </div>
                       </Paper>
                     ) : (
                       "Chưa có yêu cầu cần thanh toán!"
