@@ -275,6 +275,7 @@ function Cart() {
                       lst.items?.map((row, index) => (
                         <TableRow
                           key={index}
+                          id = {row.item?.id}
                           // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                         >
                           <TableCell sx={{ width: "42px" }}>

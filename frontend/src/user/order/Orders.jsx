@@ -344,6 +344,7 @@ function Orders() {
                     </div>
                     {recentRequest ? (
                       <Paper
+                        id = {recentRequest.id}
                         sx={{
                           width: "fit-content",
                           minWidth: "350px",

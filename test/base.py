@@ -8,6 +8,7 @@ import json
 import pandas as pd 
 from command import Command, CommandChoices
 import os 
+from openpyxl import load_workbook
 
 
 class BaseTestCase(unittest.TestCase):
@@ -76,8 +77,9 @@ class BaseTestCase(unittest.TestCase):
 
     @classmethod
     def write_data_xlsx(self, sheet_name, data, file_path = "./data.xlsx"):
-        df : pd.DataFrame = pd.DataFrame(data)
-        df.to_excel(file_path, sheet_name=sheet_name, engine='openpyxl', index=False)
+        with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+            df : pd.DataFrame = pd.DataFrame(data)
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
         
     def handle_send_file(self, file_str):
         file_name_lst = file_str.split(';')

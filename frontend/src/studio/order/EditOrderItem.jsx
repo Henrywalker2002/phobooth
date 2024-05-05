@@ -30,6 +30,7 @@ function EditOrderItem({ open, setOpen, orderItem, setOrder }) {
         .patch(`/order-item/${orderItem.id}/`, updateData)
         .then((res) => {
           console.log(res.data);
+          setOpen(false);
           setOrder(res.data);
         })
         // .then(() => setOpenSBar(true))

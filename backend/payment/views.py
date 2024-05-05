@@ -28,6 +28,11 @@ class PaymentViewSet(BaseModelViewSet):
     filterset_class = PaymentFilter
     search_fields = ["@order__order_item__item__name"]
     
+    def get_queryset(self):
+        if self.action == "list":
+            return super().get_queryset().order_by('-status', 'no')
+        return super().get_queryset()
+    
     def get_serializer(self, *args, **kwargs):
         is_order = kwargs.pop('is_order', False)
         if is_order:
