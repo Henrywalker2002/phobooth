@@ -244,6 +244,7 @@ class TestPayment(BaseTestCase):
         self.command.execute_pause(amount = 2)
         self.command.execute_type(target = "id=otpvalue", value = data.get('otp'))
         self.command.execute_click(target = "id=btnConfirm")
+        self.command.execute_pause()
     
     def input_data(self, data: dict):
         payment_id = data.get('payment')
@@ -285,3 +286,4 @@ class TestPayment(BaseTestCase):
                 row['error'] = str(e)
                 print(e)
         self.write_data_xlsx(sheet_name='payment', data=self.data)
+
