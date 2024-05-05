@@ -396,7 +396,7 @@ function ItemDetail(props) {
                     },
                   }}
                 >
-                  Đặt dịch vụ
+                  Đặt sản phẩm
                 </Button>
               </div>
             </div>
