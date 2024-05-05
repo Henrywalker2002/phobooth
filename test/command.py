@@ -35,6 +35,7 @@ class CommandChoices:
     WAIT_FOR_ELEMENT_NOT_PRESENT = 'wait_for_element_not_present'
     WAIT_FOR_ELEMENT_VISIBLE = 'wait_for_element_visible'
     WAIT_FOR_ELEMENT_NOT_VISIBLE = 'wait_for_element_not_visible'
+    WAIT_FOR_ELEEENT_CLICKABLE = 'wait_for_element_clickable'
     SCROLL_TO = 'scroll_to'
     INPUT_DATE = 'input_date'
 
@@ -60,6 +61,7 @@ class CommandChoices:
         WAIT_FOR_ELEMENT_NOT_PRESENT: ['target', 'amount'],
         WAIT_FOR_ELEMENT_VISIBLE: ['target', 'amount'],
         WAIT_FOR_ELEMENT_NOT_VISIBLE: ['target', 'amount'],
+        WAIT_FOR_ELEEENT_CLICKABLE: ['target', 'amount'],
         SCROLL_TO: ['target'],
         INPUT_DATE: ['target', 'value']
     }
@@ -269,6 +271,11 @@ class Command:
     def execute_wait_for_element_not_visible(self, target, amount = 5, *args, **kwargs) -> dict:
         located = self.get_located(target)
         WebDriverWait(self.driver, amount).until_not(located)
+        return kwargs.get('store')
+    
+    def execute_wait_for_element_clickable(self, target, amount = 5, *args, **kwargs) -> dict:
+        element = self.find_target(target)
+        WebDriverWait(self.driver, amount).until(EC.element_to_be_clickable(element))
         return kwargs.get('store')
     
     def execute_scroll_to(self, target, *args, **kwargs) -> dict:

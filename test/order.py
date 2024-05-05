@@ -1,6 +1,6 @@
 from base import BaseTestCase
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
+import pandas as pd 
 
 
 class TestCreateOrder(BaseTestCase):
@@ -197,4 +197,91 @@ class TestAddPayment(BaseTestCase):
                     row['error'] = str(e)
                     print(e)
             self.write_data_xlsx(sheet_name='add_payment', data=self.data)
+    
+
+class TestPayment(BaseTestCase):
+    
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.driver.maximize_window()
+        cls.login_with_account('username', 'password')
+        cls.data = cls.load_data_xlsx(sheet_name='payment')
         
+    @classmethod 
+    def load_data_xlsx(self, sheet_name, file_path = "./data.xlsx") -> list[dict]:
+        df : pd.DataFrame = pd.read_excel(file_path, sheet_name = sheet_name)
+        df['card_number'] = df['card_number'].astype('str')
+        df['otp'] = df['otp'].astype('str')
+        df.fillna('', inplace=True)
+        lst = []
+        for index, row in df.iterrows():
+            lst.append(row.to_dict())
+        return lst
+    
+    def handle_pay_vnpay(self, data : dict):
+        self.command.execute_pause(amount = 2)
+        all_handles = self.driver.window_handles
+        self.driver.switch_to.window(all_handles[1])  
+        self.command.execute_pause(amount= 2)
+        self.command.execute_wait_for_element_clickable(target = "xpath=//*[contains(text(), 'Thẻ nội địa và tài khoản ngân hàng')]")
+        self.command.execute_click(target = "xpath=//*[contains(text(), 'Thẻ nội địa và tài khoản ngân hàng')]")
+        self.command.execute_wait_for_element_clickable(target = "id=NCB")
+        self.command.execute_click(target = "id=NCB")
+        input_data = {
+            "card_number_mask" : data.get('card_number'),
+            "cardHolder" : data.get('card_holder'),
+            "cardDate" : data.get('card_date'),    
+        }
+        self.command.execute_input(value = input_data)
+        self.command.execute_pause(amount = 2)
+        self.command.execute_wait_for_element_clickable(target = "id=btnContinue")
+        self.command.execute_click(target = "id=btnContinue")
+        self.command.execute_wait_for_element_present(target = "xpath=//div[@role='dialog']", amount=5)
+        self.command.execute_pause(amount = 2)
+        self.command.execute_click(target = "id=btnAgree")
+        self.command.execute_wait_for_element_present(target= "id=otpvalue")
+        self.command.execute_pause(amount = 2)
+        self.command.execute_type(target = "id=otpvalue", value = data.get('otp'))
+        self.command.execute_click(target = "id=btnConfirm")
+    
+    def input_data(self, data: dict):
+        payment_id = data.get('payment')
+        self.command.execute_assert_element_present(target= "xpath=//*[text()='Yêu cầu thanh toán mới nhất']")
+        self.command.execute_scroll_to(target = "xpath=//*[text()='Yêu cầu thanh toán mới nhất']")
+        self.command.execute_pause(amount  = 2)
+        elements = self.driver.find_elements(By.ID, f"payment-{payment_id}")
+        while len(elements) == 0:
+            self.command.execute_click(target= "xpath=//div[contains(@class, 'items-stretch')]//*[@aria-label='Go to next page']")
+            self.command.execute_pause(amount= 1)
+            elements = self.driver.find_elements(By.ID, f"payment-{payment_id}")
+        self.command.execute_click(target= "xpath=//button[text()='Thanh toán']")
+        self.command.execute_wait_for_element_visible(target= "xpath=//div[@role='dialog']", amount=5)
+        self.command.execute_check(target = "xpath=//input[@value='vnpay']")
+        self.command.execute_click(target = "xpath=//div[@role='dialog']//button[text()='Thanh toán']")
+
+        self.handle_pay_vnpay(data)
+        
+    def check_error(self, field, value):
+        pass
+    
+    def test(self):
+        if self.data:
+            order_id = self.data[0].get('order')
+            self.command.execute_open(target = f"{self.base_url}/order/detail/{order_id}")
+        for row in self.data:
+            try:
+                self.input_data(row)
+                expect = row.get('expect')
+                if expect == 'success':
+                    pass 
+                else:
+                    field, value = expect.split(':')
+                    self.check_error(field, value)  
+                row['result'] = 'pass'
+                row['error'] = ''
+            except Exception as e:
+                row['result'] = 'fail'
+                row['error'] = str(e)
+                print(e)
+        self.write_data_xlsx(sheet_name='payment', data=self.data)

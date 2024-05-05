@@ -508,6 +508,7 @@ function OrderDetail() {
                             if (req.status === "PENDING")
                               return (
                                 <Paper
+                                  id = {`payment-${req.id}`}
                                   key={req.id}
                                   sx={{
                                     width: "fit-content",

@@ -1,7 +1,6 @@
 from base import BaseTestCase
 from selenium.webdriver.common.by import By
 
-
 class TestSignUp(BaseTestCase):
     
     @classmethod
