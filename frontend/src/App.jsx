@@ -39,6 +39,7 @@ import StudioDemo from "./studio/demo/Demo";
 import AdvancedSearch from "./user/search/AdvancedSearch";
 import StudioReport from "./studio/report/Report";
 import TransferRequests from "./admin/transfer/Requests";
+import PaymentSuccess from "./user/order/PaymentSuccess";
 
 function App() {
   const theme = createTheme({
@@ -94,7 +95,12 @@ function App() {
               <Route path="/booking" element={<Booking />} />
             </Route>
             <Route path="/orders" element={<Orders />} />
+            <Route
+              path="/order/success-payment/:orderId/:paymentId/:amount/:transactionNo/:transactionDate/"
+              element={<PaymentSuccess />}
+            />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
+
             <Route path="/complain/detail/:id" element={<ComplainDetail />} />
             <Route path="/profile" element={<Profile />} />
 

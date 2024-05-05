@@ -249,7 +249,7 @@ function Booking() {
 
       {/* Header */}
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
-        Đặt dịch vụ
+        Đặt sản phẩm
       </div>
 
       {/* Tables */}
@@ -423,7 +423,7 @@ function Booking() {
                   name="note"
                   onChange={(e) => handleUpdateNote(e, itemList.studio.id)}
                   rows={3}
-                  placeholder="Để lại ghi chú thêm về dịch vụ..."
+                  placeholder="Để lại ghi chú thêm về sản phẩm..."
                   sx={{
                     borderColor: "#E6E6E6",
                     fontSize: "10px",
