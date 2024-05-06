@@ -13,4 +13,6 @@ class DatabaseRouter:
         return True
     
     def allow_migrate(self, db, app_label, model_name=None, **hints):
+        if app_label == 'notification':
+            return db == 'notification'
         return None
