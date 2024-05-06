@@ -27,7 +27,7 @@ class NotificationPrepositionalObjectChoices(models.TextChoices):
 
 class Notification(BaseModel):
     
-    id = ObjectIdField(primary_key = True, db_column = "_id")
+    id = ObjectIdField(primary_key = True, auto_created = True, db_column = "_id")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     subject = models.CharField(max_length=255)
     verb = models.CharField(max_length=255, choices = NotificationVerbChoices.choices)
