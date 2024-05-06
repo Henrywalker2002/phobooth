@@ -1,12 +1,33 @@
 import { Avatar, Button, Divider, Paper } from "@mui/material";
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CurrencyFormatter } from "../../util/Format";
 import { FaCircleCheck } from "react-icons/fa6";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 function PaymentSuccess() {
-  let { orderId, paymentId, amount, transactionNo, transactionDate } =
-    useParams();
+  const axiosInstance = useAxiosPrivate();
+  const navigate = useNavigate();
+  let query = useQuery();
+  let refCode = query.get("vnp_TxnRef"),
+    amount = query.get("vnp_Amount"),
+    transactionNo = query.get("vnp_TransactionNo"),
+    transactionDate = query.get("vnp_PayDate");
+  
+  let orderId = refCode.split("-")[0];
+  let paymentId = refCode.split("-")[1];
+
+  useEffect(() => {
+    axiosInstance.get("/payment/return/", { params: query }).then((res) => {
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, [query]);
   return (
     <div className="w-full mx-auto my-12 flex items-center justify-center">
       <Paper
@@ -55,7 +76,7 @@ function PaymentSuccess() {
                 Số tiền đã thanh toán :
               </div>
               <div className="text-right font-bold text-green-700">
-                {CurrencyFormatter(amount)}
+                {CurrencyFormatter(amount / 100) }
               </div>
             </div>
           </div>
@@ -70,6 +91,9 @@ function PaymentSuccess() {
               padding: "5px 20px",
               fontSize: "15px",
               marginX: "auto",
+            }}
+            onClick= {() => {
+              navigate(`/order/detail/${orderId}`);
             }}
           >
             Quay lại đơn hàng
