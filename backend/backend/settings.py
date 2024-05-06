@@ -199,7 +199,7 @@ SIMPLE_JWT = {
 MEDIA_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_URL = '/assets/'
 
-VNPAY_RETURN_URL = 'http://localhost:8000/payment/return/'  # get from config
+VNPAY_RETURN_URL = 'http://localhost:5173/order/success-payment/'  # get from config
 VNPAY_PAYMENT_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  # get from config
 VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
 VNPAY_TMN_CODE = os.getenv("VNPAY_TMN_CODE") # Website ID in VNPAY System, get from config

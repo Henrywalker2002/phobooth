@@ -156,6 +156,8 @@ class PaymentViewSet(BaseModelViewSet):
                 # handle refund 
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
             payment_instance = payment_instance.first()
+            if payment_instance.status == PaymentStatusChoices.PAID:
+                return Response(data=data, status=status.HTTP_200_OK)
             payment_instance.status = PaymentStatusChoices.PAID
             payment_instance.payment_date = datetime.date.today()
             payment_instance.payment_method = PaymentMethodChoices.VNPAY
@@ -168,7 +170,7 @@ class PaymentViewSet(BaseModelViewSet):
             # create notification
             NotificationService.user_pay(payment_instance)
             self.update_amout_paid_order(payment_instance.order)
-        return Response(data=data)
+        return Response(data=data, status=status.HTTP_202_ACCEPTED)
 
     def gen_request_id_refund(self, payment):
         return f"{payment.order.id}-{payment.id}-refund"

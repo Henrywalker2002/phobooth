@@ -96,7 +96,7 @@ function App() {
             </Route>
             <Route path="/orders" element={<Orders />} />
             <Route
-              path="/order/success-payment/:orderId/:paymentId/:amount/:transactionNo/:transactionDate/"
+              path="/order/success-payment"
               element={<PaymentSuccess />}
             />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
