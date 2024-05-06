@@ -9,7 +9,7 @@ class CategoryTypeChoices(models.TextChoices):
 
 
 class Category(BaseModel):
-    type = models.CharField(choices=CategoryTypeChoices.choices, null=False)
+    type = models.CharField(choices=CategoryTypeChoices.choices, null=False, max_length=255)
     title = models.CharField(max_length=255, null=False, unique=True)
     code_name = models.CharField(max_length=255, null=False, unique=True)
     description = models.CharField(max_length=512, null=True)

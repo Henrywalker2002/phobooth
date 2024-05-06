@@ -47,7 +47,7 @@ class ItemPicture(models.Model):
 class Item(BaseModel):
     name = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
-    type = models.CharField(choices=ItemTypeChoices.choices, null=False)
+    type = models.CharField(choices=ItemTypeChoices.choices, null=False, max_length=255)
     category = models.ForeignKey(to=Category, on_delete=models.SET_NULL, null=True)
     studio = models.ForeignKey(
         to="studio.Studio",

@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'pymongo',
+    'djongo',
     'daphne',
     'channels',
     'channels_redis',
@@ -122,7 +124,17 @@ DATABASES = {
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
     }, 
+    'notification' : {
+        'ENGINE': 'djongo',
+        'NAME': 'notification',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': os.getenv('MONGO_DB_HOST'),  
+        }
+    }
 }
+
+DATABASE_ROUTERS = ['backend.database_router.DatabaseRouter']
 
 
 # Password validation
