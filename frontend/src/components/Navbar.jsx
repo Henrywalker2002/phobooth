@@ -181,7 +181,7 @@ function Navbar() {
               <ListItemIcon>
                 <BiStore style={{ width: "20px", height: "20px" }} />
               </ListItemIcon>
-              <ListItemText>Kênh Studio</ListItemText>
+              <ListItemText>Kênh cửa hàng</ListItemText>
             </MenuItem>
             <MenuItem onClick={() => navigate("/orders")}>
               <ListItemIcon>
@@ -420,7 +420,7 @@ function Navbar() {
                 <ListItemIcon>
                   <BiStore style={{ width: "20px", height: "20px" }} />
                 </ListItemIcon>
-                <ListItemText>Kênh Studio</ListItemText>
+                <ListItemText>Kênh cửa hàng</ListItemText>
               </MenuItem>
 
               <MenuItem onClick={() => navigate("/advanced-search/")}>

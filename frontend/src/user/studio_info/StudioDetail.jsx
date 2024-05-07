@@ -118,7 +118,7 @@ function StudioDetail() {
                     fontWeight: 600,
                   }}
                 >
-                  {studio?.type === "STUDIO" ? "Studio" : "Thợ chụp ảnh"}
+                  {studio?.type === "STUDIO" ? "Cửa hàng" : "Thợ chụp ảnh"}
                 </div>
                 <div className="flex items-stretch justify-start gap-2">
                   <Button

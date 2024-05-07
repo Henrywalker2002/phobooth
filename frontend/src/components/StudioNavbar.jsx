@@ -94,7 +94,7 @@ function StudioNavbar() {
             <img src={logo} alt="logo-phobooth"></img>
           </div> */}
           <div className="self-center">
-            <div className="text-[#787282] text-[19px]">Studio</div>
+            <div className="text-[#787282] text-[19px]">Cửa hàng</div>
           </div>
         </div>
 

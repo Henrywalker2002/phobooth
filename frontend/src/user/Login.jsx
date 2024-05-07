@@ -19,7 +19,7 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-
+  console.log(from);
   const [cookies, setCookie] = useCookies(["accInfo"]);
   const [persist, setPersist] = useState(cookies?.persist || false);
   const userRef = useRef();
@@ -53,30 +53,39 @@ function Login() {
   const handleFacebookLogin = () => {
     FB.login(function (response) {
       if (response.authResponse) {
-        axios.post("/fb-login/", { access_token: response.authResponse.accessToken }).then((response) => {
-          setCookie(
-            "userInfo",
-            {
-              ...response?.data,
-              password: pwd,
-            },
-            { path: "/" }
-          );
-          console.log(response?.data);
-    
-          setUser("");
-          setPwd("");
-          if (
-            response.data.role[0].code_name === "admin" ||
-            response.data.role[0].code_name === "staff"
-          )
-            navigate("/admin", { replace: true });
-          else navigate(from, { replace: true });
-        }).catch((err) => {
-          if (err.status === 400) {
-            console.log(err.response.data.message)
-          }
-        })
+        axios
+          .post("/fb-login/", {
+            access_token: response.authResponse.accessToken,
+          })
+          .then((response) => {
+            setCookie(
+              "userInfo",
+              {
+                ...response?.data,
+                password: pwd,
+              },
+              { path: "/" }
+            );
+            console.log(response?.data);
+
+            setUser("");
+            setPwd("");
+            if (
+              response.data.role[0].code_name === "admin" ||
+              response.data.role[0].code_name === "staff"
+            )
+              navigate("/admin", { replace: true });
+            else if (from.includes("/admin")) {
+              navigate("/", { replace: true });
+            } else if (from.includes("/studio") && !response.data?.studio?.id) {
+              navigate("/studio/register", { replace: true });
+            } else navigate(from, { replace: true });
+          })
+          .catch((err) => {
+            if (err.status === 400) {
+              console.log(err.response.data.message);
+            }
+          });
       } else {
         console.log("User cancelled login or did not fully authorize.");
       }
@@ -115,10 +124,17 @@ function Login() {
         response.data.role[0].code_name === "staff"
       )
         navigate("/admin", { replace: true });
-      else navigate(from, { replace: true });
+      else if (from.includes("/admin")) {
+        navigate("/", { replace: true });
+      } else if (from.includes("/studio") && !response.data?.studio?.id) {
+        navigate("/studio/register", { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setErrMsg(err.response.data.messsage);
       // errRef.current.focus();
+      // console.log(err);
     }
   };
 

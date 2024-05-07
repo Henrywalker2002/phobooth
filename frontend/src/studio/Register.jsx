@@ -48,10 +48,10 @@ function Register() {
   const [openErr401, setOpenErr401] = useState(false);
   const [openOtherErr, setOpenOtherErr] = useState(false);
 
-  const type=  [
-    {label : "Studio", value :"STUDIO"},
-    {label : "Thợ chụp ảnh", value :"PHOTOGRAPHER"},
-  ]
+  const type = [
+    { label: "Studio", value: "STUDIO" },
+    { label: "Thợ chụp ảnh", value: "PHOTOGRAPHER" },
+  ];
 
   useEffect(() => {
     axios
@@ -219,7 +219,7 @@ function Register() {
             fontWeight: "500",
           }}
         >
-          Đăng kí Studio
+          Đăng kí cửa hàng
         </Typography>
       </Breadcrumbs>
 
@@ -323,32 +323,30 @@ function Register() {
                   marginY: "10px",
                 }}
               />
-               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
+              <div className="text-zinc-900 text-sm leading-5 mt-4 ">
                 Hình thức *
               </div>
               <TextField
-                    required
-                    variant="outlined"
-                    name="type"
-                    value={studioInfo.type}
-                    onChange={updateStudioInfo}
-                    defaultValue="STUDIO"
-                    select
-                    error={errMsg.type ? true : false}
-                    helperText={
-                      errMsg.type ?? ""
-                    }
-                    sx={{
-                      width: "350px",
-                      marginY: "8px",
-                    }}
-                  >
-                    {type.map((type, index) => (
-                      <MenuItem key={type.value} value={type.value}>
-                        {type.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                required
+                variant="outlined"
+                name="type"
+                value={studioInfo.type}
+                onChange={updateStudioInfo}
+                defaultValue="STUDIO"
+                select
+                error={errMsg.type ? true : false}
+                helperText={errMsg.type ?? ""}
+                sx={{
+                  width: "350px",
+                  marginY: "8px",
+                }}
+              >
+                {type.map((type, index) => (
+                  <MenuItem key={type.value} value={type.value}>
+                    {type.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </div>
 
             <div className="flex basis-[0%] flex-col items-stretch mt-9 ml-5 self-start">
