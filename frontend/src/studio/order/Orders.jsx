@@ -165,6 +165,7 @@ function Orders() {
           hover={true}
           onClick={() => navigate("/studio/order/detail/" + row.id)}
           sx={{ borderBottom: "unset", cursor: "pointer" }}
+          id = {row.id}
         >
           <TableCell>
             <IconButton

@@ -57,10 +57,10 @@ function handleContentNotification(notification) {
   var image = {};
   if (notification.verb == NotificationTypeChoices.CREATED) {
     message = `${notification.subject} đã tạo ${notification.direct_object}`;
-    if (notification.direct_object.includes("order")) {
+    if (notification.direct_object.includes("Đơn hàng")) {
       redirect_url = `/studio/order/detail/${notification.redirect_id}`;
     }
-    if (notification.direct_object.includes("payment")) {
+    if (notification.direct_object.includes("Thanh toán")) {
       redirect_url = `/order/detail/${notification.redirect_id}`;
     }
     image.icon = <EditCalendarTwoToneIcon />;

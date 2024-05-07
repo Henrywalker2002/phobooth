@@ -64,7 +64,7 @@ class UpdatePaymentSerializer(CreatePaymentSerializer):
 
 
 class ReadPaymentSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = Payment
         fields = ["id", "no", "amount", "status",

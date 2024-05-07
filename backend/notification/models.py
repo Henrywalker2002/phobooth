@@ -1,6 +1,7 @@
 from django.db import models
 from base.models import BaseModel
 from user.models import User
+from djongo.models import ObjectIdField
 
 
 class NotificationVerbChoices(models.TextChoices):
@@ -25,6 +26,8 @@ class NotificationPrepositionalObjectChoices(models.TextChoices):
 
 
 class Notification(BaseModel):
+    
+    id = ObjectIdField(primary_key = True, auto_created = True, db_column = "_id")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     subject = models.CharField(max_length=255)
     verb = models.CharField(max_length=255, choices = NotificationVerbChoices.choices)

@@ -7,7 +7,7 @@ from order.serializers.order_item import CreateOrderItemSerializer, ReadOrderIte
 from user.serializers import UserSummarySerializer
 from order.exceptions import UpdateCompletedOrderException, UpdateCompletedOrderPaidException, UpdateCompletedOrderOrderItemException
 from payment.serializers import ReadPaymentSerializer
-from payment.models import PaymentStatusChoices
+from payment.models import PaymentStatusChoices, Payment
 from order_history.serializers import OrderHistorySummarySerializer
 from address.serializers import AddressSerializer, ReadAddressSerializer
 from complain.serializers import ComplainSummarySerializer
@@ -50,6 +50,11 @@ class ReadOrderSerializer(serializers.ModelSerializer):
     order_history = OrderHistorySummarySerializer(many=True, read_only=True)
     address = ReadAddressSerializer(read_only=True)
     complain = ComplainSummarySerializer(read_only=True)
+    
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+        res["payment"] = sorted(res["payment"], key = lambda x : x["status"], reverse=True)
+        return res 
     
     class Meta:
         model = Order

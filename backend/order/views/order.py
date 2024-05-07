@@ -30,7 +30,7 @@ class OrderViewSet(BaseModelViewSet):
         elif self.action == "list_order_of_studio":
             return self.queryset.filter(studio=self.request.user.studio).order_by("-created_at")
         return super().get_queryset()
-
+    
     @transaction.atomic
     def create(self, request, *kawrgs, **kwargs):
         request.data['customer'] = request.user.id
