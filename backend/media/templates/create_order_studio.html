@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, p {
+            margin: 0 0 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .customer-info {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Notification</h1>
+        <p>Dear {{user.full_name}},</p>
+        
+        <p>{{customer.full_name}} vừa đặt đơn hàng {{order.id}} với thông tin như sau:</p>
+        <table>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+            {% for item in list %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <p>Bạn vui lòng liên hệ với khách hàng qua email để chốt giá cả và cập nhật vào đơn hàng.</p>
+        <div class="customer-info">
+            <p>Thông tin khách hàng</p>
+            <p>Email: {{customer.email}}</p>
+            <p>Số điện thoại: {{customer.phone}}</p>
+        </div>
+        <p>Trân trọng,</p>
+    </div>
+</body>
+</html>

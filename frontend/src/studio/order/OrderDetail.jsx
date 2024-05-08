@@ -66,7 +66,7 @@ function OrderDetail(props) {
 
   const getOrderDetail = () => {
     axiosPrivate
-      .get(`/order/${id}`)
+      .get(`/order/${id}/`)
       .then((res) => {
         // console.log(res.data);
         setOrder(res.data);

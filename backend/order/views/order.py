@@ -14,6 +14,7 @@ from notification.execute import NotificationService
 from address.models import Address
 from order.filter import OrderFilter
 from django.db.models import Sum, F
+from media.execute import MediaService
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -68,6 +69,7 @@ class OrderViewSet(BaseModelViewSet):
 
         # create notification
         NotificationService.user_create_order(order)
+        MediaService.create_email_for_create_order(order)
         data = self.get_serializer(order, is_get=True).data
         return Response(data, status=status.HTTP_201_CREATED)
 
@@ -85,10 +87,12 @@ class OrderViewSet(BaseModelViewSet):
             serializer.validated_data['finish_date'] = datetime.date.today().strftime("%Y-%m-%d")
             # create notification
             NotificationService.studio_completed_order(instance)
+            MediaService.create_email_complete_order(instance)
             self.update_number_order_completed(instance.studio)
         
         if serializer.validated_data.get('status') == OrderStatusChoice.IN_PROCESS:
             NotificationService.studio_accept_order(instance)
+            MediaService.create_email_for_accept_order(instance)
             order_items = instance.order_item.all()
             for order_item in order_items:
                 order_item.status = OrderItemStatusChoice.ACCEPTED
@@ -100,6 +104,7 @@ class OrderViewSet(BaseModelViewSet):
                 NotificationService.user_cancel_order(instance)
             else :
                 NotificationService.studio_deny_order(instance)
+            MediaService.create_email_for_cancel_order(instance)
         
         address = serializer.validated_data.pop('address', None)
         self.perform_update(serializer)    
