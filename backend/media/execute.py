@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.core import mail
 from django.conf import settings
 from order_history.models import OrderHistory
+from order.models import Order
 
 class OrderItemChange:
     
@@ -17,26 +18,6 @@ class OrderItemChange:
         self.price = price
 
 class MediaService:
-    
-    # @staticmethod
-    # def create_email_for_order_change(order_history: OrderHistory):
-    #     tempalate = loader.get_template('order_history.html')
-    #     item_change = OrderItemChange(**order_history.new_value)
-    #     link = "http://localhost:5173/order/detail/" + str(order_history.order.id) + "/"
-    #     context = {
-    #         'list': [item_change],
-    #         'user' : order_history.order.customer,
-    #         'order' : order_history.order,
-    #         'link' : link
-    #     }
-    #     content = tempalate.render(context)
-        
-    #     media_to = order_history.order.customer.email
-    #     media_from = settings.EMAIL_HOST_USER
-    #     media = Media.objects.create(media_from = media_from, media_to = media_to, 
-    #                                  content = content, content_type = MediaContentTypeChoices.HTML,
-    #                                  send_method = MediaSendMethodChoices.EMAIL, 
-    #                                  title = f"Thay thay đổi về đơn hàng {order_history.order.id}")
     
     @staticmethod
     @transaction.atomic
@@ -69,6 +50,100 @@ class MediaService:
                                          send_method = MediaSendMethodChoices.EMAIL, 
                                          title = f"Thay thay đổi về đơn hàng {history.order.id}")
         OrderHistory.objects.bulk_update(order_history_lst, ['is_created_mail'])
+    
+    @staticmethod
+    def get_list_of_order_item_created(order: Order):
+        lst = []
+        for order_item in order.order_item.all():
+            if order_item.item is not None:
+                name = order_item.item.name
+                if order_item.item.fixed_price is not None:
+                    price = order_item.item.fixed_price
+                else:
+                    price = f"{order_item.item.min_price} - {order_item.item.max_price}"
+            else:
+                name = order_item.variation.product.name
+                price = order_item.variation.price
+            order_item_change = OrderItemChange(item_name=name, quantity= order_item.quantity, price= price)
+            lst.append(order_item_change)
+        return lst 
+    
+    @staticmethod
+    @transaction.atomic
+    def create_email_for_order(template_name: str, context: dict, email_to: str, title: str) -> Media:
+        template = loader.get_template(template_name)
+        content = template.render(context)
+        media = Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                                     media_to=email_to,
+                                     content=content,
+                                     content_type=MediaContentTypeChoices.HTML,
+                                     send_method=MediaSendMethodChoices.EMAIL,
+                                     title=title)
+        return media
+    
+    @staticmethod
+    @transaction.atomic
+    def create_email_for_create_order(order : Order):
+        lst = MediaService.get_list_of_order_item_created(order)
+        customer_context = {
+            'order': order,
+            'user': order.customer,
+            'list': lst,
+            'studio': order.studio,
+        }
+        MediaService.create_email_for_order(template_name='create_order_customer.html',
+                                            context=customer_context,
+                                            email_to=order.customer.email,
+                                            title=f"Xác nhận đơn hàng {order.id}")
+        studio_context = {
+            'order': order,
+            'user': order.studio.owner,
+            'list': lst,
+            'customer': order.customer
+        }
+        MediaService.create_email_for_order(template_name='create_order_studio.html',
+                                            context=studio_context,
+                                            email_to=order.studio.owner.email,
+                                            title=f"Xác nhận đơn hàng {order.id}")
+        
+    @staticmethod
+    def get_list_of_order_item(order: Order):
+        lst = []
+        for order_item in order.order_item.all():
+            if order_item.item is not None:
+                name = order_item.item.name
+            else:
+                name = order_item.variation.product.name
+            price = order_item.price
+            order_item_change = OrderItemChange(item_name=name, quantity= order_item.quantity, price= price)
+            lst.append(order_item_change)
+        return lst 
+    
+    @staticmethod
+    def create_email_for_accept_order(order: Order):
+        lst = MediaService.get_list_of_order_item(order)
+        context = {
+            'order' : order,
+            'list' : lst,
+            'user' : order.customer,
+        }
+        MediaService.create_email_for_order(template_name='accept_order.html',
+                                            context=context,
+                                            email_to=order.customer.email,
+                                            title=f"Xác nhận đơn hàng {order.id}")
+    
+    @staticmethod
+    def create_email_complete_order(order : Order):
+        lst = MediaService.get_list_of_order_item(order)
+        context = {
+            'order': order,
+            'list': lst,
+            'user': order.customer,
+        }
+        MediaService.create_email_for_order(template_name='complete_order.html',
+                                            context=context,
+                                            email_to=order.customer.email,
+                                            title=f"Xác nhận đơn hàng {order.id}")
     
     @staticmethod
     def send_mail():

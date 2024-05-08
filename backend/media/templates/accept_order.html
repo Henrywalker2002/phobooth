@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        .footer {
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Dear {{user.full_name}},</p>
+        <p>Đơn hàng {{order.id}} của bạn vừa được chấp nhận với các thông tin như sau: </p>
+        <table>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+            {% for item in list %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p>Tới tổng giá là: {{order.total_price}} </p>
+        <p>Nếu bạn không chấp nhận hoặc không hài lòng với đơn hàng này vui lòng huỷ đơn hàng.</p>
+        <p>Lưu ý rằng: Trong quá trình thực hiện đơn hàng, cửa hàng có thể thêm sản phẩm để phù hợp với nhu cầu, khi đó chúng tôi sẽ gửi email cho bạn để thực hiện bước tiếp theo, xin vui lòng theo dõi email.</p>
+        <p class="footer">Trân trọng,</p>
+    </div>
+</body>
+</html>
