@@ -104,6 +104,7 @@ class OrderViewSet(BaseModelViewSet):
                 NotificationService.user_cancel_order(instance)
             else :
                 NotificationService.studio_deny_order(instance)
+            MediaService.create_email_for_cancel_order(instance)
         
         address = serializer.validated_data.pop('address', None)
         self.perform_update(serializer)    

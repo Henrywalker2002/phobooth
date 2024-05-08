@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+
+    </style>
+</head>
+<body>
+    <p>Dear {{user.full_name}},</p>
+
+    <p>Đợt thanh toán {{payment.no}} cho đơn hàng {{order.id}} đã được khách hàng thanh toán.</p>
+    <p>Thông tin thanh toán như sau:</p>
+    <div class = "payment_infor">
+        <p>Số tiền: {{payment.amount}}</p>
+        <p>Ngày thanh toán: {{payment.payment_date}}</p>
+        <p>Phương thức thanh toán: {{payment.method}}</p>
+    </div>
+    <p>Trân trọng,</p>
+</body>
+</html>

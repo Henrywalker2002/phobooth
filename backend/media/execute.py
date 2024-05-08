@@ -8,6 +8,7 @@ from django.core import mail
 from django.conf import settings
 from order_history.models import OrderHistory
 from order.models import Order
+from payment.models import Payment
 
 class OrderItemChange:
     
@@ -144,6 +145,78 @@ class MediaService:
                                             context=context,
                                             email_to=order.customer.email,
                                             title=f"Xác nhận đơn hàng {order.id}")
+    
+    @staticmethod
+    @transaction.atomic
+    def create_email_for_cancel_order(order: Order): 
+        context_customer = {
+            'order': order,
+            'user': order.customer,
+        }
+        template = loader.get_template('cancel_order.html')
+        Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                             media_to=order.customer.email,
+                             content=template.render(context_customer),
+                             content_type=MediaContentTypeChoices.HTML,
+                             send_method=MediaSendMethodChoices.EMAIL,
+                             title=f"Hủy đơn hàng {order.id}")
+
+        context_studio = {
+            'order': order,
+            'user': order.studio.owner,
+        }
+        template = loader.get_template('cancel_order.html')
+        Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                                media_to=order.studio.owner.email,
+                                content=template.render(context_studio),
+                                content_type=MediaContentTypeChoices.HTML,
+                                send_method=MediaSendMethodChoices.EMAIL,
+                                title=f"Hủy đơn hàng {order.id}")
+        
+    
+    @staticmethod
+    def create_email_for_create_payment(payment : Payment) :
+        order = payment.order
+        context = {
+            'order': order,
+            'payment': payment,
+            'user': order.customer,
+        }
+        content = loader.get_template('create_payment.html').render(context)
+        media = Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                                    media_to=order.customer.email,
+                                    content=content,
+                                    content_type=MediaContentTypeChoices.HTML,
+                                    send_method=MediaSendMethodChoices.EMAIL,
+                                    title=f"Xác nhận thanh toán {payment.id}")
+    
+    @staticmethod
+    def create_email_for_pay_payment(payment : Payment):
+        order = payment.order
+        context_customer = {
+            'order': order,
+            'payment': payment,
+            'user': order.customer,
+        }
+        customer_content = loader.get_template('pay_payment_customer.html').render(context_customer)
+        Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                            media_to=order.customer.email,
+                            content=customer_content,
+                            content_type=MediaContentTypeChoices.HTML,
+                            send_method=MediaSendMethodChoices.EMAIL,
+                            title=f"Xác nhận thanh toán {payment.id}")
+        context_studio = {
+            'order': order,
+            'payment': payment,
+            'user': order.studio.owner,
+        }
+        studio_content = loader.get_template('pay_payment_studio.html').render(context_studio)
+        Media.objects.create(media_from=settings.EMAIL_HOST_USER,
+                            media_to=order.studio.owner.email,
+                            content=studio_content,
+                            content_type=MediaContentTypeChoices.HTML,
+                            send_method=MediaSendMethodChoices.EMAIL,
+                            title=f"Xác nhận thanh toán {payment.id}")
     
     @staticmethod
     def send_mail():
