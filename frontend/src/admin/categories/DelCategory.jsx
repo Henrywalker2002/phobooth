@@ -6,7 +6,7 @@ function DelCategory({ open, setOpen, setOpenSBar, category }) {
   const axiosPrivate = useAxiosPrivate();
   const handleDelReq = () => {
     axiosPrivate
-      .delete(`/category/${category.id}/`)
+      .delete(`/category/${category.code_name}/`)
       .then((res) => {
         console.log(res.data);
 

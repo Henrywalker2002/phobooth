@@ -95,7 +95,7 @@ function OrderDetail() {
     };
     console.log(data);
     axiosPrivate
-      .patch(`/order/${id}/`, data)
+      .patch(`/order/${1}/`, data)
       .then((res) => {
         console.log(res.data);
         setReload(true);
@@ -249,7 +249,7 @@ function OrderDetail() {
     return (
       <React.Fragment>
         <TableRow sx={{ borderBottom: "unset" }}>
-          <TableCell sx={{ maxWidth: "50px" }}>
+          <TableCell sx={{ width: "5%" }}>
             {row.status === "ACCEPTED" ? (
               <CheckCircleIcon color="success" />
             ) : row.status === "REJECTED" ? (
@@ -274,12 +274,12 @@ function OrderDetail() {
             </div>
           </TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
               {translateType(row.item?.type)}
             </div>
           </TableCell>
           <TableCell align="left">
-            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
               {row.item?.category?.title}
             </div>
           </TableCell>
@@ -364,8 +364,8 @@ function OrderDetail() {
         </Typography>
       </Breadcrumbs>
 
-      <div className="flex justify-between items-start mt-5 px-16">
-        <div className="flex flex-col gap-5">
+      <div className="flex justify-between items-start mt-5 px-10">
+        <div className="flex flex-col gap-5 w-[70%]">
           {/* Cancel Noti */}
           {order.status === "CANCELED" && (
             <Alert
@@ -381,7 +381,7 @@ function OrderDetail() {
           <TableContainer
             component={Paper}
             sx={{
-              width: "950px",
+              width: "100%",
               border: "0.5px solid #d6d3d1",
             }}
           >
@@ -411,30 +411,36 @@ function OrderDetail() {
             <Table aria-label="collapsible table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ maxWidth: "50px" }} />
+                  <TableCell sx={{ width: "1%" }} />
                   <TableCell
                     align="left"
-                    sx={{ color: "#3F41A6", width: "250px" }}
+                    sx={{ color: "#3F41A6", width: "30%", fontSize: "16px" }}
                   >
-                    SẢN PHẨM
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ color: "#3F41A6", width: "150px" }}
-                  >
-                    PHÂN LOẠI
+                    Sản phẩm
                   </TableCell>
                   <TableCell
                     align="left"
-                    sx={{ color: "#3F41A6", width: "150px" }}
+                    sx={{ color: "#3F41A6", width: "13%", fontSize: "16px" }}
                   >
-                    DANH MỤC
+                    Phân loại
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    SỐ LƯỢNG
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "20%", fontSize: "16px" }}
+                  >
+                    Danh mục
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    GIÁ ĐƠN VỊ
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "11%", fontSize: "16px" }}
+                  >
+                    Số lượng
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%", fontSize: "16px" }}
+                  >
+                    Giá đơn vị
                   </TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -508,7 +514,7 @@ function OrderDetail() {
                             if (req.status === "PENDING")
                               return (
                                 <Paper
-                                  id = {`payment-${req.id}`}
+                                  id={`payment-${req.id}`}
                                   key={req.id}
                                   sx={{
                                     width: "fit-content",
@@ -888,7 +894,7 @@ function OrderDetail() {
           {/* Thông tin vận chuyển */}
           <Paper
             sx={{
-              width: "950px",
+              width: "100%",
               margin: "10px auto",
               border: "1px solid #d6d3d1",
             }}

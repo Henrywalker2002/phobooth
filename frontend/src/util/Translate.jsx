@@ -28,11 +28,17 @@ export const translateErrStatusOrder = (err) => {
     "You cannot update this order to in process, please update all price of order item first"
   )
     return "Bạn cần phải cập nhật giá của tất cả sản phẩm trước khi cập nhật trạng thái tiếp theo !";
+  else if (err === "You cannot update this order to in process")
+    return "Bạn không thể cập nhật đơn hàng này sang trạng thái 'Đang tiến hành'.";
   else if (
     err ===
     "You cannot complete order if that order have not been paid completed yet"
   )
     return 'Không cập nhật "Hoàn Thành" cho đơn hàng chưa được thanh toán toàn bộ!';
+  else if (
+    err === "You cannot complete order if have any order item is not completed"
+  )
+    return "Bạn không thể hoàn thành đơn hàng nếu có sản phẩm chưa được hoàn thành.";
   else if (err === "You cannot update a completed order")
     return "Bạn không thể cập nhật trạng thái cho đơn hàng đã hoàn thành!";
   else if (err === "You cannot cancel this order")

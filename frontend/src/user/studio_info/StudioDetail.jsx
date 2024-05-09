@@ -38,7 +38,7 @@ function StudioDetail() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/studio/${code_name}`)
+      .get(`/studio/${code_name}/`)
       .then((res) => {
         console.log(res.data);
         setStudio(res.data);
@@ -118,7 +118,7 @@ function StudioDetail() {
                     fontWeight: 600,
                   }}
                 >
-                  {studio?.type === "STUDIO" ? "Studio" : "Thợ chụp ảnh"}
+                  {studio?.type === "STUDIO" ? "Cửa hàng" : "Thợ chụp ảnh"}
                 </div>
                 <div className="flex items-stretch justify-start gap-2">
                   <Button

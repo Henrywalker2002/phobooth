@@ -48,6 +48,13 @@ function Signup() {
     };
   }, []);
 
+  useEffect(() => {
+    setUser("");
+    setPwd("");
+    setEmail("");
+    setFullName("");
+  }, []);
+
   const handleSignup = async (e) => {
     e.preventDefault();
     var signupInfo = JSON.stringify({
@@ -94,30 +101,35 @@ function Signup() {
   const handleFacebookLogin = () => {
     FB.login(function (response) {
       if (response.authResponse) {
-        axios.post("/fb-login/", { access_token: response.authResponse.accessToken }).then((response) => {
-          setCookie(
-            "userInfo",
-            {
-              ...response?.data,
-              password: pwd,
-            },
-            { path: "/" }
-          );
-          console.log(response?.data);
-    
-          setUser("");
-          setPwd("");
-          if (
-            response.data.role[0].code_name === "admin" ||
-            response.data.role[0].code_name === "staff"
-          )
-            navigate("/admin", { replace: true });
-          else navigate(from, { replace: true });
-        }).catch((err) => {
-          if (err.status === 400) {
-            console.log(err.response.data.message)
-          }
-        })
+        axios
+          .post("/fb-login/", {
+            access_token: response.authResponse.accessToken,
+          })
+          .then((response) => {
+            setCookie(
+              "userInfo",
+              {
+                ...response?.data,
+                password: pwd,
+              },
+              { path: "/" }
+            );
+            console.log(response?.data);
+
+            setUser("");
+            setPwd("");
+            if (
+              response.data.role[0].code_name === "admin" ||
+              response.data.role[0].code_name === "staff"
+            )
+              navigate("/admin", { replace: true });
+            else navigate(from, { replace: true });
+          })
+          .catch((err) => {
+            if (err.status === 400) {
+              console.log(err.response.data.message);
+            }
+          });
       } else {
         console.log("User cancelled login or did not fully authorize.");
       }

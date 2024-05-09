@@ -95,10 +95,7 @@ function App() {
               <Route path="/booking" element={<Booking />} />
             </Route>
             <Route path="/orders" element={<Orders />} />
-            <Route
-              path="/order/success-payment"
-              element={<PaymentSuccess />}
-            />
+            <Route path="/order/success-payment" element={<PaymentSuccess />} />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
 
             <Route path="/complain/detail/:id" element={<ComplainDetail />} />
@@ -152,8 +149,6 @@ function App() {
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/notification" element={<NotificationMgmt />} />
           <Route path="/" element={<Home />} />
-          {/* Studio Detail dành cho user xem */}
-          <Route path="/studio/:code_name" element={<StudioDetail />} />
         </Route>
       </Routes>
     </ThemeProvider>

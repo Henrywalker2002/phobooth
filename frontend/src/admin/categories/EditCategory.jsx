@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { translateErrCategory } from "../../util/Translate";
@@ -59,6 +59,8 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
           </div>
           <IconButton
             onClick={() => {
+              setNewCategory({});
+              setErrMsg({});
               setOpen(false);
             }}
           >
@@ -145,6 +147,10 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
         <div className="flex gap-5 justify-center mx-auto my-2">
           <Button
             variant="outlined"
+            onClick={() => {
+              setNewCategory({});
+              setErrMsg({});
+            }}
             sx={{
               textTransform: "none",
               border: "1px solid #3F41A6",
@@ -175,7 +181,7 @@ function EditCategory({ open, setOpen, setOpenSBar, category }) {
               },
             }}
           >
-            Thêm danh mục
+            Cập nhật
           </Button>
         </div>
       </DialogActions>

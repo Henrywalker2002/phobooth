@@ -25,6 +25,7 @@ import InsertChartOutlinedRoundedIcon from "@mui/icons-material/InsertChartOutli
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useCookies } from "react-cookie";
 import NotificationList from "./notification/Notification";
+import no_avt from "../assets/blank-avatar.png";
 
 function StudioNavbar() {
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ function StudioNavbar() {
             <img src={logo} alt="logo-phobooth"></img>
           </div> */}
           <div className="self-center">
-            <div className="text-[#787282] text-[19px]">Studio</div>
+            <div className="text-[#787282] text-[19px]">Cửa hàng</div>
           </div>
         </div>
 
@@ -186,14 +187,15 @@ function StudioNavbar() {
               <ChatOutlinedIcon sx={{ color: "#666666" }} />
             </IconButton>
 
-            <IconButton
+            <Avatar
+              alt="avt"
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
-            >
-              <FaRegCircleUser style={{ color: "#666666" }} />
-            </IconButton>
+              src={studioInfo.avatar ?? no_avt}
+              sx={{ width: "30px", height: "30px", cursor: "pointer" }}
+            />
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
@@ -216,16 +218,12 @@ function StudioNavbar() {
                   },
                 }}
               >
-                {studioInfo.avatar ? (
-                  <Avatar
-                    alt="avt"
-                    src={studioInfo.avatar}
-                    style={{ marginRight: "10px" }}
-                  />
-                ) : (
-                  <FaRegCircleUser style={{ marginRight: "10px" }} />
-                )}
-                {studioInfo.friendly_name}
+                <div className="flex gap-2 items-center">
+                  <Avatar alt="avt" src={studioInfo.avatar ?? no_avt} />
+                  <div className="max-w-[150px] text-wrap whitespace-normal text-base font-semibold text-indigo-800 tracking-wide">
+                    {studioInfo.friendly_name}
+                  </div>
+                </div>
               </MenuItem>
 
               <Divider />

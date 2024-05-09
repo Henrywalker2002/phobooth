@@ -60,7 +60,7 @@ function UpdateHistory({ order }) {
   };
 
   return (
-    <div className="flex flex-col gap-3 w-[30%] items-center">
+    <div className="flex flex-col gap-3 w-[20%] items-end">
       <Paper
         sx={{
           width: "fit-content",

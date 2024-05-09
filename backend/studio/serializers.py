@@ -87,7 +87,7 @@ class StudioDetailSerializer(serializers.ModelSerializer):
 
         fields = ['id', "code_name", 'friendly_name', 'phone', 'email', 'description', 'tax_code', 'is_verified',
                   'address', "avatar", "star", "number_rate", "number_order_completed", 'created_at', "total_item",
-                  "account_balance", "account_number", "account_name",  "bank_bin"]
+                  "account_balance", "account_number", "account_name",  "bank_bin", 'type']
 
 
 class AddEmployeeSerializer(serializers.Serializer):
