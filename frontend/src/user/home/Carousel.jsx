@@ -58,10 +58,15 @@ function Carousel({ handleAddToCart }) {
   useEffect(() => {
     const handleGetCategory = async () => {
       try {
-        let res = await axios.get("/category");
+        let serRes = await axios.get(
+          "/category/?type=SERVICE&limit=5&offset=0"
+        );
+        let proRes = await axios.get(
+          "/category/?type=PRODUCT&limit=5&offset=0"
+        );
         // console.log(res.data);
-        setCategories(res.data.results);
-        await handleGetItems(res.data.results[0]?.code_name);
+        setCategories(serRes.data.results.concat(proRes.data.results));
+        await handleGetItems(serRes.data.results[0]?.code_name);
       } catch (error) {
         console.log(error);
       }
@@ -142,7 +147,8 @@ function Carousel({ handleAddToCart }) {
                         key={category.id}
                         onClick={() => handleGetItems(category.code_name)}
                         sx={{
-                          height: "50px",
+                          height: "fit-content",
+                          padding: "15px 30px",
                           "&:hover": {
                             bgcolor: "#99A3FF",
                           },
@@ -152,17 +158,24 @@ function Carousel({ handleAddToCart }) {
                               : "",
                         }}
                       >
-                        <ListItemText inset>{category.title}</ListItemText>
+                        <ListItemText>
+                          <div className="text-wrap whitespace-normal">
+                            {category.title}
+                          </div>
+                        </ListItemText>
                       </MenuItem>
                     ))
                   : "Empty"}
 
-                <Divider />
+                {/* <Divider sx={{ marginY: 0 }} /> */}
                 <MenuItem
-                  sx={{ height: "50px" }}
+                  sx={{
+                    height: "50px",
+                    borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+                  }}
                   onClick={() => navigate("/advanced-search/")}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: "20px" }}>
                     <AddIcon fontSize="medium" />
                   </ListItemIcon>
                   <ListItemText>Xem tất cả danh mục</ListItemText>

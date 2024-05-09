@@ -104,7 +104,7 @@ function UpdateHistory({ order, setOrderReload }) {
     <div className="flex flex-col gap-3">
       <Paper
         sx={{
-          width: "fit-content",
+          width: "20%",
           minWidth: "350px",
           border: "1px solid #d6d3d1",
         }}

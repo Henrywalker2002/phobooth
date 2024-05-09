@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import StudioNavbar from "../../components/StudioNavbar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import DelItem from "./DelItem";
+import { CurrencyFormatter } from "../../util/Format";
 
 function ItemMgmt() {
   // global
@@ -58,7 +59,7 @@ function ItemMgmt() {
     axiosPrivate
       .get(`/item-service/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        // console.log(res.data.results);
+        console.log(res.data.results);
         setSerPageCount(Math.ceil(res.data.count / itemsPage));
         setServiceList(res.data.results);
       })
@@ -86,7 +87,7 @@ function ItemMgmt() {
     axiosPrivate
       .get(`/item-product/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        // console.log(res.data.results);
+        console.log(res.data.results);
         setProPageCount(Math.ceil(res.data.count / itemsPage));
         setProductList(res.data.results);
       })
@@ -114,7 +115,7 @@ function ItemMgmt() {
     axiosPrivate
       .get(`/item-service-pack/?limit=${itemsPage}&offset=0`)
       .then((res) => {
-        // console.log(res.data.results);
+        console.log(res.data.results);
         setPkgPageCount(Math.ceil(res.data.count / itemsPage));
         setPkgList(res.data.results);
       })
@@ -296,22 +297,36 @@ function ItemMgmt() {
           {/* Service Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "900px", margin: "20px auto" }}
+            sx={{ width: "80%", margin: "20px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "#3F41A6" }}>DỊCH VỤ</TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell sx={{ color: "#3F41A6", width: "30%" }}>
+                    DỊCH VỤ
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "18%" }}
+                  >
                     LOẠI DỊCH VỤ
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "20%" }}
+                  >
                     DANH MỤC
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "20%" }}
+                  >
                     GIÁ THAM KHẢO
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "12%" }}
+                  >
                     HÀNH ĐỘNG
                   </TableCell>
                 </TableRow>
@@ -327,8 +342,8 @@ function ItemMgmt() {
                         <div className="items-stretch flex gap-5">
                           <img
                             loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                            srcSet={service?.picture}
+                            className="object-cover rounded w-[50px] h-[40px] overflow-hidden shrink-0 max-w-full"
                           />
                           <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow whitespace-nowrap my-auto">
                             {service.name}
@@ -336,21 +351,23 @@ function ItemMgmt() {
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {service.type == "SERVICE"
                             ? "Dịch vụ chính"
                             : "Dịch vụ hỗ trợ"}
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
                           {service.category?.title}
                         </div>
                       </TableCell>
                       <TableCell align="left">
                         {service.min_price && service.max_price
-                          ? `${service.min_price} - ${service.max_price}`
+                          ? `${CurrencyFormatter(
+                              service.min_price
+                            )} - ${CurrencyFormatter(service.max_price)}`
                           : ""}
                       </TableCell>
                       <TableCell align="left">
@@ -398,20 +415,31 @@ function ItemMgmt() {
           {/* Product Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "900px", margin: "20px auto" }}
+            sx={{ width: "70%", margin: "20px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "#3F41A6" }}>HÀNG HÓA</TableCell>
+                  <TableCell sx={{ color: "#3F41A6", width: "40%" }}>
+                    HÀNG HÓA
+                  </TableCell>
 
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%" }}
+                  >
                     DANH MỤC
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "20%" }}
+                  >
                     GIÁ
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "15%" }}
+                  >
                     HÀNH ĐỘNG
                   </TableCell>
                 </TableRow>
@@ -427,8 +455,8 @@ function ItemMgmt() {
                         <div className="items-stretch flex gap-5">
                           <img
                             loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                            srcSet={product?.picture}
+                            className="object-cover rounded w-[50px] h-[40px] overflow-hidden shrink-0 max-w-full"
                           />
                           <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow whitespace-nowrap my-auto">
                             {product.name}
@@ -437,12 +465,14 @@ function ItemMgmt() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
                           {product.category?.title}
                         </div>
                       </TableCell>
-                      <TableCell align="left">{product.fixed_price}</TableCell>
+                      <TableCell align="left">
+                        {CurrencyFormatter(product.fixed_price)}
+                      </TableCell>
                       <TableCell align="left" sx={{ width: "140px" }}>
                         <div className="flex gap-1 w-fit">
                           <IconButton
@@ -488,20 +518,31 @@ function ItemMgmt() {
           {/* Package Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "900px", margin: "20px auto" }}
+            sx={{ width: "70%", margin: "20px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "#3F41A6" }}>GÓI DỊCH VỤ</TableCell>
+                  <TableCell sx={{ color: "#3F41A6", width: "35%" }}>
+                    GÓI DỊCH VỤ
+                  </TableCell>
 
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%" }}
+                  >
                     DANH MỤC
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    GIÁ
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "25%" }}
+                  >
+                    GIÁ THAM KHẢO
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "15%" }}
+                  >
                     HÀNH ĐỘNG
                   </TableCell>
                 </TableRow>
@@ -517,8 +558,8 @@ function ItemMgmt() {
                         <div className="items-stretch flex gap-5">
                           <img
                             loading="lazy"
-                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/a97f9876005eb17efc67930c907f0a0f6a644b429c20721808ad7714be271a90?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                            className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full"
+                            srcSet={pkg?.picture}
+                            className="object-cover rounded w-[50px] h-[40px] overflow-hidden shrink-0 max-w-full"
                           />
                           <div className="text-zinc-900 text-[14px] font-medium leading-6 self-center grow whitespace-nowrap my-auto">
                             {pkg.name}
@@ -527,13 +568,15 @@ function ItemMgmt() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                           {pkg.category.title}
                         </div>
                       </TableCell>
                       <TableCell align="left">
                         {pkg.min_price && pkg.max_price
-                          ? `${pkg.min_price} - ${pkg.max_price}`
+                          ? `${CurrencyFormatter(
+                              pkg.min_price
+                            )} - ${CurrencyFormatter(pkg.max_price)}`
                           : ""}
                       </TableCell>
                       <TableCell align="left" sx={{ width: "140px" }}>

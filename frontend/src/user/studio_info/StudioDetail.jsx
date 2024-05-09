@@ -38,7 +38,7 @@ function StudioDetail() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/studio/${code_name}`)
+      .get(`/studio/${code_name}/`)
       .then((res) => {
         console.log(res.data);
         setStudio(res.data);

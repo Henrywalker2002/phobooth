@@ -34,8 +34,10 @@ function DeleteOrderItem({ open, setOpen, orderItem, setOrder }) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)}>Hủy</Button>
-        <Button onClick={handleDeleteItem} autoFocus>
+        <Button sx={{ color: "#3F41A6" }} onClick={() => setOpen(false)}>
+          Hủy
+        </Button>
+        <Button sx={{ color: "#3F41A6" }} onClick={handleDeleteItem} autoFocus>
           Xóa
         </Button>
       </DialogActions>

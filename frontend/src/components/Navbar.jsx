@@ -32,7 +32,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
 import NotificationList from "./notification/Notification";
-// import logo from "../assets/logo1.png";
+import no_avt from "../assets/blank-avatar.png";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
   display: "none",
@@ -358,14 +358,23 @@ function Navbar() {
               <MdOutlineShoppingCart style={{ color: "#666666" }} />
             </IconButton>
 
-            <IconButton
+            {/* <IconButton
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
             >
               <FaRegCircleUser style={{ color: "#666666" }} />
-            </IconButton>
+            </IconButton> */}
+            <Avatar
+              alt="avt"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              src={cookies.userInfo.avatar ?? no_avt}
+              sx={{ width: "30px", height: "30px", cursor: "pointer" }}
+            />
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
@@ -378,26 +387,17 @@ function Navbar() {
               <MenuItem
                 // onClick={() => navigate("/profile")}
                 sx={{
-                  color: "#3F41A6",
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  lineHeight: "25px",
-                  fontStyle: "normal",
                   "&:hover": {
                     backgroundColor: "transparent !important", // Ngăn chặn màu nền khi hover
                   },
                 }}
               >
-                {cookies.userInfo.avatar ? (
-                  <Avatar
-                    alt="avt"
-                    src={cookies.userInfo.avatar}
-                    style={{ marginRight: "10px" }}
-                  />
-                ) : (
-                  <FaRegCircleUser style={{ marginRight: "10px" }} />
-                )}
-                {userInfo}
+                <div className="flex gap-2 items-center">
+                  <Avatar alt="avt" src={cookies.userInfo.avatar ?? no_avt} />
+                  <div className="max-w-[150px] text-wrap whitespace-normal text-base font-semibold text-indigo-800 tracking-wide">
+                    {userInfo}
+                  </div>
+                </div>
               </MenuItem>
               <Divider />
               <MenuItem onClick={() => navigate("/profile")}>

@@ -29,7 +29,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AddIcon from "@mui/icons-material/Add";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdDeleteOutline } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import StudioNavbar from "../../components/StudioNavbar";
@@ -66,7 +66,7 @@ function OrderDetail(props) {
 
   const getOrderDetail = () => {
     axiosPrivate
-      .get(`/order/${id}`)
+      .get(`/order/${id}/`)
       .then((res) => {
         // console.log(res.data);
         setOrder(res.data);
@@ -125,6 +125,12 @@ function OrderDetail(props) {
     setOpenEditItem(true);
   };
 
+  // Delete Order Item Dialog
+  const handleOpenDelItem = (item) => {
+    setSelectedItem(item);
+    setOpenDelItem(true);
+  };
+
   // disable btn
   const EditIconButton = ({ row }) => {
     if (order.status !== "ORDERED") {
@@ -148,6 +154,40 @@ function OrderDetail(props) {
     return (
       <IconButton onClick={() => handleOpenEditItem(row)}>
         <MdEdit
+          style={{
+            width: "22px",
+            height: "22px",
+          }}
+        />
+      </IconButton>
+    );
+  };
+
+  const DelIconButton = ({ row }) => {
+    // console.log(row);
+    if (order.status !== "ORDERED" && order.status !== "IN_PROCESS") {
+      return (
+        <Tooltip
+          title={
+            "Bạn chỉ được xóa khi đơn đang trạng thái 'Đã đặt' và 'Đang tiến hành'"
+          }
+        >
+          <span>
+            <IconButton disabled>
+              <MdDeleteOutline
+                style={{
+                  width: "22px",
+                  height: "22px",
+                }}
+              />
+            </IconButton>
+          </span>
+        </Tooltip>
+      );
+    }
+    return (
+      <IconButton onClick={() => handleOpenDelItem(row)}>
+        <MdDeleteOutline
           style={{
             width: "22px",
             height: "22px",
@@ -224,7 +264,7 @@ function OrderDetail(props) {
 
     return (
       <React.Fragment>
-        <TableRow sx={{ borderBottom: "unset" }} id = {row.item?.id}>
+        <TableRow sx={{ borderBottom: "unset" }} id={row.item?.id}>
           <TableCell sx={{ maxWidth: "50px" }}>
             {row.status === "ACCEPTED" ? (
               <CheckCircleIcon color="success" />
@@ -262,7 +302,7 @@ function OrderDetail(props) {
           <TableCell align="left">{getPrice(row)}</TableCell>
           <TableCell align="left">
             <EditIconButton row={row} />
-            {/* <DelIconButton row={row} /> */}
+            <DelIconButton row={row} />
           </TableCell>
         </TableRow>
         <TableRow>
@@ -332,8 +372,8 @@ function OrderDetail(props) {
         </Typography>
       </Breadcrumbs>
 
-      <div className="flex justify-between items-start mt-5 px-16">
-        <div className="flex flex-col gap-5 w-[70%]">
+      <div className="flex justify-between items-start mt-5 px-5">
+        <div className="flex flex-col gap-5 w-[75%]">
           {/* Detail Order */}
           <TableContainer
             component={Paper}
@@ -343,7 +383,7 @@ function OrderDetail(props) {
               border: "0.5px solid #d6d3d1",
             }}
           >
-            <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-12 py-4 rounded-lg">
+            <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-10 py-4 rounded-lg">
               <div className="text-indigo-800 text-xl font-semibold leading-8 whitespace-nowrap">
                 {order?.order_item?.length} sản phẩm
               </div>
@@ -457,8 +497,9 @@ function OrderDetail(props) {
                     </div>
 
                     <div className="pl-5 text-stone-500 text-sm leading-6">
-                      Lưu ý: Giá tổng của đơn hàng sẽ được cập nhật sau 3 ngày
-                      kể từ khi sản phẩm được thêm vào.
+                      Lưu ý: Giá tổng của đơn hàng sẽ được cập nhật sau khi
+                      khách hàng chấp nhận hoặc mặc định trong vòng 3 ngày sau
+                      khi sản phẩm được thêm vào.
                     </div>
 
                     {order.note == null ? null : (

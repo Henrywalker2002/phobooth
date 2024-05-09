@@ -20,6 +20,7 @@ import Filter from "./Filter";
 import { useCookies } from "react-cookie";
 import Footer from "./Footer";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 
 const handleDate = (date) => {
   const newDate = new Date(date);
@@ -27,6 +28,7 @@ const handleDate = (date) => {
 };
 
 function Home() {
+  const navigate = useNavigate();
   const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
   // local
@@ -36,7 +38,7 @@ function Home() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/studio/${cookies.userInfo.studio.code_name}`)
+      .get(`/studio/${cookies.userInfo.studio.code_name}/`)
       .then((res) => {
         console.log(res.data);
         setStudio(res.data);

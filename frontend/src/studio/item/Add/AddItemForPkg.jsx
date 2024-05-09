@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { CurrencyFormatter } from "../../../util/Format";
 
 function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
   let title =
@@ -38,6 +39,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
   // selection list
   useEffect(() => {
     let slug = type == "PRODUCT" ? "/item-product/" : "/item-service/";
+    slug += "?limit=100&offset=0";
     axiosPrivate
       .get(slug)
       .then((res) => {
@@ -88,6 +90,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
       onClose={() => setOpen(false)}
       sx={{
         "& .MuiDialog-paper": {
+          width: "80%",
           maxWidth: "1500px",
           maxHeight: "700px",
         },
@@ -128,7 +131,7 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
         <TableContainer
           component={Paper}
           sx={{
-            width: "700px",
+            width: "80%",
             margin: "20px auto",
             border: "1px solid #d6d3d1",
           }}
@@ -136,17 +139,19 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead sx={{ bgcolor: "#E2E5FF" }}>
               <TableRow>
-                <TableCell>
+                <TableCell sx={{ width: "5%" }}>
                   {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
                 </TableCell>
-                <TableCell sx={{ color: "#3F41A6" }}>{title}</TableCell>
+                <TableCell sx={{ color: "#3F41A6", width: "45%" }}>
+                  {title}
+                </TableCell>
 
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "25%" }}>
                   DANH MỤC
                 </TableCell>
 
-                <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                  GIÁ (VNĐ)
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "25%" }}>
+                  GIÁ THAM KHẢO
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -187,15 +192,18 @@ function AddItemForPkg({ open, setOpen, type, itemList, setItemList }) {
                     </TableCell>
 
                     <TableCell align="left">
-                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
                         {item.category?.title}
                       </div>
                     </TableCell>
                     {type === "PRODUCT" ? (
-                      <TableCell align="left">{item.fixed_price}</TableCell>
+                      <TableCell align="left">
+                        {CurrencyFormatter(item.fixed_price)}
+                      </TableCell>
                     ) : (
                       <TableCell align="left">
-                        {item.min_price} - {item.max_price}
+                        {CurrencyFormatter(item.min_price)} -{" "}
+                        {CurrencyFormatter(item.max_price)}
                       </TableCell>
                     )}
                   </TableRow>

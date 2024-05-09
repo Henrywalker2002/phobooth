@@ -63,11 +63,17 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
   const handleSubmit = () => {
     console.log(formData);
     if (formData.password.length < 8) {
-      setErrorMessage("Mật khẩu phải có ít nhất 8 ký tự");
+      setErrorMessage({
+        ...errorMessage,
+        password: "Mật khẩu phải có ít nhất 8 ký tự",
+      });
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Mật khẩu không khớp");
+      setErrorMessage({
+        ...errorMessage,
+        password: "Mật khẩu không khớp",
+      });
       return;
     }
     AxiosPrivate.post("/staff/", formData)
@@ -283,6 +289,7 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
                 value={formData.confirmPassword}
                 onChange={handleChange("confirmPassword")}
                 type={showConfirmPassword ? "text" : "password"}
+                error={errorMessage.password ? true : false}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

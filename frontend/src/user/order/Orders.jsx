@@ -20,6 +20,7 @@ import {
   TextField,
   InputAdornment,
   Alert,
+  Tab,
 } from "@mui/material";
 import { RiSearchLine } from "react-icons/ri";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -35,6 +36,7 @@ import Filter from "./Filter";
 import RatingDialog from "./RatingDialog";
 import { DateFormatter } from "../../util/Format";
 import { translateType } from "../../util/Translate";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 function Orders() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ function Orders() {
 
   const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
+  const [status, setStatus] = useState("ORDERED");
   const [cancelId, setCancelId] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
@@ -58,6 +61,10 @@ function Orders() {
     style: "currency",
     currency: "VND",
   });
+
+  const handleStatusChangeTab = (event, newValue) => {
+    setStatus(newValue);
+  };
 
   const getSlugForFilter = (slug) => {
     if (filterVal.status) {
@@ -79,7 +86,7 @@ function Orders() {
   };
 
   useEffect(() => {
-    let slug = "/order/?limit=5&offset=0";
+    let slug = `/order/?limit=5&offset=0&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -92,11 +99,11 @@ function Orders() {
       .catch((err) => {
         console.log(err);
       });
-  }, [filterVal]);
+  }, [filterVal, status]);
 
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
-    let slug = `/order/?limit=5&offset=${offset}`;
+    let slug = `/order/?limit=5&offset=${offset}&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -344,7 +351,7 @@ function Orders() {
                     </div>
                     {recentRequest ? (
                       <Paper
-                        id = {recentRequest.id}
+                        id={recentRequest.id}
                         sx={{
                           width: "fit-content",
                           minWidth: "350px",
@@ -525,7 +532,7 @@ function Orders() {
         Quản lý đơn hàng
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto my-3">
+      <div className="flex gap-5 items-center w-fit mx-auto mt-3 mb-7">
         {/* search */}
         <TextField
           id="input-with-icon-textfield"
@@ -573,64 +580,125 @@ function Orders() {
         </Button>
       </div>
 
-      {/* Table */}
-      <TableContainer
-        component={Paper}
-        sx={{
-          width: "1250px",
-          margin: "20px auto",
-          border: "0.5px solid #d6d3d1",
-        }}
-      >
-        <Table aria-label="collapsible table">
-          <TableHead sx={{ bgcolor: "#E2E5FF" }}>
-            <TableRow>
-              <TableCell />
-              <TableCell sx={{ color: "#3F41A6" }}>MÃ ĐƠN HÀNG</TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                NHÀ CUNG CẤP
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                SỐ LƯỢNG SẢN PHẨM
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                TRẠNG THÁI
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                TỔNG GIÁ
-              </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                HÀNH ĐỘNG
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.length > 0 ? (
-              orders.map((row) => <Row key={row?.id} row={row} />)
-            ) : (
-              <TableRow>
-                <TableCell />
-                {/* <TableCell>Chưa có đơn hàng</TableCell> */}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TabContext value={status}>
+        <Box>
+          <TabList
+            onChange={handleStatusChangeTab}
+            centered
+            sx={{
+              "&.MuiTabs-root .MuiTabs-scroller .MuiTabs-indicator": {
+                bgcolor: "#3F41A6",
+                width: "90px",
+              },
+            }}
+          >
+            <Tab
+              label="Đã đặt"
+              value="ORDERED"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
+            <Tab
+              label="Đang tiến hành"
+              value="IN_PROCESS"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
+            <Tab
+              label="Hoàn thành"
+              value="COMPLETED"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
+            <Tab
+              label="Hủy đơn"
+              value="CANCELED"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
+          </TabList>
+        </Box>
+        <TabPanel value={status}>
+          {/* Table */}
+          <TableContainer
+            component={Paper}
+            sx={{
+              width: "1250px",
+              margin: "20px auto",
+              border: "0.5px solid #d6d3d1",
+            }}
+          >
+            <Table aria-label="collapsible table">
+              <TableHead sx={{ bgcolor: "#E2E5FF" }}>
+                <TableRow>
+                  <TableCell />
+                  <TableCell sx={{ color: "#3F41A6" }}>MÃ ĐƠN HÀNG</TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    NHÀ CUNG CẤP
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    SỐ LƯỢNG SẢN PHẨM
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    TRẠNG THÁI
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    TỔNG GIÁ
+                  </TableCell>
+                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    HÀNH ĐỘNG
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {orders.length > 0 ? (
+                  orders.map((row) => <Row key={row?.id} row={row} />)
+                ) : (
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Chưa có đơn hàng</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-      {/* Pagination */}
-      <Pagination
-        count={pageCount}
-        onChange={getOrdersForPage}
-        page={defaultPage}
-        sx={{
-          margin: "0 auto",
-          width: "fit-content",
-          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-            {
-              bgcolor: "#E2E5FF",
-            },
-        }}
-      />
+          {/* Pagination */}
+          <Pagination
+            count={pageCount}
+            onChange={getOrdersForPage}
+            page={defaultPage}
+            sx={{
+              margin: "0 auto",
+              width: "fit-content",
+              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                {
+                  bgcolor: "#E2E5FF",
+                },
+            }}
+          />
+        </TabPanel>
+      </TabContext>
 
       {/* Filter Dialog */}
       <Filter

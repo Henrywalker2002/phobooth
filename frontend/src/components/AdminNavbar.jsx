@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Button,
   Divider,
   IconButton,
@@ -28,6 +29,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
 import { translateRole } from "../util/Translate";
 import NotificationList from "./notification/Notification";
+import no_avt from "../assets/blank-avatar.png";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
   display: "none",
@@ -226,14 +228,23 @@ export default function AdminNavbar() {
               <MdOutlineChat style={{ color: "#666666" }} />
             </IconButton>
 
-            <IconButton
+            {/* <IconButton
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
             >
               <FaRegCircleUser style={{ color: "#666666" }} />
-            </IconButton>
+            </IconButton> */}
+            <Avatar
+              alt="avt"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              src={cookies.userInfo.avatar ?? no_avt}
+              sx={{ width: "30px", height: "30px", cursor: "pointer" }}
+            />
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
@@ -243,18 +254,6 @@ export default function AdminNavbar() {
                 "aria-labelledby": "basic-button",
               }}
             >
-              {/* <MenuItem
-                sx={{
-                  color: "#3F41A6",
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  lineHeight: "25px",
-                  fontStyle: "normal",
-                }}
-              >
-                {userInfo}
-              </MenuItem> */}
-
               <MenuItem
                 // onClick={() => navigate("/profile")}
                 sx={{
@@ -268,7 +267,13 @@ export default function AdminNavbar() {
                   },
                 }}
               >
-                {userInfo.avatar ? (
+                <div className="flex gap-2 items-center">
+                  <Avatar alt="avt" src={cookies.userInfo.avatar ?? no_avt} />
+                  <div className="max-w-[150px] text-wrap whitespace-normal text-base font-semibold text-indigo-800 tracking-wide">
+                    {userInfo.full_name}
+                  </div>
+                </div>
+                {/* {userInfo.avatar ? (
                   <Avatar
                     alt="avt"
                     src={studioInfo.avatar}
@@ -276,7 +281,7 @@ export default function AdminNavbar() {
                   />
                 ) : // (<FaRegCircleUser style={{ marginRight: "10px" }} />)
                 null}
-                {userInfo.full_name}
+                {userInfo.full_name} */}
               </MenuItem>
               <Divider />
 

@@ -102,6 +102,7 @@ function AddService({ categories, setOpenSBar }) {
   // Add Service
   const handleAddItem = async (e) => {
     e.preventDefault();
+    // console.log(service);
     // check imgs are existed
     if (imgList.length < 4 || imgList.length > 5) setOpenImgAlert(true);
     else if (checkPrice(service)) {
