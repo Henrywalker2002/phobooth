@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        .payment_infor {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <p>Dear {{user.full_name}},</p>
+
+    <p>Chúng tôi vừa xác bạn vừa thanh toán đợt thanh toán {{payment.no}} cho đơn hàng {{order.id}}.</p>
+    <p>Thông tin thanh toán như sau:</p>
+    <div class = "payment_infor">
+        <p>Số tiền: {{payment.amount}}</p>
+        <p>Ngày thanh toán: {{payment.payment_date}}</p>
+        <p>Phương thức thanh toán: {{payment.payment_method}}</p>
+    </div>
+    <p>Trân trọng,</p>
+</body>
+</html>

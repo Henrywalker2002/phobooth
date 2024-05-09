@@ -196,9 +196,23 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'user.User'
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:5173',
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "x-frame-options",
+    "Accept",
+    "Authorization"
+)
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),

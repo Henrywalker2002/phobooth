@@ -17,6 +17,7 @@ from django.conf import settings
 from base.helper import get_client_ip
 import datetime
 from notification.execute import NotificationService
+from media.execute import MediaService
 
 
 class PaymentViewSet(BaseModelViewSet):
@@ -59,7 +60,7 @@ class PaymentViewSet(BaseModelViewSet):
 
         # create notification
         NotificationService.studio_create_payment(serializer.instance)
-        
+        MediaService.create_email_for_create_payment(serializer.instance)
         headers = self.get_success_headers(serializer.data)
         data = self.get_serializer(order, is_order=True).data
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
@@ -169,6 +170,7 @@ class PaymentViewSet(BaseModelViewSet):
             payment_instance.save() 
             # create notification
             NotificationService.user_pay(payment_instance)
+            MediaService.create_email_for_pay_payment(payment_instance)
             self.update_amout_paid_order(payment_instance.order)
         return Response(data=data, status=status.HTTP_202_ACCEPTED)
 
