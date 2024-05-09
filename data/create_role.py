@@ -4,6 +4,7 @@ import requests
 def create_role():
     lst = ["customer", "studio", "admin", "staff"]
     url = "http://localhost:8000/"
+    
     for role in lst:
         response = requests.get(url + 'role?code_name=' + role)
         json = response.json()
