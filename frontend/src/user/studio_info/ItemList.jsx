@@ -129,7 +129,7 @@ function ItemList({ code_name, itemType, filterVal }) {
               />
             ))
           ) : (
-            <div>Không có sản phẩm nào</div>
+            <div className="mx-0">Không có sản phẩm nào</div>
           )}
         </div>
       </div>

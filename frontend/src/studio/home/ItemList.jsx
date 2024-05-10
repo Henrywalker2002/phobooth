@@ -106,7 +106,7 @@ function ItemList({ itemType, filterVal }) {
       </div>
       <div className="flex self-center mx-auto">
         <div className="grid grid-cols-3 gap-7">
-          {itemList?.results?.length > 0 ? (
+          {itemList?.results?.length > 0 &&
             itemList?.results?.map((item, index) => (
               <Card
                 elevation={3}
@@ -197,26 +197,28 @@ function ItemList({ itemType, filterVal }) {
                   </CardContent>
                 </CardActionArea>
               </Card>
-            ))
-          ) : (
-            <div>Không có sản phẩm nào</div>
-          )}
+            ))}
         </div>
+        {itemList?.results?.length <= 0 && (
+          <div className="text-zinc-800">Không có sản phẩm nào</div>
+        )}
       </div>
 
       {/* Pagination For Item */}
-      <Pagination
-        count={itemsCount}
-        onChange={getItemForPage}
-        sx={{
-          margin: "0 auto",
-          width: "fit-content",
-          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-            {
-              bgcolor: "#E2E5FF",
-            },
-        }}
-      />
+      {itemList?.results?.length > 0 && (
+        <Pagination
+          count={itemsCount}
+          onChange={getItemForPage}
+          sx={{
+            margin: "0 auto",
+            width: "fit-content",
+            "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+              {
+                bgcolor: "#E2E5FF",
+              },
+          }}
+        />
+      )}
     </div>
   );
 }

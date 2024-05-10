@@ -184,7 +184,13 @@ function Profile() {
       formData.append("avatar", avt.avt_file, avt.avt_file.name);
     }
 
-    if (addresses.length > 0) {
+    if (
+      addresses.length > 0 &&
+      addresses[0].province &&
+      addresses[0].district &&
+      addresses[0].ward &&
+      addresses[0].street
+    ) {
       // console.log(addresses);
       let addressInfo = {
         province: addresses[0].province,
@@ -394,6 +400,14 @@ function Profile() {
                       ? dayjs(newInfo?.date_of_birth)
                       : dayjs(cookies?.userInfo.date_of_birth)
                   }
+                  slotProps={{
+                    textField: {
+                      helperText: `${
+                        errMsg.date_of_birth ? errMsg.date_of_birth[0] : ""
+                      }`,
+                      error: errMsg.date_of_birth ? true : false,
+                    },
+                  }}
                   // defaultValue={dayjs(cookies?.userInfo.date_of_birth) ?? null}
                 />
               </LocalizationProvider>

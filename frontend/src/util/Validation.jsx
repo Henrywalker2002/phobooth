@@ -5,6 +5,6 @@ export const validFixedPrice = (price) => {
 };
 
 export const validRangePrice = (min_price, max_price) => {
-  if (max_price < min_price) return false;
+  if (Number(max_price) < Number(min_price)) return false;
   return true;
 };

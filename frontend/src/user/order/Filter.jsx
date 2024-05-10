@@ -6,7 +6,6 @@ import {
   DialogContent,
   FormControl,
   FormControlLabel,
-  FormGroup,
   IconButton,
   Radio,
   RadioGroup,
@@ -23,13 +22,6 @@ import { isBefore } from "../../util/Compare";
 function Filter({ open, setOpen, filterVal, setFilterVal }) {
   // local
   const [studioList, setStudioList] = useState([]);
-  const statusList = [
-    { label: "Đã đặt", value: "ORDERED" },
-    { label: "Đang tiến hành", value: "IN_PROCESS" },
-    { label: "Vận chuyển", value: "SHIPPING" },
-    { label: "Hoàn thành", value: "COMPLETED" },
-    { label: "Hủy đơn", value: "CANCELED" },
-  ];
   const [newFilterVal, setNewFilterVal] = useState({});
 
   useEffect(() => {
@@ -114,44 +106,6 @@ function Filter({ open, setOpen, filterVal, setFilterVal }) {
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
         <div className="min-w-[350px] flex flex-col gap-4 px-7">
-          <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
-            <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
-              Trạng thái :
-            </div>
-            <FormGroup>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                name="status"
-                onChange={handleChangeFilter}
-                defaultValue={filterVal.status}
-              >
-                {statusList.map((status, i) => (
-                  <FormControlLabel
-                    key={i}
-                    value={status.value}
-                    control={
-                      <Radio
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#3F41A6",
-                          },
-                        }}
-                      />
-                    }
-                    label={status.label}
-                    sx={{
-                      color: "#666",
-
-                      "& .MuiTypography-root": {
-                        fontSize: "14px",
-                      },
-                    }}
-                  />
-                ))}
-              </RadioGroup>
-            </FormGroup>
-          </div>
-
           <div className="flex flex-col gap-2 justify-between  text-base leading-6 ">
             <div className="flex-auto text-[#1A1A1A] text-lg font-medium">
               Nhà cung cấp (Studio) :
