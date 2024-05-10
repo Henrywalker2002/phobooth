@@ -8,7 +8,6 @@ import json
 import pandas as pd 
 from command import Command, CommandChoices
 import os 
-from openpyxl import load_workbook
 
 
 class BaseTestCase(unittest.TestCase):
@@ -26,6 +25,7 @@ class BaseTestCase(unittest.TestCase):
         options = Options()
         service = Service(executable_path='./msedgedriver.exe')
         cls.driver = WebDriver(service=service, options=options)
+        cls.driver.maximize_window()
         cls.command = Command(cls.driver)
     
     @classmethod
@@ -68,7 +68,7 @@ class BaseTestCase(unittest.TestCase):
     
     @classmethod 
     def load_data_xlsx(self, sheet_name, file_path = "./data.xlsx") -> list[dict]:
-        df : pd.DataFrame = pd.read_excel(file_path, sheet_name = sheet_name)
+        df : pd.DataFrame = pd.read_excel(file_path, sheet_name = sheet_name, dtype='str')
         df.fillna('', inplace=True)
         lst = []
         for index, row in df.iterrows():
@@ -78,8 +78,8 @@ class BaseTestCase(unittest.TestCase):
     @classmethod
     def write_data_xlsx(self, sheet_name, data, file_path = "./data.xlsx"):
         with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-            df : pd.DataFrame = pd.DataFrame(data)
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
+            df : pd.DataFrame = pd.DataFrame(data, dtype='str')
+            df.to_excel(writer, sheet_name=sheet_name, index=False, float_format= None)
         
     def handle_send_file(self, file_str):
         file_name_lst = file_str.split(';')
@@ -88,3 +88,20 @@ class BaseTestCase(unittest.TestCase):
             value_lst.append(f"{os.getcwd()}\\assets\\add_item\\{file_name}")
         self.command.execute_upload_file(target = "xpath=//input[@type='file']", 
                                          value = "\n".join(value_lst))
+    
+    def update_address(self, address : dict):
+        self.command.execute_open(target =  f"{self.base_url}/profile")
+        self.input_selection('province', address.get('province'))
+        self.input_selection('district', address.get('district'))
+        self.input_selection('ward', address.get('ward'))
+        self.command.execute_edit_content(target = "xpath=//input[@name='street']", value = address.get('street'))
+        self.command.execute_click(target = "xpath=//button[@type='submit']")
+        
+    def input_selection(self, type, name):
+        self.command.execute_click(target = f"xpath=//input[@name='{type}']/..")
+        self.command.execute_wait_for_element_present(target = f"xpath=//li[contains(text(), '{name}')]", amount = 10)
+        option = self.command.find_target(f"xpath=//li[contains(text(), '{name}')]")
+        self.driver.execute_script("arguments[0].scrollIntoView();", option)  
+        self.command.execute_pause(amount = 1)
+        self.command.execute_wait_for_element_clickable(target = f"xpath=//li[contains(text(), '{name}')]")  
+        option.click()

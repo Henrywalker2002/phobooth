@@ -49,7 +49,7 @@ function Register() {
   const [openOtherErr, setOpenOtherErr] = useState(false);
 
   const type = [
-    { label: "Studio", value: "STUDIO" },
+    { label: "Cửa hàng / studio", value: "STUDIO" },
     { label: "Thợ chụp ảnh", value: "PHOTOGRAPHER" },
   ];
 
@@ -169,6 +169,14 @@ function Register() {
           },
           { path: "/" }
         );
+        setCookie(
+          "accInfo",
+          {
+            ...cookies.userInfo,
+            studio: res.data,
+          },
+          { path: "/" }
+        );
         navigate("/studio/");
       })
       .catch((err) => {
@@ -265,6 +273,7 @@ function Register() {
                 required
                 variant="outlined"
                 name="code_name"
+                id = "code_name"
                 value={studioInfo.code_name}
                 onChange={updateStudioInfo}
                 error={errMsg.code_name ? true : false}
@@ -286,6 +295,7 @@ function Register() {
                 required
                 variant="outlined"
                 name="email"
+                id = "email"
                 value={studioInfo.email}
                 onChange={updateStudioInfo}
                 InputProps={{
@@ -310,6 +320,7 @@ function Register() {
                 required
                 variant="outlined"
                 name="phone"
+                id="phone"
                 value={studioInfo.phone}
                 onChange={updateStudioInfo}
                 error={errMsg.phone ? true : false}
@@ -400,9 +411,9 @@ function Register() {
           <div className="flex flex-col ml-4">
             <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
               Địa chỉ cửa hàng *
-              <IconButton onClick={handleAddAddress}>
+              {/* <IconButton onClick={handleAddAddress}>
                 <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
-              </IconButton>
+              </IconButton> */}
             </div>
             {addresses.length > 1 ? (
               addresses.map((address, index) => (
@@ -412,6 +423,7 @@ function Register() {
                     id="outlined-select-provinces"
                     label="Tỉnh thành"
                     value={address.province ? address.province : ""}
+                    name = "province"
                     defaultValue=""
                     select
                     error={errMsg.address?.province ? true : false}
@@ -430,7 +442,7 @@ function Register() {
                         value={prov.code}
                         onClick={() => handleUpdateProv(address.id, prov)}
                       >
-                        {prov.name}
+                        {prov.name_with_type}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -440,6 +452,7 @@ function Register() {
                     id="outlined-select-districts"
                     label="Quận huyện"
                     variant="outlined"
+                    name="district"
                     value={address.district ? address.district : ""}
                     defaultValue=""
                     select
@@ -459,7 +472,7 @@ function Register() {
                         value={dist.code}
                         onClick={() => handleUpdateDist(address.id, dist.code)}
                       >
-                        {dist.name}
+                        {dist.name_with_type}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -485,7 +498,7 @@ function Register() {
                     <MenuItem value="">--Chọn phường xã--</MenuItem>
                     {address.wardlist?.map((ward, index) => (
                       <MenuItem key={index} value={ward.code}>
-                        {ward.name}
+                        {ward.name_with_type}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -529,6 +542,7 @@ function Register() {
                   required
                   label="Tỉnh thành"
                   value={addresses[0]?.province ? addresses[0].province : ""}
+                  name= "province"
                   defaultValue=""
                   select
                   error={errMsg.address?.province ? true : false}
@@ -547,7 +561,7 @@ function Register() {
                       value={prov.code}
                       onClick={() => handleUpdateProv(addresses[0].id, prov)}
                     >
-                      {prov.name}
+                      {prov.name_with_type}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -558,6 +572,7 @@ function Register() {
                   variant="outlined"
                   value={addresses[0]?.district ? addresses[0].district : ""}
                   defaultValue=""
+                  name="district"
                   select
                   error={errMsg.address?.district ? true : false}
                   helperText={
@@ -577,7 +592,7 @@ function Register() {
                         handleUpdateDist(addresses[0].id, dist.code)
                       }
                     >
-                      {dist.name}
+                      {dist.name_with_type}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -603,7 +618,7 @@ function Register() {
                   <MenuItem value="">--Chọn phường xã--</MenuItem>
                   {addresses[0].wardlist?.map((ward, index) => (
                     <MenuItem key={index} value={ward.code}>
-                      {ward.name}
+                      {ward.name_with_type}
                     </MenuItem>
                   ))}
                 </TextField>

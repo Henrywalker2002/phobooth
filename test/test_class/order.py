@@ -8,7 +8,7 @@ class TestCreateOrder(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.login_with_account('henrywalker', 'string123')
+        cls.login_with_account('username123', 'password')
         cls.data = cls.load_data_xlsx(sheet_name='create_order')
     
     def handle_add_to_cart(self, item_lst):
@@ -25,8 +25,6 @@ class TestCreateOrder(BaseTestCase):
         for item_id in item_lst:
             self.command.execute_check(target=f"xpath=//*[@id='{item_id}']//input")
         self.command.execute_click(target = "xpath=//button[text()='Đặt dịch vụ']")
-        if data.get('address'):
-            pass 
         self.command.execute_click(target = "xpath=//button[text()='Đặt dịch vụ']")
         self.command.execute_pause(amount = 3)
     
@@ -34,6 +32,16 @@ class TestCreateOrder(BaseTestCase):
         pass 
     
     def test(self):
+        if self.data:
+            row = self.data[0]
+            address = {
+                'province': row.get('province'),
+                'district': row.get('district'),
+                'ward': row.get('ward'),
+                'street': row.get('street')
+            }
+            self.update_address(address)
+        
         for row in self.data:
             try:
                 self.input_data(row)

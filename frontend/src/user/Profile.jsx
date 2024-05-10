@@ -533,6 +533,7 @@ function Profile() {
                     helperText={
                       errMsg.address?.province ? errMsg.address.province[0] : ""
                     }
+                    name="province"
                     sx={{
                       width: "200px",
                       marginY: "10px",
@@ -553,6 +554,7 @@ function Profile() {
                   <TextField
                     id="outlined-select-districts"
                     label="Quận huyện"
+                    name="district"
                     variant="outlined"
                     value={
                       address?.distlist?.find(
@@ -662,6 +664,7 @@ function Profile() {
                     width: "200px",
                     marginY: "10px",
                   }}
+                  name="province"
                 >
                   <MenuItem value="">-- Chọn tỉnh thành --</MenuItem>
                   {provinces?.map((prov, index) => (
@@ -678,6 +681,7 @@ function Profile() {
                 <TextField
                   label="Quận huyện"
                   variant="outlined"
+                  name="district"
                   value={
                     addresses[0]?.distlist?.find(
                       (dist) => dist.code == addresses[0].district
