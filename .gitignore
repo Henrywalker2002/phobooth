@@ -1,4 +1,5 @@
 .vscode
 __pycache__
 ~$*
-*.bat
+backend.bat 
+frontend.bat

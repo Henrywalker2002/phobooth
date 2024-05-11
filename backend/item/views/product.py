@@ -45,6 +45,7 @@ class ProductViewSet(BaseModelViewSet):
         pictures = serializer.validated_data.pop('pictures', [])
         serializer.validated_data['type'] = ItemTypeChoices.PRODUCT
         option = serializer.validated_data.pop('option', None)
+        serializer.validated_data['studio'] = request.user.studio
         serializer.save()
         
         item = serializer.instance

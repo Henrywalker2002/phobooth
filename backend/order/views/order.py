@@ -15,6 +15,7 @@ from address.models import Address
 from order.filter import OrderFilter
 from django.db.models import Sum, F
 from media.execute import MediaService
+from cart.models import Cart
 
 
 class OrderViewSet(BaseModelViewSet):
@@ -66,6 +67,19 @@ class OrderViewSet(BaseModelViewSet):
 
         OrderItem.objects.bulk_create(
             [OrderItem(order=order, **item) for item in order_item])
+
+        for order_item in order_item:
+            item = order_item.get('item', None)
+            if item: 
+                cart = Cart.objects.filter(customer=request.user, item=item)
+                if cart:
+                    cart.first().delete()
+            
+            variation = order_item.get('variation', None)
+            if variation:
+                cart = Cart.objects.filter(customer=request.user, item=variation.product)
+                if cart:
+                    cart.first().delete()
 
         # create notification
         NotificationService.user_create_order(order)

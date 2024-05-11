@@ -1,7 +1,10 @@
 // Studio Register
 export const translateErr = (err) => {
   if (err.code_name && err.code_name[0].includes("already exists")) {
-    err.code_name[0] = "Studio có tên này đã tồn tại.";
+    err.code_name[0] = "Cửa hàng có mã này đã tồn tại.";
+  }
+  else if (err.code_name && err.code_name[0].includes("Code name must start with")) {
+    err.code_name[0] = "Tên cửa hàng phải bắt đầu bằng chữ cái hoặc số và chỉ bao gồm chữ cái số, kí tự và dấu gạch dưới.";
   }
 
   if (err.phone) {
@@ -18,6 +21,7 @@ export const translateErr = (err) => {
       err.email[0] = "Email chưa đúng định dạng.";
     }
   }
+
   //   console.log(err);
   return err;
 };
@@ -71,7 +75,7 @@ export const translateErrSignUp = (err) => {
     err.username &&
     err.username[0] == "user with this username already exists."
   ) {
-    err.username[0] = "Tên này đã tồn tại.";
+    err.username[0] = "Tên nguời dùng này đã tồn tại.";
   }
 
   if (

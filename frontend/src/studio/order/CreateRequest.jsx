@@ -16,6 +16,9 @@ function CreateRequest({
   total_price,
   amount_created,
 }) {
+  const [error, setError] = useState({
+    amount : "Bạn cần nhập số tiền",
+  });
   const [newReq, setNewReq] = useState({});
   const axiosPrivate = useAxiosPrivate();
   const today = dayjs(dayjs().format("YYYY-MM-DD"));
@@ -32,12 +35,20 @@ function CreateRequest({
   const checkPrice = (price) => {
     if (price) {
       if (isNaN(price) || price <= 0 || price == "") {
-        return "Giá trị không hợp lệ!";
+        setError({...error, amount: "Giá trị không hợp lệ!"})
       } else if (total_price - amount_created - price < 0) {
-        return "Giá trị vượt quá số tiền còn lại!";
+        setError({...error, amount: "Giá trị vượt quá số tiền còn lại!"})
+      }
+      else if (price < 10000) {
+        setError({...error, amount: "Số tiền cần thanh toán không thể nhỏ hơn 10,000 VND!"})
+      }
+      else {
+        setError({...error, amount: ""})
       }
     }
-    return "";
+    else {
+      setError({...error, amount: "Bạn cần nhập số tiền"})
+    }
   };
 
   const handleCreateNewReq = () => {
@@ -54,6 +65,41 @@ function CreateRequest({
       .catch((err) => console.log(err));
   };
 
+  const handleDateChange = (value) => {
+    if (value) {
+      let selectDate = new Date(value);
+      
+      if (isNaN(selectDate.getTime())) {
+        setError({
+          ...error,
+          expiration_date: "Ngày không hợp lệ",
+        });
+        return;
+      }
+      if (selectDate.getTime() < new Date(today.format("YYYY-MM-DD")).getTime()) {
+        setError({
+          ...error,
+          expiration_date: "Hạn thanh toán không thể nhỏ hơn ngày hiện tại",
+        });
+        return;
+      }
+      else {
+        setError({
+          ...error,
+          expiration_date: "",
+        })
+      };
+      setNewReq({
+        ...newReq,
+        expiration_date: value.format("YYYY-MM-DD"),
+      });
+      }
+    }
+
+    const handleAmountChange = (e) => {
+      checkPrice(e.target.value);
+      setNewReq({ ...newReq, amount: e.target.value })
+    }
   return (
     <Dialog
       sx={{ minWidth: "500px" }}
@@ -98,23 +144,15 @@ function CreateRequest({
               }}
               format="DD-MM-YYYY"
               minDate={today}
-              onChange={(value) => {
-                if (value)
-                  setNewReq({
-                    ...newReq,
-                    expiration_date: value.format("YYYY-MM-DD"),
-                  });
-              }}
+              onChange={handleDateChange}
               value={
                 newReq.expiration_date ? dayjs(newReq?.expiration_date) : null
               }
               slotProps={{
                 textField: {
-                  helperText: `${
-                    checkEmptyInput(newReq.expiration_date)
-                      ? "Bạn cần chọn ngày"
-                      : ""
-                  }`,
+                  error: error.expiration_date ? true : false,
+                  helperText: error.expiration_date ?? "",
+                  id: "expiration_date",
                 },
               }}
             />
@@ -125,7 +163,7 @@ function CreateRequest({
             Số tiền cần thanh toán :
           </div>
           <TextField
-            id="outlined-basic"
+            id="amount"
             variant="outlined"
             sx={{
               "& .MuiInputBase-input": {
@@ -136,14 +174,10 @@ function CreateRequest({
               width: "170px",
               boxSizing: "border-box",
             }}
-            onChange={(e) => setNewReq({ ...newReq, amount: e.target.value })}
+            onChange={handleAmountChange}
             value={newReq.amount ?? ""}
-            error={checkPrice(newReq.amount) == "" ? false : true}
-            helperText={
-              checkEmptyInput(newReq.amount)
-                ? "Bạn cần nhập số tiền"
-                : checkPrice(newReq.amount)
-            }
+            error={error.amount ? true : false}
+            helperText={error.amount ?? ""}
           />
         </div>
         <div className="flex gap-5 justify-between items-center bg-white max-md:flex-wrap max-md:max-w-full">
@@ -152,7 +186,7 @@ function CreateRequest({
           </div>
           <div className="text-lg font-semibold leading-5 text-indigo-800">
             {formatter.format(
-              !checkEmptyInput(newReq.amount) && checkPrice(newReq.amount) == ""
+              error.amount === "" && newReq.amount
                 ? total_price - amount_created - newReq.amount
                 : total_price - amount_created
             )}
@@ -162,7 +196,10 @@ function CreateRequest({
       <div className="flex gap-5  mx-auto my-5 text-sm font-semibold leading-4 whitespace-nowrap max-md:flex-wrap max-md:px-5 max-md:mt-10 max-md:max-w-full">
         <Button
           variant="outlined"
-          onClick={() => setNewReq({})}
+          onClick={() => {
+            setNewReq({}); 
+            setOpen(false);
+          }}
           sx={{
             textTransform: "none",
             border: "1px solid #3F41A6",
@@ -182,8 +219,8 @@ function CreateRequest({
           variant="contained"
           disabled={
             checkEmptyInput(newReq.expiration_date) ||
-            checkEmptyInput(newReq.amount) ||
-            checkPrice(newReq.amount) !== ""
+            error.expiration_date !== "" || 
+            error.amount !== ""
           }
           onClick={() => {
             handleCreateNewReq();

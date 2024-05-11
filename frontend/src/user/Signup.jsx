@@ -281,22 +281,26 @@ function Signup() {
               <TextField
                 id="fullname"
                 label="Họ và tên"
+                name="fullname"
                 variant="standard"
                 inputRef={userRef}
                 onChange={(e) => setFullName(e.target.value)}
                 value={fullname}
                 error={errMsg.full_name ? true : false}
                 helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
+                required
               />
 
               <TextField
                 id="username"
                 label="Tên người dùng"
+                name="username"
                 variant="standard"
                 onChange={(e) => setUser(e.target.value)}
                 value={user}
                 error={errMsg.username ? true : false}
                 helperText={errMsg.username ? errMsg.username[0] : ""}
+                required
               />
 
               <FormControl
@@ -308,8 +312,10 @@ function Signup() {
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   type="email"
-                  id="my-input"
+                  name="email"
+                  id="email"
                   aria-describedby="my-helper-text"
+                  required
                 />
                 <FormHelperText
                   id="email-helper-text"
@@ -334,6 +340,8 @@ function Signup() {
                   sx={{ width: "400px" }}
                   id="standard-adornment-password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  required
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
