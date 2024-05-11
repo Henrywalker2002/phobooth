@@ -96,6 +96,7 @@ class BaseTestCase(unittest.TestCase):
         self.input_selection('ward', address.get('ward'))
         self.command.execute_edit_content(target = "xpath=//input[@name='street']", value = address.get('street'))
         self.command.execute_click(target = "xpath=//button[@type='submit']")
+        self.command.execute_pause(amount = 2)
         
     def input_selection(self, type, name):
         self.command.execute_click(target = f"xpath=//input[@name='{type}']/..")

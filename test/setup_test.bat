@@ -31,4 +31,7 @@ cd backend
 
 py manage.py create_item
 
-"C:\Program Files\PostgreSQL\15\bin\pg_dump.exe" -h localhost -p 5432 -U postgres -d test_db -f "%cd%\test_db.sql"
+cd .. 
+cd test
+
+"C:\Program Files\PostgreSQL\15\bin\pg_dump.exe" -h localhost -p 5432 -U postgres -d test_db -f "%cd%\temporary\test_db.sql"

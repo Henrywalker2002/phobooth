@@ -24,6 +24,18 @@ class CreateOrderItemSerializer(serializers.ModelSerializer):
             attrs["variation"] = None
         return attrs
 
+    def validate_quantity(self, value):
+        if value < 1:
+            raise serializers.ValidationError(
+                "Quantity must be greater than 0")
+        return value
+    
+    def validate_price(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError(
+                "Price must be greater than 0")
+        return value
+    
     class Meta:
         model = OrderItem
         fields = ["variation", "item", "quantity"]

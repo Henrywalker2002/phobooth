@@ -213,6 +213,8 @@ function Profile() {
         setCookie(
           "userInfo",
           {
+            access : cookies.userInfo.access,
+            refresh : cookies.userInfo.refresh,
             ...res.data,
           },
           { path: "/" }

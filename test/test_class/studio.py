@@ -74,8 +74,6 @@ class TestAddStudio(BaseTestCase):
     
     def test(self):
         for row in self.data:
-            if row.get('result') == 'pass':
-                continue
             try :
                 self.input_data(row)
                 expect = row.get('expect')

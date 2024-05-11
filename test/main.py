@@ -10,10 +10,11 @@ if __name__ == "__main__":
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSignUp))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAddStudio))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAddService))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCreateOrder))
+    # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCreateOrder))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAcceptOrder))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAddOrderItem))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAddPayment))
     # suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPayment))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCompleteOrder))
     unittest.TextTestRunner(verbosity=2).run(suite)
     
