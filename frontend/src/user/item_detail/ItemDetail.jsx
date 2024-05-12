@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useContext, useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import {
@@ -13,22 +13,21 @@ import {
   Avatar,
   ImageListItem,
   ImageListItemBar,
+  Chip,
 } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { FaArrowRight } from "react-icons/fa6";
-import { GoHome } from "react-icons/go";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "../../api/axios";
 import Err401Dialog from "../../components/Err401Dialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
-import ImgList from "./ImgList";
 import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
 import logo from "../../assets/logo2.png";
@@ -36,17 +35,36 @@ import ItemCard from "../../components/ItemCard";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { CurrencyFormatter } from "../../util/Format";
+import CartContext from "../../context/CartProvider";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
   const navigate = useNavigate();
+  const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
+  const { setItemLists } = useContext(CartContext);
   let { id } = useParams(props, "id");
   const [item, setItem] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
-  const [list1, setLits1] = useState([]);
+  const [itemsInStudio, setItemsInStudio] = useState([]);
+  const [similarItems, setSimilarItems] = useState([]);
+  const [selectedChip, setSelectedChip] = useState({ opt1: "", opt2: "" });
+  const options = [
+    {
+      name: "Màu sắc",
+      value: ["đen", "trắng", "xanh"],
+    },
+    {
+      name: "Kích cỡ",
+      value: ["lớn", "nhỏ"],
+    },
+  ];
+  const handleChipClick = (val, index) => {
+    if (index === 0) setSelectedChip({ ...selectedChip, opt1: val });
+    else setSelectedChip({ ...selectedChip, opt2: val });
+  };
 
   const [chooseIndex, setChooseIndex] = useState(0);
   // Hàm xử lý khi click vào nút "Xem thêm"
@@ -68,22 +86,41 @@ function ItemDetail(props) {
     return newDate.toLocaleDateString();
   };
 
+  // Get 4 items in this studio
   useEffect(() => {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
         console.log(res.data);
         setItem(res.data);
+        return res.data;
+      })
+      .then((data) => {
         axios
           .get(`/item/`, {
             params: {
-              studio: res.data.studio.code_name,
+              studio: data.studio.code_name,
               limit: 4,
             },
           })
           .then((res) => {
-            setLits1(res.data.results);
+            console.log("Items in Studio", res.data.results);
+            setItemsInStudio(res.data.results);
           });
+        return data;
+      })
+      .then((data) => {
+        axios
+          .get(`/item/`, {
+            params: {
+              category: data.category.code_name,
+              limit: 4,
+            },
+          })
+          .then((res) => {
+            setSimilarItems(res.data.results);
+          });
+        return data;
       })
       .catch((err) => {
         console.log(err);
@@ -112,6 +149,24 @@ function ItemDetail(props) {
       });
   };
 
+  // Order now
+  const handleOrderNow = (item) => {
+    console.log(item);
+    setItemLists([
+      {
+        studio: item.studio,
+        items: [
+          {
+            item: item,
+            number: quantity,
+          },
+        ],
+        address: { ...cookies.userInfo.address },
+      },
+    ]);
+    navigate("/booking", { state: { from: location } }, { replace: true });
+  };
+
   // Close SnackBar Success
   const handleCloseSBar = (e, reason) => {
     if (reason === "clickaway") {
@@ -121,8 +176,6 @@ function ItemDetail(props) {
     setOpenSBar(false);
   };
 
-  const list0 = ["Sản phẩm khác của Studio", "Tương tự"];
-  // const list1 = [1, 2, 3, 4];
   return (
     <div>
       <Navbar />
@@ -312,10 +365,11 @@ function ItemDetail(props) {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {CurrencyFormatter(item.fixed_price) ??
-                  `${CurrencyFormatter(item.min_price)} - ${CurrencyFormatter(
-                    item.max_price
-                  )}`}{" "}
+                {item.fixed_price
+                  ? CurrencyFormatter(item.fixed_price)
+                  : `${CurrencyFormatter(item.min_price)} - ${CurrencyFormatter(
+                      item.max_price
+                    )}`}{" "}
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -325,79 +379,143 @@ function ItemDetail(props) {
                   {translateType(item?.type)}
                 </div>
                 <div className="text-zinc-900 text-sm leading-5 my-auto">
-                  Lĩnh vực :
+                  Danh mục :
                 </div>
                 <div className="text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch px-2 py-1">
                   {item?.category?.title}
                 </div>
               </div>
               {/* <div className="bg-neutral-200 self-stretch shrink-0 h-px mt-5" /> */}
-              <div className="text-zinc-500 text-sm leading-5 self-stretch mt-5 border-y-[1px] border-neutral-200 py-3 min-h-[220px]">
+              <div className="text-zinc-500 text-sm leading-5 self-stretch mt-5 border-y-[1px] border-neutral-200 py-3 min-h-[100px]">
                 {item?.description + " "}
               </div>
+              <div className="flex flex-col gap-5 mt-5">
+                {options.map((opt, index) => (
+                  <div key={index} className="flex gap-5">
+                    <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
+                      {opt.name} :
+                    </div>
+                    <div className="flex gap-3 flex-wrap">
+                      {opt.value?.map((val, i) => {
+                        return index === 0 ? (
+                          <Chip
+                            key={i}
+                            label={val}
+                            onClick={() => handleChipClick(val, index)}
+                            variant="outlined"
+                            sx={{
+                              padding: "5px 5px",
+                              bgcolor: `${
+                                selectedChip.opt1 === val ? "#3F41A6" : ""
+                              }`,
+                              color: `${
+                                selectedChip.opt1 === val ? "#fff" : ""
+                              }`,
+                              "&:hover": {
+                                bgcolor: "#E2E5FF",
+                              },
+                            }}
+                          />
+                        ) : (
+                          <Chip
+                            key={i}
+                            label={val}
+                            onClick={() => handleChipClick(val, index)}
+                            variant="outlined"
+                            sx={{
+                              padding: "5px 5px",
+                              bgcolor: `${
+                                selectedChip.opt2 === val ? "#3F41A6" : ""
+                              }`,
+                              color: `${
+                                selectedChip.opt2 === val ? "#fff" : ""
+                              }`,
+                              "&:hover": {
+                                bgcolor: "#E2E5FF",
+                              },
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
 
-              <div className="justify-start items-stretch self-stretch flex gap-5 px-px py-5 ">
-                <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
-                  <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => setQuantity(quantity - 1)}
-                    >
-                      <RiSubtractFill style={{ color: "#666666" }} />
-                    </IconButton>
+                <div className=" flex gap-5 mt-2">
+                  <div className="flex flex-col items-center">
+                    <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#d6d3d1)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
+                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
+                        <IconButton
+                          color="primary"
+                          onClick={() => setQuantity(quantity - 1)}
+                        >
+                          <RiSubtractFill style={{ color: "#666666" }} />
+                        </IconButton>
+                      </div>
+                      <div className="text-zinc-900 text-center text-base leading-6 my-auto mx-2">
+                        {quantity}
+                      </div>
+                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
+                        <IconButton
+                          color="primary"
+                          onClick={() => setQuantity(quantity + 1)}
+                        >
+                          <IoIosAdd style={{ color: "#666666" }} />
+                        </IconButton>
+                      </div>
+                    </div>
+                    <div className=" text-stone-500 text-xs leading-6">
+                      Còn 3 sản phẩm
+                    </div>
                   </div>
-                  <div className="text-zinc-900 text-center text-base leading-6 my-auto mx-2">
-                    {quantity}
-                  </div>
-                  <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
-                      <IoIosAdd style={{ color: "#666666" }} />
-                    </IconButton>
-                  </div>
-                </div>
-                <Button
-                  variant="outlined"
-                  startIcon={
-                    <MdOutlineAddShoppingCart style={{ color: "#3F41A6" }} />
-                  }
-                  sx={{
-                    borderRadius: "43px",
-                    borderColor: "#3F41A6",
-                    color: "#3F41A6",
-                    padding: "0 30px",
-                    textTransform: "none",
-                    width: "230px",
-                    "&:hover": {
-                      bgcolor: "#F6F5FB",
+
+                  <Button
+                    variant="outlined"
+                    startIcon={
+                      <MdOutlineAddShoppingCart style={{ color: "#3F41A6" }} />
+                    }
+                    sx={{
+                      borderRadius: "43px",
                       borderColor: "#3F41A6",
-                    },
-                  }}
-                  onClick={() => {
-                    if (cookies?.userInfo?.username) handleAddToCart(item.id);
-                    else setOpenErr401(true);
-                  }}
-                >
-                  Thêm vào giỏ hàng
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: "43px",
-                    color: "#F6F5FB",
-                    bgcolor: "#3F41A6",
-                    padding: "0 30px",
-                    textTransform: "none",
-                    width: "230px",
-                    "&:hover": {
-                      bgcolor: "#3F41A6B2",
-                    },
-                  }}
-                >
-                  Đặt sản phẩm
-                </Button>
+                      color: "#3F41A6",
+                      padding: "13px 30px",
+                      textTransform: "none",
+                      width: "fit-content",
+                      height: "fit-content",
+                      "&:hover": {
+                        bgcolor: "#F6F5FB",
+                        borderColor: "#3F41A6",
+                      },
+                    }}
+                    onClick={() => {
+                      if (cookies?.userInfo?.username) handleAddToCart(item.id);
+                      else setOpenErr401(true);
+                    }}
+                  >
+                    Thêm vào giỏ hàng
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      if (cookies?.userInfo?.username) handleOrderNow(item);
+                      else setOpenErr401(true);
+                    }}
+                    sx={{
+                      borderRadius: "43px",
+                      color: "#F6F5FB",
+                      bgcolor: "#3F41A6",
+                      padding: "15px 30px",
+                      textTransform: "none",
+                      width: "fit-content",
+                      height: "fit-content",
+                      "&:hover": {
+                        bgcolor: "#3F41A6B2",
+                      },
+                    }}
+                  >
+                    Đặt sản phẩm ngay
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -409,21 +527,21 @@ function ItemDetail(props) {
         <div className="border bg-white mx-6 px-9 py-10 border-solid border-neutral-200 rounded-md">
           <div className="gap-5 flex">
             <div className="flex flex-col items-start justify-center w-[43%] ml-5">
-              <div className="gap-5 flex ml-8">
-                <div className="flex flex-col items-center w-3/12">
+              <div className="gap-5 flex">
+                <div className="flex flex-col items-center w-2/12">
                   <Avatar
                     alt={item.studio?.friendly_name}
                     src={item.studio?.avatar ?? logo}
                     sx={{ width: 70, height: 70 }}
                   />
                 </div>
-                <div className="flex flex-col items-stretch w-9/12">
+                <div className="flex flex-col items-stretch w-10/12">
                   <div className="flex flex-col items-stretch gap-2 justify-center">
                     <div className="justify-center text-indigo-800 text-2xl font-semibold tracking-wider">
                       {item.studio?.friendly_name}
                       <div style={{ color: "#848484", fontSize: "14px" }}>
                         {item.studio?.type == "STUDIO"
-                          ? "Studio"
+                          ? "Cửa hàng"
                           : "Thợ chụp ảnh"}
                       </div>
                     </div>
@@ -435,9 +553,9 @@ function ItemDetail(props) {
                           borderRadius: "4px",
                           borderColor: "#3F41A6",
                           color: "#3F41A6",
-                          padding: "5px 10px",
+                          padding: "5px 20px",
                           textTransform: "none",
-                          width: "130px",
+                          width: "fit-content",
                           "&:hover": {
                             bgcolor: "#F6F5FB",
                             borderColor: "#3F41A6",
@@ -457,16 +575,16 @@ function ItemDetail(props) {
                           borderRadius: "4px",
                           borderColor: "#1A093E",
                           color: "#1A093E",
-                          padding: "5px 10px",
+                          padding: "5px 20px",
                           textTransform: "none",
-                          width: "130px",
+                          width: "fit-content",
                           "&:hover": {
                             bgcolor: "#F2F2F2",
                             borderColor: "#1A093E",
                           },
                         }}
                       >
-                        Xem Studio
+                        Xem cửa hàng
                       </Button>
                     </div>
                   </div>
@@ -524,49 +642,97 @@ function ItemDetail(props) {
         description={item.description}
       />
 
-      {/* Các danh sách */}
-      <div className="my-20 flex flex-col gap-14">
-        {list0.map((item, index) => (
-          <div className="flex flex-col items-center" key={index}>
-            <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">
-              <div className="text-zinc-900 text-2xl font-semibold leading-10">
-                {item}
-              </div>
-              <Button
-                endIcon={
-                  <FaArrowRight style={{ width: "18px", height: "18px" }} />
-                }
-                onClick={() => navigate("/advanced-search/")}
-                sx={{
-                  textTransform: "none",
-                  color: "#3F41A6",
-                  width: "140px",
-                  height: "35px",
-                  borderRadius: "5px",
-                  fontSize: "15px",
-                  "&:hover": {
-                    color: "#1A237E",
-                    bgcolor: "transparent",
-                  },
-                }}
-              >
-                Xem tất cả
-              </Button>
+      <div className="my-5 flex flex-col gap-10">
+        {/* Danh sách các sp khác của cửa hàng */}
+        <div className="flex flex-col items-center">
+          <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">
+            <div className="text-zinc-900 text-2xl font-semibold leading-10">
+              Các sản phẩm khác của cửa hàng
             </div>
-            <div className="w-[90%] mt-2 px-5">
-              <div className="flex justify-between">
-                {list1.map((item, index) => (
-                  <ItemCard
-                    key={index}
-                    item={item}
-                    handleAddToCart={handleAddToCart}
-                    setOpenErr401={setOpenErr401}
-                  />
-                ))}
-              </div>
+            <Button
+              endIcon={
+                <FaArrowRight style={{ width: "18px", height: "18px" }} />
+              }
+              onClick={() =>
+                navigate("/advanced-search/", {
+                  state: { studio: item.studio.code_name },
+                  replace: true,
+                })
+              }
+              sx={{
+                textTransform: "none",
+                color: "#3F41A6",
+                width: "140px",
+                height: "35px",
+                borderRadius: "5px",
+                fontSize: "15px",
+                "&:hover": {
+                  color: "#1A237E",
+                  bgcolor: "transparent",
+                },
+              }}
+            >
+              Xem tất cả
+            </Button>
+          </div>
+          <div className="w-[90%] mt-2 px-5">
+            <div className="flex justify-between">
+              {itemsInStudio.map((item, index) => (
+                <ItemCard
+                  key={index}
+                  item={item}
+                  handleAddToCart={handleAddToCart}
+                  setOpenErr401={setOpenErr401}
+                />
+              ))}
             </div>
           </div>
-        ))}
+        </div>
+        {/* Danh sách sp tương tự */}
+        <div className="flex flex-col items-center">
+          <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">
+            <div className="text-zinc-900 text-2xl font-semibold leading-10">
+              Các sản phẩm tương tự
+            </div>
+            <Button
+              endIcon={
+                <FaArrowRight style={{ width: "18px", height: "18px" }} />
+              }
+              onClick={() =>
+                navigate("/advanced-search/", {
+                  state: { category: item.category.code_name },
+                  replace: true,
+                })
+              }
+              sx={{
+                textTransform: "none",
+                color: "#3F41A6",
+                width: "140px",
+                height: "35px",
+                borderRadius: "5px",
+                fontSize: "15px",
+                "&:hover": {
+                  color: "#1A237E",
+                  bgcolor: "transparent",
+                },
+              }}
+            >
+              Xem tất cả
+            </Button>
+          </div>
+          <div className="w-[90%] mt-2 px-5">
+            <div className="flex justify-between">
+              {similarItems.map((item, index) => (
+                <ItemCard
+                  key={index}
+                  item={item}
+                  handleAddToCart={handleAddToCart}
+                  setOpenErr401={setOpenErr401}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Add to cart successfully */}

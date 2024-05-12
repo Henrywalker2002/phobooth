@@ -19,7 +19,7 @@ import {
   AlertTitle,
 } from "@mui/material";
 import CartContext from "../../context/CartProvider";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -35,6 +35,9 @@ import { translateType } from "../../util/Translate";
 
 function Booking() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/cart";
+  // console.log(from);
   const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
   const { itemLists, setItemLists } = useContext(CartContext);
@@ -130,7 +133,7 @@ function Booking() {
 
   const handleCancelOrder = () => {
     setItemLists([]);
-    navigate("/cart");
+    navigate(from, { replace: true });
   };
 
   // update address
@@ -225,15 +228,17 @@ function Booking() {
           <HomeOutlinedIcon />
         </Link>
 
-        <Link
-          component="button"
-          underline="none"
-          key="2"
-          color="inherit"
-          onClick={() => navigate("/cart", { replace: true })}
-        >
-          Quản lý giỏ hàng
-        </Link>
+        {from === "/cart" && (
+          <Link
+            component="button"
+            underline="none"
+            key="2"
+            color="inherit"
+            onClick={() => navigate("/cart", { replace: true })}
+          >
+            Quản lý giỏ hàng
+          </Link>
+        )}
 
         <Typography
           key="3"
@@ -248,7 +253,7 @@ function Booking() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
         Đặt sản phẩm
       </div>
 
@@ -259,7 +264,7 @@ function Booking() {
             key={itemList.studio.id}
             component={Paper}
             sx={{
-              width: "1200px",
+              width: "90%",
               margin: "20px auto",
               border: "0.5px solid #d6d3d1",
             }}
@@ -267,22 +272,36 @@ function Booking() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
-                  <TableCell sx={{ color: "#3F41A6", paddingLeft: "40px" }}>
+                  <TableCell
+                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "40%" }}
+                  >
                     SẢN PHẨM
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "10%" }}
+                  >
                     PHÂN LOẠI
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "15%" }}
+                  >
                     DANH MỤC
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "10%" }}
+                  >
                     SỐ LƯỢNG
                   </TableCell>
-                  <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                  <TableCell
+                    align="left"
+                    sx={{ color: "#3F41A6", width: "20%" }}
+                  >
                     GIÁ (VNĐ)
                   </TableCell>
-                  <TableCell></TableCell>
+                  <TableCell sx={{ width: "5%" }} />
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -390,8 +409,8 @@ function Booking() {
             </Table>
 
             {/* More Info */}
-            <div className="self-center flex w-full max-w-6xl items-stretch  gap-28 my-5">
-              <div className="ml-[50px] flex flex-col items-start">
+            <div className="flex w-full justify-around my-5">
+              <div className="flex flex-col items-start">
                 <div className="flex items-stretch justify-between gap-4">
                   <img
                     loading="lazy"
@@ -467,17 +486,19 @@ function Booking() {
                     </IconButton>
                   </div>
                 </Alert>
-                <div className="ml-8 mt-5 gap-36 bg-white flex">
-                  <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
-                    Tổng giá tham khảo :
+                <div className="flex flex-col gap-3 mt-5 ml-8">
+                  <div className=" justify-between bg-white flex">
+                    <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
+                      Tổng giá tham khảo :
+                    </div>
+                    <div className="text-indigo-800 text-lg font-semibold leading-6 self-center whitespace-nowrap">
+                      {showTotalPrice(itemList.items)}
+                    </div>
                   </div>
-                  <div className="text-indigo-800 text-lg font-semibold leading-6 self-center whitespace-nowrap">
-                    {showTotalPrice(itemList.items)}
+                  <div className=" text-stone-500 text-base leading-6">
+                    Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
+                    cửa hàng cập nhật và thông báo sau khi đặt dịch vụ.
                   </div>
-                </div>
-                <div className="ml-8 w-[450px] text-stone-500 text-base leading-6 mt-3">
-                  Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
-                  Studio cập nhật và thông báo sau khi đặt dịch vụ.
                 </div>
               </div>
             </div>

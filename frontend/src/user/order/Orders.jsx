@@ -48,7 +48,7 @@ function Orders() {
 
   const [openFilter, setOpenFilter] = useState(false);
   // Collapsible table
-  const [status, setStatus] = useState("ORDERED");
+  const [status, setStatus] = useState("ALL");
   const [cancelId, setCancelId] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
@@ -67,9 +67,6 @@ function Orders() {
   };
 
   const getSlugForFilter = (slug) => {
-    if (filterVal.status) {
-      slug += `&status=${filterVal?.status}`;
-    }
     if (filterVal.studio) {
       slug += `&studio=${filterVal?.studio}`;
     }
@@ -86,7 +83,10 @@ function Orders() {
   };
 
   useEffect(() => {
-    let slug = `/order/?limit=5&offset=0&status=${status}`;
+    let slug =
+      status === "ALL"
+        ? "/order/?limit=5&offset=0"
+        : `/order/?limit=5&offset=0&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -592,6 +592,17 @@ function Orders() {
               },
             }}
           >
+            <Tab
+              label="Tất cả"
+              value="ALL"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
             <Tab
               label="Đã đặt"
               value="ORDERED"

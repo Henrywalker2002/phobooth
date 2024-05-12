@@ -28,6 +28,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import ImgAlert from "../../../components/ImgAlert";
 import { validFixedPrice, validRangePrice } from "../../../util/Validation";
 import ErrDialog from "../ErrDialog";
+import { CurrencyFormatter } from "../../../util/Format";
 
 function AddPkg({ categories, setOpenSBar }) {
   // global
@@ -212,12 +213,12 @@ function AddPkg({ categories, setOpenSBar }) {
   return (
     <form
       onSubmit={handleAddItem}
-      className="forms flex flex-col gap-2 items-center pb-5"
+      className="forms flex flex-col gap-2 items-center pb-5 w-[90%]"
     >
       {/* Thông tin cơ bản */}
       <Paper
         sx={{
-          width: "800px",
+          width: "100%",
           margin: "0 auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -282,9 +283,9 @@ function AddPkg({ categories, setOpenSBar }) {
                 </TextField>
               </div>
             </div>
-            <div className="flex flex-col items-stretch ml-5 w-[40%] max-md:ml-0 max-md:w-full">
+            <div className="flex justify-center ml-5 w-[40%] max-md:ml-0 max-md:w-full">
               <div className="flex flex-col items-stretch text-sm text-zinc-900 max-md:mt-10">
-                <div className="justify-center">Hình ảnh liên quan</div>
+                <div className="">Hình ảnh liên quan</div>
                 <div className="flex gap-4">
                   <Button
                     component="label"
@@ -477,7 +478,7 @@ function AddPkg({ categories, setOpenSBar }) {
             error={errMsg?.description ? true : false}
             helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
-              width: "750px",
+              width: "full",
               marginTop: "10px",
             }}
           />
@@ -521,16 +522,17 @@ function AddPkg({ categories, setOpenSBar }) {
                           </IconButton>
                         </div>
                         <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-1">
                             <div className=" text-xs text-zinc-500">
                               Danh mục :
                             </div>
-                            <div className="justify-center items-stretch px-2 py-px text-sm bg-violet-50 rounded">
+                            <div className="justify-center items-stretch px-2 py-px text-sm bg-indigo-100 rounded">
                               {service.category?.title}
                             </div>
                           </div>
                           <div className="my-auto text-lg font-semibold leading-4">
-                            {service.min_price} - {service.max_price}
+                            {CurrencyFormatter(service.min_price)} -{" "}
+                            {CurrencyFormatter(service.max_price)}
                           </div>
                         </div>
                       </Paper>
@@ -605,16 +607,17 @@ function AddPkg({ categories, setOpenSBar }) {
                           </IconButton>
                         </div>
                         <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-1">
                             <div className=" text-xs text-zinc-500">
                               Danh mục :
                             </div>
-                            <div className="justify-center items-stretch px-2 py-px text-sm bg-violet-50 rounded">
+                            <div className="justify-center items-stretch px-2 py-px text-sm bg-indigo-100 rounded">
                               {service.category?.title}
                             </div>
                           </div>
                           <div className="my-auto text-lg font-semibold leading-4">
-                            {service.min_price} - {service.max_price}
+                            {CurrencyFormatter(service.min_price)} -{" "}
+                            {CurrencyFormatter(service.max_price)}
                           </div>
                         </div>
                       </Paper>
@@ -691,7 +694,7 @@ function AddPkg({ categories, setOpenSBar }) {
                         </IconButton>
                       </div>
                       <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-1">
                           <div className=" text-xs text-zinc-500">
                             Danh mục :
                           </div>
@@ -700,7 +703,7 @@ function AddPkg({ categories, setOpenSBar }) {
                           </div>
                         </div>
                         <div className="my-auto text-lg font-semibold leading-4">
-                          {product.fixed_price}
+                          {CurrencyFormatter(product.fixed_price)}
                         </div>
                       </div>
                     </Paper>

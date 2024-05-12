@@ -19,7 +19,6 @@ import {
   TableHead,
   TableRow,
   TextField,
-  InputAdornment,
 } from "@mui/material";
 import { IoMdImages } from "react-icons/io";
 import { RiImageAddFill } from "react-icons/ri";
@@ -316,7 +315,7 @@ function AddProduct({ categories, setOpenSBar }) {
       {/* Thông tin cơ bản */}
       <Paper
         sx={{
-          width: "800px",
+          width: "900px",
           margin: "0 auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -607,7 +606,7 @@ function AddProduct({ categories, setOpenSBar }) {
             error={errMsg?.description ? true : false}
             helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
-              width: "730px",
+              width: "full",
               marginTop: "10px",
             }}
           />

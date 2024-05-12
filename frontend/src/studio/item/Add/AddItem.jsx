@@ -28,7 +28,7 @@ function AddItem() {
   // category list
   useEffect(() => {
     axios
-      .get("/category")
+      .get("/category/")
       .then((res) => {
         // console.log(res.data);
         setCategories(res.data.results);
