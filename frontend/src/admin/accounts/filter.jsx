@@ -68,6 +68,9 @@ function StaffFilter({ open, handleClose, filterVal, setFilterVal }) {
     if (formData.is_active !== "all" && formData.is_active !== "") {
       data.is_active = formData.is_active;
     }
+    else if (formData.is_active === "all") {
+      data.is_active = "";
+    }
 
     if (data) {
       setFilterVal({ ...filterVal, ...data });
