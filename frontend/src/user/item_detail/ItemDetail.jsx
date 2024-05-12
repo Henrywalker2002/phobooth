@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import {useEffect, useState, useContext } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import {
@@ -69,6 +69,9 @@ function ItemDetail(props) {
   };
 
   useEffect(() => {
+    if (typeof setItemLists === "function") {
+      setItemLists([]);
+    }
     axios
       .get("/item/" + id + "/")
       .then((res) => {
@@ -120,6 +123,11 @@ function ItemDetail(props) {
 
     setOpenSBar(false);
   };
+
+  const handleBuyNow = (e) => {
+    e.preventDefault();
+    navigate(`/booking?item=${id}&quantity=${quantity}`);
+  }
 
   const list0 = ["Sản phẩm khác của Studio", "Tương tự"];
   // const list1 = [1, 2, 3, 4];
@@ -395,6 +403,7 @@ function ItemDetail(props) {
                       bgcolor: "#3F41A6B2",
                     },
                   }}
+                  onClick={handleBuyNow}
                 >
                   Đặt sản phẩm
                 </Button>

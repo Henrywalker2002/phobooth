@@ -19,7 +19,7 @@ import {
   AlertTitle,
 } from "@mui/material";
 import CartContext from "../../context/CartProvider";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -42,6 +42,13 @@ function Booking() {
   const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openAddrAlert, setOpenAddrAlert] = useState(false);
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const item = queryParams.get("item");
+  const quantity = queryParams.get("quantity");
+
+  console.log(itemLists)
+
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -53,6 +60,24 @@ function Booking() {
       setOpenAddrAlert(true);
     }
     console.log("itemLists", itemLists);
+    if (item && quantity) {
+      axiosPrivate.get(`/item/${item}/`).then((res) => {
+        let items = {
+          studio : res.data.studio,
+          items : [
+            {
+              id: res.data.id,
+              item: res.data,
+              number: parseInt(quantity),
+            }
+          ],
+          address : cookies?.userInfo?.address
+        }
+        setItemLists([items]);
+      }).catch((err) => {
+
+      });
+    }
   }, []);
 
   const getTotalPrice = (lst, typ) => {
