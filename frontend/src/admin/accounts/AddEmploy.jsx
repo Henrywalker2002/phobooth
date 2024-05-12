@@ -61,7 +61,7 @@ function AddEmployeeDialog({ open, handleClose, items, setItems }) {
   };
 
   const handleSubmit = () => {
-    console.log(formData);
+    setErrorMessage({});
     if (formData.password.length < 8) {
       setErrorMessage({
         ...errorMessage,

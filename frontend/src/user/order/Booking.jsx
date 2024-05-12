@@ -542,7 +542,7 @@ function Booking() {
             },
           }}
         >
-          Đặt dịch vụ
+          Đặt sản phẩm
         </Button>
       </div>
 

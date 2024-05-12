@@ -378,7 +378,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
               sx={{
                 textTransform: "none",
                 bgcolor: "#3F41A6",
-                width: "120px",
+                width: "fit-content",
 
                 borderRadius: "20px",
                 "&:hover": {
@@ -386,7 +386,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                 },
               }}
             >
-              Lưu thay đổi
+              Tiếp tục
             </Button>
           </div>
         </DialogContent>

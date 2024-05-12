@@ -6,6 +6,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from cart.filters import CartFilter
 from cart.filters import CartFilter
+from rest_framework import status
 
 
 class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
@@ -24,7 +25,17 @@ class CartViewSet(BaseGenericViewSet, CreateModelMixin, ListModelMixin, DestroyM
     
     def create(self, request, *args, **kwargs):
         request.data['customer'] = request.user.id
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        item = self.get_queryset().filter(item=serializer.validated_data["item"], customer=request.user)
+        if item.exists():
+            item = item.first()
+            item.number += serializer.validated_data["number"]
+            item.save()
+            return Response(self.get_serializer(item).data, status=status.HTTP_201_CREATED)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

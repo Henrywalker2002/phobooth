@@ -26,6 +26,8 @@ import { useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import AddEmploy from "./AddEmploy";
@@ -60,22 +62,36 @@ export default function AdminManageAccount() {
 
   const handleDelete = () => {
     // Xử lý logic xóa ở đây
-    axiosPrivate
-      .delete(`/staff/${clickItem.username}/`)
-      .then((res) => {
-        setItems(items.filter((item) => item.username !== clickItem.username));
-        handleClose();
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          console.log(err);
-        } else if (err.response.status === 404) {
-          setItems(
-            items.filter((item) => item.username !== clickItem.username)
-          );
-          handleClose();
+    // axiosPrivate
+    //   .delete(`/staff/${clickItem.username}/`)
+    //   .then((res) => {
+    //     setItems(items.filter((item) => item.username !== clickItem.username));
+    //     handleClose();
+    //   })
+    //   .catch((err) => {
+    //     if (err.response.status === 400) {
+    //       console.log(err);
+    //     } else if (err.response.status === 404) {
+    //       setItems(
+    //         items.filter((item) => item.username !== clickItem.username)
+    //       );
+    //       handleClose();
+    //     }
+    //   });
+    axiosPrivate.patch(`/staff/${clickItem.username}/`, {
+      is_active: !clickItem.is_active,
+    }).then((res) => {
+      setItems(items.map((item) => {
+        if (item.username === clickItem.username) {
+          return { ...item, is_active: !item.is_active };
         }
-      });
+        return item;
+      }));
+      handleClose();
+    }).catch((err) => {
+      console.log(err);
+    });
+
     setOpen(false);
   };
   const [openAdd, setOpenAdd] = React.useState(false);
@@ -317,7 +333,14 @@ export default function AdminManageAccount() {
                           <ModeEditIcon style={{ color: "#666666" }} />
                         </IconButton>
                         <IconButton onClick={() => handleClickOpen(item)}>
-                          <DeleteOutlineIcon style={{ color: "#666666" }} />
+                          {
+                            item.is_active ? (
+                              <LockOutlinedIcon style={{ color: "#666666" }} />
+                            ) : (
+                              <LockOpenOutlinedIcon style={{ color: "#666666" }} />
+                            )
+                          }
+                          {/* <DeleteOutlineIcon style={{ color: "#666666" }} /> */}
                         </IconButton>
                       </div>
                     </TableCell>
@@ -361,12 +384,12 @@ export default function AdminManageAccount() {
       >
         <DialogTitle id="alert-dialog-title">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
-            Xác nhận xóa
+            Xác nhận {clickItem.is_active ? "khóa" : "mở khóa"}
           </div>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {`Bạn có chắc chắn muốn xóa ${clickItem.full_name}?`}
+            Bạn có chắc chắn muốn {clickItem.is_active ? "khoá" : "mở khoá"} tài khoản của {clickItem.full_name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -402,7 +425,7 @@ export default function AdminManageAccount() {
             }}
             autoFocus
           >
-            Xóa tài khoản
+            {clickItem.is_active ? "Khoá" : "Mở Khoá"} tài khoản
           </Button>
         </DialogActions>
       </Dialog>

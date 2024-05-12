@@ -7,6 +7,7 @@ function CancelInOrders({
   open,
   setOpen,
   row,
+  status,
   setOrders,
   setStatusMsg,
   setSuccess,
@@ -33,14 +34,14 @@ function CancelInOrders({
       })
       .then(() => {
         axiosPrivate
-          .get("/order/?limit=5&offset=0")
+          .get(`/order/studio/?limit=5&offset=0&status=${status}`)
           .then((res) => {
             console.log(res.data);
             setOrders(res?.data.results);
 
             row.action === "CANCELED"
-              ? setStatusMsg("Hủy đơn hàng thành công!")
-              : setStatusMsg("Hoàn thành đơn hàng thành công!");
+            ? setStatusMsg("Hủy đơn hàng thành công!")
+            : setStatusMsg("Hoàn thành đơn hàng thành công!");
           })
           .catch((err) => {
             console.log(err);

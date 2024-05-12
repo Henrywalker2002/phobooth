@@ -31,7 +31,6 @@ for provide_code in data:
     
     response = requests.post(url + 'province/', json=provide)
     
-    os.system('cls')
     print(count, '/', len(data.keys()))
     count += 1
     

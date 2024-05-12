@@ -46,7 +46,7 @@ function Payment({ order, setOrder }) {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/order/${order.id}`)
+      .get(`/order/${order.id}/`)
       .then((res) => {
         console.log(res.data);
         setOrder(res.data);

@@ -88,6 +88,9 @@ function ItemDetail(props) {
 
   // Get 4 items in this studio
   useEffect(() => {
+    if (typeof setItemLists === "function") {
+      setItemLists([]);
+    }
     axios
       .get("/item/" + id + "/")
       .then((res) => {
@@ -174,6 +177,11 @@ function ItemDetail(props) {
     }
 
     setOpenSBar(false);
+  };
+
+  const handleBuyNow = (e) => {
+    e.preventDefault();
+    navigate(`/booking?item=${id}&quantity=${quantity}`);
   };
 
   return (

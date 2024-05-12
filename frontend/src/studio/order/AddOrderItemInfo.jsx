@@ -40,21 +40,19 @@ function AddOrderItemInfo({
   // Check Quantity
   const checkQuantity = (quantity) => {
     if (
-      (quantity !== undefined || quantity !== null) &&
-      (isNaN(quantity) || quantity === "")
+      quantity !== undefined && quantity !== null && !isNaN(quantity) && quantity > 0 && quantity !== "" && Number.isInteger(Number(quantity))
     )
-      return false;
-    return true;
+      return true;
+    return false;
   };
 
   // Check price
   const checkPrice = (price) => {
     if (
-      (price !== undefined || price !== null) &&
-      (isNaN(price) || price == 0 || price === "")
+      price !== undefined && price !== null && !isNaN(price) && price > 0 && price !== ""
     )
-      return false;
-    return true;
+      return true;
+    return false;
   };
 
   //   Check disable for add btn
@@ -171,7 +169,7 @@ function AddOrderItemInfo({
                   <TableCell align="left">
                     <TextField
                       required
-                      id="outlined-basic"
+                      id="price"
                       variant="outlined"
                       name="price"
                       defaultValue={order_item?.price}
@@ -193,7 +191,7 @@ function AddOrderItemInfo({
                   <TableCell align="left">
                     <TextField
                       required
-                      id="outlined-basic"
+                      id="quantity"
                       variant="outlined"
                       name="quantity"
                       defaultValue={order_item?.quantity}
@@ -238,7 +236,7 @@ function AddOrderItemInfo({
             textTransform: "none",
             border: "1px solid #3F41A6",
             color: "#3F41A6",
-            width: "80px",
+            width: "fit-content",
 
             borderRadius: "20px",
             "&:hover": {
@@ -246,7 +244,7 @@ function AddOrderItemInfo({
             },
           }}
         >
-          Hủy
+          Quay lại
         </Button>
 
         <Button

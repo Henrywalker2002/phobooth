@@ -123,18 +123,10 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
-    }, 
-    'notification' : {
-        'ENGINE': 'djongo',
-        'NAME': 'notification',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': os.getenv('MONGO_DB_HOST'),  
-        }
     }
 }
 
-DATABASE_ROUTERS = ['backend.database_router.DatabaseRouter']
+# DATABASE_ROUTERS = ['backend.database_router.DatabaseRouter']
 
 APPEND_SLASH = False
 

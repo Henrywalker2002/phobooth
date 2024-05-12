@@ -38,6 +38,7 @@ class CommandChoices:
     WAIT_FOR_ELEEENT_CLICKABLE = 'wait_for_element_clickable'
     SCROLL_TO = 'scroll_to'
     INPUT_DATE = 'input_date'
+    ASSERT_MESSAGE_ERROR = 'get_message_error'
 
     validate_settings = {
         OPEN: ['target'],
@@ -63,7 +64,8 @@ class CommandChoices:
         WAIT_FOR_ELEMENT_NOT_VISIBLE: ['target', 'amount'],
         WAIT_FOR_ELEEENT_CLICKABLE: ['target', 'amount'],
         SCROLL_TO: ['target'],
-        INPUT_DATE: ['target', 'value']
+        INPUT_DATE: ['target', 'value'],
+        ASSERT_MESSAGE_ERROR: ['target', 'value']
     }
 
     @staticmethod
@@ -155,7 +157,7 @@ class Command:
         element.send_keys(KeyChoices.get_key(value))
         return kwargs.get('store')
 
-    def execute_input(self,value, *args, **kwargs) -> dict:
+    def execute_input(self,value : dict, *args, **kwargs) -> dict:
         """
         value is a dict which key is name of input field and value is the value to be inputted
         """
@@ -286,4 +288,10 @@ class Command:
     def execute_input_date(self, target, value, *args, **kwargs) -> dict:
         element = self.find_target(target)
         ActionChains(self.driver).move_to_element(element).click().send_keys(value).perform()
+        return kwargs.get('store')
+    
+    def execute_assert_message_error(self, target, value, *args, **kwargs) -> dict:
+        element = self.find_target(target)
+        if element.get_attribute("validationMessage") != value:
+            raise AssertException(CommandChoices.ASSERT_MESSAGE_ERROR, target, value)
         return kwargs.get('store')

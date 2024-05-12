@@ -75,7 +75,7 @@ class ReadOrderSerializer(serializers.ModelSerializer):
             "payment",
             "order_history",
             "address",
-            "complain"
+            "complain",
         ]
 
 class OrderSummarySerializer(serializers.ModelSerializer):
@@ -102,7 +102,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
             "order_item",
             "studio",
             "payment",
-            "complain"
+            "complain",
         ]
         
 class UpdateOrderSerializer(serializers.ModelSerializer):
