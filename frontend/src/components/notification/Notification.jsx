@@ -112,9 +112,7 @@ function NotificationList({ anchorNoti, handleClose }) {
       .then((response) => {
         const results = response.data.results;
         setNotifications(
-          results.map((notification) =>
-            handleContentNotification(notification)
-          )
+          results.map((notification) => handleContentNotification(notification))
         );
       })
       .catch((error) => {
@@ -129,15 +127,24 @@ function NotificationList({ anchorNoti, handleClose }) {
       onClose={handleClose}
     >
       {notifications.length === 0 ? (
-        <Box>
-          <MenuItem >
+        <Box
+          sx={{
+            minWidth: "300px",
+          }}
+        >
+          <MenuItem>
             <p>Không có thông báo</p>
           </MenuItem>
         </Box>
       ) : (
         <>
           {notifications.map((notification, i) => (
-            <Box key={i}>
+            <Box
+              sx={{
+                minWidth: "300px",
+              }}
+              key={i}
+            >
               <NotificationItem
                 id={notification.id}
                 image={notification.image}
@@ -153,7 +160,11 @@ function NotificationList({ anchorNoti, handleClose }) {
             </Box>
           ))}
           <Divider />
-          <MenuItem onClick={() => handle_read_all(axiosPrivate, notifications, setNotifications)}>
+          <MenuItem
+            onClick={() =>
+              handle_read_all(axiosPrivate, notifications, setNotifications)
+            }
+          >
             Đánh dấu đã đọc tất cả
           </MenuItem>
           <MenuItem onClick={() => navigate("/notification")}>

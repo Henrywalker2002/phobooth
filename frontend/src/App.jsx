@@ -93,6 +93,7 @@ function App() {
             <Route element={<CartContextLayout />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/item/detail/:id" element={<ItemDetail />} />
             </Route>
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/success-payment" element={<PaymentSuccess />} />

@@ -26,7 +26,7 @@ import { MdStorefront } from "react-icons/md";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CartContext from "../../context/CartProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { translateType } from "../../util/Translate";
@@ -35,6 +35,7 @@ import { useCookies } from "react-cookie";
 function Cart() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const location = useLocation();
   const [cookies] = useCookies(["accInfo"]);
   const [openNoItemAlert, setOpenNoItemALert] = useState(false);
   const [items, setItems] = React.useState([]);
@@ -136,7 +137,7 @@ function Cart() {
           };
         })
       );
-      navigate("/booking");
+      navigate("/booking", { state: { from: location } }, { replace: true });
     } else setOpenNoItemALert(true);
   };
 
@@ -235,7 +236,7 @@ function Cart() {
         Quản lý giỏ hàng
       </div>
       {/* Tables */}
-      <div className="flex flex-col gap-5 items-center">
+      <div className="flex flex-col items-center">
         {items?.length > 0 ? (
           <>
             {items.map((lst, index) => (
@@ -243,7 +244,7 @@ function Cart() {
                 component={Paper}
                 key={index}
                 sx={{
-                  width: "1200px",
+                  width: "90%",
                   margin: "20px auto",
                   border: "0.5px solid #d6d3d1",
                 }}
@@ -251,23 +252,35 @@ function Cart() {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                     <TableRow>
-                      <TableCell>
-                        {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
+                      <TableCell sx={{ width: "5%" }} />
+                      <TableCell sx={{ color: "#3F41A6", width: "35%" }}>
+                        SẢN PHẨM
                       </TableCell>
-                      <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
-                      <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      <TableCell
+                        align="left"
+                        sx={{ color: "#3F41A6", width: "10%" }}
+                      >
                         PHÂN LOẠI
                       </TableCell>
-                      <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      <TableCell
+                        align="left"
+                        sx={{ color: "#3F41A6", width: "15%" }}
+                      >
                         DANH MỤC
                       </TableCell>
-                      <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      <TableCell
+                        align="left"
+                        sx={{ color: "#3F41A6", width: "10%" }}
+                      >
                         SỐ LƯỢNG
                       </TableCell>
-                      <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                      <TableCell
+                        align="left"
+                        sx={{ color: "#3F41A6", width: "20%" }}
+                      >
                         GIÁ THÀNH PHẦN
                       </TableCell>
-                      <TableCell></TableCell>
+                      <TableCell sx={{ width: "5%" }} />
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -275,7 +288,7 @@ function Cart() {
                       lst.items?.map((row, index) => (
                         <TableRow
                           key={index}
-                          id = {row.item?.id}
+                          id={row.item?.id}
                           // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                         >
                           <TableCell sx={{ width: "42px" }}>
@@ -366,8 +379,8 @@ function Cart() {
                 </Table>
 
                 {/* More Info */}
-                <div className="self-center flex w-full max-w-6xl items-stretch justify-start gap-[220px] my-5">
-                  <div className="max-w-[320px] ml-[90px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex grow basis-[0%] flex-col items-stretch pl-5 pr-5 py-5 rounded-lg border-solid">
+                <div className="self-center flex w-full items-stretch justify-around my-5">
+                  <div className="max-w-[400px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pl-5 pr-5 py-5 rounded-lg border-solid">
                     <div className="flex items-stretch justify-between gap-4">
                       <img
                         loading="lazy"
@@ -379,7 +392,7 @@ function Cart() {
 
                         <div style={{ color: "#848484", fontSize: "14px" }}>
                           {lst.studio?.type == "STUDIO"
-                            ? "Studio"
+                            ? "Cửa hàng"
                             : "Thợ chụp ảnh"}
                         </div>
                       </div>
@@ -392,9 +405,9 @@ function Cart() {
                           borderRadius: "4px",
                           borderColor: "#3F41A6",
                           color: "#3F41A6",
-                          padding: "5px 10px",
+                          padding: "5px 20px",
                           textTransform: "none",
-                          width: "120px",
+                          width: "fit-content",
                           "&:hover": {
                             bgcolor: "#F6F5FB",
                             borderColor: "#3F41A6",
@@ -413,16 +426,16 @@ function Cart() {
                           borderRadius: "4px",
                           borderColor: "#1A093E",
                           color: "#1A093E",
-                          padding: "5px 10px",
+                          padding: "5px 20px",
                           textTransform: "none",
-                          width: "130px",
+                          width: "fit-content",
                           "&:hover": {
                             bgcolor: "#F2F2F2",
                             borderColor: "#1A093E",
                           },
                         }}
                       >
-                        Xem Studio
+                        Xem cửa hàng
                       </Button>
                     </div>
                   </div>

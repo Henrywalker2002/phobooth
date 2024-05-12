@@ -90,7 +90,12 @@ function Profile() {
       formData.append("avatar", avt.avt_file, avt.avt_file.name);
     }
     if (Object.keys(newInfo).length > 0) {
+      delete newInfo.avatar;
       formData.append("data", JSON.stringify(newInfo));
+    }
+    // Display the key/value pairs
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
     }
     axiosPrivate
       .patch(`studio/${cookies.userInfo.studio.code_name}/`, formData, {

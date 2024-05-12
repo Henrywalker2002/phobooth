@@ -270,7 +270,7 @@ function EditProduct({ id, setOpenSBar, categories }) {
     >
       <Paper
         sx={{
-          width: "800px",
+          width: "60%",
           margin: "10px auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -604,7 +604,7 @@ function EditProduct({ id, setOpenSBar, categories }) {
             error={errMsg?.description ? true : false}
             helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
-              width: "730px",
+              width: "full",
               marginTop: "10px",
             }}
           />

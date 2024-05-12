@@ -47,7 +47,7 @@ function Orders() {
   const [success, setSuccess] = useState(false);
   const [openActionSBar, setOpenActionSBar] = useState(false);
   // local
-  const [status, setStatus] = useState("ORDERED");
+  const [status, setStatus] = useState("ALL");
   const [selectedRow, setSelectedRow] = useState({});
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
@@ -77,7 +77,10 @@ function Orders() {
   };
 
   useEffect(() => {
-    let slug = `order/studio/?limit=5&offset=0&status=${status}`;
+    let slug =
+      status === "ALL"
+        ? "order/studio/?limit=5&offset=0"
+        : `order/studio/?limit=5&offset=0&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -440,6 +443,17 @@ function Orders() {
             }}
           >
             <Tab
+              label="Tất cả"
+              value="ALL"
+              sx={{
+                textTransform: "none",
+                fontSize: "17px",
+                "&.Mui-selected": {
+                  color: "#3F41A6",
+                },
+              }}
+            />
+            <Tab
               label="Đã đặt"
               value="ORDERED"
               sx={{
@@ -531,19 +545,21 @@ function Orders() {
           </TableContainer>
 
           {/* Pagination */}
-          <Pagination
-            count={pageCount}
-            onChange={getOrdersForPage}
-            page={defaultPage}
-            sx={{
-              margin: "15px auto",
-              width: "fit-content",
-              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-                {
-                  bgcolor: "#E2E5FF",
-                },
-            }}
-          />
+          {orders.length > 0 && (
+            <Pagination
+              count={pageCount}
+              onChange={getOrdersForPage}
+              page={defaultPage}
+              sx={{
+                margin: "15px auto",
+                width: "fit-content",
+                "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                  {
+                    bgcolor: "#E2E5FF",
+                  },
+              }}
+            />
+          )}
         </TabPanel>
       </TabContext>
 

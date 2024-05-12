@@ -112,7 +112,7 @@ function ItemList({ filterVal }) {
         </div>
       </div>
       <div className="flex self-center mx-auto ">
-        <div className="grid grid-cols-3 gap-10 grid-rows-4">
+        <div className="grid grid-cols-3 gap-10">
           {itemList?.results?.map((item, index) => (
             <ItemCard
               key={index}

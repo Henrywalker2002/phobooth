@@ -27,6 +27,7 @@ import { v4 as uuidv4 } from "uuid";
 import ImgAlert from "../../../components/ImgAlert";
 import { validFixedPrice, validRangePrice } from "../../../util/Validation";
 import ErrDialog from "../ErrDialog";
+import { CurrencyFormatter } from "../../../util/Format";
 
 function EditPkg({ id, setOpenSBar, categories }) {
   const axiosPrivate = useAxiosPrivate();
@@ -293,7 +294,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
     >
       <Paper
         sx={{
-          width: "800px",
+          width: "70%",
           margin: "10px auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -594,7 +595,7 @@ function EditPkg({ id, setOpenSBar, categories }) {
             error={errMsg?.description ? true : false}
             helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
-              width: "750px",
+              width: "full",
               marginTop: "10px",
             }}
           />
@@ -640,16 +641,17 @@ function EditPkg({ id, setOpenSBar, categories }) {
                           </IconButton>
                         </div>
                         <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-1">
                             <div className=" text-xs text-zinc-500">
                               Danh mục :
                             </div>
-                            <div className="justify-center items-stretch px-2 py-px text-sm bg-violet-50 rounded">
+                            <div className="justify-center items-stretch px-2 py-px text-sm bg-indigo-100 rounded">
                               {service.category?.title}
                             </div>
                           </div>
                           <div className="my-auto text-lg font-semibold leading-4">
-                            {service.min_price} - {service.max_price}
+                            {CurrencyFormatter(service.min_price)} -{" "}
+                            {CurrencyFormatter(service.max_price)}
                           </div>
                         </div>
                       </Paper>
@@ -724,16 +726,17 @@ function EditPkg({ id, setOpenSBar, categories }) {
                           </IconButton>
                         </div>
                         <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-1">
                             <div className=" text-xs text-zinc-500">
                               Danh mục :
                             </div>
-                            <div className="justify-center items-stretch px-2 py-px text-sm bg-violet-50 rounded">
+                            <div className="justify-center items-stretch px-2 py-px text-sm bg-indigo-100 rounded">
                               {service.category?.title}
                             </div>
                           </div>
                           <div className="my-auto text-lg font-semibold leading-4">
-                            {service.min_price} - {service.max_price}
+                            {CurrencyFormatter(service.min_price)} -{" "}
+                            {CurrencyFormatter(service.max_price)}
                           </div>
                         </div>
                       </Paper>
@@ -808,16 +811,16 @@ function EditPkg({ id, setOpenSBar, categories }) {
                         </IconButton>
                       </div>
                       <div className="flex justify-between items-stretch mt-3 text-indigo-800 whitespace-nowrap">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-1">
                           <div className=" text-xs text-zinc-500">
                             Danh mục :
                           </div>
-                          <div className="justify-center items-stretch px-2 py-px text-sm bg-violet-50 rounded">
+                          <div className="justify-center items-stretch px-2 py-px text-sm bg-indigo-100 rounded">
                             {product.category?.title}
                           </div>
                         </div>
                         <div className="my-auto text-lg font-semibold leading-4">
-                          {product.fixed_price}
+                          {CurrencyFormatter(product.fixed_price)}
                         </div>
                       </div>
                     </Paper>

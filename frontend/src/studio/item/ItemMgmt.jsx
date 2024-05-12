@@ -351,14 +351,14 @@ function ItemMgmt() {
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center  rounded bg-indigo-100 self-stretch  px-2 py-1">
                           {service.type == "SERVICE"
                             ? "Dịch vụ chính"
                             : "Dịch vụ hỗ trợ"}
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center  rounded bg-indigo-100 self-stretch  px-2 py-1">
                           {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
                           {service.category?.title}
                         </div>
@@ -465,7 +465,7 @@ function ItemMgmt() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center rounded bg-indigo-100  px-2 py-1">
                           {/* {row?.item.category?.title == "family" ? "Gia đình" : ""} */}
                           {product.category?.title}
                         </div>
@@ -568,7 +568,7 @@ function ItemMgmt() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center rounded bg-indigo-100 px-2 py-1">
                           {pkg.category.title}
                         </div>
                       </TableCell>

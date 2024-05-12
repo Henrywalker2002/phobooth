@@ -7,7 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Checkbox, TextField } from "@mui/material";
 import axios from "../api/axios";
 import { useCookies } from "react-cookie";
@@ -17,8 +17,8 @@ const LOGIN_URL = "/login/";
 
 function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  // const location = useLocation();
+  // const from = location.state?.from?.pathname || "/";
   // console.log(from);
   const [cookies, setCookie] = useCookies(["accInfo"]);
   const [persist, setPersist] = useState(cookies?.persist || false);
@@ -75,11 +75,9 @@ function Login() {
               response.data.role[0].code_name === "staff"
             )
               navigate("/admin", { replace: true });
-            else if (from.includes("/admin")) {
+            else {
               navigate("/", { replace: true });
-            } else if (from.includes("/studio") && !response.data?.studio?.id) {
-              navigate("/studio/register", { replace: true });
-            } else navigate(from, { replace: true });
+            }
           })
           .catch((err) => {
             if (err.status === 400) {
@@ -124,12 +122,8 @@ function Login() {
         response.data.role[0].code_name === "staff"
       )
         navigate("/admin", { replace: true });
-      else if (from.includes("/admin")) {
+      else {
         navigate("/", { replace: true });
-      } else if (from.includes("/studio") && !response.data?.studio?.id) {
-        navigate("/studio/register", { replace: true });
-      } else {
-        navigate(from, { replace: true });
       }
     } catch (err) {
       setErrMsg(err.response.data.messsage);

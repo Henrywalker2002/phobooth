@@ -157,7 +157,7 @@ function AddService({ categories, setOpenSBar }) {
       {/* Thông tin cơ bản */}
       <Paper
         sx={{
-          width: "800px",
+          width: "900px",
           margin: "0 auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -169,7 +169,7 @@ function AddService({ categories, setOpenSBar }) {
         <Divider />
         <div className="flex flex-col items-stretch mt-4 px-6 ">
           <div className="gap-5 flex">
-            <div className="flex flex-col items-stretch w-[70%]">
+            <div className="flex flex-col items-stretch w-[60%]">
               <div className="flex flex-col items-stretch ">
                 <div className="text-zinc-900 text-sm leading-5 ">
                   Tên dịch vụ
@@ -306,7 +306,7 @@ function AddService({ categories, setOpenSBar }) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-stretch w-[35%] ml-5">
+            <div className="flex flex-col items-stretch w-[40%] ml-5">
               <div className="flex grow flex-col items-stretch">
                 <div className="text-zinc-900 text-sm leading-5">Danh mục</div>
                 <TextField
@@ -325,7 +325,7 @@ function AddService({ categories, setOpenSBar }) {
                       boxSizing: "border-box",
                       paddingY: "12px",
                     },
-                    width: "200px",
+                    width: "full",
                     marginY: "10px",
                   }}
                 >
@@ -529,7 +529,7 @@ function AddService({ categories, setOpenSBar }) {
             error={errMsg?.description ? true : false}
             helperText={errMsg?.description ? errMsg.description[0] : ""}
             sx={{
-              width: "730px",
+              width: "full",
               marginTop: "10px",
             }}
           />

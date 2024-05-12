@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Filter from "./Filter";
 import ItemList from "./ItemList";
 
 function AdvancedSearch() {
   const navigate = useNavigate();
-  const [filterVal, setFilterVal] = useState({});
+  const location = useLocation();
+  const initialFilter = location.state;
+  const [filterVal, setFilterVal] = useState({ ...initialFilter });
+
+  useEffect(() => {
+    setFilterVal({ ...initialFilter });
+    window.scrollTo(0, 0);
+  }, []);
+  console.log("initial", filterVal);
   return (
     <div>
       <Navbar />
@@ -50,7 +58,7 @@ function AdvancedSearch() {
 
       <div className="flex justify-evenly items-start my-3">
         <Filter filterVal={filterVal} setFilterVal={setFilterVal} />
-        <ItemList filterVal={filterVal} />
+        <ItemList filterVal={filterVal} initialFilter={initialFilter} />
       </div>
     </div>
   );
