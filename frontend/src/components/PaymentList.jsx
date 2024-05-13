@@ -15,7 +15,7 @@ function PaymentList({open, setOpen, order_id}) {
     }).catch((err) => {
       console.log(err);
     });
-  }, []);
+  }, [order_id]);
 
   const handleClose = () => {
     setOpen(false);
@@ -49,7 +49,7 @@ function PaymentList({open, setOpen, order_id}) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Refund</DialogTitle>
+      <DialogTitle>Hoàn tiền</DialogTitle>
       <DialogContent>
         {error && <Typography color="error">{error}</Typography>}
         <List>
@@ -58,7 +58,7 @@ function PaymentList({open, setOpen, order_id}) {
               <Checkbox
                 checked={selected.includes(payment.id)}
                 onClick={() => handleListItemClick(payment.id)}
-                disabled = {payment.status !== "PAID" || payment.method !== "VNPAY"}
+                disabled = {payment.status !== "PAID" || payment.payment_method !== "VNPAY"}
               />
               <span>Số tiền:  {payment.amount}</span> 
               <span> - Trạng thái: {payment.status}</span>

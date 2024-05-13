@@ -221,7 +221,7 @@ class MediaService:
     @staticmethod
     def send_mail():
         instance_lst = Media.objects.filter(Q(status = MediaStatusChoices.IN_QUEUE) | Q(status = MediaStatusChoices.FAIL)
-                                            & Q(retry_count__lt = 3) & Q(send_method = MediaSendMethodChoices.EMAIL))
+                                            & Q(retry_count__lt = 5) & Q(send_method = MediaSendMethodChoices.EMAIL))
         connection = mail.get_connection()
         connection.open()
         
@@ -241,6 +241,7 @@ class MediaService:
             except SMTPException as e:
                 instance.retry_count += 1
                 instance.status = MediaStatusChoices.FAIL
+                print(e)
                 instance.save()
                 
         connection.close()

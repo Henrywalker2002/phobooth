@@ -868,7 +868,7 @@ function OrderDetail() {
 
                       <Button
                         variant="contained"
-                        disabled={order?.complain == null ? false : true}
+                        disabled={order?.complain == null && order?.status != 'ORDERED' ? false : true}
                         onClick={() => setOpenCreateComplain(true)}
                         sx={{
                           textTransform: "none",

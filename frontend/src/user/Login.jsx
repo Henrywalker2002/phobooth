@@ -126,7 +126,14 @@ function Login() {
         navigate("/", { replace: true });
       }
     } catch (err) {
-      setErrMsg(err.response.data.messsage);
+      let message = err.response.data.message;
+      if (message === "user is not active") {
+        setErrMsg("Tài khoản của bạn đã bị khoá, vui lòng liên hệ admin!")
+      }
+      else {
+        setErrMsg("Sai tên đăng nhập hoặc mật khẩu!");
+      }
+      // setErrMsg(err.response.data.messsage);
       // errRef.current.focus();
       // console.log(err);
     }
@@ -255,7 +262,7 @@ function Login() {
             >
               {errMsg !== "" ? (
                 <Alert ref={errRef} severity="error">
-                  Tên người dùng hoặc mật khẩu không chính xác
+                  {errMsg}
                 </Alert>
               ) : (
                 ""

@@ -231,7 +231,7 @@ function StudioNavbar() {
                 <ListItemIcon>
                   <FaRegCircleUser className="w-5 h-5" />
                 </ListItemIcon>
-                <ListItemText>Thông tin cá nhân</ListItemText>
+                <ListItemText>Thông tin cửa hàng</ListItemText>
               </MenuItem>
               <MenuItem
                 onClick={() => {
