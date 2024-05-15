@@ -49,7 +49,7 @@ function ComplainDetail() {
   useEffect(() => {
     console.log(id);
     axiosPrivate
-      .get(`/complain/${id}`)
+      .get(`/complain/${id}/`)
       .then((res) => {
         console.log(res.data);
         setComplainData(res.data);

@@ -36,7 +36,7 @@ export default function VerifyStudioList() {
   useEffect(() => {
     const fetchVerifyList = async () => {
       await axiosPrivate
-        .get(`/studio-document?offset=${offset - 1}&limit=10`)
+        .get(`/studio-document/?offset=${offset - 1}&limit=10`)
         .then((response) => {
           setPageCount(Math.ceil(response.data.count / 10));
           setVerifyList(response.data.results);

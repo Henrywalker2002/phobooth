@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Navbar from "../../components/Navbar";
+import AdminNavbar from "../../components/AdminNavbar";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -48,7 +48,7 @@ function ComplainDetail() {
   useEffect(() => {
     console.log(id);
     axiosPrivate
-      .get(`/complain/${id}`)
+      .get(`/complain/${id}/`)
       .then((res) => {
         setComplainData(res.data);
       })
@@ -160,7 +160,7 @@ function ComplainDetail() {
 
   return (
     <div>
-      <Navbar />
+      <AdminNavbar />
 
       {/* Breadcumbs */}
       <Breadcrumbs

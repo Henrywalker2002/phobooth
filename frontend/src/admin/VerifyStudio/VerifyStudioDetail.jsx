@@ -34,7 +34,7 @@ export default function VerifyStudioDetail() {
   useEffect(() => {
     const fetchStudio = async () => {
       await axiosPrivate
-        .get(`/studio-document/${id}`)
+        .get(`/studio-document/${id}/`)
         .then((response) => {
           setStudio(response.data);
           setLoading(false);
@@ -235,14 +235,16 @@ export default function VerifyStudioDetail() {
             Giấy phép kinh doanh/Chứng minh đăng kí doanh nghiệp
           </div>
 
-          <div className="w-fit mx-auto" style = {{
-                border : "1px solid #E0E0E0",
-                marginTop : "20px",
-              }}>
+          <div
+            className="w-fit mx-auto"
+            style={{
+              border: "1px solid #E0E0E0",
+              marginTop: "20px",
+            }}
+          >
             <Document
               file={studio.license}
               onLoadSuccess={onDocumentLoadSuccess}
-
             >
               <Page pageNumber={pageNumber} />
             </Document>

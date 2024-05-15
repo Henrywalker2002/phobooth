@@ -584,7 +584,7 @@ function OrderDetail(props) {
                       số điện thoại
                     </div>
                     <div className="w-full text-base font-normal leading-5 text-zinc-900">
-                      Chưa cập nhật
+                      {order?.customer?.phone ?? "Chưa cập nhật"}
                     </div>
                   </div>
                   <div className="w-full items-stretch flex flex-col gap-1">

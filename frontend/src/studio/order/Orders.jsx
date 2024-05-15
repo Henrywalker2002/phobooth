@@ -273,7 +273,7 @@ function Orders() {
                     <TableRow>
                       <TableCell />
                       <TableCell sx={{ color: "#808080" }}>
-                        TÊN HÀNG HÓA
+                        TÊN SẢN PHẨM
                       </TableCell>
                       <TableCell sx={{ color: "#808080" }}>PHÂN LOẠI</TableCell>
                       <TableCell align="left" sx={{ color: "#808080" }}>
@@ -518,7 +518,7 @@ function Orders() {
                     NGÀY ĐẶT
                   </TableCell>
                   <TableCell align="left" sx={{ color: "#3F41A6" }}>
-                    SỐ LƯỢNG HÀNG HÓA
+                    SỐ LƯỢNG SẢN PHẨM
                   </TableCell>
                   <TableCell align="left" sx={{ color: "#3F41A6" }}>
                     TRẠNG THÁI

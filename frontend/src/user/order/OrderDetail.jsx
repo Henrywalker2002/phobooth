@@ -398,7 +398,7 @@ function OrderDetail() {
                   </div>
                   <div className="text-zinc-900 text-sm tracking-wider">
                     {order?.studio?.type == "STUDIO"
-                      ? "Studio"
+                      ? "Cửa hàng"
                       : "Thợ chụp ảnh"}
                   </div>
                 </div>
@@ -818,7 +818,7 @@ function OrderDetail() {
                       </div>
                       <div className="justify-between items-stretch flex gap-5 py-3">
                         <div className="text-stone-500 text-sm leading-5 whitespace-nowrap">
-                          Khuyến mãi từ Studio Demo:
+                          Khuyến mãi từ {order?.studio?.friendly_name}:
                         </div>
                         <div className="text-zinc-900 text-sm font-medium leading-5 whitespace-nowrap">
                           {order.discount_price == null
@@ -901,7 +901,7 @@ function OrderDetail() {
             elevation={3}
           >
             <div className="text-zinc-900 text-xl font-semibold leading-8 whitespace-nowrap shadow-sm bg-white justify-center pl-6 pr-16 py-3 rounded-lg items-start ">
-              Thông tin cơ bản
+              Thông tin khách hàng
             </div>
             <Divider />
 
@@ -944,7 +944,7 @@ function OrderDetail() {
                     số điện thoại
                   </div>
                   <div className="w-full text-base font-normal leading-5 text-zinc-900">
-                    Chưa cập nhật
+                    {order?.customer?.phone ?? "Chưa cập nhật"}
                   </div>
                 </div>
                 <div className="w-full items-stretch flex flex-col gap-1">

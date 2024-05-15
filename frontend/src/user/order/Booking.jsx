@@ -465,8 +465,10 @@ function Booking() {
                     />
                   }
                 >
-                  <AlertTitle sx={{ color: "#18181B" }}>
-                    Địa chỉ nhận hàng
+                  <AlertTitle>
+                    <div className=" text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
+                      Địa chỉ nhận hàng :
+                    </div>
                   </AlertTitle>
                   <div className="flex items-start gap-2">
                     <div className=" text-stone-500 text-base leading-6">
@@ -497,7 +499,7 @@ function Booking() {
                   </div>
                   <div className=" text-stone-500 text-base leading-6">
                     Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
-                    cửa hàng cập nhật và thông báo sau khi đặt dịch vụ.
+                    cửa hàng cập nhật và thông báo sau khi đặt sản phẩm.
                   </div>
                 </div>
               </div>

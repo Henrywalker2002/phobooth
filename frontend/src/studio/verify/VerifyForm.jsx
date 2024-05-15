@@ -31,7 +31,7 @@ export default function VerifyForm(props) {
     <Grid container spacing={2}>
       <Grid item xs={6}>
         <div className="text-zinc-900 text-sm leading-5">
-          Tên người đại diện pháp lý của Studio *
+          Tên người đại diện pháp lý của cửa hàng *
         </div>
         <StyledTextField
           required

@@ -213,8 +213,8 @@ function Profile() {
         setCookie(
           "userInfo",
           {
-            access : cookies.userInfo.access,
-            refresh : cookies.userInfo.refresh,
+            access: cookies.userInfo.access,
+            refresh: cookies.userInfo.refresh,
             ...res.data,
           },
           { path: "/" }
@@ -285,7 +285,7 @@ function Profile() {
             fontWeight: "500",
           }}
         >
-          Hồ sơ cá nhân
+          Thông tin cá nhân
         </Typography>
       </Breadcrumbs>
 
@@ -297,7 +297,7 @@ function Profile() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Hồ sơ cá nhân
+          Thông tin cá nhân
         </div>
         <Divider />
         <form onSubmit={handleUpdateProfile}>
@@ -516,11 +516,11 @@ function Profile() {
           </div>
 
           <div className="flex flex-col ml-4">
-            <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
+            <div className="text-zinc-900 text-sm leading-5 mt-4 mb-2 flex items-center gap-1">
               Địa chỉ
-              <IconButton onClick={handleAddAddress}>
+              {/* <IconButton onClick={handleAddAddress}>
                 <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
-              </IconButton>
+              </IconButton> */}
             </div>
             {addresses.length > 1 ? (
               addresses.map((address, index) => (

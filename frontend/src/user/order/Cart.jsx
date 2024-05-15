@@ -232,7 +232,7 @@ function Cart() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý giỏ hàng
       </div>
       {/* Tables */}
@@ -478,7 +478,7 @@ function Cart() {
       </div>
 
       {/* Btn */}
-      <div className="max-w-[1200px] mx-auto mb-6 mt-2 flex justify-end">
+      <div className="max-w-[1200px] mx-auto mb-6 flex justify-end">
         <Button
           variant="contained"
           sx={{
@@ -487,14 +487,15 @@ function Cart() {
             borderRadius: "43px",
             color: "#F6F5FB",
             bgcolor: "#3F41A6",
-            width: "130px",
+            width: "fit-content",
+            padding: "5px 15px",
             "&:hover": {
               bgcolor: "#3F41A6B2",
             },
           }}
           onClick={handleBooking}
         >
-          Đặt dịch vụ
+          Đặt sản phẩm
         </Button>
       </div>
 
