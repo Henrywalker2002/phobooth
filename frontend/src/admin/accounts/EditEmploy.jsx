@@ -159,7 +159,7 @@ export default function EditEmploy({
       .catch((err) => {
         setErrorMessage("Không thể lấy thông tin thành viên");
       });
-  }, [currentItem]);
+  }, [currentItem.username]);
 
   const resetFormData = () => {};
 

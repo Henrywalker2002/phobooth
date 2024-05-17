@@ -1,17 +1,17 @@
 const convertRole = (roles) => {
-  for (let i =0;i < roles?.length;i++) {
+  for (let i = 0; i < roles?.length; i++) {
     var role = roles[i]
     if (typeof role === "object") {
       role = role.code_name
     }
     if (role.includes("admin")) {
-        return "Quản lý"
+      return "Quản lý"
     }
-    if (roles[i] === "staff") {
-        return "Nhân viên"
+    if (roles[i].code_name === "staff") {
+      return "Nhân viên"
     }
     else {
-        return "Khách hàng"
+      return "Khách hàng"
     }
   }
 }
@@ -32,7 +32,7 @@ const convertStatus = (status) => {
   if (status === "IN_PROGRESS") {
     return "Đang xử lý"
   }
-  
+
 }
 
-export { convertRole , convertTime, convertStatus}
+export { convertRole, convertTime, convertStatus }

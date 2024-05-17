@@ -42,7 +42,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
 
   useEffect(() => {
     axiosPrivate
-      .get("/item-service/")
+      .get("/item-service/?limit=5")
       .then((res) => {
         // console.log(res.data.results);
         setServiceList(res.data.results);
@@ -105,11 +105,11 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
         "& .MuiDialog-paper": {
           maxWidth: "1500px",
           maxHeight: "700px",
-          width: "1200px",
+          width: "80%",
         },
       }}
     >
-      <DialogTitle>DANH SÁCH SẢN PHẨM CỦA STUDIO</DialogTitle>
+      <DialogTitle>DANH SÁCH SẢN PHẨM CỦA CỬA HÀNG</DialogTitle>
       {!openUpdateInfo && (
         <DialogContent dividers={true}>
           <div className="w-fit h-[50px] flex gap-20 mx-auto">
@@ -172,7 +172,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
             <TableContainer
               component={Paper}
               sx={{
-                width: "70%",
+                width: "90%",
                 margin: "20px auto",
                 border: "1px solid #d6d3d1",
               }}
@@ -207,10 +207,10 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                     productList.map((item) => (
                       <TableRow
                         key={item.id}
-                        id = {item.id}
+                        id={item.id}
                         // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       >
-                        <TableCell sx={{ width: "42px" }}>
+                        <TableCell>
                           <Checkbox
                             onChange={(e) => {
                               e.target.checked
@@ -273,14 +273,24 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                     <TableCell>
                       {/* <Checkbox inputProps={{ "aria-label": "Checkbox demo" }} /> */}
                     </TableCell>
-                    <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
-                    <TableCell sx={{ color: "#3F41A6" }}>PHÂN LOẠI</TableCell>
+                    <TableCell sx={{ color: "#3F41A6", width: "30%" }}>
+                      SẢN PHẨM
+                    </TableCell>
+                    <TableCell sx={{ color: "#3F41A6", width: "20%" }}>
+                      PHÂN LOẠI
+                    </TableCell>
 
-                    <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    <TableCell
+                      align="left"
+                      sx={{ color: "#3F41A6", width: "25%" }}
+                    >
                       DANH MỤC
                     </TableCell>
 
-                    <TableCell align="left" sx={{ color: "#3F41A6" }}>
+                    <TableCell
+                      align="left"
+                      sx={{ color: "#3F41A6", width: "25%" }}
+                    >
                       GIÁ THAM KHẢO
                     </TableCell>
                   </TableRow>
@@ -290,7 +300,7 @@ function AddOrderItem({ open, setOpen, getOrderDetail, orderId }) {
                     serviceList.map((item) => (
                       <TableRow
                         key={item.id}
-                        id = {item.id}
+                        id={item.id}
                         // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       >
                         <TableCell sx={{ width: "42px" }}>

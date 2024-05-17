@@ -75,13 +75,57 @@ function Navbar() {
       setUserInfo(cookies?.userInfo?.full_name);
     } else setUserInfo("");
 
-    axios.get('/category/').then((res) => {
-      setCategoryLst(res.data.results);
-    }
-    ).catch((err) => {
-      console.log(err);
-    }
-    );
+    axios
+      .get("/category/")
+      .then((res) => {
+        // setCategoryLst(res.data.results);
+        setCategoryLst([
+          {
+            label: "Chụp ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Chụp")
+            ),
+          },
+          {
+            label: "In ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("In")
+            ),
+          },
+          {
+            label: "Sửa ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Sửa")
+            ),
+          },
+          {
+            label: "Quay phim",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Quay phim")
+            ),
+          },
+          {
+            label: "Hàng hóa",
+            categories: res.data.results.filter(
+              (category) => category.type === "PRODUCT"
+            ),
+          },
+          {
+            label: "Danh mục khác",
+            categories: res.data.results.filter(
+              (category) =>
+                category.type === "SERVICE" &&
+                ["Chụp", "In", "Sửa", "Quay phim"].reduce(
+                  (acc, label) => acc && !category.title.includes(label),
+                  true
+                )
+            ),
+          },
+        ]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   // profile nav
   const [anchorEl, setAnchorEl] = useState(null);
@@ -119,8 +163,11 @@ function Navbar() {
   };
 
   const handleSearch = (e) => {
-    navigate(`/advanced-search/`, {state : {search : searchKeyWord}, replace: true});
-  }
+    navigate(`/advanced-search/`, {
+      state: { search: searchKeyWord },
+      replace: true,
+    });
+  };
 
   return (
     <AppBar
@@ -287,7 +334,11 @@ function Navbar() {
             >
               Danh mục
             </Button>
-            <CategoryMenu categories={categoryLst} handleClose={handleCloseCategory} anchorEl={anchorCategory} />
+            <CategoryMenu
+              categories={categoryLst}
+              handleClose={handleCloseCategory}
+              anchorEl={anchorCategory}
+            />
           </div>
         </div>
 
@@ -298,8 +349,8 @@ function Navbar() {
               type="search"
               placeholder="Tìm kiếm"
               onChange={handleChangeKeyWord}
-              onKeyDown={ (e) => {
-                if (e.key === 'Enter') {
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
                   handleSearch();
                 }
               }}
@@ -324,7 +375,7 @@ function Navbar() {
                   bgcolor: "#303F9F",
                 },
               }}
-              onClick = {handleSearch}
+              onClick={handleSearch}
             >
               <RiSearchLine className="w-6 h-6 mx-auto" />
             </Button>

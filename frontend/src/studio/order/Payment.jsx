@@ -73,7 +73,7 @@ function Payment({ order, setOrder }) {
   const handleOpenEditReq = (e, reqId) => {
     e.stopPropagation();
     axiosPrivate
-      .get(`/payment/${reqId}`)
+      .get(`/payment/${reqId}/`)
       .then((res) => {
         console.log(res);
         setEditReq(res.data);

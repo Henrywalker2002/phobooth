@@ -300,7 +300,7 @@ function Demo() {
                         {currentDemo.format}
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1 tracking-wide">
+                    <div className="flex gap-2.5 tracking-wide">
                       <div className="font-medium text-zinc-900">Mô tả :</div>
                       <div className="text-stone-500">
                         {currentDemo.description}

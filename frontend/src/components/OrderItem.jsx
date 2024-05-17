@@ -1,7 +1,12 @@
 import { translateOrderStatus, translateType } from "../util/Translate";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React from "react";
-
 
 const formatter = new Intl.NumberFormat("vi-VN", {
   style: "currency",
@@ -62,7 +67,10 @@ function Row(props) {
 
 export default function OrderItem({ order }) {
   return (
-    <Table aria-label="collapsible table">
+    <Table
+      aria-label="collapsible table"
+      sx={{ border: "0.5px solid #d6d3d1", borderRadius: "4px" }}
+    >
       <TableHead sx={{ bgcolor: "#E2E5FF" }}>
         <TableRow>
           <TableCell

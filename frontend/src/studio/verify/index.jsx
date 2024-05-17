@@ -133,7 +133,7 @@ export default function VerifyStudio() {
           // href="/"
           onClick={() => navigate("/studio/profile", { replace: true })}
         >
-          Thông tin Studio
+          Thông tin cửa hàng
         </Link>
 
         <Typography
@@ -144,7 +144,7 @@ export default function VerifyStudio() {
             fontWeight: "500",
           }}
         >
-          Xác thực Studio
+          Xác thực cửa hàng
         </Typography>
       </Breadcrumbs>
       <Paper
@@ -155,7 +155,7 @@ export default function VerifyStudio() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Xác thực Studio
+          Xác thực cửa hàng
         </div>
         <Divider />
         <div className="justify-center pl-5 py-3 rounded-lg items-start">

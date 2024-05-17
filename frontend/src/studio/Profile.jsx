@@ -222,7 +222,7 @@ function Profile() {
             fontWeight: "500",
           }}
         >
-          Thông tin Studio
+          Thông tin cửa hàng
         </Typography>
       </Breadcrumbs>
 
@@ -234,14 +234,14 @@ function Profile() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Thông tin Studio
+          Thông tin cửa hàng
         </div>
         <Divider />
         <form onSubmit={handleUpdateStudio}>
           <div className="self-stretch flex items-stretch  gap-[150px] mt-5">
             <div className="flex basis-[0%] flex-col items-stretch ml-4">
               <div className="text-zinc-900 text-sm leading-5">
-                Tên Studio *
+                Tên cửa hàng *
               </div>
               <TextField
                 required
@@ -280,7 +280,7 @@ function Profile() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4">
-                Email (Studio) *
+                Email (Cửa hàng) *
               </div>
               <TextField
                 required
@@ -304,7 +304,7 @@ function Profile() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
-                Số điện thoại (Studio) *
+                Số điện thoại (Cửa hàng) *
               </div>
               <TextField
                 required
@@ -392,7 +392,7 @@ function Profile() {
 
           <div className="flex flex-col ml-4">
             <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
-              Địa chỉ Studio *
+              Địa chỉ cửa hàng *
             </div>
             <TextField
               disabled
@@ -538,7 +538,7 @@ function Profile() {
                   navigate("/studio/profile/verify", { state: { studioInfo } })
                 }
               >
-                Xác thực Studio
+                Xác thực cửa hàng
               </Button>
             )}
 
