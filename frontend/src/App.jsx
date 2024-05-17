@@ -150,8 +150,7 @@ function App() {
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/notification" element={<NotificationMgmt />} />
-          <Route path="/notfound" element={<NotFound />} />
-          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </ThemeProvider>
