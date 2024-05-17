@@ -74,7 +74,7 @@ function Filter({ filterVal, setFilterVal }) {
 
   useEffect(() => {
     axios
-      .get("/category")
+      .get("/category/")
       .then((res) => {
         console.log(res.data);
         setCategories(res.data.results);

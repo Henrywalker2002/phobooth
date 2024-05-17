@@ -21,6 +21,7 @@ import ResponseText from "../../../components/ResponseText";
 import { convertRole, convertTime, convertStatus } from "./helpFunction";
 import { useCookies } from "react-cookie";
 import PaymentList from "../../../components/PaymentList";
+import OrderItem from "../../../components/OrderItem";
 
 const id = window.location.pathname.split("/")[3];
 const ws = new WebSocket(`ws://localhost:8000/ws/complain-forum/${id}/`);
@@ -40,6 +41,12 @@ function ComplainDetail() {
   const [pageCount, setPageCount] = React.useState(0);
   const [pageNext, setPageNext] = React.useState(null);
   const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
+  const [orderInfor, setOrderInfor] = React.useState({});
+
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
 
   const endOfMessagesRef = React.useRef(null);
   const scrollToBottom = () => {
@@ -49,7 +56,7 @@ function ComplainDetail() {
   useEffect(() => {
     console.log(id);
     axiosPrivate
-      .get(`/complain/${id}`)
+      .get(`/complain/${id}/`)
       .then((res) => {
         console.log(res.data);
         setComplainData(res.data);
@@ -97,6 +104,18 @@ function ComplainDetail() {
       };
     };
   }, []);
+
+  useEffect(() => {
+    axiosPrivate
+      .get(`/order/${complainData.order}/`)
+      .then((res) => {
+        setOrderInfor(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [complainData]);
 
   useEffect(() => {
     scrollToBottom();
@@ -228,7 +247,7 @@ function ComplainDetail() {
 
       <Paper
         sx={{
-          width: "800px",
+          width: "65%",
           margin: "20px auto",
           border: "1px solid #d6d3d1",
           paddingBottom: "20px",
@@ -264,14 +283,14 @@ function ComplainDetail() {
             <div className="text-lg font-semibold text-gray-700">
               {complainData.title}
             </div>
-            <div className="flex gap-3.5 self-start text-sm leading-5">
+            <div className="flex gap-3.5 self-start text-md leading-5">
               <div className="grow my-auto text-zinc-900">Phân loại :</div>
               <div className="justify-center px-2 py-1 text-indigo-800 bg-indigo-100 rounded">
                 {complainData.type === "REFUND" ? "Hoàn tiền" : "Khác"}
               </div>
             </div>
 
-            <div className="flex gap-3.5 self-start text-sm leading-5">
+            <div className="flex gap-3.5 self-start text-md leading-5">
               <div className="grow my-auto text-zinc-900">Trạng thái :</div>
 
               {complainData?.status === "PENDING" ? (
@@ -289,21 +308,34 @@ function ComplainDetail() {
               ) : null}
             </div>
 
-            <div className="text-sm leading-6 text-black">
-              {complainData.description}
+            <div className="flex gap-3.5 self-start text-md leading-5">
+              <div className="grow my-auto text-zinc-900">
+                Tổng giá trị đơn hàng :
+              </div>
+              <div className="text-indigo-800 text-md leading-6 whitespace-nowrap">
+                {formatter.format(orderInfor.total_price)}
+              </div>
             </div>
-            {complainData.pictures?.map((picture, i) => {
-              return (
-                <img
-                  key={i}
-                  loading="lazy"
-                  srcSet={picture.picture}
-                  className="max-w-full aspect-[1.92] w-[645px]"
-                />
-              );
-            })}
+
+            <div className="text-sm leading-6 text-black">
+              Nội dung khiếu nại: {complainData.description}
+            </div>
           </div>
         </div>
+
+        <div className="px-5">
+          <OrderItem order={orderInfor} />
+        </div>
+        {complainData.pictures?.map((picture, i) => {
+          return (
+            <img
+              key={i}
+              loading="lazy"
+              srcSet={picture.picture}
+              className="max-w-full h-auto"
+            />
+          );
+        })}
       </Paper>
 
       <div className="text-indigo-800 text-xl font-semibold flex justify-center whitespace-nowrap mt-10">
@@ -328,7 +360,7 @@ function ComplainDetail() {
 
         <Paper
           sx={{
-            width: "800px",
+            width: "65%",
             marginX: "auto",
             border: "1px solid #d6d3d1",
           }}

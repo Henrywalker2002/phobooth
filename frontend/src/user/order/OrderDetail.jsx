@@ -398,7 +398,7 @@ function OrderDetail() {
                   </div>
                   <div className="text-zinc-900 text-sm tracking-wider">
                     {order?.studio?.type == "STUDIO"
-                      ? "Studio"
+                      ? "Cửa hàng"
                       : "Thợ chụp ảnh"}
                   </div>
                 </div>
@@ -502,10 +502,10 @@ function OrderDetail() {
               <div className="flex justify-around">
                 {/* payment request + complain + demo*/}
                 <div className="flex flex-col w-1/2 gap-12">
-                  {/* payment request */}
+                  {/* payment request */}``
                   <div className="items-stretch flex flex-col px-5 gap-2">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
-                      Yêu cầu thanh toán mới nhất
+                      Yêu cầu thanh toán
                     </div>
 
                     <div className="flex flex-col my-3 h-fit">
@@ -868,7 +868,11 @@ function OrderDetail() {
 
                       <Button
                         variant="contained"
-                        disabled={order?.complain == null ? false : true}
+                        disabled={
+                          order?.complain == null && order?.status != "ORDERED"
+                            ? false
+                            : true
+                        }
                         onClick={() => setOpenCreateComplain(true)}
                         sx={{
                           textTransform: "none",

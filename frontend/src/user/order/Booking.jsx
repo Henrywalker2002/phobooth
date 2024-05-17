@@ -253,7 +253,7 @@ function Booking() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Đặt sản phẩm
       </div>
 
@@ -341,8 +341,8 @@ function Booking() {
                       </div>
                     </TableCell>
                     <TableCell align="left" sx={{ width: "150px" }}>
-                      <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
-                        <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                      <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#d6d3d1)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
+                        <div className="bg-indigo-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                           <IconButton
                             color="primary"
                             onClick={() =>
@@ -358,10 +358,10 @@ function Booking() {
                             />
                           </IconButton>
                         </div>
-                        <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
+                        <div className="text-indigo-800 text-center text-sm leading-6 mx-2">
                           {row.number}
                         </div>
-                        <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                        <div className="bg-indigo-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                           <IconButton
                             color="primary"
                             onClick={() =>
@@ -497,7 +497,7 @@ function Booking() {
                   </div>
                   <div className=" text-stone-500 text-base leading-6">
                     Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ được
-                    cửa hàng cập nhật và thông báo sau khi đặt dịch vụ.
+                    cửa hàng cập nhật và thông báo sau khi đặt sản phẩm.
                   </div>
                 </div>
               </div>
@@ -536,7 +536,8 @@ function Booking() {
             borderRadius: "43px",
             color: "#F6F5FB",
             bgcolor: "#3F41A6",
-            width: "130px",
+            width: "fit-content",
+            padding: "5px 15px",
             "&:hover": {
               bgcolor: "#3F41A6B2",
             },

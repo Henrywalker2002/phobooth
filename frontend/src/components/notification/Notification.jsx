@@ -21,7 +21,7 @@ function NotificationContent({ title, message, timestamp }) {
       <h3 className="text-sm font-semibold leading-5 text-neutral-800 gap-2">
         {title}
       </h3>
-      <p className="text-[15px] leading-5 text-gray-500">{message}</p>
+      <p className="text-[15px] leading-5 text-gray-500 truncate">{message}</p>
       <time className="text-xs leading-5 text-neutral-500">{timestamp}</time>
     </div>
   );
@@ -129,7 +129,9 @@ function NotificationList({ anchorNoti, handleClose }) {
       {notifications.length === 0 ? (
         <Box
           sx={{
-            minWidth: "300px",
+            width: "200px",
+            minWidth: "200px",
+            maxWidth: "400px",
           }}
         >
           <MenuItem>
@@ -137,7 +139,7 @@ function NotificationList({ anchorNoti, handleClose }) {
           </MenuItem>
         </Box>
       ) : (
-        <>
+        <div>
           {notifications.map((notification, i) => (
             <Box
               sx={{
@@ -170,7 +172,7 @@ function NotificationList({ anchorNoti, handleClose }) {
           <MenuItem onClick={() => navigate("/notification")}>
             Xem tất cả
           </MenuItem>
-        </>
+        </div>
       )}
     </Menu>
   );

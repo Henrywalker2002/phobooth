@@ -128,6 +128,7 @@ export default function AdminNavbar() {
                   color: "#3F41A6",
                 },
               }}
+              onClick={() => navigate("/admin")}
             >
               {translateRole(cookies?.userInfo?.role[0]?.code_name)}
             </Button>

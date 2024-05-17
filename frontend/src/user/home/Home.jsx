@@ -9,6 +9,7 @@ import Err401Dialog from "../../components/Err401Dialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Carousel from "./Carousel";
 import ItemCard from "../../components/ItemCard";
+import { useCookies } from "react-cookie";
 
 function Home() {
   const axiosPrivate = useAxiosPrivate();
@@ -19,6 +20,13 @@ function Home() {
 
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
+  const [cookies, setCookies] = useCookies(['userInfo'])
+  
+  if (cookies.userInfo) {
+    if (cookies.userInfo.role[0].code_name === "admin") {
+      navigate("/admin");
+    }
+  }
 
   useEffect(() => {
     axios

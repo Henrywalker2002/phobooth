@@ -40,6 +40,7 @@ import AdvancedSearch from "./user/search/AdvancedSearch";
 import StudioReport from "./studio/report/Report";
 import TransferRequests from "./admin/transfer/Requests";
 import PaymentSuccess from "./user/order/PaymentSuccess";
+import NotFound from "./components/NotFound";
 
 function App() {
   const theme = createTheme({
@@ -149,7 +150,7 @@ function App() {
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/notification" element={<NotificationMgmt />} />
-          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -33,6 +33,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useCookies } from "react-cookie";
 import NotificationList from "./notification/Notification";
 import no_avt from "../assets/blank-avatar.png";
+import axios from "../api/axios";
+import { CategoryMenu } from "./CategoryMenu";
 
 const MenuBtn = styled(IconButton)(({ theme }) => ({
   display: "none",
@@ -56,11 +58,74 @@ function Navbar() {
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
   const [cookies, , removeCookie] = useCookies(["accInfo"]);
+  const [searchKeyWord, setSearchKeyWord] = useState("");
+  const [categoryLst, setCategoryLst] = useState([]);
+  const [anchorCategory, setAnchorCategory] = useState(null);
+
+  const handleClickCategory = (event) => {
+    setAnchorCategory(event.currentTarget);
+  };
+
+  const handleCloseCategory = () => {
+    setAnchorCategory(null);
+  };
 
   useEffect(() => {
     if (cookies?.userInfo?.username !== undefined) {
       setUserInfo(cookies?.userInfo?.full_name);
     } else setUserInfo("");
+
+    axios
+      .get("/category/")
+      .then((res) => {
+        // setCategoryLst(res.data.results);
+        setCategoryLst([
+          {
+            label: "Chụp ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Chụp")
+            ),
+          },
+          {
+            label: "In ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("In")
+            ),
+          },
+          {
+            label: "Sửa ảnh",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Sửa")
+            ),
+          },
+          {
+            label: "Quay phim",
+            categories: res.data.results.filter((category) =>
+              category.title.includes("Quay phim")
+            ),
+          },
+          {
+            label: "Hàng hóa",
+            categories: res.data.results.filter(
+              (category) => category.type === "PRODUCT"
+            ),
+          },
+          {
+            label: "Danh mục khác",
+            categories: res.data.results.filter(
+              (category) =>
+                category.type === "SERVICE" &&
+                ["Chụp", "In", "Sửa", "Quay phim"].reduce(
+                  (acc, label) => acc && !category.title.includes(label),
+                  true
+                )
+            ),
+          },
+        ]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   // profile nav
   const [anchorEl, setAnchorEl] = useState(null);
@@ -91,6 +156,17 @@ function Navbar() {
   };
   const handleNotificationClose = () => {
     setAnchorNoti(null);
+  };
+
+  const handleChangeKeyWord = (e) => {
+    setSearchKeyWord(e.target.value);
+  };
+
+  const handleSearch = (e) => {
+    navigate(`/advanced-search/`, {
+      state: { search: searchKeyWord },
+      replace: true,
+    });
   };
 
   return (
@@ -254,9 +330,15 @@ function Navbar() {
                   color: "#3F41A6",
                 },
               }}
+              onClick={handleClickCategory}
             >
               Danh mục
             </Button>
+            <CategoryMenu
+              categories={categoryLst}
+              handleClose={handleCloseCategory}
+              anchorEl={anchorCategory}
+            />
           </div>
         </div>
 
@@ -266,6 +348,12 @@ function Navbar() {
               id="outlined-search"
               type="search"
               placeholder="Tìm kiếm"
+              onChange={handleChangeKeyWord}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
               sx={{
                 "& .MuiInputBase-input": {
                   padding: "10px 12px",
@@ -287,6 +375,7 @@ function Navbar() {
                   bgcolor: "#303F9F",
                 },
               }}
+              onClick={handleSearch}
             >
               <RiSearchLine className="w-6 h-6 mx-auto" />
             </Button>

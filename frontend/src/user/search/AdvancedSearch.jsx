@@ -11,6 +11,7 @@ function AdvancedSearch() {
   const navigate = useNavigate();
   const location = useLocation();
   const initialFilter = location.state;
+  console.log("initial", initialFilter);
   const [filterVal, setFilterVal] = useState({ ...initialFilter });
 
   useEffect(() => {
