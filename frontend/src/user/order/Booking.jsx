@@ -32,6 +32,9 @@ import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import AddressAlert from "./AddressAlert";
 import { translateType } from "../../util/Translate";
+import VariationPopover from "../../components/VariationPopover";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 
 function Booking() {
   const navigate = useNavigate();
@@ -44,23 +47,30 @@ function Booking() {
   const [selectedItemList, setSelectedItemList] = useState({});
   const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openAddrAlert, setOpenAddrAlert] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const [currentItem, setCurrentItem] = useState({});
+  const [variation, setVariation] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
 
+
   // check address
   useEffect(() => {
     if (!cookies.userInfo.address) {
       setOpenAddrAlert(true);
     }
-    console.log("itemLists", itemLists);
   }, []);
 
   const getTotalPrice = (lst, typ) => {
     if (lst.length) {
       let result = lst.reduce((total, row) => {
+        if (variation[row.item.id]) {
+          return total + row?.number * variation[row.item.id].price;
+        }
         if (row?.item?.fixed_price) {
           return total + row?.number * row?.item?.fixed_price;
         } else {
@@ -82,6 +92,10 @@ function Booking() {
   };
 
   function getPrice(row) {
+    if (variation[row.item.id]) {
+      let price = variation[row.item.id].price * row.number;
+      return formatter.format(price);
+    }
     if (row?.item?.fixed_price) {
       return formatter.format(row?.item?.fixed_price * row?.number);
     }
@@ -99,7 +113,18 @@ function Booking() {
     try {
       for (let itemLst of itemLists) {
         let order_item = itemLst.items.map((item) => {
-          return { item: item.item.id, quantity: item.number };
+          if (variation[item.item.id]) {
+            return {
+              quantity: item.number,
+              variation: variation[item.item.id].id,
+            }
+          }
+          else {
+            return {
+              quantity: item.number,
+              item : item.item.id
+            }
+          } 
         });
         let updateOrderLst = {
           order_item: order_item,
@@ -202,6 +227,26 @@ function Booking() {
     setItemLists(newItemLists);
   };
 
+  const handleOpenVariation = (e, item) => {
+    setCurrentItem(item)
+    setAnchorEl(e.currentTarget)
+  };
+
+  const handleCloseVariation = () => {
+    setAnchorEl(null);
+  }
+
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", "
+      }
+    }
+    text = text.slice(0, -2);
+    return text.length > 16 ? text.slice(0, 16) + "..." : text;
+  }
+
   return (
     <div>
       <Navbar />
@@ -273,9 +318,15 @@ function Booking() {
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
                   <TableCell
-                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "40%" }}
+                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "30%" }}
                   >
                     SẢN PHẨM
+                  </TableCell>
+
+                  <TableCell
+                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "20%" }}
+                  >
+                    PHÂN LOẠI HÀNG
                   </TableCell>
                   <TableCell
                     align="left"
@@ -329,6 +380,17 @@ function Booking() {
                           {row.item?.name}
                         </div>
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {variation[row.item.id] ? textVariation(variation[row.item.id]) : (
+                        row.item.type === "PRODUCT" ? "Chọn" : "")}
+                      <Button onClick={(e) => handleOpenVariation(e, row.item)} 
+                              disabled = {row.item.type === "PRODUCT" ? false : true}
+                              sx = {{
+                                color : "#000"
+                              }}>
+                        {row.item.type === "PRODUCT" ? <ArrowDropDownIcon /> : ""}
+                      </Button>
                     </TableCell>
                     <TableCell align="left">
                       <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
@@ -557,6 +619,14 @@ function Booking() {
 
       {/* Address Alert */}
       <AddressAlert open={openAddrAlert} setOpen={setOpenAddrAlert} />
+      <VariationPopover
+        open={open}
+        handleClose={handleCloseVariation}
+        anchorEl={anchorEl}
+        item_id={currentItem.id}
+        variation={variation}
+        setVariation={setVariation}
+      />
     </div>
   );
 }

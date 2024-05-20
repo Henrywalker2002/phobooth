@@ -61,6 +61,7 @@ class Item(BaseModel):
         default=ItemStatusChoices.ACTIVE,
         max_length=255,
     )
+    # stock = models.IntegerField(default= 100)
     width = models.FloatField(null=True)
     length = models.FloatField(null=True)
     weight = models.FloatField(null=True)

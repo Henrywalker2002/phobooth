@@ -35,9 +35,10 @@ class CreateOrderSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("You must provide at least one order item")
         studio = None 
         for item in value: 
+            item = item["item"] or item["variation"].product
             if studio is None:
-                studio = item["item"].studio
-            if studio != item["item"].studio:
+                studio = item.studio
+            if studio != item.studio:
                 raise serializers.ValidationError("You can't provide order item from different studio")
         return value
 

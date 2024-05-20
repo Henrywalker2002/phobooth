@@ -36,6 +36,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { CurrencyFormatter } from "../../util/Format";
 import CartContext from "../../context/CartProvider";
+import find_varation from "../../util/FindVariation";
 
 function ItemDetail(props) {
   const [cookies] = useCookies(["accInfo"]);
@@ -51,19 +52,15 @@ function ItemDetail(props) {
   const [itemsInStudio, setItemsInStudio] = useState([]);
   const [similarItems, setSimilarItems] = useState([]);
   const [selectedChip, setSelectedChip] = useState({ opt1: "", opt2: "" });
-  const options = [
-    {
-      name: "Màu sắc",
-      value: ["đen", "trắng", "xanh"],
-    },
-    {
-      name: "Kích cỡ",
-      value: ["lớn", "nhỏ"],
-    },
-  ];
+  const [options, setOptions] = useState([{}]);
+  const [stock, setStock] = useState(10);
+  const [varitaion, setVariation] = useState({})
+
   const handleChipClick = (val, index) => {
     if (index === 0) setSelectedChip({ ...selectedChip, opt1: val });
     else setSelectedChip({ ...selectedChip, opt2: val });
+    let selectedVariation = find_varation(val,index , item.variation, item.option.length, selectedChip);
+    setVariation(selectedVariation) 
   };
 
   const [chooseIndex, setChooseIndex] = useState(0);
@@ -94,8 +91,10 @@ function ItemDetail(props) {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
-        console.log(res.data);
         setItem(res.data);
+        if (res.data.option) {
+          setOptions(res.data.option);
+        }
         return res.data;
       })
       .then((data) => {
@@ -107,7 +106,6 @@ function ItemDetail(props) {
             },
           })
           .then((res) => {
-            console.log("Items in Studio", res.data.results);
             setItemsInStudio(res.data.results);
           });
         return data;
@@ -154,7 +152,6 @@ function ItemDetail(props) {
 
   // Order now
   const handleOrderNow = (item) => {
-    console.log(item);
     setItemLists([
       {
         studio: item.studio,
@@ -177,11 +174,6 @@ function ItemDetail(props) {
     }
 
     setOpenSBar(false);
-  };
-
-  const handleBuyNow = (e) => {
-    e.preventDefault();
-    navigate(`/booking?item=${id}&quantity=${quantity}`);
   };
 
   return (
@@ -264,7 +256,7 @@ function ItemDetail(props) {
                         onClick={() => handleClickChoose(startIndex)}
                       />
 
-                      {startIndex > 1 && (
+                      {startIndex > 0 && (
                         <ImageListItemBar
                           style={{
                             position: "absolute",
@@ -373,11 +365,11 @@ function ItemDetail(props) {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {item.fixed_price
+                {varitaion.price ? CurrencyFormatter(varitaion.price) : (item.fixed_price
                   ? CurrencyFormatter(item.fixed_price)
                   : `${CurrencyFormatter(item.min_price)} - ${CurrencyFormatter(
                       item.max_price
-                    )}`}{" "}
+                    )}`)}{" "}
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -401,7 +393,7 @@ function ItemDetail(props) {
                 {options.map((opt, index) => (
                   <div key={index} className="flex gap-5">
                     <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
-                      {opt.name} :
+                      {opt.name ? (opt.name + " :") : ""}
                     </div>
                     <div className="flex gap-3 flex-wrap">
                       {opt.value?.map((val, i) => {
@@ -456,6 +448,7 @@ function ItemDetail(props) {
                         <IconButton
                           color="primary"
                           onClick={() => setQuantity(quantity - 1)}
+                          disabled={quantity <= 1}
                         >
                           <RiSubtractFill style={{ color: "#666666" }} />
                         </IconButton>
@@ -467,13 +460,14 @@ function ItemDetail(props) {
                         <IconButton
                           color="primary"
                           onClick={() => setQuantity(quantity + 1)}
+                          disabled = {quantity >= stock}
                         >
                           <IoIosAdd style={{ color: "#666666" }} />
                         </IconButton>
                       </div>
                     </div>
                     <div className=" text-stone-500 text-xs leading-6">
-                      Còn 3 sản phẩm
+                      {/* {`Còn ${stock} sản phẩm`} */}
                     </div>
                   </div>
 
