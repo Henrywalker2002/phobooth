@@ -77,6 +77,16 @@ function OrderDetail() {
     currency: "VND",
   });
 
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", ";
+      }
+    }
+    text = text.slice(0, -2);
+    return text;
+  };
   // update adress
   const handleChangeAddress = (newAddr) => {
     console.log(newAddr);
@@ -268,8 +278,15 @@ function OrderDetail() {
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
 
-              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-normal truncate my-auto rounded-lg">
-                {row.item?.name}
+              <div className="flex flex-col items-start">
+                <div className="text-zinc-900 text-base font-medium leading-6 whitespace-normal my-auto">
+                  {row.item?.name}
+                </div>
+                {row?.variation && (
+                  <div className="text-neutral-500 text-sm leading-5">
+                    {textVariation(row?.variation)}
+                  </div>
+                )}
               </div>
             </div>
           </TableCell>
@@ -285,8 +302,8 @@ function OrderDetail() {
           </TableCell>
           <TableCell align="left">{row.quantity}</TableCell>
           <TableCell align="left">{getPrice(row)}</TableCell>
-          <TableCell align="left">
-            {order.status === "COMPLETED" ? (
+          {order.status === "COMPLETED" && (
+            <TableCell align="left">
               <Button
                 onClick={() => {
                   setSelectedItem(row);
@@ -304,8 +321,8 @@ function OrderDetail() {
               >
                 Đánh giá
               </Button>
-            ) : null}
-          </TableCell>
+            </TableCell>
+          )}
         </TableRow>
       </React.Fragment>
     );
@@ -442,7 +459,7 @@ function OrderDetail() {
                   >
                     Giá đơn vị
                   </TableCell>
-                  <TableCell></TableCell>
+                  {order.status === "COMPLETED" && <TableCell />}
                 </TableRow>
               </TableHead>
               <TableBody>

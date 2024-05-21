@@ -33,8 +33,7 @@ import { IoIosAdd } from "react-icons/io";
 import AddressAlert from "./AddressAlert";
 import { translateType } from "../../util/Translate";
 import VariationPopover from "../../components/VariationPopover";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 function Booking() {
   const navigate = useNavigate();
@@ -56,7 +55,6 @@ function Booking() {
     style: "currency",
     currency: "VND",
   });
-
 
   // check address
   useEffect(() => {
@@ -117,14 +115,13 @@ function Booking() {
             return {
               quantity: item.number,
               variation: variation[item.item.id].id,
-            }
-          }
-          else {
+            };
+          } else {
             return {
               quantity: item.number,
-              item : item.item.id
-            }
-          } 
+              item: item.item.id,
+            };
+          }
         });
         let updateOrderLst = {
           order_item: order_item,
@@ -228,24 +225,24 @@ function Booking() {
   };
 
   const handleOpenVariation = (e, item) => {
-    setCurrentItem(item)
-    setAnchorEl(e.currentTarget)
+    setCurrentItem(item);
+    setAnchorEl(e.currentTarget);
   };
 
   const handleCloseVariation = () => {
     setAnchorEl(null);
-  }
+  };
 
   const textVariation = (variation) => {
     let text = "";
     if (variation) {
       for (let values of variation.value) {
-        text += values.name + ", "
+        text += values.name + ", ";
       }
     }
     text = text.slice(0, -2);
-    return text.length > 16 ? text.slice(0, 16) + "..." : text;
-  }
+    return text;
+  };
 
   return (
     <div>
@@ -323,9 +320,7 @@ function Booking() {
                     SẢN PHẨM
                   </TableCell>
 
-                  <TableCell
-                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "20%" }}
-                  >
+                  <TableCell sx={{ color: "#3F41A6", width: "20%" }}>
                     PHÂN LOẠI HÀNG
                   </TableCell>
                   <TableCell
@@ -381,24 +376,40 @@ function Booking() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {variation[row.item.id] ? textVariation(variation[row.item.id]) : (
-                        row.item.type === "PRODUCT" ? "Chọn" : "")}
-                      <Button onClick={(e) => handleOpenVariation(e, row.item)} 
-                              disabled = {row.item.type === "PRODUCT" ? false : true}
-                              sx = {{
-                                color : "#000"
-                              }}>
-                        {row.item.type === "PRODUCT" ? <ArrowDropDownIcon /> : ""}
-                      </Button>
+                    <TableCell align="left">
+                      <div className="flex gap-1 items-center max-w-full">
+                        {variation[row.item.id] ? (
+                          <div className="truncate max-w-[200px]">
+                            {textVariation(variation[row.item.id])}
+                          </div>
+                        ) : row.item.type === "PRODUCT" ? (
+                          "Chọn"
+                        ) : (
+                          ""
+                        )}
+                        <IconButton
+                          onClick={(e) => handleOpenVariation(e, row.item)}
+                          disabled={row.item.type === "PRODUCT" ? false : true}
+                          sx={{
+                            color: "#000",
+                            padding: 0,
+                          }}
+                        >
+                          {row.item.type === "PRODUCT" ? (
+                            <ArrowDropDownIcon />
+                          ) : (
+                            ""
+                          )}
+                        </IconButton>
+                      </div>
                     </TableCell>
                     <TableCell align="left">
-                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                         {translateType(row.item?.type)}
                       </div>
                     </TableCell>
                     <TableCell align="left">
-                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                         {row.item?.category?.title}
                       </div>
                     </TableCell>

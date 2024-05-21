@@ -54,13 +54,19 @@ function ItemDetail(props) {
   const [selectedChip, setSelectedChip] = useState({ opt1: "", opt2: "" });
   const [options, setOptions] = useState([{}]);
   const [stock, setStock] = useState(10);
-  const [varitaion, setVariation] = useState({})
+  const [varitaion, setVariation] = useState({});
 
   const handleChipClick = (val, index) => {
     if (index === 0) setSelectedChip({ ...selectedChip, opt1: val });
     else setSelectedChip({ ...selectedChip, opt2: val });
-    let selectedVariation = find_varation(val,index , item.variation, item.option.length, selectedChip);
-    setVariation(selectedVariation) 
+    let selectedVariation = find_varation(
+      val,
+      index,
+      item.variation,
+      item.option.length,
+      selectedChip
+    );
+    setVariation(selectedVariation);
   };
 
   const [chooseIndex, setChooseIndex] = useState(0);
@@ -91,6 +97,7 @@ function ItemDetail(props) {
     axios
       .get("/item/" + id + "/")
       .then((res) => {
+        console.log(res.data);
         setItem(res.data);
         if (res.data.option) {
           setOptions(res.data.option);
@@ -365,11 +372,13 @@ function ItemDetail(props) {
                 </div>
               </div>
               <div className="text-indigo-800 text-2xl font-medium leading-9 self-stretch whitespace-nowrap mt-2.5 max-md:max-w-full">
-                {varitaion.price ? CurrencyFormatter(varitaion.price) : (item.fixed_price
+                {varitaion?.price
+                  ? CurrencyFormatter(varitaion.price)
+                  : item.fixed_price
                   ? CurrencyFormatter(item.fixed_price)
                   : `${CurrencyFormatter(item.min_price)} - ${CurrencyFormatter(
                       item.max_price
-                    )}`)}{" "}
+                    )}`}{" "}
               </div>
               <div className="flex items-center justify-between gap-3.5 mt-3.5 px-px self-start max-md:justify-center">
                 <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
@@ -393,7 +402,7 @@ function ItemDetail(props) {
                 {options.map((opt, index) => (
                   <div key={index} className="flex gap-5">
                     <div className="text-zinc-900 text-sm leading-5 whitespace-nowrap my-auto">
-                      {opt.name ? (opt.name + " :") : ""}
+                      {opt.name ? opt.name + " :" : ""}
                     </div>
                     <div className="flex gap-3 flex-wrap">
                       {opt.value?.map((val, i) => {
@@ -460,7 +469,7 @@ function ItemDetail(props) {
                         <IconButton
                           color="primary"
                           onClick={() => setQuantity(quantity + 1)}
-                          disabled = {quantity >= stock}
+                          disabled={quantity >= stock}
                         >
                           <IoIosAdd style={{ color: "#666666" }} />
                         </IconButton>

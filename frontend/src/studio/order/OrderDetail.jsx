@@ -64,6 +64,17 @@ function OrderDetail(props) {
     currency: "VND",
   });
 
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", ";
+      }
+    }
+    text = text.slice(0, -2);
+    return text;
+  };
+
   const getOrderDetail = () => {
     axiosPrivate
       .get(`/order/${id}/`)
@@ -283,8 +294,16 @@ function OrderDetail(props) {
                 }
                 className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
               />
-              <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                {row.item?.name}
+
+              <div className="flex flex-col items-start">
+                <div className="text-zinc-900 text-base font-medium leading-6 whitespace-nowrap my-auto">
+                  {row.item?.name}
+                </div>
+                {row?.variation && (
+                  <div className="text-neutral-500 text-sm leading-5">
+                    {textVariation(row?.variation)}
+                  </div>
+                )}
               </div>
             </div>
           </TableCell>
