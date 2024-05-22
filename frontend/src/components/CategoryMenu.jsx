@@ -18,7 +18,6 @@ import { useState } from "react";
 
 export function CategoryMenu({ categories, handleClose, anchorEl }) {
   const navigate = useNavigate();
-  console.log(categories);
 
   const handleClick = (code_name) => {
     handleClose();

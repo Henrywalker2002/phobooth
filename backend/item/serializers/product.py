@@ -1,8 +1,14 @@
 from rest_framework import serializers
-from item.models import Item, Option, OptionValue, Variation
-from item.serializers.item import ItemPictureSerializer
+from item.models import Item, Option, OptionValue, Variation, ItemPicture
 from category.models import Category, CategoryTypeChoices
 
+class ItemPictureSerializer(serializers.ModelSerializer):
+    
+    picture = serializers.ImageField(use_url=True)
+    
+    class Meta:
+        model = ItemPicture
+        fields = ['id', 'picture']
 
 class VariationSerializer(serializers.Serializer):
     option_values = serializers.ListField(child=serializers.CharField(
