@@ -9,12 +9,14 @@ import {
 import axios from "../../api/axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import ItemCard from "../../components/ItemCard";
+import Err401Dialog from "../../components/Err401Dialog";
 
 function ItemList({ filterVal }) {
   const axiosPrivate = useAxiosPrivate();
   //   local
   const [itemList, setItemList] = useState([]);
   const [openSBar, setOpenSBar] = useState(false);
+  const [openErr401, setOpenErr401] = useState(false);
   // pagination
   const itemsPage = 12;
   const [itemsCount, setItemsCount] = useState(1);
@@ -66,6 +68,7 @@ function ItemList({ filterVal }) {
       })
       .catch((err) => {
         console.log(err);
+        if (err.response.status === 401) setOpenErr401(true);
       });
   };
 
@@ -153,6 +156,9 @@ function ItemList({ filterVal }) {
           Đã thêm vào giỏ hàng !
         </Alert>
       </Snackbar>
+
+      {/* Err 401 Dialog */}
+      <Err401Dialog open={openErr401} setOpen={setOpenErr401} />
     </div>
   );
 }

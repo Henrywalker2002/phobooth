@@ -29,7 +29,7 @@ function ReqPaying({ open, setOpen, req, setReload }) {
         .get(`/payment/${req.id}/payment-url/`)
         .then((res) => {
           console.log(res);
-          window.open(res.data.url, "_blank", "noreferrer");
+          window.open(res.data.url, "_self");
           setReload(true);
         })
         .then(() => setOpen(false))

@@ -26,16 +26,16 @@ function Widgets({ studioInfor, setStudioInfor }) {
       .post("/draw-money/", {})
       .then((res) => {
         setOpenSBar(true);
-        setMessageBar("Rút tiền thành công");
+        setMessageBar("Gửi yêu cầu thành công! Vui lòng chờ xác nhận !");
         setSuccess(true);
         setStudioInfor({ ...studioInfor, account_balance: 0 });
       })
       .catch((res) => {
-        console.log(res.data);
-        if (res.data.status === 400) {
+        console.log(res);
+        if (res.response.status === 400) {
           if (
-            "non_field_errors" in res.data &&
-            res.data.non_field_errors[0].includes("account number")
+            "non_field_errors" in res.response.data &&
+            res.response.data.non_field_errors[0].includes("account number")
           ) {
             setOpenSBar(true);
             setSuccess(false);
@@ -225,7 +225,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
                   Số tiền tạm giữ
                 </div>
                 <div className="text-xl font-semibold tracking-tight  text-indigo-900">
-                  {formatter.format(studioInfor.account_balance ?? 0)}
+                  {formatter.format(studioInfor.holding_money ?? 0)}
                 </div>
               </div>
             </div>
@@ -236,7 +236,7 @@ function Widgets({ studioInfor, setStudioInfor }) {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openSBar}
-        autoHideDuration={2000}
+        autoHideDuration={3000}
         onClose={handleCloseSBar}
       >
         <Alert

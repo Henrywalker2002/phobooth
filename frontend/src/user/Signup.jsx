@@ -17,7 +17,7 @@ import { translateErrSignUp } from "../util/Translate";
 function Signup() {
   const userRef = useRef();
   const navigate = useNavigate();
-  const [, setCookie] = useCookies(["accInfo"]);
+  const [, setCookie] = useCookies(["accInfo", "persist"]);
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
@@ -69,20 +69,20 @@ function Signup() {
         headers: { "Content-Type": "application/json" },
       });
       console.log(response?.data);
-      setCookie(
-        "userInfo",
-        {
-          ...response?.data,
-          password: pwd,
-        },
-        { path: "/" }
-      );
-      setCookie("persist", false, { path: "/" });
-      setUser("");
-      setPwd("");
-      setEmail("");
-      setFullName("");
-      navigate(from, { replace: true });
+      // setCookie(
+      //   "accInfo",
+      //   {
+      //     ...response?.data,
+      //     password: pwd,
+      //   },
+      //   { path: "/" }
+      // );
+      // setCookie("persist", false, { path: "/" });
+      // setUser("");
+      // setPwd("");
+      // setEmail("");
+      // setFullName("");
+      navigate("/login", { replace: true });
     } catch (err) {
       console.log(err);
       let newErr = translateErrSignUp(err.response.data);
@@ -107,7 +107,7 @@ function Signup() {
           })
           .then((response) => {
             setCookie(
-              "userInfo",
+              "accInfo",
               {
                 ...response?.data,
                 password: pwd,
@@ -153,7 +153,7 @@ function Signup() {
       });
       console.log(response?.data);
       setCookie(
-        "userInfo",
+        "accInfo",
         {
           ...response?.data,
           password: pwd,

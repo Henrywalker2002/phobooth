@@ -81,7 +81,7 @@ export default function VerifyStudioList() {
             fontWeight: "500",
           }}
         >
-          Quản lý xác thực Studio
+          Quản lý xác thực cửa hàng
         </Typography>
       </Breadcrumbs>
       <div
@@ -100,7 +100,7 @@ export default function VerifyStudioList() {
             textAlign: "center",
           }}
         >
-          Quản lý xác thực Studio
+          Quản lý xác thực cửa hàng
         </Typography>
 
         <div className="flex gap-5 items-center w-fit mx-auto my-5">
@@ -156,33 +156,21 @@ export default function VerifyStudioList() {
 
         <TableContainer
           component={Paper}
-          sx={{ width: "fit-content", margin: "20px auto" }}
+          sx={{ width: "80%", margin: "20px auto" }}
         >
           <Table sx={{ minWidth: 800 }} aria-label="simple table">
             <TableHead sx={{ bgcolor: "#E2E5FF" }}>
               <TableRow>
-                <TableCell
-                  align="left"
-                  sx={{ color: "#3F41A6", width: "200px" }}
-                >
-                  STUDIO
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "30%" }}>
+                  CỬA HÀNG
                 </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{ color: "#3F41A6", width: "200px" }}
-                >
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "25%" }}>
                   NGÀY GỬI XÁC THỰC
                 </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{ color: "#3F41A6", width: "180px" }}
-                >
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "25%" }}>
                   SỐ LẦN XÁC THỰC
                 </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{ color: "#3F41A6", width: "200px" }}
-                >
+                <TableCell align="left" sx={{ color: "#3F41A6", width: "20%" }}>
                   TÌNH TRẠNG XỬ LÝ
                 </TableCell>
               </TableRow>

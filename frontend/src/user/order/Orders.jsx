@@ -62,6 +62,17 @@ function Orders() {
     currency: "VND",
   });
 
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", ";
+      }
+    }
+    text = text.slice(0, -2);
+    return text;
+  };
+
   const handleStatusChangeTab = (event, newValue) => {
     setStatus(newValue);
   };
@@ -91,6 +102,7 @@ function Orders() {
     axiosPrivate
       .get(slug)
       .then((res) => {
+        console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
         setDefaultPage(1);
@@ -297,10 +309,17 @@ function Orders() {
                                   ? detailedRow.item?.picture
                                   : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
                               }
-                              className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
+                              className="object-contain object-center w-[50px] max-w-full rounded-lg"
                             />
-                            <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {detailedRow.item?.name}
+                            <div className="flex flex-col items-start">
+                              <div className="text-zinc-900 text-base font-medium leading-6 whitespace-nowrap my-auto">
+                                {detailedRow.item?.name}
+                              </div>
+                              {detailedRow?.variation && (
+                                <div className="text-neutral-500 text-sm leading-5">
+                                  {textVariation(detailedRow?.variation)}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </TableCell>

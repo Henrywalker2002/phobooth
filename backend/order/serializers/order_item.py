@@ -3,11 +3,11 @@ from order.models import Order, OrderItem, OrderStatusChoice
 from item.models import Item, Variation
 from item.serializers.item import ItemShortSerializer
 from order.exceptions import UpdateOrderItemException, UpdateCompletedOrderException
-
+from item.serializers.product import VariationDetailSerializer
 
 class CreateOrderItemSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(
-        queryset=Item.objects.all(), required=True)
+        queryset=Item.objects.all(), required=False)
     variation = serializers.PrimaryKeyRelatedField(
         queryset=Variation.objects.all(), required=False, allow_null=True)
 
@@ -69,7 +69,7 @@ class AppendOrderItemSerializer(CreateOrderItemSerializer):
 
 class ReadOrderItemSerializer(serializers.ModelSerializer):
     item = ItemShortSerializer(read_only=True)
-
+    variation = VariationDetailSerializer(read_only=True)
     class Meta:
         model = OrderItem
         fields = [
@@ -79,7 +79,8 @@ class ReadOrderItemSerializer(serializers.ModelSerializer):
             "price",
             "additional_information",
             "status",
-            "denied_reason"
+            "denied_reason",
+            "variation",
         ]
 
     def to_representation(self, instance):

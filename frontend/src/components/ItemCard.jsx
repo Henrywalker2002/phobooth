@@ -77,7 +77,8 @@ function ItemCard({ item, handleAddToCart }) {
                 onClick={(e) => {
                   e.stopPropagation();
 
-                  if (cookies?.userInfo?.username) handleAddToCart(item.id);
+                  // if (cookies?.accInfo?.username) handleAddToCart(item.id);
+                  handleAddToCart(item.id);
                 }}
                 sx={{
                   alignSelf: "center",

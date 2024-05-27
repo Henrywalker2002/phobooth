@@ -36,15 +36,17 @@ function Home() {
   const [studio, setStudio] = useState({});
   const [filterVal, setFilterVal] = useState({});
 
+  console.log(cookies);
+
   useEffect(() => {
     axiosPrivate
-      .get(`/studio/${cookies.userInfo.studio.code_name}/`)
+      .get(`/studio/${cookies.accInfo.studio.code_name}/`)
       .then((res) => {
         console.log(res.data);
         setStudio(res.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [cookies.accInfo.studio]);
 
   const handleChange = (event, newValue) => {
     setType(newValue);

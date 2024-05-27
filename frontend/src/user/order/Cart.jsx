@@ -133,7 +133,7 @@ function Cart() {
         updateOrderLst.map((lst) => {
           return {
             ...lst,
-            address: { ...cookies.userInfo.address },
+            address: { ...cookies.accInfo.address },
           };
         })
       );
@@ -450,7 +450,7 @@ function Cart() {
                     </div>
                     <div className="text-stone-500 text-base leading-6 mt-4">
                       Lưu ý: Giá trên chỉ là giá tham khảo, giá chính xác sẽ
-                      được Studio cập nhật và thông báo sau khi đặt dịch vụ.
+                      được cửa hàng cập nhật và thông báo sau khi đặt sản phẩm.
                     </div>
                   </div>
                 </div>

@@ -32,6 +32,8 @@ import { RiSubtractFill } from "react-icons/ri";
 import { IoIosAdd } from "react-icons/io";
 import AddressAlert from "./AddressAlert";
 import { translateType } from "../../util/Translate";
+import VariationPopover from "../../components/VariationPopover";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 function Booking() {
   const navigate = useNavigate();
@@ -44,6 +46,10 @@ function Booking() {
   const [selectedItemList, setSelectedItemList] = useState({});
   const [openEditAddr, setOpenEditAddr] = useState(false);
   const [openAddrAlert, setOpenAddrAlert] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const [currentItem, setCurrentItem] = useState({});
+  const [variation, setVariation] = useState({});
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -52,15 +58,17 @@ function Booking() {
 
   // check address
   useEffect(() => {
-    if (!cookies.userInfo.address) {
+    if (!cookies.accInfo.address) {
       setOpenAddrAlert(true);
     }
-    console.log("itemLists", itemLists);
   }, []);
 
   const getTotalPrice = (lst, typ) => {
     if (lst.length) {
       let result = lst.reduce((total, row) => {
+        if (variation[row.item.id]) {
+          return total + row?.number * variation[row.item.id].price;
+        }
         if (row?.item?.fixed_price) {
           return total + row?.number * row?.item?.fixed_price;
         } else {
@@ -82,6 +90,10 @@ function Booking() {
   };
 
   function getPrice(row) {
+    if (variation[row.item.id]) {
+      let price = variation[row.item.id].price * row.number;
+      return formatter.format(price);
+    }
     if (row?.item?.fixed_price) {
       return formatter.format(row?.item?.fixed_price * row?.number);
     }
@@ -99,7 +111,17 @@ function Booking() {
     try {
       for (let itemLst of itemLists) {
         let order_item = itemLst.items.map((item) => {
-          return { item: item.item.id, quantity: item.number };
+          if (variation[item.item.id]) {
+            return {
+              quantity: item.number,
+              variation: variation[item.item.id].id,
+            };
+          } else {
+            return {
+              quantity: item.number,
+              item: item.item.id,
+            };
+          }
         });
         let updateOrderLst = {
           order_item: order_item,
@@ -202,6 +224,26 @@ function Booking() {
     setItemLists(newItemLists);
   };
 
+  const handleOpenVariation = (e, item) => {
+    setCurrentItem(item);
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleCloseVariation = () => {
+    setAnchorEl(null);
+  };
+
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", ";
+      }
+    }
+    text = text.slice(0, -2);
+    return text;
+  };
+
   return (
     <div>
       <Navbar />
@@ -253,7 +295,7 @@ function Booking() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Đặt sản phẩm
       </div>
 
@@ -273,9 +315,13 @@ function Booking() {
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
                 <TableRow>
                   <TableCell
-                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "40%" }}
+                    sx={{ color: "#3F41A6", paddingLeft: "40px", width: "30%" }}
                   >
                     SẢN PHẨM
+                  </TableCell>
+
+                  <TableCell sx={{ color: "#3F41A6", width: "20%" }}>
+                    PHÂN LOẠI HÀNG
                   </TableCell>
                   <TableCell
                     align="left"
@@ -331,18 +377,45 @@ function Booking() {
                       </div>
                     </TableCell>
                     <TableCell align="left">
-                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      <div className="flex gap-1 items-center max-w-full">
+                        {variation[row.item.id] ? (
+                          <div className="truncate max-w-[200px]">
+                            {textVariation(variation[row.item.id])}
+                          </div>
+                        ) : row.item.type === "PRODUCT" ? (
+                          "Chọn"
+                        ) : (
+                          ""
+                        )}
+                        <IconButton
+                          onClick={(e) => handleOpenVariation(e, row.item)}
+                          disabled={row.item.type === "PRODUCT" ? false : true}
+                          sx={{
+                            color: "#000",
+                            padding: 0,
+                          }}
+                        >
+                          {row.item.type === "PRODUCT" ? (
+                            <ArrowDropDownIcon />
+                          ) : (
+                            ""
+                          )}
+                        </IconButton>
+                      </div>
+                    </TableCell>
+                    <TableCell align="left">
+                      <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                         {translateType(row.item?.type)}
                       </div>
                     </TableCell>
                     <TableCell align="left">
-                      <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                      <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                         {row.item?.category?.title}
                       </div>
                     </TableCell>
                     <TableCell align="left" sx={{ width: "150px" }}>
-                      <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
-                        <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                      <div className="w-fit justify-center items-center border border-[color:var(--gray-scale-gray-100,#d6d3d1)] bg-white flex gap-0 px-2 py-1 rounded-[170px] border-solid self-end">
+                        <div className="bg-indigo-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                           <IconButton
                             color="primary"
                             onClick={() =>
@@ -358,10 +431,10 @@ function Booking() {
                             />
                           </IconButton>
                         </div>
-                        <div className="text-zinc-900 text-center text-sm leading-6 mx-2">
+                        <div className="text-indigo-800 text-center text-sm leading-6 mx-2">
                           {row.number}
                         </div>
-                        <div className="bg-zinc-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
+                        <div className="bg-indigo-100 flex w-[20px] shrink-0 h-[20px] flex-col rounded-[170px] items-center justify-center">
                           <IconButton
                             color="primary"
                             onClick={() =>
@@ -538,7 +611,8 @@ function Booking() {
             borderRadius: "43px",
             color: "#F6F5FB",
             bgcolor: "#3F41A6",
-            width: "130px",
+            width: "fit-content",
+            padding: "5px 15px",
             "&:hover": {
               bgcolor: "#3F41A6B2",
             },
@@ -558,6 +632,14 @@ function Booking() {
 
       {/* Address Alert */}
       <AddressAlert open={openAddrAlert} setOpen={setOpenAddrAlert} />
+      <VariationPopover
+        open={open}
+        handleClose={handleCloseVariation}
+        anchorEl={anchorEl}
+        item_id={currentItem.id}
+        variation={variation}
+        setVariation={setVariation}
+      />
     </div>
   );
 }

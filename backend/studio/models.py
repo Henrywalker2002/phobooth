@@ -2,6 +2,8 @@ from base.models import BaseModel
 from django.db import models
 from address.models import Address
 from item.models import ItemTypeChoices
+from order.models import OrderStatusChoice
+from django.db.models import Sum
 
 
 class StudioTypeChoices(models.TextChoices):
@@ -28,10 +30,16 @@ class Studio(BaseModel):
     account_name = models.CharField(max_length=255, null=True, blank=True)
     account_balance = models.IntegerField(default=0)
     type = models.CharField(max_length=255, choices=StudioTypeChoices.choices, default=StudioTypeChoices.STUDIO)
+    
     @property
     def total_item(self):
         return self.items.exclude(type = ItemTypeChoices.ACCESSORY).count()
     
+    @property
+    def holding_money(self):
+        holding_money = self.order.filter(status = OrderStatusChoice.COMPLETED, done_payment = False).aggregate(holding_money = Sum("total_price"))["holding_money"]
+        return holding_money if holding_money else 0
+        
     def __eq__(self, other):
         return self.id == other.id
 

@@ -18,6 +18,7 @@ from base.helper import get_client_ip
 import datetime
 from notification.execute import NotificationService
 from media.execute import MediaService
+import random
 
 
 class PaymentViewSet(BaseModelViewSet):
@@ -108,7 +109,8 @@ class PaymentViewSet(BaseModelViewSet):
         return Response(data=data)
 
     def gen_id_for_payment(self, payment):
-        return f"{payment.order.id}-{payment.id}-{payment.number_attemp_in_day}"
+        random_num = random.randint(1000, 9999)
+        return f"{payment.order.id}-{payment.id}-{random_num}"
 
     @action(detail=True, methods=["GET"], url_path="payment-url")
     def get_payment_url(self, request, *args, **kwargs):

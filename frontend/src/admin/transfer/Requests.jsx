@@ -23,6 +23,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { RiSearchLine } from "react-icons/ri";
 import TransferDialog from "./TransferDialog";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 
 const handleDate = (date) => {
   const d = new Date(date);
@@ -42,6 +43,7 @@ function Requests() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('-created_at');
   const limit = 20;
+  const navigate = useNavigate();
 
   useEffect(() => {
     let params = {

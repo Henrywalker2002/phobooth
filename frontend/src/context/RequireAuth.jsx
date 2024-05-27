@@ -19,17 +19,16 @@ const RequireAuth = ({ allowedRoles }) => {
     });
     return res.length > 0 ? true : false;
   }
-  var check; 
+  var check;
   if (typeof allowedRoles === "string") {
-    check = checkRoleHelper([allowedRoles], cookies?.userInfo?.role);
-  }
-  else {
-    check = checkRoleHelper(allowedRoles, cookies?.userInfo?.role);
+    check = checkRoleHelper([allowedRoles], cookies?.accInfo?.role);
+  } else {
+    check = checkRoleHelper(allowedRoles, cookies?.accInfo?.role);
   }
 
-  return checkRoleHelper(allowedRoles, cookies?.userInfo?.role) ? (
+  return checkRoleHelper(allowedRoles, cookies?.accInfo?.role) ? (
     <Outlet />
-  ) : !cookies?.userInfo?.id ? (
+  ) : !cookies?.accInfo?.id ? (
     <Navigate to="/login" state={{ from: location }} replace />
   ) : (
     <Navigate to="/unauthorized" state={{ from: location }} replace />

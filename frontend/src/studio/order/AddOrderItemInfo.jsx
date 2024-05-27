@@ -14,6 +14,7 @@ import {
   Button,
 } from "@mui/material";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { translateType } from "../../util/Translate";
 
 function AddOrderItemInfo({
   open,
@@ -40,7 +41,12 @@ function AddOrderItemInfo({
   // Check Quantity
   const checkQuantity = (quantity) => {
     if (
-      quantity !== undefined && quantity !== null && !isNaN(quantity) && quantity > 0 && quantity !== "" && Number.isInteger(Number(quantity))
+      quantity !== undefined &&
+      quantity !== null &&
+      !isNaN(quantity) &&
+      quantity > 0 &&
+      quantity !== "" &&
+      Number.isInteger(Number(quantity))
     )
       return true;
     return false;
@@ -49,7 +55,11 @@ function AddOrderItemInfo({
   // Check price
   const checkPrice = (price) => {
     if (
-      price !== undefined && price !== null && !isNaN(price) && price > 0 && price !== ""
+      price !== undefined &&
+      price !== null &&
+      !isNaN(price) &&
+      price > 0 &&
+      price !== ""
     )
       return true;
     return false;
@@ -106,7 +116,7 @@ function AddOrderItemInfo({
       <TableContainer
         component={Paper}
         sx={{
-          width: "1100px",
+          width: "100%",
           margin: "20px auto",
           border: "1px solid #d6d3d1",
         }}
@@ -114,20 +124,24 @@ function AddOrderItemInfo({
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ bgcolor: "#E2E5FF" }}>
             <TableRow>
-              <TableCell sx={{ color: "#3F41A6" }}>SẢN PHẨM</TableCell>
-              <TableCell sx={{ color: "#3F41A6" }}>PHÂN LOẠI</TableCell>
+              <TableCell sx={{ color: "#3F41A6", width: "28%" }}>
+                SẢN PHẨM
+              </TableCell>
+              <TableCell sx={{ color: "#3F41A6", width: "12%" }}>
+                PHÂN LOẠI
+              </TableCell>
 
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
+              <TableCell align="left" sx={{ color: "#3F41A6", width: "20%" }}>
                 DANH MỤC
               </TableCell>
 
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
+              <TableCell align="left" sx={{ color: "#3F41A6", width: "20%" }}>
                 GIÁ THAM KHẢO(VNĐ)
               </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
+              <TableCell align="left" sx={{ color: "#3F41A6", width: "15%" }}>
                 CẬP NHẬT GIÁ
               </TableCell>
-              <TableCell align="left" sx={{ color: "#3F41A6" }}>
+              <TableCell align="left" sx={{ color: "#3F41A6", width: "10%" }}>
                 CẬP NHẬT SỐ LƯỢNG
               </TableCell>
             </TableRow>
@@ -154,7 +168,7 @@ function AddOrderItemInfo({
 
                   <TableCell align="left">
                     <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {order_item.item.type}
+                      {translateType(order_item.item.type)}
                     </div>
                   </TableCell>
 

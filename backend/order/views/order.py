@@ -40,7 +40,10 @@ class OrderViewSet(BaseModelViewSet):
         serializer.is_valid(raise_exception=True)
         order_item = serializer.validated_data.pop('order_item')
         address = serializer.validated_data.pop('address')
-        studio = order_item[0]['item'].studio
+        if order_item[0]['item']:
+            studio = order_item[0]['item'].studio
+        else:
+            studio = order_item[0]['variation'].product.studio
         # create order
         serializer.validated_data['studio'] = studio
         self.perform_create(serializer)
@@ -64,9 +67,15 @@ class OrderViewSet(BaseModelViewSet):
                 order.save()
         
         # create order item
-
+        for item in order_item:
+            item['order'] = order
+            if item['item'] and item['item'].fixed_price:
+                item['price'] = item['item'].fixed_price
+            if item['variation']:
+                item['item'] = item['variation'].product
+                item['price'] = item['variation'].price
         OrderItem.objects.bulk_create(
-            [OrderItem(order=order, **item) for item in order_item])
+            [OrderItem(**item) for item in order_item])
 
         for order_item in order_item:
             item = order_item.get('item', None)

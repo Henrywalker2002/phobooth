@@ -31,17 +31,18 @@ function CancelInOrders({
       })
       .then((res) => {
         console.log(res.data);
+        row.action === "CANCELED"
+        ? setStatusMsg("Hủy đơn hàng thành công!")
+        : setStatusMsg("Hoàn thành đơn hàng thành công!");
+        setOpenActionSBar(true);
       })
       .then(() => {
+        let slug = status === "ALL" ? "" : `&status=${status}`
         axiosPrivate
-          .get(`/order/studio/?limit=5&offset=0&status=${status}`)
+          .get(`/order/studio/?limit=5&offset=0${slug}`)
           .then((res) => {
             console.log(res.data);
             setOrders(res?.data.results);
-
-            row.action === "CANCELED"
-            ? setStatusMsg("Hủy đơn hàng thành công!")
-            : setStatusMsg("Hoàn thành đơn hàng thành công!");
           })
           .catch((err) => {
             console.log(err);
@@ -50,7 +51,6 @@ function CancelInOrders({
       .then(() => {
         setSuccess(true);
         setOpen(false);
-        setOpenActionSBar(true);
         setDefaultPage(1);
       })
       .catch((err) => {

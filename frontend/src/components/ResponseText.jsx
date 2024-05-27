@@ -7,7 +7,7 @@ export default function ResponseText({ reply }) {
   return (
     <Paper
       sx={{
-        width: "800px",
+        width: "100%",
         marginX: "auto",
         border: "1px solid #d6d3d1",
       }}

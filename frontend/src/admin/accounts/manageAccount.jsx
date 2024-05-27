@@ -25,9 +25,8 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import AddEmploy from "./AddEmploy";
@@ -78,19 +77,24 @@ export default function AdminManageAccount() {
     //       handleClose();
     //     }
     //   });
-    axiosPrivate.patch(`/staff/${clickItem.username}/`, {
-      is_active: !clickItem.is_active,
-    }).then((res) => {
-      setItems(items.map((item) => {
-        if (item.username === clickItem.username) {
-          return { ...item, is_active: !item.is_active };
-        }
-        return item;
-      }));
-      handleClose();
-    }).catch((err) => {
-      console.log(err);
-    });
+    axiosPrivate
+      .patch(`/staff/${clickItem.username}/`, {
+        is_active: !clickItem.is_active,
+      })
+      .then((res) => {
+        setItems(
+          items.map((item) => {
+            if (item.username === clickItem.username) {
+              return { ...item, is_active: !item.is_active };
+            }
+            return item;
+          })
+        );
+        handleClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setOpen(false);
   };
@@ -333,13 +337,13 @@ export default function AdminManageAccount() {
                           <ModeEditIcon style={{ color: "#666666" }} />
                         </IconButton>
                         <IconButton onClick={() => handleClickOpen(item)}>
-                          {
-                            item.is_active ? (
-                              <LockOutlinedIcon style={{ color: "#666666" }} />
-                            ) : (
-                              <LockOpenOutlinedIcon style={{ color: "#666666" }} />
-                            )
-                          }
+                          {item.is_active ? (
+                            <LockOutlinedIcon style={{ color: "#666666" }} />
+                          ) : (
+                            <LockOpenOutlinedIcon
+                              style={{ color: "#666666" }}
+                            />
+                          )}
                           {/* <DeleteOutlineIcon style={{ color: "#666666" }} /> */}
                         </IconButton>
                       </div>
@@ -362,6 +366,7 @@ export default function AdminManageAccount() {
         onChange={handlePageChange}
         sx={{
           margin: "0 auto",
+          marginBottom: "20px",
           width: "fit-content",
           "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
             {
@@ -389,7 +394,8 @@ export default function AdminManageAccount() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Bạn có chắc chắn muốn {clickItem.is_active ? "khoá" : "mở khoá"} tài khoản của {clickItem.full_name}?
+            Bạn có chắc chắn muốn {clickItem.is_active ? "khoá" : "mở khoá"} tài
+            khoản của {clickItem.full_name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

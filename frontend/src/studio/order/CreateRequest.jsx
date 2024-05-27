@@ -2,7 +2,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Button, Dialog, Divider, IconButton, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import dayjs from "dayjs";
@@ -17,7 +17,7 @@ function CreateRequest({
   amount_created,
 }) {
   const [error, setError] = useState({
-    amount : "Bạn cần nhập số tiền",
+    amount: "Bạn cần nhập số tiền",
   });
   const [newReq, setNewReq] = useState({});
   const axiosPrivate = useAxiosPrivate();
@@ -27,6 +27,10 @@ function CreateRequest({
     currency: "VND",
   });
 
+  useEffect(() => {
+    setNewReq({});
+  }, [open]);
+
   const checkEmptyInput = (val) => {
     if (!val || val == "") return true;
     return false;
@@ -35,19 +39,19 @@ function CreateRequest({
   const checkPrice = (price) => {
     if (price) {
       if (isNaN(price) || price <= 0 || price == "") {
-        setError({...error, amount: "Giá trị không hợp lệ!"})
+        setError({ ...error, amount: "Giá trị không hợp lệ!" });
       } else if (total_price - amount_created - price < 0) {
-        setError({...error, amount: "Giá trị vượt quá số tiền còn lại!"})
+        setError({ ...error, amount: "Giá trị vượt quá số tiền còn lại!" });
+      } else if (price < 10000) {
+        setError({
+          ...error,
+          amount: "Số tiền cần thanh toán không thể nhỏ hơn 10,000 VND!",
+        });
+      } else {
+        setError({ ...error, amount: "" });
       }
-      else if (price < 10000) {
-        setError({...error, amount: "Số tiền cần thanh toán không thể nhỏ hơn 10,000 VND!"})
-      }
-      else {
-        setError({...error, amount: ""})
-      }
-    }
-    else {
-      setError({...error, amount: "Bạn cần nhập số tiền"})
+    } else {
+      setError({ ...error, amount: "Bạn cần nhập số tiền" });
     }
   };
 
@@ -68,7 +72,7 @@ function CreateRequest({
   const handleDateChange = (value) => {
     if (value) {
       let selectDate = new Date(value);
-      
+
       if (isNaN(selectDate.getTime())) {
         setError({
           ...error,
@@ -76,30 +80,31 @@ function CreateRequest({
         });
         return;
       }
-      if (selectDate.getTime() < new Date(today.format("YYYY-MM-DD")).getTime()) {
+      if (
+        selectDate.getTime() < new Date(today.format("YYYY-MM-DD")).getTime()
+      ) {
         setError({
           ...error,
           expiration_date: "Hạn thanh toán không thể nhỏ hơn ngày hiện tại",
         });
         return;
-      }
-      else {
+      } else {
         setError({
           ...error,
           expiration_date: "",
-        })
-      };
+        });
+      }
       setNewReq({
         ...newReq,
         expiration_date: value.format("YYYY-MM-DD"),
       });
-      }
     }
+  };
 
-    const handleAmountChange = (e) => {
-      checkPrice(e.target.value);
-      setNewReq({ ...newReq, amount: e.target.value })
-    }
+  const handleAmountChange = (e) => {
+    checkPrice(e.target.value);
+    setNewReq({ ...newReq, amount: e.target.value });
+  };
   return (
     <Dialog
       sx={{ minWidth: "500px" }}
@@ -176,7 +181,7 @@ function CreateRequest({
             }}
             onChange={handleAmountChange}
             value={newReq.amount ?? ""}
-            error={error.amount ? true : false}
+            error={error.amount && newReq.amount ? true : false}
             helperText={error.amount ?? ""}
           />
         </div>
@@ -197,7 +202,7 @@ function CreateRequest({
         <Button
           variant="outlined"
           onClick={() => {
-            setNewReq({}); 
+            setNewReq({});
             setOpen(false);
           }}
           sx={{
@@ -219,7 +224,7 @@ function CreateRequest({
           variant="contained"
           disabled={
             checkEmptyInput(newReq.expiration_date) ||
-            error.expiration_date !== "" || 
+            error.expiration_date !== "" ||
             error.amount !== ""
           }
           onClick={() => {

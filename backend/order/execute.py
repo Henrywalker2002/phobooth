@@ -5,7 +5,14 @@ from studio.models import Studio
 from django.db import transaction
 from django.db.models import Sum, F
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
+
+def get_complain(order):
+    try:
+        return order.complain
+    except ObjectDoesNotExist:
+        return None
 
 @transaction.atomic
 def check_order_and_pay():
@@ -19,6 +26,9 @@ def check_order_and_pay():
     order_lst = []
 
     for order in orders:
+        complain = get_complain(order)
+        if complain and complain.status != "RESOLVED":
+            continue
         balance = order.payment.filter(
             status=PaymentStatusChoices.PAID, payment_method=PaymentMethodChoices.VNPAY).aggregate(
                 balance=Sum("amount"))["balance"]

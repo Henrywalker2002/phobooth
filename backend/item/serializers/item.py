@@ -3,6 +3,7 @@ from item.models import Item, ItemPicture
 from studio.serializers import StudioSummarySerializer
 from category.serializers import CategorySummarySerializer
 from rate.serializers import ReadRateSerializer
+from item.serializers.product import VariationDetailSerializer
 
 
 class ItemPictureSerializer(serializers.ModelSerializer):
@@ -19,11 +20,22 @@ class ItemDetailSerializer(serializers.ModelSerializer):
     pictures = ItemPictureSerializer(read_only=True, many=True)
     category = CategorySummarySerializer(read_only=True)
     rates = ReadRateSerializer(read_only=True, many=True)
+    variation = VariationDetailSerializer(read_only=True, required=False, many = True)
     
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        option_lst = []
+        for option in instance.option.all():
+            option_dict = {}
+            option_dict['name'] = option.name
+            option_dict['value'] = option.option_value.all().values_list('name', flat=True)
+            option_lst.append(option_dict)
+        ret['option'] = option_lst
+        return ret
     class Meta:
         model = Item
         fields = ['id', 'name', 'description', 'type', 'category', 'pictures', 'status', 
-                  'studio', 'min_price', 'max_price', "fixed_price", "star", "rates" ]
+                  'studio', 'min_price', 'max_price', "fixed_price", "star", "rates", "variation"]
         
 
 class ItemSummarySerializer(serializers.ModelSerializer):

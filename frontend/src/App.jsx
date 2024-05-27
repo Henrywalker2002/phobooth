@@ -40,6 +40,7 @@ import AdvancedSearch from "./user/search/AdvancedSearch";
 import StudioReport from "./studio/report/Report";
 import TransferRequests from "./admin/transfer/Requests";
 import PaymentSuccess from "./user/order/PaymentSuccess";
+import NotFound from "./components/NotFound";
 
 function App() {
   const theme = createTheme({
@@ -83,6 +84,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Routes>
+      <Route element={<CartContextLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
@@ -90,11 +92,9 @@ function App() {
         <Route element={<PersistLogin />}>
           {/* User */}
           <Route element={<RequireAuth allowedRoles={["customer"]} />}>
-            <Route element={<CartContextLayout />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/booking" element={<Booking />} />
-              <Route path="/item/detail/:id" element={<ItemDetail />} />
-            </Route>
+
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/success-payment" element={<PaymentSuccess />} />
             <Route path="/order/detail/:id" element={<OrderDetail />} />
@@ -149,7 +149,8 @@ function App() {
           <Route path="/item/detail/:id" element={<ItemDetail />} />
           <Route path="/advanced-search/" element={<AdvancedSearch />} />
           <Route path="/notification" element={<NotificationMgmt />} />
-          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
         </Route>
       </Routes>
     </ThemeProvider>

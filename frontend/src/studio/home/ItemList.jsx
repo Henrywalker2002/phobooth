@@ -29,7 +29,7 @@ function ItemList({ itemType, filterVal }) {
   useEffect(() => {
     axios
       .get(
-        `/item/?limit=${itemsPage}&offset=0&type=${itemType}&studio=${cookies.userInfo.studio.code_name}`,
+        `/item/?limit=${itemsPage}&offset=0&type=${itemType}&studio=${cookies.accInfo.studio?.code_name}`,
         { params: filterVal }
       )
       .then((res) => {
@@ -46,7 +46,7 @@ function ItemList({ itemType, filterVal }) {
     let offset = itemsPage * (page - 1);
     axios
       .get(
-        `/item/?limit=${itemsPage}&offset=${offset}&type=${itemType}&studio=${cookies.userInfo.studio.code_name}`,
+        `/item/?limit=${itemsPage}&offset=${offset}&type=${itemType}&studio=${cookies.accInfo.studio.code_name}`,
         { params: filterVal }
       )
       .then((res) => {
@@ -167,7 +167,7 @@ function ItemList({ itemType, filterVal }) {
                           onClick={(e) => {
                             e.stopPropagation();
 
-                            if (cookies?.userInfo?.username)
+                            if (cookies?.accInfo?.username)
                               handleAddToCart(item.id);
                           }}
                           sx={{

@@ -19,6 +19,7 @@ import json
 from django.http.request import QueryDict
 from user.filter import StaffFilter
 import requests
+from django.contrib.auth.hashers import check_password
 
 
 class UserViewSet(BaseModelViewSet):
@@ -113,6 +114,7 @@ class StaffViewSet(BaseModelViewSet):
     filterset_class = StaffFilter
     search_fields = ["@username", "@full_name", "@email"]
     lookup_field = "username"
+    lookup_value_regex = r"[\w.]+"
 
     def get_queryset(self):
         return self.queryset.filter(role__code_name__in=["staff", "admin"], is_deleted=False).distinct()
@@ -179,11 +181,15 @@ class AuthenticationViewSet(BaseGenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = authenticate(
-            request, username=serializer.validated_data['username'], password=serializer.validated_data['password'])
+        try:
+            user = User.objects.get(username=serializer.validated_data['username'])
+            if not check_password(serializer.validated_data['password'], user.password):
+                return Response({"message": "wrong username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({"message": "wrong username or password"}, status=status.HTTP_401_UNAUTHORIZED)
         if user:
             if not user.is_active:
-                return Response("user is not active", status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"message" : "user is not active"}, status=status.HTTP_401_UNAUTHORIZED)
             token = RefreshToken.for_user(user)
             user_data = self.get_serializer(user, is_get=True).data
             user_data["access"] = str(token.access_token)

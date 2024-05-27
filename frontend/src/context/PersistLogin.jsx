@@ -8,7 +8,7 @@ import { LinearProgress } from "@mui/material";
 const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
   const refresh = useRefreshToken();
-  const [cookies] = useCookies(["accInfo"]);
+  const [cookies] = useCookies(["accInfo", "persist"]);
 
   useEffect(() => {
     let isMounted = true;
@@ -25,15 +25,15 @@ const PersistLogin = () => {
 
     // Avoids unwanted call to verifyRefreshToken
 
-    // !cookies?.userInfo?.access && cookies?.persist
+    // !cookies?.accInfo?.access && cookies?.persist
     //   ? verifyRefreshToken()
     //   : setIsLoading(false);
 
     if (
-      (cookies?.userInfo?.access &&
-        isTokenExpired(cookies?.userInfo?.access) &&
+      (cookies?.accInfo?.access &&
+        isTokenExpired(cookies?.accInfo?.access) &&
         cookies?.persist) ||
-      (!cookies?.userInfo?.access && cookies?.persist)
+      (!cookies?.accInfo?.access && cookies?.persist)
     )
       verifyRefreshToken();
     else setIsLoading(false);
@@ -42,10 +42,10 @@ const PersistLogin = () => {
   }, []);
 
   // useEffect(() => {
-  //   console.log("access", isTokenExpired(cookies?.userInfo?.access));
-  //   console.log("refresh", isTokenExpired(cookies?.userInfo?.refresh));
+  //   console.log("access", isTokenExpired(cookies?.accInfo?.access));
+  //   console.log("refresh", isTokenExpired(cookies?.accInfo?.refresh));
   //   console.log(`isLoading: ${isLoading}`);
-  //   console.log(`aT: ${JSON.stringify(cookies?.userInfo?.access)}`);
+  //   console.log(`aT: ${JSON.stringify(cookies?.accInfo?.access)}`);
   // }, [isLoading]);
 
   return (

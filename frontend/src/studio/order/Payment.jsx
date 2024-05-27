@@ -59,7 +59,7 @@ function Payment({ order, setOrder }) {
 
   const handleOpenDeltailReq = (reqId) => {
     axiosPrivate
-      .get(`/payment/${reqId}`)
+      .get(`/payment/${reqId}/`)
       .then((res) => {
         console.log(res);
         setDetailReq(res.data);
@@ -73,7 +73,7 @@ function Payment({ order, setOrder }) {
   const handleOpenEditReq = (e, reqId) => {
     e.stopPropagation();
     axiosPrivate
-      .get(`/payment/${reqId}`)
+      .get(`/payment/${reqId}/`)
       .then((res) => {
         console.log(res);
         setEditReq(res.data);
@@ -87,7 +87,7 @@ function Payment({ order, setOrder }) {
   const handleOpenDelReq = (e, reqId) => {
     e.stopPropagation();
     axiosPrivate
-      .get(`/payment/${reqId}`)
+      .get(`/payment/${reqId}/`)
       .then((res) => {
         console.log(res);
         setDelReq(res.data);

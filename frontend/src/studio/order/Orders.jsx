@@ -58,6 +58,17 @@ function Orders() {
     currency: "VND",
   });
 
+  const textVariation = (variation) => {
+    let text = "";
+    if (variation) {
+      for (let values of variation.value) {
+        text += values.name + ", ";
+      }
+    }
+    text = text.slice(0, -2);
+    return text;
+  };
+
   const handleStatusChangeTab = (event, newValue) => {
     setStatus(newValue);
   };
@@ -85,7 +96,7 @@ function Orders() {
     axiosPrivate
       .get(slug)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         let count = res.data.count;
         setPageCount(Math.ceil(count / 5));
         setDefaultPage(1);
@@ -308,8 +319,15 @@ function Orders() {
                               }
                               className="aspect-square object-contain object-center w-[50px] overflow-hidden shrink-0 max-w-full rounded-lg"
                             />
-                            <div className="text-zinc-900 text-base font-medium leading-6 self-center grow whitespace-nowrap my-auto">
-                              {detailedRow.item?.name}
+                            <div className="flex flex-col items-start">
+                              <div className="text-zinc-900 text-base font-medium leading-6 whitespace-nowrap my-auto">
+                                {detailedRow.item?.name}
+                              </div>
+                              {detailedRow?.variation && (
+                                <div className="text-neutral-500 text-sm leading-5">
+                                  {textVariation(detailedRow?.variation)}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </TableCell>

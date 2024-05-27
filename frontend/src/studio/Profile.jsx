@@ -49,7 +49,7 @@ function Profile() {
   useEffect(() => {
     // console.log(cookies);
     axiosPrivate
-      .get(`/studio/${cookies.userInfo.studio.code_name}/`)
+      .get(`/studio/${cookies.accInfo.studio.code_name}/`)
       .then((res) => {
         // console.log(res.data);
         setStudioInfo(res.data);
@@ -98,7 +98,7 @@ function Profile() {
       console.log(pair[0] + ", " + pair[1]);
     }
     axiosPrivate
-      .patch(`studio/${cookies.userInfo.studio.code_name}/`, formData, {
+      .patch(`studio/${cookies.accInfo.studio.code_name}/`, formData, {
         headers: {
           ...axiosPrivate.defaults.headers,
           "content-type": "multipart/form-data",
@@ -110,9 +110,9 @@ function Profile() {
         setErrMsg({});
         setStudioInfo(res.data);
         setCookie(
-          "userInfo",
+          "accInfo",
           {
-            ...cookies.userInfo,
+            ...cookies.accInfo,
             studio: res.data,
           },
           { path: "/" }
@@ -280,7 +280,7 @@ function Profile() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4">
-                Email (cửa hàng) *
+                Email (Cửa hàng) *
               </div>
               <TextField
                 required
@@ -304,7 +304,7 @@ function Profile() {
               />
 
               <div className="text-zinc-900 text-sm leading-5 mt-4 ">
-                Số điện thoại (cửa hàng) *
+                Số điện thoại (Cửa hàng) *
               </div>
               <TextField
                 required

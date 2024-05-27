@@ -31,11 +31,11 @@ function StudioNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [studioInfo, setStudioInfo] = useState({});
-  const [cookies, , removeCookie] = useCookies(["accInfo"]);
+  const [cookies, , removeCookie] = useCookies(["accInfo", "persist"]);
 
   useEffect(() => {
-    if (cookies?.userInfo?.studio !== undefined) {
-      setStudioInfo(cookies?.userInfo?.studio);
+    if (cookies?.accInfo?.studio !== undefined) {
+      setStudioInfo(cookies?.accInfo?.studio);
     }
   }, []);
 
@@ -49,7 +49,7 @@ function StudioNavbar() {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    removeCookie("userInfo", { path: "/" });
+    removeCookie("accInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };

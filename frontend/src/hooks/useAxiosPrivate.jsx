@@ -12,7 +12,7 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        config.headers["Authorization"] = `Bearer ${cookies?.userInfo?.access}`;
+        config.headers["Authorization"] = `Bearer ${cookies?.accInfo?.access}`;
         return config;
       },
       (error) => Promise.reject(error)
@@ -36,7 +36,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       // axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [cookies?.userInfo, refresh]);
+  }, [cookies?.accInfo, refresh]);
 
   return axiosPrivate;
 };
