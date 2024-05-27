@@ -40,7 +40,7 @@ class TestSignUp(BaseTestCase):
                 expect = row.get('expect')
                 if expect == 'success':
                     self.command.execute_pause(amount = 3)
-                    self.command.execute_assert_url(value = f'{self.base_url}/')
+                    self.command.execute_assert_url(value = f'{self.base_url}/login')
                 else:
                     field, value = expect.split(':')
                     self.check_error(field, value)

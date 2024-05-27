@@ -25,8 +25,8 @@ class TestCreateOrder(BaseTestCase):
             self.command.execute_wait_for_element_present(target= f"xpath=//*[@id='{item_lst[0]}']//input", amount=10)
         for item_id in item_lst:
             self.command.execute_check(target=f"xpath=//*[@id='{item_id}']//input")
-        self.command.execute_click(target = "xpath=//button[text()='Đặt dịch vụ']")
-        self.command.execute_click(target = "xpath=//button[text()='Đặt dịch vụ']")
+        self.command.execute_click(target = "xpath=//button[text()='Đặt sản phẩm']")
+        self.command.execute_click(target = "xpath=//button[text()='Đặt sản phẩm']")
         self.command.execute_pause(amount = 3)
     
     def check_error(self, field, value):
@@ -264,8 +264,8 @@ class TestPayment(BaseTestCase):
     
     def handle_pay_vnpay(self, data : dict):
         self.command.execute_pause(amount = 2)
-        all_handles = self.driver.window_handles
-        self.driver.switch_to.window(all_handles[1])  
+        # all_handles = self.driver.window_handles
+        # self.driver.switch_to.window(all_handles[1])  
         self.command.execute_pause(amount= 2)
         self.command.execute_wait_for_element_clickable(target = "xpath=//*[contains(text(), 'Thẻ nội địa và tài khoản ngân hàng')]")
         self.command.execute_click(target = "xpath=//*[contains(text(), 'Thẻ nội địa và tài khoản ngân hàng')]")
@@ -291,8 +291,8 @@ class TestPayment(BaseTestCase):
     
     def input_data(self, data: dict):
         payment_id = data.get('payment')
-        self.command.execute_assert_element_present(target= "xpath=//*[text()='Yêu cầu thanh toán mới nhất']")
-        self.command.execute_scroll_to(target = "xpath=//*[text()='Yêu cầu thanh toán mới nhất']")
+        self.command.execute_assert_element_present(target= "xpath=//*[text()='Yêu cầu thanh toán']")
+        self.command.execute_scroll_to(target = "xpath=//*[text()='Yêu cầu thanh toán']")
         self.command.execute_pause(amount  = 2)
         elements = self.driver.find_elements(By.ID, f"payment-{payment_id}")
         while len(elements) == 0:

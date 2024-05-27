@@ -13842,6 +13842,9 @@ COPY public.media_media (id, created_at, modified_at, media_from, media_to, cont
 8	2024-05-27 18:11:32.395507+07	2024-05-27 18:11:32.395507+07	"noreply@phobooth.online"	"email@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            margin: 0;\n            padding: 20px;\n            background-color: #f9f9f9;\n            color: #333;\n        }\n        h1, p {\n            margin: 0 0 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-bottom: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 10px;\n            text-align: left;\n        }\n        th {\n            background-color: #f2f2f2;\n        }\n        .customer-info {\n            margin-top: 20px;\n            border-top: 1px solid #ddd;\n            padding-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <div class="container">\n        <p>Dear Nguyen Van A,</p>\n        \n        <p>Nguyen Van A vừa đặt đơn hàng 4 với thông tin như sau:</p>\n        <table>\n            <tr>\n                <th>Tên sản phẩm</th>\n                <th>Số lượng</th>\n                <th>Giá</th>\n            </tr>\n            \n                <tr>\n                    <td>name</td>\n                    <td>1</td>\n                    <td>1000 - 2000</td>\n                </tr>\n            \n        </table>\n\n        <p>Bạn vui lòng liên hệ với khách hàng qua email để chốt giá cả và cập nhật vào đơn hàng.</p>\n        <div class="customer-info">\n            <p>Thông tin khách hàng</p>\n            <p>Email: email@email.com</p>\n            <p>Số điện thoại: None</p>\n        </div>\n        <p>Trân trọng,</p>\n    </div>\n</body>\n</html>\n	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận đơn hàng 4
 9	2024-05-27 18:12:34.197201+07	2024-05-27 18:12:34.197201+07	"noreply@phobooth.online"	"email@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            margin: 0;\n            padding: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-bottom: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n            text-align: left;\n        }\n        th {\n            background-color: #f2f2f2;\n        }\n        p {\n            margin-bottom: 10px;\n        }\n        .footer {\n            font-style: italic;\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <div class="container">\n        <p>Dear Nguyen Van A,</p>\n        <p>Đơn hàng 1 của bạn vừa được chấp nhận với các thông tin như sau: </p>\n        <table>\n            <tr>\n                <th>Tên sản phẩm</th>\n                <th>Số lượng</th>\n                <th>Giá</th>\n            </tr>\n            \n                <tr>\n                    <td>school photo</td>\n                    <td>2</td>\n                    <td>50000</td>\n                </tr>\n            \n        </table>\n        <p>Tới tổng giá là: None </p>\n        <p>Nếu bạn không chấp nhận hoặc không hài lòng với đơn hàng này vui lòng huỷ đơn hàng.</p>\n        <p>Lưu ý rằng: Trong quá trình thực hiện đơn hàng, cửa hàng có thể thêm sản phẩm để phù hợp với nhu cầu, khi đó chúng tôi sẽ gửi email cho bạn để thực hiện bước tiếp theo, xin vui lòng theo dõi email.</p>\n        <p class="footer">Trân trọng,</p>\n    </div>\n</body>\n</html>\n	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận đơn hàng 1
 10	2024-05-27 18:12:47.726275+07	2024-05-27 18:12:47.726275+07	"noreply@phobooth.online"	"email@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            margin: 0;\n            padding: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-bottom: 20px;\n        }\n        th, td {\n            border: 1px solid #ddd;\n            padding: 8px;\n            text-align: left;\n        }\n        th {\n            background-color: #f2f2f2;\n        }\n        p {\n            margin-bottom: 10px;\n        }\n        .footer {\n            font-style: italic;\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <div class="container">\n        <p>Dear Nguyen Van A,</p>\n        <p>Đơn hàng 2 của bạn vừa được chấp nhận với các thông tin như sau: </p>\n        <table>\n            <tr>\n                <th>Tên sản phẩm</th>\n                <th>Số lượng</th>\n                <th>Giá</th>\n            </tr>\n            \n                <tr>\n                    <td>school photo</td>\n                    <td>2</td>\n                    <td>57778</td>\n                </tr>\n            \n                <tr>\n                    <td>company photo</td>\n                    <td>2</td>\n                    <td>9998</td>\n                </tr>\n            \n        </table>\n        <p>Tới tổng giá là: None </p>\n        <p>Nếu bạn không chấp nhận hoặc không hài lòng với đơn hàng này vui lòng huỷ đơn hàng.</p>\n        <p>Lưu ý rằng: Trong quá trình thực hiện đơn hàng, cửa hàng có thể thêm sản phẩm để phù hợp với nhu cầu, khi đó chúng tôi sẽ gửi email cho bạn để thực hiện bước tiếp theo, xin vui lòng theo dõi email.</p>\n        <p class="footer">Trân trọng,</p>\n    </div>\n</body>\n</html>\n	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận đơn hàng 2
+11	2024-05-27 18:15:17.094473+07	2024-05-27 18:15:17.094473+07	"noreply@phobooth.online"	"email@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            padding: 20px;\n        }\n        .header {\n            text-align: center;\n            margin-bottom: 20px;\n        }\n        .message p {\n            margin: 10px 0;\n        }\n    </style>\n</head>\n<body>\n    <div class="message">\n        <div class="content">\n            <p>Xin chào Nguyen Van A,</p>\n            <p>Cửa hàng vừa thêm một đợt thanh toán vào đơn hàng 1 của bạn với các thông tin sau:</p>\n            <p>Số tiền: 100000</p>\n            <p>Ngày hết hạn: June 16, 2024</p>\n            <p>Vui lòng thanh toán hoá đơn trong thời gian sớm nhất có thể.</p>\n        </div>\n        <div class="footer">\n            <p>Trân trọng,</p>\n        </div>\n    </div>\n</body>\n</html>\n	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận thanh toán 1
+12	2024-05-27 18:19:55.016812+07	2024-05-27 18:19:55.016812+07	"noreply@phobooth.online"	"email@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            padding: 20px;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-bottom: 20px;\n        }\n        th, td {\n            border: 1px solid #ccc;\n            padding: 8px;\n            text-align: left;\n        }\n        th {\n            background-color: #f2f2f2;\n        }\n        p {\n            margin-bottom: 10px;\n        }\n        .payment_infor {\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <p>Dear Nguyen Van A,</p>\n\n    <p>Chúng tôi vừa xác bạn vừa thanh toán đợt thanh toán 1 cho đơn hàng 1.</p>\n    <p>Thông tin thanh toán như sau:</p>\n    <div class = "payment_infor">\n        <p>Số tiền: 100000</p>\n        <p>Ngày thanh toán: May 27, 2024</p>\n        <p>Phương thức thanh toán: VNPAY</p>\n    </div>\n    <p>Trân trọng,</p>\n</body>\n</html>	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận thanh toán 1
+13	2024-05-27 18:19:55.018844+07	2024-05-27 18:19:55.018844+07	"noreply@phobooth.online"	"first@email.com"	<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <style>\n\n    </style>\n</head>\n<body>\n    <p>Dear First User,</p>\n\n    <p>Đợt thanh toán 1 cho đơn hàng 1 đã được khách hàng thanh toán.</p>\n    <p>Thông tin thanh toán như sau:</p>\n    <div class = "payment_infor">\n        <p>Số tiền: 100000</p>\n        <p>Ngày thanh toán: May 27, 2024</p>\n        <p>Phương thức thanh toán: </p>\n    </div>\n    <p>Trân trọng,</p>\n</body>\n</html>	HTML	EMAIL	IN_QUEUE	0	f	Xác nhận thanh toán 1
 \.
 
 
@@ -13857,6 +13860,8 @@ COPY public.notification_notification (id, created_at, modified_at, subject, ver
 5	2024-05-27 18:12:34.190201+07	2024-05-27 18:12:34.190201+07	first studio	ACCEPTED	Đơn hàng 1	\N	WITH	Giá None	f	ORDER	1	3	f
 6	2024-05-27 18:12:47.719248+07	2024-05-27 18:12:47.719248+07	first studio	ACCEPTED	Đơn hàng 2	\N	WITH	Giá None	f	ORDER	2	3	f
 7	2024-05-27 18:13:37.037044+07	2024-05-27 18:13:37.037044+07	first studio	ADD	Sản phẩm company photo	\N	TO	Đơn hàng 1	f	ORDER	1	3	f
+8	2024-05-27 18:15:17.090473+07	2024-05-27 18:15:17.090473+07	first studio	CREATED	Thanh toán 1	\N	FOR	Đơn hàng 1	f	ORDER	1	3	f
+9	2024-05-27 18:19:55.012845+07	2024-05-27 18:19:55.012845+07	Nguyen Van A	PAID	Thanh toán 1	\N	FOR	Đơn hàng 1	f	ORDER	1	2	f
 \.
 
 
@@ -13876,8 +13881,8 @@ COPY public.order_history_orderhistory (id, created_at, modified_at, status, den
 COPY public.order_order (id, created_at, modified_at, total_price, discount_price, amount_paid, finish_date, status, note, customer_id, studio_id, transportation_price, amount_created, address_id, done_payment, is_deleted) FROM stdin;
 3	2024-05-27 18:11:32.359546+07	2024-05-27 18:11:32.371505+07	\N	0	0	\N	ORDERED	\N	3	1	0	0	2	f	f
 4	2024-05-27 18:11:32.366509+07	2024-05-27 18:11:32.375504+07	\N	0	0	\N	ORDERED	\N	3	2	0	0	2	f	f
-1	2024-05-27 18:11:13.63958+07	2024-05-27 18:12:34.20525+07	100000	0	0	\N	IN_PROCESS	\N	3	1	0	0	2	f	f
 2	2024-05-27 18:11:22.96616+07	2024-05-27 18:12:47.736248+07	135552	0	0	\N	IN_PROCESS	\N	3	1	0	0	2	f	f
+1	2024-05-27 18:11:13.63958+07	2024-05-27 18:19:55.021842+07	100000	0	100000	\N	IN_PROCESS	\N	3	1	0	100000	2	f	f
 \.
 
 
@@ -13900,6 +13905,7 @@ COPY public.order_orderitem (id, created_at, modified_at, quantity, price, addit
 --
 
 COPY public.payment_payment (id, modified_at, no, payment_method, payment_date, created_at, expiration_date, amount, status, order_type, order_desc, bank_code, language, order_id, bank_tran_no, number_attemp_in_day, payment_attemp_date, vn_order_infor, vn_pay_tran_no, "vn_pay_TxnRef", is_deleted) FROM stdin;
+1	2024-05-27 18:19:55.007856+07	1	VNPAY	2024-05-27	2024-05-27 18:15:17.082471+07	2024-06-16	100000	PAID	190000		NCB	vn	1	VNP14431923	2	2024-05-27	username123 thanh toan don hang 1 lan 1	14431923	1-1-1938	f
 \.
 
 
@@ -14163,14 +14169,14 @@ SELECT pg_catalog.setval('public.item_variation_value_id_seq', 1, false);
 -- Name: media_media_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.media_media_id_seq', 10, true);
+SELECT pg_catalog.setval('public.media_media_id_seq', 13, true);
 
 
 --
 -- Name: notification_notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.notification_notification_id_seq', 7, true);
+SELECT pg_catalog.setval('public.notification_notification_id_seq', 9, true);
 
 
 --
@@ -14198,7 +14204,7 @@ SELECT pg_catalog.setval('public.order_orderitem_id_seq', 6, true);
 -- Name: payment_payment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.payment_payment_id_seq', 1, false);
+SELECT pg_catalog.setval('public.payment_payment_id_seq', 1, true);
 
 
 --

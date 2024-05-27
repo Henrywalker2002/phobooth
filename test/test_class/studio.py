@@ -42,9 +42,12 @@ class TestAddStudio(BaseTestCase):
             "street" : data.get('street'),
         }
         self.command.execute_input(type_data)
-        self.input_selection('province', data.get('province'))
-        self.input_selection('district', data.get('district'))
-        self.input_selection('ward', data.get('ward'))
+        if data.get('province') != '':
+            self.input_selection('province', data.get('province'))
+        if data.get('district') != '':
+            self.input_selection('district', data.get('district'))
+        if data.get('ward') != '':
+            self.input_selection('ward', data.get('ward'))
         self.input_type(data.get('type'))
         if data.get('avatar') != '': 
             url_avatar = os.path.join(os.getcwd(), 'assets', 'studio', data.get('avatar'))
@@ -79,7 +82,7 @@ class TestAddStudio(BaseTestCase):
                 expect = row.get('expect')
                 if expect == 'success':
                     self.command.execute_pause(amount = 3)
-                    self.command.execute_assert_url(value = f'{self.base_url}/studio/')
+                    self.command.execute_assert_url(value = f'{self.base_url}/studio')
                 else:
                     field, value = expect.split(':')
                     self.check_error(field, value)
