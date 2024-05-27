@@ -13764,9 +13764,9 @@ COPY public.draw_money_drawmoney (id, created_at, modified_at, amount, status, t
 COPY public.item_item (id, created_at, modified_at, name, description, type, width, length, weight, height, fixed_price, min_price, max_price, category_id, studio_id, status, star, is_deleted) FROM stdin;
 1	2024-05-11 11:31:08.668526+07	2024-05-11 11:31:08.668526+07	school photo	school photo description	SERVICE	\N	\N	\N	\N	\N	1000	2000	\N	1	ACTIVE	5	f
 2	2024-05-11 11:31:08.669526+07	2024-05-11 11:31:08.669526+07	company photo	company photo description	SERVICE	\N	\N	\N	\N	\N	2000	3000	\N	1	ACTIVE	5	f
-3	2024-05-11 11:38:40.381713+07	2024-05-11 11:38:40.381713+07	Dịch vụ vận chuyển	Dịch vụ vận chuyển	ACCESSORY	\N	\N	\N	\N	\N	0	500000	\N	2	ACTIVE	5	f
-4	2024-05-11 11:40:18.480274+07	2024-05-11 11:40:18.480274+07	name	description	SERVICE	\N	\N	\N	\N	\N	1000	2000	1	2	ACTIVE	5	f
-5	2024-05-11 11:40:50.186078+07	2024-05-11 11:40:50.186078+07	name	description	ACCESSORY	\N	\N	\N	\N	\N	1000	2000	1	2	ACTIVE	5	f
+3	2024-05-27 18:03:18.146477+07	2024-05-27 18:03:18.146477+07	Dịch vụ vận chuyển	Dịch vụ vận chuyển	ACCESSORY	\N	\N	\N	\N	\N	0	500000	\N	2	ACTIVE	5	f
+4	2024-05-27 18:04:26.322216+07	2024-05-27 18:04:26.322216+07	name	description	SERVICE	\N	\N	\N	\N	\N	1000	2000	1	2	ACTIVE	5	f
+5	2024-05-27 18:05:16.215201+07	2024-05-27 18:05:16.215201+07	name	description	ACCESSORY	\N	\N	\N	\N	\N	1000	2000	1	2	ACTIVE	5	f
 \.
 
 
@@ -13783,15 +13783,14 @@ COPY public.item_item_item (id, from_item_id, to_item_id) FROM stdin;
 --
 
 COPY public.item_itempicture (id, picture, item_id) FROM stdin;
-1	/item/shipping.png	3
-2	item/anh-1_DyzB95n.png	4
-3	item/anh-2_Fk7xT8E.jpg	4
-4	item/anh-3_jcRLwTC.jpg	4
-5	item/anh-4_07bZAB7.jpg	4
-6	item/anh-1_SdVf65r.png	5
-7	item/anh-2_kWrG4qx.jpg	5
-8	item/anh-3_y9S837t.jpg	5
-9	item/anh-4_EazZiUR.jpg	5
+1	item/anh-1.png	4
+2	item/anh-2.jpg	4
+3	item/anh-3.jpg	4
+4	item/anh-4.jpg	4
+5	item/anh-1_qU1JSK4.png	5
+6	item/anh-2_UTXddKb.jpg	5
+7	item/anh-3_9IbKbqu.jpg	5
+8	item/anh-4_DELcSKN.jpg	5
 \.
 
 
@@ -13941,7 +13940,7 @@ COPY public.studio_document_studiodocument (id, created_at, modified_at, phone, 
 
 COPY public.studio_studio (id, created_at, modified_at, friendly_name, description, tax_code, is_verified, phone, email, code_name, avatar, address_id, account_number, bank_bin, number_order_completed, number_rate, star, account_name, account_balance, type, is_deleted) FROM stdin;
 1	2024-05-11 11:31:08.665532+07	2024-05-11 11:31:08.665532+07	first studio	first studio description	\N	f	0262458212	first@email.com	first_studio		\N	\N	\N	0	0	5	\N	0	STUDIO	f
-2	2024-05-11 11:38:40.376679+07	2024-05-11 11:38:40.376679+07	studio	studio thành lập lâu năm, uy tín	\N	f	0987722535	emai@email.com	studio_130	avatars/avatar_2oj1aZv.png	1	\N	\N	0	0	5	\N	0	STUDIO	f
+2	2024-05-27 18:03:18.135471+07	2024-05-27 18:03:18.135471+07	studio	studio thành lập lâu năm, uy tín	\N	f	0987722535	emai@email.com	studio_130	avatars/avatar_Y5ZO3wf.png	1	\N	\N	0	0	5	\N	0	STUDIO	f
 \.
 
 
@@ -13950,9 +13949,10 @@ COPY public.studio_studio (id, created_at, modified_at, friendly_name, descripti
 --
 
 COPY public.user_user (last_login, id, username, email, password, full_name, is_active, google_id, facebook_id, created_at, modified_at, own_studio_id, avatar, date_of_birth, phone, address_id, word_for_studio_id, is_deleted) FROM stdin;
-\N	1	admin	admin@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	Admin	t	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N		\N	\N	\N	\N	f
 \N	2	first user	first@email.com	pbkdf2_sha256$600000$s7yxjKfpjhp35PaDvlM7jr$G34rhKG4dXPiaG2E794UqO9pATxPA8Kwz+fbs69FG2E=	First User	t	\N	\N	2024-05-11 11:31:08.244527+07	2024-05-11 11:31:08.667492+07	1		\N	\N	\N	\N	f
-\N	3	username123	email@email.com	pbkdf2_sha256$600000$FLjo1krOzIhTmp92AAe63m$Il0TXRZphxgcYxWQTHedh6yG+ILec+7vDJl9syy2I1U=	Nguyen Van A	t	\N	\N	2024-05-11 11:34:07.537055+07	2024-05-11 11:38:40.379708+07	2		\N	\N	\N	\N	f
+\N	1	admin	admin@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	Admin	t	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N		\N	\N	\N	\N	f
+\N	4	test	test@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	name	f	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N	\N	\N	\N	\N	\N	f
+\N	3	username123	email@email.com	pbkdf2_sha256$600000$eZH2klHzhfTdFQRcIeuvTK$yPGes83N6rO3Vn1K+WFaP6EW6UTaeVSmXuUR2L+VfOE=	Nguyen Van A	t	\N	\N	2024-05-27 17:32:15.869143+07	2024-05-27 18:03:18.143491+07	2		\N	\N	\N	\N	f
 \.
 
 
@@ -14099,7 +14099,7 @@ SELECT pg_catalog.setval('public.item_item_item_id_seq', 1, false);
 -- Name: item_itempicture_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.item_itempicture_id_seq', 9, true);
+SELECT pg_catalog.setval('public.item_itempicture_id_seq', 8, true);
 
 
 --

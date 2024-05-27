@@ -13936,9 +13936,10 @@ COPY public.studio_studio (id, created_at, modified_at, friendly_name, descripti
 --
 
 COPY public.user_user (last_login, id, username, email, password, full_name, is_active, google_id, facebook_id, created_at, modified_at, own_studio_id, avatar, date_of_birth, phone, address_id, word_for_studio_id, is_deleted) FROM stdin;
-\N	1	admin	admin@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	Admin	t	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N		\N	\N	\N	\N	f
 \N	2	first user	first@email.com	pbkdf2_sha256$600000$s7yxjKfpjhp35PaDvlM7jr$G34rhKG4dXPiaG2E794UqO9pATxPA8Kwz+fbs69FG2E=	First User	t	\N	\N	2024-05-11 11:31:08.244527+07	2024-05-11 11:31:08.667492+07	1		\N	\N	\N	\N	f
-\N	3	username123	email@email.com	pbkdf2_sha256$600000$FLjo1krOzIhTmp92AAe63m$Il0TXRZphxgcYxWQTHedh6yG+ILec+7vDJl9syy2I1U=	Nguyen Van A	t	\N	\N	2024-05-11 11:34:07.537055+07	2024-05-11 11:34:08.071021+07	\N		\N	\N	\N	\N	f
+\N	3	username123	email@email.com	pbkdf2_sha256$600000$eZH2klHzhfTdFQRcIeuvTK$yPGes83N6rO3Vn1K+WFaP6EW6UTaeVSmXuUR2L+VfOE=	Nguyen Van A	t	\N	\N	2024-05-27 17:32:15.869143+07	2024-05-27 17:32:16.333143+07	\N		\N	\N	\N	\N	f
+\N	1	admin	admin@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	Admin	t	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N		\N	\N	\N	\N	f
+\N	4	test	test@email.com	pbkdf2_sha256$600000$SoXBoVQxuhoFLZqtSil0lB$6ukz1HcfzG7n7pTJ0xeJGQ4vI6XMKej8W+blJwvGzEU=	name	f	\N	\N	2024-05-11 11:30:44.277874+07	2024-05-11 11:30:44.277874+07	\N	\N	\N	\N	\N	\N	f
 \.
 
 
