@@ -7,20 +7,20 @@ const useRefreshToken = () => {
   const [cookies, setCookie] = useCookies(["accInfo"]);
 
   const refresh = async () => {
-    // console.log(cookies?.userInfo?.refresh);
+    // console.log(cookies?.accInfo?.refresh);
     const response = await axios.post(
       "/api/token/refresh/",
       {
-        refresh: cookies?.userInfo?.refresh,
+        refresh: cookies?.accInfo?.refresh,
       },
       {
         headers: { "Content-Type": "application/json" },
       }
     );
     setCookie(
-      "userInfo",
+      "accInfo",
       {
-        ...cookies.userInfo,
+        ...cookies.accInfo,
         access: response.data.access,
       },
       { path: "/" }

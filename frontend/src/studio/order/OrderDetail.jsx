@@ -391,7 +391,7 @@ function OrderDetail(props) {
         </Typography>
       </Breadcrumbs>
 
-      <div className="flex justify-between items-start mt-5 px-5">
+      <div className="flex justify-between  items-start mt-5 px-2">
         <div className="flex flex-col gap-5 w-[75%]">
           {/* Detail Order */}
           <TableContainer
@@ -603,7 +603,7 @@ function OrderDetail(props) {
                       số điện thoại
                     </div>
                     <div className="w-full text-base font-normal leading-5 text-zinc-900">
-                      Chưa cập nhật
+                      {order?.customer?.phone ?? "Chưa cập nhật"}
                     </div>
                   </div>
                   <div className="w-full items-stretch flex flex-col gap-1">

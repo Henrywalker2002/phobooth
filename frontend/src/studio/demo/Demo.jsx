@@ -21,7 +21,7 @@ function handleDate(created_at) {
 
 function Demo() {
   let { id } = useParams();
-  const [cookies, setCookie] = useCookies(["accInfo"]);
+  const [cookies] = useCookies(["accInfo"]);
   const navigate = useNavigate();
   const [infoType, setInfoType] = useState("basic");
   const axiosPrivate = useAxiosPrivate();
@@ -63,7 +63,7 @@ function Demo() {
   useEffect(() => {
     axiosPrivate.get(`/order/${id}/`).then((res) => {
       let order_infor = res.data;
-      let user_infor = cookies.userInfo;
+      let user_infor = cookies.accInfo;
       if (user_infor?.username === order_infor?.customer?.username) {
         setNavbarType("customer");
       } else {

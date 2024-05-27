@@ -58,7 +58,7 @@ function Booking() {
 
   // check address
   useEffect(() => {
-    if (!cookies.userInfo.address) {
+    if (!cookies.accInfo.address) {
       setOpenAddrAlert(true);
     }
   }, []);
@@ -538,8 +538,10 @@ function Booking() {
                     />
                   }
                 >
-                  <AlertTitle sx={{ color: "#18181B" }}>
-                    Địa chỉ nhận hàng
+                  <AlertTitle>
+                    <div className=" text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
+                      Địa chỉ nhận hàng :
+                    </div>
                   </AlertTitle>
                   <div className="flex items-start gap-2">
                     <div className=" text-stone-500 text-base leading-6">

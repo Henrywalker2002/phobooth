@@ -168,7 +168,7 @@ function ItemDetail(props) {
             number: quantity,
           },
         ],
-        address: { ...cookies.userInfo.address },
+        address: { ...cookies.accInfo.address },
       },
     ]);
     navigate("/booking", { state: { from: location } }, { replace: true });
@@ -499,7 +499,7 @@ function ItemDetail(props) {
                       },
                     }}
                     onClick={() => {
-                      if (cookies?.userInfo?.username) handleAddToCart(item.id);
+                      if (cookies?.accInfo?.username) handleAddToCart(item.id);
                       else setOpenErr401(true);
                     }}
                   >
@@ -508,7 +508,7 @@ function ItemDetail(props) {
                   <Button
                     variant="contained"
                     onClick={() => {
-                      if (cookies?.userInfo?.username) handleOrderNow(item);
+                      if (cookies?.accInfo?.username) handleOrderNow(item);
                       else setOpenErr401(true);
                     }}
                     sx={{

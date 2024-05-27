@@ -190,7 +190,12 @@ function Carousel({ handleAddToCart }) {
                   endIcon={
                     <FaArrowRight style={{ width: "18px", height: "18px" }} />
                   }
-                  onClick={() => navigate("/advanced-search/")}
+                  onClick={() =>
+                    navigate("/advanced-search/", {
+                      state: { category: activeCategory },
+                      replace: true,
+                    })
+                  }
                   sx={{
                     textTransform: "none",
                     color: "#3F41A6",

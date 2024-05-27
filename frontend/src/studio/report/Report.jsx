@@ -13,13 +13,13 @@ import { useCookies } from "react-cookie";
 function Report() {
   const navigate = useNavigate();
   const [studioInfor, setStudioInfor] = useState({});
-  const [cookies] = useCookies(["userInfo"]);
+  const [cookies] = useCookies(["accInfo"]);
   const axiosPrivate = useAxiosPrivate();
-  var studioCodeName = cookies?.userInfo?.studio?.code_name;
+  var studioCodeName = cookies?.accInfo?.studio?.code_name;
 
   useEffect(() => {
     axiosPrivate
-      .get(`/studio/${studioCodeName}`)
+      .get(`/studio/${studioCodeName}/`)
       .then((res) => {
         setStudioInfor(res.data);
       })
@@ -72,7 +72,7 @@ function Report() {
 
         <ItemTable studioInfor={studioInfor} />
 
-        <ComplainTable studioInfor= {studioInfor}/>
+        <ComplainTable studioInfor={studioInfor} />
       </div>
     </div>
   );

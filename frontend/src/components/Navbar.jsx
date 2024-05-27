@@ -57,7 +57,7 @@ function Navbar() {
   const location = useLocation();
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
-  const [cookies, , removeCookie] = useCookies(["accInfo"]);
+  const [cookies, , removeCookie] = useCookies(["accInfo", "persist"]);
   const [searchKeyWord, setSearchKeyWord] = useState("");
   const [categoryLst, setCategoryLst] = useState([]);
   const [anchorCategory, setAnchorCategory] = useState(null);
@@ -71,8 +71,8 @@ function Navbar() {
   };
 
   useEffect(() => {
-    if (cookies?.userInfo?.username !== undefined) {
-      setUserInfo(cookies?.userInfo?.full_name);
+    if (cookies?.accInfo?.username !== undefined) {
+      setUserInfo(cookies?.accInfo?.full_name);
     } else setUserInfo("");
 
     axios
@@ -138,7 +138,7 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    removeCookie("userInfo", { path: "/" });
+    removeCookie("accInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
@@ -247,7 +247,7 @@ function Navbar() {
               onClick={() => {
                 // kiểm tra đã có tài khoản studio chưa
 
-                if (!cookies?.userInfo?.studio?.id) {
+                if (!cookies?.accInfo?.studio?.id) {
                   navigate("/studio/register");
                 } else {
                   navigate("/studio");
@@ -461,7 +461,7 @@ function Navbar() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
-              src={cookies.userInfo.avatar ?? no_avt}
+              src={cookies.accInfo.avatar ?? no_avt}
               sx={{ width: "30px", height: "30px", cursor: "pointer" }}
             />
             <Menu
@@ -482,7 +482,7 @@ function Navbar() {
                 }}
               >
                 <div className="flex gap-2 items-center">
-                  <Avatar alt="avt" src={cookies.userInfo.avatar ?? no_avt} />
+                  <Avatar alt="avt" src={cookies.accInfo.avatar ?? no_avt} />
                   <div className="max-w-[150px] text-wrap whitespace-normal text-base font-semibold text-indigo-800 tracking-wide">
                     {userInfo}
                   </div>
@@ -499,7 +499,7 @@ function Navbar() {
                 onClick={() => {
                   // kiểm tra đã có tài khoản studio chưa
 
-                  if (!cookies?.userInfo?.studio?.id) {
+                  if (!cookies?.accInfo?.studio?.id) {
                     navigate("/studio/register");
                   } else {
                     navigate("/studio");

@@ -20,10 +20,11 @@ function Home() {
 
   const [openErr401, setOpenErr401] = useState(false);
   const [openSBar, setOpenSBar] = useState(false);
-  const [cookies, setCookies] = useCookies(['userInfo'])
-  
-  if (cookies.userInfo) {
-    if (cookies.userInfo.role[0].code_name === "admin") {
+  const [cookies] = useCookies(["accInfo"]);
+  console.log(cookies);
+
+  if (cookies.accInfo) {
+    if (cookies.accInfo.role[0].code_name === "admin") {
       navigate("/admin");
     }
   }
@@ -54,6 +55,7 @@ function Home() {
       })
       .catch((err) => {
         console.log(err);
+        if (err.response.status === 401) setOpenErr401(true);
       });
   };
 

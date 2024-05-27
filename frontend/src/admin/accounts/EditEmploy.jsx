@@ -144,6 +144,7 @@ export default function EditEmploy({
     axiosPrivate
       .get(`/staff/${currentItem.username}/`)
       .then((res) => {
+        console.log(res);
         setFormData({
           full_name: res.data.full_name,
           username: res.data.username,

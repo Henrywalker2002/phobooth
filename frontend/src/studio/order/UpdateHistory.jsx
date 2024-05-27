@@ -63,12 +63,12 @@ function UpdateHistory({ order }) {
     <div className="flex flex-col gap-3 w-[20%] items-end">
       <Paper
         sx={{
-          width: "fit-content",
+          width: "100%",
           minWidth: "350px",
           border: "1px solid #d6d3d1",
         }}
       >
-        <div className="flex justify-between items-center px-5 py-3 leading-[150%] max-w-[400px]">
+        <div className="flex justify-between items-center px-3 py-3 leading-[150%] max-w-[450px]">
           <div className="text-lg font-semibold text-zinc-800">
             Lịch sử cập nhật
           </div>
@@ -112,17 +112,15 @@ function UpdateHistory({ order }) {
                         </span>
                       </div>
 
-                      <div className="flex gap-2  items-center leading-6">
-                        <div className=" text-zinc-800 font-semibold flex gap-2">
+                      <div className="flex flex-col gap-2 items-start leading-6">
+                        <div className=" text-zinc-800 font-semibold flex gap-1">
                           {hist?.new_value?.item_name}
                           <span className="w-fit h-fit text-indigo-800 font-normal text-sm leading-4 rounded bg-indigo-100 px-2 py-1">
                             x {hist?.new_value?.quantity}
                           </span>
-                          {hist?.new_value?.price && (
-                            <span className=" text-stone-500">:</span>
-                          )}
                         </div>
-                        <div className=" text-zinc-00">
+                        <div className=" text-zinc-700 flex gap-2">
+                          Giá:
                           {hist?.new_value?.price &&
                             CurrencyFormatter(hist?.new_value?.price)}
                         </div>

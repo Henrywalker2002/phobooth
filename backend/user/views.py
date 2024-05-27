@@ -114,6 +114,7 @@ class StaffViewSet(BaseModelViewSet):
     filterset_class = StaffFilter
     search_fields = ["@username", "@full_name", "@email"]
     lookup_field = "username"
+    lookup_value_regex = r"[\w.]+"
 
     def get_queryset(self):
         return self.queryset.filter(role__code_name__in=["staff", "admin"], is_deleted=False).distinct()

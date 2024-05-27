@@ -52,12 +52,12 @@ export default function AdminNavbar() {
   const location = useLocation();
   const [userInfo, setUserInfo] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
-  const [cookies, , removeCookie] = useCookies(["accInfo"]);
+  const [cookies, , removeCookie] = useCookies(["accInfo", "persist"]);
 
   useEffect(() => {
-    if (cookies?.userInfo?.username !== undefined) {
-      setUserInfo(cookies?.userInfo);
-      console.log(cookies?.userInfo);
+    if (cookies?.accInfo?.username !== undefined) {
+      setUserInfo(cookies?.accInfo);
+      console.log(cookies?.accInfo);
     } else setUserInfo("");
   }, []);
 
@@ -70,7 +70,7 @@ export default function AdminNavbar() {
     setAnchorEl(null);
   };
   const handleLogout = () => {
-    removeCookie("userInfo", { path: "/" });
+    removeCookie("accInfo", { path: "/" });
     removeCookie("persist", { path: "/" });
     navigate("/login", { state: { from: location }, replace: true });
   };
@@ -130,7 +130,7 @@ export default function AdminNavbar() {
               }}
               onClick={() => navigate("/admin")}
             >
-              {translateRole(cookies?.userInfo?.role[0]?.code_name)}
+              {translateRole(cookies?.accInfo?.role[0]?.code_name)}
             </Button>
           </div>
         </div>
@@ -243,7 +243,7 @@ export default function AdminNavbar() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
-              src={cookies.userInfo.avatar ?? no_avt}
+              src={cookies.accInfo.avatar ?? no_avt}
               sx={{ width: "30px", height: "30px", cursor: "pointer" }}
             />
             <Menu
@@ -269,7 +269,7 @@ export default function AdminNavbar() {
                 }}
               >
                 <div className="flex gap-2 items-center">
-                  <Avatar alt="avt" src={cookies.userInfo.avatar ?? no_avt} />
+                  <Avatar alt="avt" src={cookies.accInfo.avatar ?? no_avt} />
                   <div className="max-w-[150px] text-wrap whitespace-normal text-base font-semibold text-indigo-800 tracking-wide">
                     {userInfo.full_name}
                   </div>

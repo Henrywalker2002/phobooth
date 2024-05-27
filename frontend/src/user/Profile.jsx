@@ -26,7 +26,6 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { v4 as uuidv4 } from "uuid";
 import { useCookies } from "react-cookie";
@@ -64,11 +63,11 @@ function Profile() {
 
   // setup address
   const setUpInitialAddress = () => {
-    if (cookies.userInfo.address !== null) {
+    if (cookies.accInfo.address !== null) {
       let distlist = [];
       let wardlist = [];
       axios
-        .get(`province/${cookies.userInfo.address.province.code_name}/`)
+        .get(`province/${cookies.accInfo.address.province.code_name}/`)
         .then((res) => {
           // console.log(res);
           distlist = res.data.districts;
@@ -76,17 +75,17 @@ function Profile() {
         })
         .then((distlist) => {
           wardlist = distlist?.find(
-            (dist) => dist.code === cookies.userInfo.address.district.code
+            (dist) => dist.code === cookies.accInfo.address.district.code
           )?.wards;
         })
         .then(() => {
           setAddresses([
             {
-              id: cookies.userInfo.address.id,
-              street: cookies.userInfo.address.street,
-              ward: cookies.userInfo.address.ward.code,
-              district: cookies.userInfo.address.district.code,
-              province: cookies.userInfo.address.province.code,
+              id: cookies.accInfo.address.id,
+              street: cookies.accInfo.address.street,
+              ward: cookies.accInfo.address.ward.code,
+              district: cookies.accInfo.address.district.code,
+              province: cookies.accInfo.address.province.code,
               distlist: distlist,
               wardlist: wardlist,
             },
@@ -202,7 +201,7 @@ function Profile() {
     }
 
     axiosPrivate
-      .patch(`/user/${cookies.userInfo.id}/`, formData, {
+      .patch(`/user/${cookies.accInfo.id}/`, formData, {
         headers: {
           ...axiosPrivate.defaults.headers,
           "content-type": "multipart/form-data",
@@ -211,10 +210,10 @@ function Profile() {
       .then((res) => {
         // console.log(res.data);
         setCookie(
-          "userInfo",
+          "accInfo",
           {
-            access : cookies.userInfo.access,
-            refresh : cookies.userInfo.refresh,
+            access: cookies.accInfo.access,
+            refresh: cookies.accInfo.refresh,
             ...res.data,
           },
           { path: "/" }
@@ -285,7 +284,7 @@ function Profile() {
             fontWeight: "500",
           }}
         >
-          Hồ sơ cá nhân
+          Thông tin cá nhân
         </Typography>
       </Breadcrumbs>
 
@@ -297,7 +296,7 @@ function Profile() {
         }}
       >
         <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap shadow-sm w-full justify-center pl-5 py-3 rounded-lg items-start">
-          Hồ sơ cá nhân
+          Thông tin cá nhân
         </div>
         <Divider />
         <form onSubmit={handleUpdateProfile}>
@@ -308,8 +307,8 @@ function Profile() {
                 required
                 variant="outlined"
                 name="full_name"
-                value={newInfo.full_name ?? cookies.userInfo.full_name ?? ""}
-                // defaultValue={cookies.userInfo.full_name}
+                value={newInfo.full_name ?? cookies.accInfo.full_name ?? ""}
+                // defaultValue={cookies.accInfo.full_name}
                 onChange={updateUserInfo}
                 error={errMsg.full_name ? true : false}
                 helperText={errMsg.full_name ? errMsg.full_name[0] : ""}
@@ -330,8 +329,8 @@ function Profile() {
                 required
                 variant="outlined"
                 name="username"
-                value={newInfo.username ?? cookies.userInfo.username ?? ""}
-                // defaultValue={cookies.userInfo.username}
+                value={newInfo.username ?? cookies.accInfo.username ?? ""}
+                // defaultValue={cookies.accInfo.username}
                 onChange={updateUserInfo}
                 error={errMsg.username ? true : false}
                 helperText={errMsg.username ? errMsg.username[0] : ""}
@@ -351,8 +350,8 @@ function Profile() {
                   required
                   name="password"
                   onChange={updateUserInfo}
-                  value={newInfo.password ?? cookies.userInfo.password ?? ""}
-                  // defaultValue={cookies.userInfo.password}
+                  value={newInfo.password ?? cookies.accInfo.password ?? ""}
+                  // defaultValue={cookies.accInfo.password}
                   error={errMsg.password ? true : false}
                   sx={{ width: "350px", height: "45px", marginY: "10px" }}
                   id="standard-adornment-password"
@@ -400,7 +399,7 @@ function Profile() {
                   value={
                     newInfo?.date_of_birth
                       ? dayjs(newInfo?.date_of_birth)
-                      : dayjs(cookies?.userInfo.date_of_birth)
+                      : dayjs(cookies?.accInfo.date_of_birth)
                   }
                   slotProps={{
                     textField: {
@@ -410,7 +409,7 @@ function Profile() {
                       error: errMsg.date_of_birth ? true : false,
                     },
                   }}
-                  // defaultValue={dayjs(cookies?.userInfo.date_of_birth) ?? null}
+                  // defaultValue={dayjs(cookies?.accInfo.date_of_birth) ?? null}
                 />
               </LocalizationProvider>
 
@@ -424,8 +423,8 @@ function Profile() {
                     required
                     variant="outlined"
                     name="email"
-                    value={newInfo.email ?? cookies.userInfo.email ?? ""}
-                    // defaultValue={cookies.userInfo.email}
+                    value={newInfo.email ?? cookies.accInfo.email ?? ""}
+                    // defaultValue={cookies.accInfo.email}
 
                     InputProps={{
                       type: "email",
@@ -449,8 +448,8 @@ function Profile() {
                 variant="outlined"
                 name="phone"
                 onChange={updateUserInfo}
-                value={newInfo.phone ?? cookies.userInfo.phone ?? ""}
-                // defaultValue={cookies.userInfo.phone}
+                value={newInfo.phone ?? cookies.accInfo.phone ?? ""}
+                // defaultValue={cookies.accInfo.phone}
                 error={errMsg.phone ? true : false}
                 helperText={errMsg.phone ? errMsg.phone[0] : ""}
                 sx={{
@@ -471,8 +470,8 @@ function Profile() {
                   src={
                     avt.avt_preview
                       ? avt.avt_preview
-                      : cookies.userInfo.avatar
-                      ? cookies.userInfo.avatar
+                      : cookies.accInfo.avatar
+                      ? cookies.accInfo.avatar
                       : "https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg"
                   }
                   sx={{ width: 140, height: 140 }}
@@ -516,11 +515,11 @@ function Profile() {
           </div>
 
           <div className="flex flex-col ml-4">
-            <div className="text-zinc-900 text-sm leading-5 mt-4 flex items-center gap-1">
+            <div className="text-zinc-900 text-sm leading-5 mt-4 mb-2 flex items-center gap-1">
               Địa chỉ
-              <IconButton onClick={handleAddAddress}>
+              {/* <IconButton onClick={handleAddAddress}>
                 <AddCircleOutlineIcon sx={{ width: "20px", height: "20px" }} />
-              </IconButton>
+              </IconButton> */}
             </div>
             {addresses.length > 1 ? (
               addresses.map((address, index) => (

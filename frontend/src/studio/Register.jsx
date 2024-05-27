@@ -159,25 +159,12 @@ function Register() {
         },
       })
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
+        let newInfo = { ...cookies.accInfo, studio: res.data };
+        console.log(newInfo);
+        setCookie("accInfo", newInfo, { path: "/" });
 
-        setCookie(
-          "userInfo",
-          {
-            ...cookies.userInfo,
-            studio: res.data,
-          },
-          { path: "/" }
-        );
-        setCookie(
-          "accInfo",
-          {
-            ...cookies.userInfo,
-            studio: res.data,
-          },
-          { path: "/" }
-        );
-        navigate("/studio/");
+        navigate("/studio");
       })
       .catch((err) => {
         console.log(err);
@@ -273,7 +260,7 @@ function Register() {
                 required
                 variant="outlined"
                 name="code_name"
-                id = "code_name"
+                id="code_name"
                 value={studioInfo.code_name}
                 onChange={updateStudioInfo}
                 error={errMsg.code_name ? true : false}
@@ -295,7 +282,7 @@ function Register() {
                 required
                 variant="outlined"
                 name="email"
-                id = "email"
+                id="email"
                 value={studioInfo.email}
                 onChange={updateStudioInfo}
                 InputProps={{
@@ -423,7 +410,7 @@ function Register() {
                     id="outlined-select-provinces"
                     label="Tỉnh thành"
                     value={address.province ? address.province : ""}
-                    name = "province"
+                    name="province"
                     defaultValue=""
                     select
                     error={errMsg.address?.province ? true : false}
@@ -542,7 +529,7 @@ function Register() {
                   required
                   label="Tỉnh thành"
                   value={addresses[0]?.province ? addresses[0].province : ""}
-                  name= "province"
+                  name="province"
                   defaultValue=""
                   select
                   error={errMsg.address?.province ? true : false}

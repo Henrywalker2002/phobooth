@@ -32,7 +32,7 @@ function ComplainDetail() {
   const [complainData, setComplainData] = React.useState({});
   const [relies, setRelies] = React.useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const [cookies, setCookies] = useCookies(["userInfo"]);
+  const [cookies] = useCookies(["accInfo"]);
   const [reply, setReply] = React.useState("");
   const [error, setError] = React.useState("");
   const limit = 20;
@@ -91,7 +91,7 @@ function ComplainDetail() {
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      if (data.reply?.user?.username !== cookies.userInfo?.username) {
+      if (data.reply?.user?.username !== cookies.accInfo?.username) {
         setRelies([...relies, data.reply]);
       }
 
@@ -341,7 +341,7 @@ function ComplainDetail() {
             },
             display: relies.length > 0 ? "box" : "none",
           }}
-          className="max-h-screen text-left w-800 overflow-y-scroll snap-start border-2 border-indigo-800 p-5 rounded-lg flex flex-col gap-5"
+          className="max-h-screen text-left w-[65%] overflow-y-scroll snap-start border-2 border-indigo-800 p-5 rounded-lg flex flex-col gap-5"
           onScroll={handleLoadMoreResponse}
         >
           {relies.map((reply, i) => {
@@ -363,16 +363,16 @@ function ComplainDetail() {
                 <img
                   loading="lazy"
                   srcSet={
-                    cookies.userInfo?.avatar ? cookies.userInfo?.avatar : avatar
+                    cookies.accInfo?.avatar ? cookies.accInfo?.avatar : avatar
                   }
                   className="w-11 h-11 rounded-full "
                 />
                 <div className="flex flex-col justify-around items-start">
                   <div className="text-base tracking-wider text-black">
-                    {cookies.userInfo?.full_name}
+                    {cookies.accInfo?.full_name}
                   </div>
                   <div className="text-sm font-medium tracking-wide text-indigo-800">
-                    {convertRole(cookies.userInfo?.role)}
+                    {convertRole(cookies.accInfo?.role)}
                   </div>
                 </div>
               </div>

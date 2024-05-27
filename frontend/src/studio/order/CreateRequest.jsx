@@ -2,7 +2,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Button, Dialog, Divider, IconButton, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import dayjs from "dayjs";
@@ -26,6 +26,10 @@ function CreateRequest({
     style: "currency",
     currency: "VND",
   });
+
+  useEffect(() => {
+    setNewReq({});
+  }, [open]);
 
   const checkEmptyInput = (val) => {
     if (!val || val == "") return true;

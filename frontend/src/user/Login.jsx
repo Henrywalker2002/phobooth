@@ -20,7 +20,7 @@ function Login() {
   // const location = useLocation();
   // const from = location.state?.from?.pathname || "/";
   // console.log(from);
-  const [cookies, setCookie] = useCookies(["accInfo"]);
+  const [cookies, setCookie] = useCookies(["accInfo", "persist"]);
   const [persist, setPersist] = useState(cookies?.persist || false);
   const userRef = useRef();
   const errRef = useRef();
@@ -59,7 +59,7 @@ function Login() {
           })
           .then((response) => {
             setCookie(
-              "userInfo",
+              "accInfo",
               {
                 ...response?.data,
                 password: pwd,
@@ -107,7 +107,7 @@ function Login() {
       });
       console.log(response?.data);
       setCookie(
-        "userInfo",
+        "accInfo",
         {
           ...response?.data,
           password: pwd,
@@ -128,9 +128,8 @@ function Login() {
     } catch (err) {
       let message = err.response.data.message;
       if (message === "user is not active") {
-        setErrMsg("Tài khoản của bạn đã bị khoá, vui lòng liên hệ admin!")
-      }
-      else {
+        setErrMsg("Tài khoản của bạn đã bị khoá, vui lòng liên hệ admin!");
+      } else {
         setErrMsg("Sai tên đăng nhập hoặc mật khẩu!");
       }
       // setErrMsg(err.response.data.messsage);

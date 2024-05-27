@@ -133,7 +133,7 @@ function Cart() {
         updateOrderLst.map((lst) => {
           return {
             ...lst,
-            address: { ...cookies.userInfo.address },
+            address: { ...cookies.accInfo.address },
           };
         })
       );
