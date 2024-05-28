@@ -520,7 +520,7 @@ function OrderDetail() {
               <div className="flex justify-around">
                 {/* payment request + complain + demo*/}
                 <div className="flex flex-col w-1/2 gap-12">
-                  {/* payment request */}``
+                  {/* payment request */}
                   <div className="items-stretch flex flex-col px-5 gap-2">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Yêu cầu thanh toán
