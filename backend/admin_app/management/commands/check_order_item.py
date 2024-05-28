@@ -9,6 +9,7 @@ class Command(BaseCommand):
     
     
     def handle(self, *args, **kwargs):
+        print("Start check order item schedule")
         check_order_item()
         
         schedule.every().day.at("00:00").do(check_order_item)
