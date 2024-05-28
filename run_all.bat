@@ -1,10 +1,11 @@
 cd backend 
 
 start cmd.exe /C py manage.py runserver 0.0.0.0:8000
-@REM py manage.py check_order_item
-@REM py manage.py check_order_pay 
-@REM py manage.py create_email 
+start cmd.exe /C py manage.py check_order_item
+start cmd.exe /C py manage.py check_order_pay 
+start cmd.exe /C py manage.py create_email 
+start cmd.exe /C py manage.py send_mail
 
 cd ..
 cd frontend 
-npm run dev -- --host
+start cmd.exe /C npm run dev -- --host

@@ -8,6 +8,7 @@ class Command(BaseCommand):
     help = 'Auto create email for user about order change'
     
     def handle(self, *args, **kwargs):
+        print("Start create email schedule")
         MediaService.create_mail_for_add_item()
         schedule.every(5).minutes.do(MediaService.create_mail_for_add_item)
         
