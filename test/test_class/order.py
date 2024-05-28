@@ -14,6 +14,7 @@ class TestCreateOrder(BaseTestCase):
     def handle_add_to_cart(self, item_lst):
         for item_id in item_lst:
             self.command.execute_open(target = f"{self.base_url}/item/detail/{item_id}")
+            self.command.execute_pause(amount = 2)
             self.command.execute_click(target = "xpath=//button[text()='Thêm vào giỏ hàng']")
             self.command.execute_wait_for_element_present(target = "xpath=//*[contains(text(),'Đã thêm vào giỏ hàng !')]")
     
