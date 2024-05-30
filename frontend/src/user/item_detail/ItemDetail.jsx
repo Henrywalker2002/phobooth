@@ -30,7 +30,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 import RateOfItem from "./RateOfProduct";
 import { translateType } from "../../util/Translate";
-import logo from "../../assets/logo2.png";
+import no_avt from "../../assets/blank-avatar.png";
 import ItemCard from "../../components/ItemCard";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -184,7 +184,7 @@ function ItemDetail(props) {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       <Navbar />
 
       {/* Breadcumbs */}
@@ -194,8 +194,7 @@ function ItemDetail(props) {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          paddingLeft: "100px",
           cursor: "pointer",
         }}
       >
@@ -233,11 +232,11 @@ function ItemDetail(props) {
         </Typography>
       </Breadcrumbs>
 
-      <div className="introItem mt-5">
+      <div className="introItem">
         {/* Content */}
-        <div className="gap-5 flex mt-5">
-          <div className="flex flex-col items-start w-[39%] ml-[200px]">
-            <div className="flex grow flex-col items-stretch mt-1.5 w-[420px]">
+        <div className="gap-5 flex px-[100px] justify-between">
+          <div className="flex flex-col items-start w-fit">
+            <div className="flex grow flex-col items-stretch w-[420px]">
               <img
                 loading="lazy"
                 srcSet={
@@ -349,8 +348,8 @@ function ItemDetail(props) {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-end mt-1 w-[61%] mr-[180px]">
-            <div className="flex grow flex-col w-[620px]">
+          <div className="flex flex-col w-[60%]">
+            <div className="flex flex-col">
               <div className="text-zinc-900 text-4xl font-semibold leading-10 whitespace-nowrap self-start">
                 {item?.name}
               </div>
@@ -453,7 +452,7 @@ function ItemDetail(props) {
                 <div className=" flex gap-5 mt-2">
                   <div className="flex flex-col items-center">
                     <div className="justify-center items-center border border-[color:var(--gray-scale-gray-100,#d6d3d1)] bg-white flex gap-0 p-2 rounded-[170px] border-solid self-start">
-                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
+                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center border-[#d6d3d1] border-[1px]">
                         <IconButton
                           color="primary"
                           onClick={() => setQuantity(quantity - 1)}
@@ -465,7 +464,7 @@ function ItemDetail(props) {
                       <div className="text-zinc-900 text-center text-base leading-6 my-auto mx-2">
                         {quantity}
                       </div>
-                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center">
+                      <div className="bg-zinc-100 self-stretch flex w-[34px] shrink-0 h-[34px] flex-col rounded-[170px] items-center justify-center border-[#d6d3d1] border-[1px]">
                         <IconButton
                           color="primary"
                           onClick={() => setQuantity(quantity + 1)}
@@ -534,15 +533,15 @@ function ItemDetail(props) {
       </div>
 
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 mt-[120px]">
-        <div className="border bg-white mx-6 px-9 py-10 border-solid border-neutral-200 rounded-md">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col mt-6 px-[100px] py-11">
+        <div className="border bg-white p-9 border-solid border-neutral-200 rounded-md">
           <div className="gap-5 flex">
             <div className="flex flex-col items-start justify-center w-[43%] ml-5">
               <div className="gap-5 flex">
                 <div className="flex flex-col items-center w-2/12">
                   <Avatar
                     alt={item.studio?.friendly_name}
-                    src={item.studio?.avatar ?? logo}
+                    src={item.studio?.avatar ?? no_avt}
                     sx={{ width: 70, height: 70 }}
                   />
                 </div>
@@ -610,7 +609,7 @@ function ItemDetail(props) {
                       Đánh giá
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                      {item.studio?.star}
+                      {parseInt(item.studio?.star)}
                     </div>
                   </div>
                   <div className="flex justify-between w-[300px]">
@@ -653,7 +652,7 @@ function ItemDetail(props) {
         description={item.description}
       />
 
-      <div className="my-5 flex flex-col gap-10">
+      <div className="flex flex-col gap-5 mt-5">
         {/* Danh sách các sp khác của cửa hàng */}
         <div className="flex flex-col items-center">
           <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">

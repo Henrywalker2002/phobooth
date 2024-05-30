@@ -519,14 +519,14 @@ function OrderDetail() {
             <div className="w-full max-w-[1200px] mt-8 mb-7">
               <div className="flex justify-around">
                 {/* payment request + complain + demo*/}
-                <div className="flex flex-col w-1/2 gap-12">
+                <div className="flex flex-col w-1/2 gap-10">
                   {/* payment request */}
-                  <div className="items-stretch flex flex-col px-5 gap-2">
+                  <div className="items-stretch flex flex-col px-5 gap-3">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Yêu cầu thanh toán
                     </div>
 
-                    <div className="flex flex-col my-3 h-fit">
+                    <div className="flex flex-col h-fit">
                       {requestList.length > 0
                         ? requestList?.map((req) => {
                             if (req.status === "PENDING")
@@ -665,12 +665,12 @@ function OrderDetail() {
                     )}
                   </div>
                   {/* Complain */}
-                  <div className="items-stretch flex flex-col px-5">
+                  <div className="items-stretch flex flex-col px-5 gap-3">
                     <div className="text-neutral-400 text-sm font-medium leading-4 tracking-wide uppercase">
                       Khiếu nại
                     </div>
 
-                    <div className="flex flex-col mt-2 gap-5 h-[120px]">
+                    <div className="flex flex-col">
                       {order.complain !== null ? (
                         <Paper
                           sx={{

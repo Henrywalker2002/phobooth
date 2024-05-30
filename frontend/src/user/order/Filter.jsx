@@ -86,7 +86,7 @@ function Filter({ open, setOpen, filterVal, setFilterVal }) {
         setOpen(false);
       }}
     >
-      <DialogTitle>
+      <DialogTitle sx={{ padding: "10px 24px" }}>
         <div className="shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
             Bộ lọc

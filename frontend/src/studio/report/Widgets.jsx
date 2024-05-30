@@ -109,8 +109,8 @@ function Widgets({ studioInfor, setStudioInfor }) {
                   Đánh giá
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="text-xl text-indigo-900 font-semibold tracking-tight">
-                    {studioInfor.star}
+                  <div className="text-xl text-indigo-900 font-semibold tracking-tight truncate">
+                    {parseInt(studioInfor.star)}
                   </div>
                   <Rating
                     name="read-only"

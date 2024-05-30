@@ -110,7 +110,10 @@ function Orders() {
   // get Orders For Each Page
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
-    let slug = `/order/studio/?limit=5&offset=${offset}&status=${status}`;
+    let slug =
+      status === "ALL"
+        ? `/order/studio/?limit=5&offset=${offset}`
+        : `/order/studio/?limit=5&offset=${offset}&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -266,16 +269,20 @@ function Orders() {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+          <TableCell
+            sx={{
+              padding: 0,
+            }}
+            colSpan={7}
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <div className="mt-5 text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
+              <Box sx={{ border: "1px solid #d6d3d1", padding: "10px" }}>
+                <div className="mb-3 text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
                   Danh sách sản phẩm
                 </div>
                 <Table
                   size="small"
                   sx={{
-                    marginTop: "20px",
                     border: "0.5px solid #d6d3d1",
                     borderRadius: "10px",
                   }}
@@ -294,7 +301,7 @@ function Orders() {
                         SỐ LƯỢNG
                       </TableCell>
                       <TableCell align="left" sx={{ color: "#808080" }}>
-                        GIÁ (VNĐ)
+                        GIÁ THÀNH PHẦN
                       </TableCell>
                       <TableCell align="left"></TableCell>
                     </TableRow>
@@ -367,8 +374,8 @@ function Orders() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
           cursor: "pointer",
         }}
       >
@@ -396,7 +403,7 @@ function Orders() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-10">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý đơn hàng
       </div>
 
@@ -517,7 +524,7 @@ function Orders() {
             />
           </TabList>
         </Box>
-        <TabPanel value={status}>
+        <TabPanel sx={{ padding: 0 }} value={status}>
           {/* Table */}
           <TableContainer
             component={Paper}
