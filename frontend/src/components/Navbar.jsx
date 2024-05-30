@@ -177,134 +177,10 @@ function Navbar() {
         boxShadow: "1.95px 1.95px 2.6px rgba(0, 0, 0, 0.15)",
       }}
     >
-      <div className="max-w-[1440px] w-full mx-auto flex items-center py-2 px-12 max-sm:px-3">
-        {/* Mobile */}
-        <MenuBtn onClick={toggleMenu}>
-          <MenuIcon sx={{ color: "#666666" }} />
-        </MenuBtn>
-
-        {/* Menu list */}
-        <Drawer anchor="left" open={openMenu} onClose={toggleMenu}>
-          <MenuList>
-            <MenuItem>
-              <Avatar src="/broken-image.jpg" />
-            </MenuItem>
-            <MenuItem>
-              <div className="btn-gr w-full px-0">
-                <Button
-                  variant="text"
-                  onClick={() => {
-                    navigate("/signup", {
-                      state: { from: location },
-                      replace: true,
-                    });
-                  }}
-                  sx={{
-                    textTransform: "none",
-                    color: "#3F41A6",
-                    width: "fit-content",
-                    height: "20px",
-                    paddingLeft: "0",
-                    paddingRight: "15px",
-                    borderRadius: "0",
-                    borderRight: "1px solid #3F41A6",
-                    "&:hover": {
-                      bgcolor: "#E2E5FF",
-                    },
-                  }}
-                >
-                  Đăng kí
-                </Button>
-
-                <Button
-                  variant="text"
-                  onClick={() => {
-                    navigate("/login", {
-                      state: { from: location },
-                      replace: true,
-                    });
-                  }}
-                  sx={{
-                    textTransform: "none",
-                    color: "#3F41A6",
-                    width: "100px",
-                    height: "20px",
-                    marginRight: "10px",
-                    borderRadius: "0",
-                    "&:hover": {
-                      bgcolor: "#E2E5FF",
-                    },
-                  }}
-                >
-                  Đăng nhập
-                </Button>
-              </div>
-            </MenuItem>
-
-            <Divider />
-
-            <MenuItem
-              onClick={() => {
-                // kiểm tra đã có tài khoản studio chưa
-
-                if (!cookies?.accInfo?.studio?.id) {
-                  navigate("/studio/register");
-                } else {
-                  navigate("/studio");
-                }
-              }}
-            >
-              <ListItemIcon>
-                <BiStore style={{ width: "20px", height: "20px" }} />
-              </ListItemIcon>
-              <ListItemText>Kênh cửa hàng</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
-              <ListItemIcon>
-                <MdOutlineShoppingCart
-                  style={{ width: "20px", height: "20px" }}
-                />
-              </ListItemIcon>
-              <ListItemText>Giỏ hàng</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
-              <ListItemIcon>
-                <CgFileDocument style={{ width: "20px", height: "20px" }} />
-              </ListItemIcon>
-              <ListItemText>Đơn hàng</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <LuTicket style={{ width: "20px", height: "20px" }} />
-              </ListItemIcon>
-              <ListItemText>Khuyến mãi</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
-              <ListItemIcon>
-                <MdNotificationsNone
-                  style={{ width: "20px", height: "20px" }}
-                />
-              </ListItemIcon>
-              <ListItemText>Thông báo</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => navigate("/orders")}>
-              <ListItemIcon>
-                <MdOutlineChat style={{ width: "20px", height: "20px" }} />
-              </ListItemIcon>
-              <ListItemText>Tin nhắn</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>
-              <ListItemIcon>
-                <MdLogout style={{ width: "20px", height: "20px" }} />
-              </ListItemIcon>
-              <ListItemText>Đăng xuất</ListItemText>
-            </MenuItem>
-          </MenuList>
-        </Drawer>
-
-        <div className="header flex w-[350px] gap-x-7 max-sm:justify-center">
+      <div className="max-w-full flex items-center py-2 px-[80px] max-sm:px-3">
+        <div className="header flex w-[30%] gap-x-7 max-sm:justify-center">
           <div
-            className="logo flex items-center w-[180px] cursor-pointer max-sm:w-fit"
+            className="logo flex items-center w-1/2 cursor-pointer max-sm:w-fit"
             onClick={() => navigate("/")}
           >
             <Logo
@@ -316,7 +192,7 @@ function Navbar() {
               PhoBooth
             </div>
           </div>
-          <div className="self-center max-sm:hidden">
+          <div className="w-1/2 self-center max-sm:hidden">
             <Button
               startIcon={<HiOutlineMenu />}
               sx={{
@@ -342,8 +218,8 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="search flex max-sm:hidden">
-          <div className="justify-center flex w-[700px] h-[40px] mx-auto rounded bg-white">
+        <div className="search flex w-[50%] max-sm:hidden">
+          <div className="justify-center flex w-full h-[40px] mx-auto rounded bg-white">
             <TextField
               id="outlined-search"
               type="search"
@@ -357,7 +233,7 @@ function Navbar() {
               sx={{
                 "& .MuiInputBase-input": {
                   padding: "10px 12px",
-                  width: "400px",
+                  width: "450px",
                   height: "40px",
                   boxSizing: "border-box",
                 },
@@ -382,13 +258,8 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Mobile */}
-        <MenuBtn>
-          <RiSearchLine style={{ color: "#666666", width: 20, height: 20 }} />
-        </MenuBtn>
-
         {userInfo == "" ? (
-          <div className="btn-gr w-60 max-sm:hidden">
+          <div className="btn-gr w-[20%] max-sm:hidden">
             <Button
               variant="text"
               onClick={() => {
@@ -434,7 +305,7 @@ function Navbar() {
             </Button>
           </div>
         ) : (
-          <div className="action-gr flex items-center justify-evenly w-60 max-sm:hidden">
+          <div className="action-gr flex items-center justify-evenly w-[20%] max-sm:hidden">
             <IconButton onClick={handleNotificationClick}>
               <MdNotificationsNone style={{ color: "#666666" }} />
             </IconButton>

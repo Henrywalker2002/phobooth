@@ -142,8 +142,15 @@ class TestAddOrderItem(BaseTestCase):
         self.handle_choose_type(type)
         self.command.execute_check(target = f"xpath=//*[@id='{item}']//input")
         self.command.execute_click(target = "xpath=//button[text()='Tiếp tục']")
-        self.command.execute_edit_content(target= "xpath=//tr/td[4]//input", value= price)
-        self.command.execute_edit_content(target= "xpath=//tr/td[5]//input", value= quantity)
+        if price:
+            self.command.execute_edit_content(target= "xpath=//tr/td[4]//input", value= price)
+        else:
+            self.command.execute_edit_content(target= "xpath=//tr/td[4]//input", value= " ")
+        if quantity:
+            self.command.execute_edit_content(target= "xpath=//tr/td[5]//input", value= quantity)
+        else:
+            self.command.execute_edit_content(target= "xpath=//tr/td[5]//input", value= " ")
+        self.command.execute_pause(amount=1)
         try:
             self.command.execute_click(target = "xpath=//div[@role='dialog']//button[text()='Thêm sản phẩm']")
         except Exception as e:

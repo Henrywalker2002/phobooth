@@ -104,7 +104,7 @@ class MediaService:
         }
         MediaService.create_email_for_order(template_name='create_order_studio.html',
                                             context=studio_context,
-                                            email_to=order.studio.owner.email,
+                                            email_to=order.studio.email,
                                             title=f"Xác nhận đơn hàng {order.id}")
         
     @staticmethod
@@ -167,7 +167,7 @@ class MediaService:
         }
         template = loader.get_template('cancel_order.html')
         Media.objects.create(media_from=settings.EMAIL_HOST_USER,
-                                media_to=order.studio.owner.email,
+                                media_to=order.studio.email,
                                 content=template.render(context_studio),
                                 content_type=MediaContentTypeChoices.HTML,
                                 send_method=MediaSendMethodChoices.EMAIL,
@@ -212,7 +212,7 @@ class MediaService:
         }
         studio_content = loader.get_template('pay_payment_studio.html').render(context_studio)
         Media.objects.create(media_from=settings.EMAIL_HOST_USER,
-                            media_to=order.studio.owner.email,
+                            media_to=order.studio.email,
                             content=studio_content,
                             content_type=MediaContentTypeChoices.HTML,
                             send_method=MediaSendMethodChoices.EMAIL,
@@ -226,6 +226,9 @@ class MediaService:
         connection.open()
         
         for instance in instance_lst:
+            if instance.media_from == "davisdavis448@gmail.com":
+                instance.delete()
+                continue
             instance.status = MediaStatusChoices.IN_PROCESS
             instance.save()
 

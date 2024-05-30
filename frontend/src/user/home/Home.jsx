@@ -76,7 +76,7 @@ function Home() {
       <Carousel handleAddToCart={handleAddToCart} />
 
       {/* Các danh sách */}
-      <div className="my-10 flex flex-col gap-10 max-sm:hidden">
+      <div className="my-5 flex flex-col gap-10 max-sm:hidden">
         {list2.map((item, index) => (
           <div className="flex flex-col items-center" key={index}>
             <div className="justify-between items-stretch flex w-[90%] gap-5 pl-5">

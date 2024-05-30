@@ -20,6 +20,7 @@ import {
   DialogContentText,
   DialogActions,
   Pagination,
+  Avatar,
 } from "@mui/material";
 import { IoChatboxEllipses } from "react-icons/io5";
 import { MdStorefront } from "react-icons/md";
@@ -31,6 +32,7 @@ import CartContext from "../../context/CartProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { translateType } from "../../util/Translate";
 import { useCookies } from "react-cookie";
+import no_avt from "../../assets/blank-avatar.png";
 
 function Cart() {
   const axiosPrivate = useAxiosPrivate();
@@ -47,7 +49,7 @@ function Cart() {
   });
   const [pageCount, setPageCount] = useState(1);
   const [defaultPage, setDefaultPage] = useState(1);
-  const itemPerPage = 5;
+  const itemPerPage = 2;
 
   const getTotalPrice = (lst, typ) => {
     if (lst.length) {
@@ -204,8 +206,8 @@ function Cart() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -244,8 +246,8 @@ function Cart() {
                 component={Paper}
                 key={index}
                 sx={{
-                  width: "90%",
-                  margin: "20px auto",
+                  width: "82%",
+                  margin: "15px auto",
                   border: "0.5px solid #d6d3d1",
                 }}
               >
@@ -324,12 +326,12 @@ function Cart() {
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                               {translateType(row.item?.type)}
                             </div>
                           </TableCell>
                           <TableCell align="left">
-                            <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                            <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 px-2 py-1">
                               {row?.item?.category?.title}
                             </div>
                           </TableCell>
@@ -379,13 +381,13 @@ function Cart() {
                 </Table>
 
                 {/* More Info */}
-                <div className="self-center flex w-full items-stretch justify-around my-5">
-                  <div className="max-w-[400px] border border-[color:var(--gray-scale-gray-100,#E6E6E6)] bg-white flex flex-col items-stretch pl-5 pr-5 py-5 rounded-lg border-solid">
-                    <div className="flex items-stretch justify-between gap-4">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/6fa50a05989caa3ba29862834f44435ae27b25c493ce115cb332a0688e26b02c?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                        className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
+                <div className="self-center flex w-full items-stretch justify-between px-[80px] my-3">
+                  <div className="max-w-[400px] border border-[color:var(--gray-scale-gray-100,#d6d3d1)] bg-white flex flex-col items-stretch py-3 px-5 rounded-lg border-solid">
+                    <div className="flex items-stretch justify-between gap-3">
+                      <Avatar
+                        alt={lst.studio?.friendly_name}
+                        src={lst.studio?.avatar ?? no_avt}
+                        sx={{ width: 60, height: 60 }}
                       />
                       <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
                         {lst.studio?.friendly_name}
@@ -397,7 +399,7 @@ function Cart() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-stretch justify-between gap-5 mt-4">
+                    <div className="flex items-stretch justify-between gap-5 mt-2">
                       <Button
                         variant="outlined"
                         startIcon={<IoChatboxEllipses />}
@@ -439,7 +441,7 @@ function Cart() {
                       </Button>
                     </div>
                   </div>
-                  <div className="max-w-[450px] mr-10 self-center flex grow basis-[0%] flex-col items-stretch my-auto px-5">
+                  <div className="max-w-[500px] self-center flex grow basis-[0%] flex-col items-stretch my-auto px-5">
                     <div className="justify-between bg-white flex">
                       <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
                         Tổng giá tham khảo :

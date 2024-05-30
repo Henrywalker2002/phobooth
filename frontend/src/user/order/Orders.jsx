@@ -115,7 +115,10 @@ function Orders() {
 
   const getOrdersForPage = (e, page) => {
     let offset = 5 * (page - 1);
-    let slug = `/order/?limit=5&offset=${offset}&status=${status}`;
+    let slug =
+      status === "ALL"
+        ? `/order/?limit=5&offset=${offset}`
+        : `/order/?limit=5&offset=${offset}&status=${status}`;
     slug = getSlugForFilter(slug);
     axiosPrivate
       .get(slug)
@@ -264,17 +267,22 @@ function Orders() {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+          <TableCell
+            sx={{
+              padding: 0,
+            }}
+            colSpan={7}
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <div className="mt-5 text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
+              <Box sx={{ border: "1px solid #d6d3d1", padding: "10px" }}>
+                <div className="mb-3 text-zinc-500 text-sm font-medium font-['Roboto'] uppercase leading-[1.5rem] tracking-wide">
                   Danh sách sản phẩm
                 </div>
                 <Table
                   size="small"
                   sx={{
-                    marginTop: "20px",
                     border: "0.5px solid #d6d3d1",
+                    borderRadius: "10px",
                   }}
                 >
                   <TableHead>
@@ -291,7 +299,7 @@ function Orders() {
                         SỐ LƯỢNG
                       </TableCell>
                       <TableCell align="left" sx={{ color: "#808080" }}>
-                        GIÁ (VNĐ)
+                        GIÁ THÀNH PHẦN
                       </TableCell>
                       <TableCell align="left"></TableCell>
                     </TableRow>
@@ -309,7 +317,7 @@ function Orders() {
                                   ? detailedRow.item?.picture
                                   : "https://us.123rf.com/450wm/mathier/mathier1905/mathier190500002/mathier190500002-no-thumbnail-image-placeholder-for-forums-blogs-and-websites.jpg?ver=6"
                               }
-                              className="object-contain object-center w-[50px] max-w-full rounded-lg"
+                              className="object-cover h-[50px] w-[50px] max-w-full rounded-lg"
                             />
                             <div className="flex flex-col items-start">
                               <div className="text-zinc-900 text-base font-medium leading-6 whitespace-nowrap my-auto">
@@ -517,8 +525,8 @@ function Orders() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
           cursor: "pointer",
         }}
       >
@@ -547,11 +555,11 @@ function Orders() {
 
       {/* Header */}
 
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý đơn hàng
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto mt-3 mb-7">
+      <div className="flex gap-5 items-center w-fit mx-auto my-3">
         {/* search */}
         <TextField
           id="input-with-icon-textfield"
@@ -668,13 +676,13 @@ function Orders() {
             />
           </TabList>
         </Box>
-        <TabPanel value={status}>
+        <TabPanel sx={{ padding: 0 }} value={status}>
           {/* Table */}
           <TableContainer
             component={Paper}
             sx={{
               width: "1250px",
-              margin: "20px auto",
+              margin: "15px auto",
               border: "0.5px solid #d6d3d1",
             }}
           >
@@ -714,19 +722,21 @@ function Orders() {
           </TableContainer>
 
           {/* Pagination */}
-          <Pagination
-            count={pageCount}
-            onChange={getOrdersForPage}
-            page={defaultPage}
-            sx={{
-              margin: "0 auto",
-              width: "fit-content",
-              "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-                {
-                  bgcolor: "#E2E5FF",
-                },
-            }}
-          />
+          {orders.length > 0 && (
+            <Pagination
+              count={pageCount}
+              onChange={getOrdersForPage}
+              page={defaultPage}
+              sx={{
+                margin: "0 auto",
+                width: "fit-content",
+                "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+                  {
+                    bgcolor: "#E2E5FF",
+                  },
+              }}
+            />
+          )}
         </TabPanel>
       </TabContext>
 

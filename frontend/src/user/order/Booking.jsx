@@ -17,6 +17,7 @@ import {
   Typography,
   Alert,
   AlertTitle,
+  Avatar,
 } from "@mui/material";
 import CartContext from "../../context/CartProvider";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ import AddressAlert from "./AddressAlert";
 import { translateType } from "../../util/Translate";
 import VariationPopover from "../../components/VariationPopover";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import no_avt from "../../assets/blank-avatar.png";
 
 function Booking() {
   const navigate = useNavigate();
@@ -255,8 +257,8 @@ function Booking() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -482,13 +484,13 @@ function Booking() {
             </Table>
 
             {/* More Info */}
-            <div className="flex w-full justify-around my-5">
-              <div className="flex flex-col items-start">
-                <div className="flex items-stretch justify-between gap-4">
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/6fa50a05989caa3ba29862834f44435ae27b25c493ce115cb332a0688e26b02c?apiKey=a8bdd108fb0746b1ab1fa443938e7c4d&"
-                    className="aspect-square object-contain object-center w-[43px] overflow-hidden shrink-0 max-w-full"
+            <div className="flex w-full justify-around my-3">
+              <div className="flex flex-col items-start gap-3">
+                <div className="flex items-center justify-between gap-2">
+                  <Avatar
+                    alt={itemList.studio?.friendly_name}
+                    src={itemList.studio?.avatar ?? no_avt}
+                    sx={{ width: 50, height: 50 }}
                   />
                   <div className="justify-center text-indigo-800 text-lg font-semibold tracking-wider self-center grow shrink basis-auto my-auto">
                     {itemList.studio?.friendly_name}
@@ -504,7 +506,6 @@ function Booking() {
                     borderColor: "#E6E6E6",
                     fontSize: "10px",
                     width: "450px",
-                    marginTop: "20px",
                   }}
                 />
 
@@ -520,11 +521,10 @@ function Booking() {
                     borderColor: "#E6E6E6",
                     fontSize: "10px",
                     width: "450px",
-                    marginTop: "20px",
                   }}
                 />
               </div>
-              <div className="max-w-[600px] mt-2 self-start flex flex-col items-stretch ">
+              <div className="max-w-[600px] py-3 flex flex-col justify-between items-stretch ">
                 <Alert
                   sx={{
                     bgcolor: "transparent",
@@ -561,7 +561,7 @@ function Booking() {
                     </IconButton>
                   </div>
                 </Alert>
-                <div className="flex flex-col gap-3 mt-5 ml-8">
+                <div className="flex flex-col gap-1 ml-8">
                   <div className=" justify-between bg-white flex">
                     <div className="text-zinc-900 text-lg font-semibold leading-8 whitespace-nowrap">
                       Tổng giá tham khảo :
@@ -582,18 +582,17 @@ function Booking() {
       })}
 
       {/* Btns */}
-      <div className="max-w-[1200px] mx-auto my-6 flex justify-end">
+      <div className="w-fit mx-auto my-5 flex gap-5">
         <Button
           variant="outlined"
           onClick={handleCancelOrder}
           sx={{
-            marginRight: "20px",
             borderRadius: "43px",
             borderColor: "#3F41A6",
             color: "#3F41A6",
             padding: "0 30px",
             textTransform: "none",
-            width: "120px",
+            width: "fit-content",
             "&:hover": {
               bgcolor: "#F6F5FB",
               borderColor: "#3F41A6",
@@ -606,7 +605,6 @@ function Booking() {
           onClick={handleCreateOrder}
           variant="contained"
           sx={{
-            marginRight: "50px",
             textTransform: "none",
             borderRadius: "43px",
             color: "#F6F5FB",

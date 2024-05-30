@@ -62,7 +62,7 @@ function Carousel({ handleAddToCart }) {
           "/category/?type=SERVICE&limit=5&offset=0"
         );
         let proRes = await axios.get(
-          "/category/?type=PRODUCT&limit=5&offset=0"
+          "/category/?type=PRODUCT&limit=4&offset=0"
         );
         // console.log(res.data);
         setCategories(serRes.data.results.concat(proRes.data.results));
@@ -116,21 +116,20 @@ function Carousel({ handleAddToCart }) {
     }
   };
   return (
-    <div className="bg-indigo-200 flex flex-col items-center px-5 max-sm:hidden">
-      <div className="w-full max-w-[1320px] mt-10 mb-14">
-        <div className="gap-5 flex">
-          <div className="flex flex-col justify-center items-stretch w-[18%]">
+    <div className="bg-indigo-100 flex flex-col items-center p-5 max-sm:hidden">
+      <div className="w-full max-w-full px-[80px]">
+        <div className="justify-between flex">
+          <div className="flex flex-col justify-center gap-3 items-stretch w-[20%]">
             <Button
               variant="contained"
               startIcon={<RiSearchLine className="w-5 h-5 mx-auto" />}
               onClick={() => navigate("/advanced-search/")}
               sx={{
                 marginX: "auto",
-                marginBottom: "20px",
                 textTransform: "none",
                 bgcolor: "#3F41A6",
                 width: "fit-content",
-                paddingX: "20px",
+                paddingX: "25px",
                 borderRadius: "20px",
                 "&:hover": {
                   bgcolor: "#3949AB",
@@ -139,7 +138,7 @@ function Carousel({ handleAddToCart }) {
             >
               Tìm kiếm nâng cao
             </Button>
-            <Paper>
+            <Paper sx={{ borderRadius: "4px" }}>
               <MenuList dense sx={{ padding: 0 }}>
                 {categories.length > 0
                   ? categories.map((category) => (
@@ -232,7 +231,7 @@ function Carousel({ handleAddToCart }) {
                       sx={{
                         margin: 3,
                         "&:hover": {
-                          bgcolor: "#E6E6E6",
+                          color: "#3F41A6",
                         },
                       }}
                       onClick={handleBack}
@@ -251,7 +250,7 @@ function Carousel({ handleAddToCart }) {
                       sx={{
                         margin: 3,
                         "&:hover": {
-                          bgcolor: "#E6E6E6",
+                          color: "#3F41A6",
                         },
                       }}
                       onClick={handleNext}

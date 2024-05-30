@@ -101,7 +101,7 @@ function RateOfItem({ item_id, star, description }) {
 
   return (
     <TabContext value={infoType}>
-      <Box sx={{ marginTop: "50px" }}>
+      <Box>
         <TabList
           onChange={handleChangeTab}
           centered
@@ -138,10 +138,10 @@ function RateOfItem({ item_id, star, description }) {
           />
         </TabList>
       </Box>
-      <TabPanel value="description">
+      <TabPanel sx={{ padding: 0 }} value="description">
         <Description description={description} />
       </TabPanel>
-      <TabPanel value="rating">
+      <TabPanel sx={{ padding: 0 }} value="rating">
         <Rated star={star} item_id={item_id} />
       </TabPanel>
     </TabContext>
@@ -152,7 +152,7 @@ function RateOfItem({ item_id, star, description }) {
 function Description({ description }) {
   if (!description)
     return (
-      <div className="text-lg leading-8 text-zinc-500 px-[90px]">
+      <div className="text-lg leading-8 text-zinc-500 px-[100px]">
         Chưa có mô tả
       </div>
     );
@@ -161,7 +161,7 @@ function Description({ description }) {
     <Box sx={{ padding: "30px 0" }}>
       {array.map((text) => {
         return (
-          <div className="text-lg leading-8 text-zinc-500 px-[90px]">
+          <div className="text-lg leading-8 text-zinc-500 px-[100px]">
             {text}
           </div>
         );
