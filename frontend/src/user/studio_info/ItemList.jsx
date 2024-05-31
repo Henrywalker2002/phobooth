@@ -17,7 +17,7 @@ function ItemList({ code_name, itemType, filterVal }) {
   const [itemList, setItemList] = useState([]);
   const [openSBar, setOpenSBar] = useState(false);
   // pagination
-  const itemsPage = 9;
+  const itemsPage = 12;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {

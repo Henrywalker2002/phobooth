@@ -23,7 +23,7 @@ function ItemList({ itemType, filterVal }) {
   const [itemList, setItemList] = useState([]);
 
   // pagination
-  const itemsPage = 9;
+  const itemsPage = 12;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {
@@ -138,7 +138,7 @@ function ItemList({ itemType, filterVal }) {
                       <div className="absolute top-2 left-3 w-[52px] h-fit backdrop-blur-[2px] bg-[linear-gradient(180deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.40)_100%)] flex aspect-[1.8620689655172413] flex-col items-stretch  p-1 rounded-3xl">
                         <div className="items-center justify-center bg-white flex gap-1 pl-1 pr-1 py-1 rounded-3xl">
                           <div className="justify-center text-yellow-950 text-center text-xs font-bold leading-5 tracking-wide mx-[1px]">
-                            {item?.star}
+                            {item?.star?.toFixed(1)}
                           </div>
                           <FaStar
                             style={{

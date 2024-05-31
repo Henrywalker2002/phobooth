@@ -119,10 +119,12 @@ function UpdateHistory({ order }) {
                             x {hist?.new_value?.quantity}
                           </span>
                         </div>
-                        <div className=" text-zinc-700 flex gap-2">
-                          Giá:
-                          {hist?.new_value?.price &&
-                            CurrencyFormatter(hist?.new_value?.price)}
+                        <div className="flex gap-1">
+                          <div className=" text-zinc-700">Giá:</div>
+                          <div>
+                            {hist?.new_value?.price &&
+                              CurrencyFormatter(hist?.new_value?.price)}
+                          </div>
                         </div>
                       </div>
                     </div>

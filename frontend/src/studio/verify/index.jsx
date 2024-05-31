@@ -110,8 +110,8 @@ export default function VerifyStudio() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link

@@ -516,7 +516,7 @@ function AddService({ categories, setOpenSBar }) {
               </div>
             </div>
           </div>
-          <div className="text-zinc-900 text-sm leading-5 mt-12 max-md:max-w-full max-md:mt-10">
+          <div className="text-zinc-900 text-sm leading-5 mt-2 max-md:max-w-full max-md:mt-10">
             Mô tả dịch vụ
           </div>
           <TextField

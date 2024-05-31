@@ -18,7 +18,7 @@ function ItemList({ filterVal }) {
   const [openSBar, setOpenSBar] = useState(false);
   const [openErr401, setOpenErr401] = useState(false);
   // pagination
-  const itemsPage = 12;
+  const itemsPage = 15;
   const [itemsCount, setItemsCount] = useState(1);
 
   useEffect(() => {
@@ -114,7 +114,7 @@ function ItemList({ filterVal }) {
           <span className="text-stone-500">kết quả tìm kiếm</span>
         </div>
       </div>
-      <div className="flex self-center mx-auto ">
+      <div className="flex self-center mx-auto min-w-[820px]">
         <div className="grid grid-cols-3 gap-10">
           {itemList?.results?.map((item, index) => (
             <ItemCard
@@ -127,18 +127,20 @@ function ItemList({ filterVal }) {
       </div>
 
       {/* Pagination For Item */}
-      <Pagination
-        count={itemsCount}
-        onChange={getItemForPage}
-        sx={{
-          margin: "0 auto",
-          width: "fit-content",
-          "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
-            {
-              bgcolor: "#E2E5FF",
-            },
-        }}
-      />
+      {itemList?.results?.length > 0 && (
+        <Pagination
+          count={itemsCount}
+          onChange={getItemForPage}
+          sx={{
+            margin: "0 auto",
+            width: "fit-content",
+            "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+              {
+                bgcolor: "#E2E5FF",
+              },
+          }}
+        />
+      )}
 
       {/* Add to cart successfully */}
       <Snackbar

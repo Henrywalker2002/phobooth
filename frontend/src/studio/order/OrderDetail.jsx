@@ -549,7 +549,7 @@ function OrderDetail(props) {
           <Paper
             sx={{
               width: "100%",
-              margin: "30px auto",
+              margin: "0 auto",
               border: "1px solid #d6d3d1",
             }}
             elevation={3}

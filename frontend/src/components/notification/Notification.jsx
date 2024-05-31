@@ -94,6 +94,7 @@ function NotificationItem({
             width: "10px",
             height: "10px",
             alignSelf: "center",
+            marginLeft: "10px",
           }}
         />
       )}
@@ -144,6 +145,7 @@ function NotificationList({ anchorNoti, handleClose }) {
             <Box
               sx={{
                 minWidth: "300px",
+                maxWidth: "450px",
               }}
               key={i}
             >

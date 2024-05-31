@@ -36,8 +36,8 @@ function Report() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -67,7 +67,7 @@ function Report() {
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap ">
         Báo cáo kinh doanh
       </div>
-      <div className="w-full flex flex-col gap-10 items-center px-[80px] my-8">
+      <div className="w-full flex flex-col gap-5 items-center px-[80px] my-8">
         <Widgets studioInfor={studioInfor} setStudioInfor={setStudioInfor} />
 
         <ItemTable studioInfor={studioInfor} />

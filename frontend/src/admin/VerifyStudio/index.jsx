@@ -36,9 +36,9 @@ export default function VerifyStudioList() {
   useEffect(() => {
     const fetchVerifyList = async () => {
       await axiosPrivate
-        .get(`/studio-document/?offset=${offset - 1}&limit=10`)
+        .get(`/studio-document/?offset=${offset - 1}&limit=5`)
         .then((response) => {
-          setPageCount(Math.ceil(response.data.count / 10));
+          setPageCount(Math.ceil(response.data.count / 5));
           setVerifyList(response.data.results);
           console.log(verifyList);
           setLoading(false);
@@ -59,8 +59,8 @@ export default function VerifyStudioList() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -84,24 +84,11 @@ export default function VerifyStudioList() {
           Quản lý xác thực cửa hàng
         </Typography>
       </Breadcrumbs>
-      <div
-        style={{
-          margin: "30px 10% 0 10%",
-          padding: "10px",
-          width: "80%",
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: "24px",
-            lineHeight: "36px",
-            color: "rgba(63, 65, 166, 1)",
-            fontWeight: "600",
-            textAlign: "center",
-          }}
-        >
+      <div>
+        {/* Header */}
+        <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
           Quản lý xác thực cửa hàng
-        </Typography>
+        </div>
 
         <div className="flex gap-5 items-center w-fit mx-auto my-5">
           <TextField
@@ -156,7 +143,7 @@ export default function VerifyStudioList() {
 
         <TableContainer
           component={Paper}
-          sx={{ width: "80%", margin: "20px auto" }}
+          sx={{ width: "70%", margin: "10px auto" }}
         >
           <Table sx={{ minWidth: 800 }} aria-label="simple table">
             <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -187,7 +174,9 @@ export default function VerifyStudioList() {
                       sx={{ cursor: "pointer" }}
                     >
                       <TableCell align="left">
-                        {item.studio.code_name}
+                        <div className="text-indigo-800 text-[14px] font-medium leading-6 self-center grow my-auto truncate max-w-[200px]">
+                          {item.studio.friendly_name}
+                        </div>
                       </TableCell>
                       <TableCell align="left">
                         {dayjs(item.create_at).format("DD-MM-YYYY")}

@@ -2,8 +2,8 @@ import React from "react";
 
 function Footer({ address, phone, email }) {
   return (
-    <div className="w-full flex justify-around items-center px-10 py-12 bg-indigo-100 mt-10">
-      <div className="flex flex-col w-[30%] min-h-[180px]">
+    <div className="w-full flex justify-around items-center p-10 bg-indigo-100 mt-10">
+      <div className="flex flex-col w-[30%] min-h-[150px]">
         <div className="flex flex-col items-center grow p-5 w-full text-sm bg-white rounded-lg border-2 border-solid border-indigo-800 border-opacity-20">
           <img
             loading="lazy"
@@ -19,7 +19,7 @@ function Footer({ address, phone, email }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-[30%] min-h-[180px]">
+      <div className="flex flex-col w-[30%] min-h-[150px]">
         <div className="flex flex-col items-center grow p-5 w-full bg-white rounded-lg border border-solid border-indigo-800 border-opacity-20 max-md:mt-10">
           <img
             loading="lazy"
@@ -34,7 +34,7 @@ function Footer({ address, phone, email }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-[30%] min-h-[180px]">
+      <div className="flex flex-col w-[30%] min-h-[150px]">
         <div className="flex flex-col items-center grow p-5 w-full bg-white rounded-lg border border-solid border-indigo-800 border-opacity-20 max-md:mt-10">
           <img
             loading="lazy"
