@@ -122,7 +122,7 @@ export default function AdminManageAccount() {
 
   useEffect(() => {
     axiosPrivate
-      .get(`/staff/?limit=10&offset=${(page - 1) * 10}`, { params: filterVal })
+      .get(`/staff/?limit=5&offset=${(page - 1) * 5}`, { params: filterVal })
       .then((res) => {
         let initialOrderList = res.data.results.map((lst) => {
           return { ...lst, items: [] };
@@ -165,8 +165,8 @@ export default function AdminManageAccount() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -193,7 +193,7 @@ export default function AdminManageAccount() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý tài khoản
       </div>
 
@@ -265,7 +265,7 @@ export default function AdminManageAccount() {
       {/* Acc Table */}
       <TableContainer
         component={Paper}
-        sx={{ margin: "20px auto", maxWidth: "1000px" }}
+        sx={{ margin: "10px auto", maxWidth: "1000px" }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -362,7 +362,7 @@ export default function AdminManageAccount() {
 
       {/* Pagination For Staff */}
       <Pagination
-        count={Math.ceil(count / 10)}
+        count={Math.ceil(count / 5)}
         onChange={handlePageChange}
         sx={{
           margin: "0 auto",

@@ -407,7 +407,7 @@ function Orders() {
         Quản lý đơn hàng
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto mt-3 mb-7">
+      <div className="flex gap-5 items-center w-fit mx-auto my-3">
         {/* search */}
         <TextField
           id="input-with-icon-textfield"
@@ -530,7 +530,7 @@ function Orders() {
             component={Paper}
             sx={{
               width: "1250px",
-              margin: "0 auto",
+              margin: "15px auto",
               border: "0.5px solid #d6d3d1",
             }}
           >
@@ -576,7 +576,8 @@ function Orders() {
               onChange={getOrdersForPage}
               page={defaultPage}
               sx={{
-                margin: "15px auto",
+                marginX: "auto",
+                marginBottom: "10px",
                 width: "fit-content",
                 "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                   {

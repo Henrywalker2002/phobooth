@@ -62,8 +62,8 @@ function Home() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -90,7 +90,7 @@ function Home() {
       </Breadcrumbs>
 
       {/* Studio Info */}
-      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 my-5">
+      <div className="justify-center items-stretch bg-indigo-100 flex flex-col px-[100px] py-11 my-3">
         <div className="flex justify-between border border-indigo-100 border-solid  rounded-md bg-white px-8 py-8  shadow shadow-indigo-100">
           <div className="flex gap-5 items-center px-8 py-8">
             <Avatar
@@ -164,7 +164,7 @@ function Home() {
                   Đánh giá
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  {studio.star}
+                  {studio.star?.toFixed(1)}
                 </div>
               </div>
               <div className="flex justify-between w-[280px]">

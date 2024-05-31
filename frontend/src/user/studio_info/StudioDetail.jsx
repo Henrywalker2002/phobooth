@@ -169,7 +169,7 @@ function StudioDetail() {
                   Đánh giá
                 </div>
                 <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                  {studio.star}
+                  {studio.star?.toFixed(1)}
                 </div>
               </div>
               <div className="flex justify-between w-[280px]">

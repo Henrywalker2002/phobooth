@@ -67,8 +67,7 @@ function StaffFilter({ open, handleClose, filterVal, setFilterVal }) {
     }
     if (formData.is_active !== "all" && formData.is_active !== "") {
       data.is_active = formData.is_active;
-    }
-    else if (formData.is_active === "all") {
+    } else if (formData.is_active === "all") {
       data.is_active = "";
     }
 
@@ -87,7 +86,7 @@ function StaffFilter({ open, handleClose, filterVal, setFilterVal }) {
         setOpen(false);
       }}
     >
-      <DialogTitle>
+      <DialogTitle sx={{ padding: "10px 24px" }}>
         <div className="shadow-sm bg-white flex items-center justify-between gap-16 rounded-lg ">
           <div className="text-indigo-800 text-xl font-semibold leading-9 whitespace-nowrap">
             Bộ lọc
@@ -106,7 +105,7 @@ function StaffFilter({ open, handleClose, filterVal, setFilterVal }) {
         dividers={true}
         sx={{ "&::-webkit-scrollbar": { display: "none" } }}
       >
-        <div className="min-w-[350px] flex flex-col gap-4 px-7">
+        <div className="min-w-[350px] flex flex-col gap-2.5 px-7">
           <Typography>Chức vụ</Typography>
           <TextField
             select

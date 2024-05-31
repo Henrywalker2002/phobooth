@@ -403,7 +403,7 @@ function OrderDetail() {
               border: "0.5px solid #d6d3d1",
             }}
           >
-            <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-16 py-4 rounded-lg">
+            <div className="items-stretch shadow-sm bg-white flex justify-between gap-5 px-10 py-4 rounded-lg">
               <div className="w-full flex items-center gap-3">
                 <Avatar
                   alt={order?.studio?.friendly_name}
@@ -782,7 +782,7 @@ function OrderDetail() {
 
                 {/* invoice */}
                 <div className="flex flex-col w-[342px]">
-                  <div className="border border-[color:var(--gray-scale-gray-100,#E6E6E6)] flex w-full flex-col pt-5 pb-2.5 rounded-md border-solid">
+                  <div className="border border-[color:var(--gray-scale-gray-100,#d6d3d1)] flex w-full flex-col py-5 rounded-md border-solid">
                     <div className="flex  justify-between gap-5 px-5">
                       <div className=" flex grow basis-[0%] flex-col self-start">
                         <div className="text-neutral-400 text-xs font-medium leading-3 tracking-wide uppercase whitespace-nowrap">
@@ -881,7 +881,7 @@ function OrderDetail() {
                     </div>
 
                     {/* Btn */}
-                    <div className=" mx-auto my-2 flex justify-center gap-5">
+                    <div className=" mx-auto flex justify-center gap-5">
                       <CancelButton />
 
                       <Button

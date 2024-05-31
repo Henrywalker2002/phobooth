@@ -22,6 +22,7 @@ import { RiSearchLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import AdminNavbar from "../../components/AdminNavbar";
+import { translateComplainType } from "../../util/Translate";
 
 function Complains() {
   // global
@@ -61,8 +62,8 @@ function Complains() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -89,11 +90,11 @@ function Complains() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý khiếu nại
       </div>
 
-      <div className="flex gap-16 items-center w-fit mx-auto my-5">
+      <div className="flex gap-16 items-center w-fit mx-auto my-4">
         {/* Selector */}
         <TextField
           id="outlined-item-type"
@@ -144,7 +145,7 @@ function Complains() {
 
       <TableContainer
         component={Paper}
-        sx={{ margin: "20px auto", maxWidth: "1200px" }}
+        sx={{ margin: "10px auto", maxWidth: "1200px" }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -191,8 +192,8 @@ function Complains() {
                   </TableCell>
                   <TableCell align="left">{complain.user.full_name}</TableCell>
                   <TableCell align="left">
-                    <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-violet-50 self-stretch aspect-[2.3448275862068964] px-2 py-1">
-                      {complain.type}
+                    <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2 py-1">
+                      {translateComplainType(complain.type)}
                     </div>
                   </TableCell>
 

@@ -189,7 +189,7 @@ function ComplainDetail() {
         aria-label="breadcrumb"
         sx={{
           marginTop: "20px",
-          paddingLeft: "120px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -227,7 +227,7 @@ function ComplainDetail() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-5"></div>
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap"></div>
 
       <Paper
         sx={{

@@ -48,7 +48,7 @@ const RateComponent = ({
         </div>
         <div className="flex items-center gap-1">
           <div className="text-base text-indigo-800 font-medium tracking-wider">
-            {rate.star}
+            {rate.star.toFixed(1)}
           </div>
           <Rating
             name="read-only"

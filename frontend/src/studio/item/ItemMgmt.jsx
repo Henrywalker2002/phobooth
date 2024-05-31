@@ -167,8 +167,8 @@ function ItemMgmt() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -195,11 +195,11 @@ function ItemMgmt() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý sản phẩm
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto my-5">
+      <div className="flex gap-5 items-center w-fit mx-auto my-3">
         <TextField
           id="input-with-icon-textfield"
           sx={{
@@ -293,11 +293,11 @@ function ItemMgmt() {
             />
           </TabList>
         </Box>
-        <TabPanel value="service">
+        <TabPanel sx={{ padding: 0, marginBottom: "10px" }} value="service">
           {/* Service Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "80%", margin: "20px auto" }}
+            sx={{ width: "80%", margin: "10px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -411,11 +411,11 @@ function ItemMgmt() {
             }}
           />
         </TabPanel>
-        <TabPanel value="product">
+        <TabPanel sx={{ padding: 0, marginBottom: "10px" }} value="product">
           {/* Product Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "70%", margin: "20px auto" }}
+            sx={{ width: "70%", margin: "10px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -514,11 +514,11 @@ function ItemMgmt() {
             }}
           />
         </TabPanel>
-        <TabPanel value="pkg">
+        <TabPanel sx={{ padding: 0, marginBottom: "10px" }} value="pkg">
           {/* Package Table */}
           <TableContainer
             component={Paper}
-            sx={{ width: "70%", margin: "20px auto" }}
+            sx={{ width: "70%", margin: "10px auto" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>

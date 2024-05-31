@@ -84,8 +84,8 @@ function Demo() {
           }
           aria-label="breadcrumb"
           sx={{
-            marginTop: "30px",
-            paddingLeft: "120px",
+            marginTop: "20px",
+            paddingLeft: "100px",
           }}
         >
           <Link
@@ -141,9 +141,9 @@ function Demo() {
           }
           aria-label="breadcrumb"
           sx={{
-            marginTop: "30px",
+            marginTop: "20px",
 
-            paddingLeft: "120px",
+            paddingLeft: "100px",
           }}
         >
           <Link

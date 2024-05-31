@@ -228,7 +228,7 @@ function AddPkg({ categories, setOpenSBar }) {
           Thông tin cơ bản
         </div>
         <Divider />
-        <div className="flex flex-col items-stretch px-6 mt-6 ">
+        <div className="flex flex-col items-stretch px-6 mt-5 ">
           <div className="flex gap-5 ">
             <div className="flex flex-col items-stretch w-[60%] ">
               <div className="flex flex-col grow items-stretch">
@@ -464,7 +464,7 @@ function AddPkg({ categories, setOpenSBar }) {
               </div>
             </div>
           </div>
-          <div className="mt-6 text-sm leading-5 text-zinc-900 max-md:max-w-full">
+          <div className="mt-2 text-sm leading-5 text-zinc-900 max-md:max-w-full">
             Mô tả gói dịch vụ
           </div>
           <TextField

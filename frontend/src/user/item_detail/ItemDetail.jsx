@@ -355,7 +355,7 @@ function ItemDetail(props) {
               </div>
               <div className="flex gap-1.5 mt-2.5 self-start items-center">
                 <div className="justify-center text-indigo-800 text-base font-medium tracking-wider self-center my-auto">
-                  {item.star}
+                  {item.star?.toFixed(1)}
                 </div>
                 <Rating
                   name="read-only"
@@ -609,7 +609,7 @@ function ItemDetail(props) {
                       Đánh giá
                     </div>
                     <div className="justify-center text-indigo-800 text-xl font-medium tracking-wider">
-                      {parseInt(item.studio?.star)}
+                      {item.studio?.star?.toFixed(1)}
                     </div>
                   </div>
                   <div className="flex justify-between w-[300px]">

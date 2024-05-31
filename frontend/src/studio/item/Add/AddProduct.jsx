@@ -325,7 +325,7 @@ function AddProduct({ categories, setOpenSBar }) {
           Thông tin cơ bản
         </div>
         <Divider />
-        <div className="flex flex-col items-stretch px-7 mt-6">
+        <div className="flex flex-col items-stretch px-7 mt-5">
           <div className="flex gap-5">
             <div className="flex flex-col items-stretch w-[60%]">
               <div className="flex flex-col grow items-stretch max-md:mt-10 max-md:max-w-full">
@@ -592,7 +592,7 @@ function AddProduct({ categories, setOpenSBar }) {
               </div>
             </div>
           </div>
-          <div className="mt-6 text-sm leading-5 text-zinc-900 max-md:max-w-full">
+          <div className="mt-5 text-sm leading-5 text-zinc-900 max-md:max-w-full">
             Mô tả hàng hóa
           </div>
           <TextField
@@ -612,7 +612,7 @@ function AddProduct({ categories, setOpenSBar }) {
           />
 
           {/* Option_names */}
-          <div className="flex gap-5 justify-between items-stretch mt-8">
+          <div className="flex gap-5 justify-between items-stretch mt-5">
             <div className="flex flex-col flex-1 items-stretch">
               <div className="text-sm leading-5 text-zinc-900">Đặc điểm 1</div>
               <TextField
@@ -652,7 +652,7 @@ function AddProduct({ categories, setOpenSBar }) {
           </div>
 
           {/* Option_values */}
-          <div className="flex gap-5 justify-between items-stretch mt-6 max-w-full text-sm text-zinc-900">
+          <div className="flex gap-5 justify-between items-stretch mt-5 max-w-full text-sm text-zinc-900">
             <div className="flex flex-col flex-1 items-stretch">
               <div className="text-sm leading-5 text-zinc-900">
                 Phân loại 1
@@ -748,7 +748,7 @@ function AddProduct({ categories, setOpenSBar }) {
           </div>
 
           {/* Variation */}
-          <div className="flex flex-col items-start gap-1 pb-2.5 mt-8 bg-white ">
+          <div className="flex flex-col items-start gap-1 pb-2.5 mt-5 bg-white ">
             <Button
               sx={{
                 textTransform: "none",

@@ -54,7 +54,7 @@ function Categories() {
   const [selectedCategory, setSelectedCategory] = useState({});
 
   // pagination
-  const itemsPage = 5;
+  const itemsPage = 4;
   const [serPageCount, setSerPageCount] = useState(1);
   const [proPageCount, setProPageCount] = useState(1);
 
@@ -147,8 +147,8 @@ function Categories() {
         }
         aria-label="breadcrumb"
         sx={{
-          marginTop: "30px",
-          paddingLeft: "120px",
+          marginTop: "20px",
+          paddingLeft: "100px",
         }}
       >
         <Link
@@ -175,11 +175,11 @@ function Categories() {
       </Breadcrumbs>
 
       {/* Header */}
-      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap mt-2">
+      <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap">
         Quản lý danh mục
       </div>
 
-      <div className="flex gap-5 items-center w-fit mx-auto my-5 ">
+      <div className="flex gap-5 items-center w-fit mx-auto my-3 ">
         <TextField
           id="input-with-icon-textfield"
           sx={{
@@ -263,11 +263,11 @@ function Categories() {
             />
           </TabList>
         </Box>
-        <TabPanel value="SERVICE">
+        <TabPanel sx={{ padding: 0 }} value="SERVICE">
           {/* Service Table */}
           <TableContainer
             component={Paper}
-            sx={{ margin: "0 auto", maxWidth: "1000px" }}
+            sx={{ margin: "10px auto", maxWidth: "1000px" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -315,7 +315,7 @@ function Categories() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2 py-1">
                           {translateType(category.type)}
                         </div>
                       </TableCell>
@@ -361,7 +361,7 @@ function Categories() {
             count={serPageCount}
             onChange={getSerCategoryForPage}
             sx={{
-              margin: "10px auto",
+              margin: "0 auto",
               width: "fit-content",
               "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                 {
@@ -370,11 +370,11 @@ function Categories() {
             }}
           />
         </TabPanel>
-        <TabPanel value="PRODUCT">
+        <TabPanel sx={{ padding: 0 }} value="PRODUCT">
           {/* Product Table */}
           <TableContainer
             component={Paper}
-            sx={{ margin: "0 auto", maxWidth: "1000px" }}
+            sx={{ margin: "10px auto", maxWidth: "1000px" }}
           >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead sx={{ bgcolor: "#E2E5FF" }}>
@@ -422,7 +422,7 @@ function Categories() {
                       </TableCell>
 
                       <TableCell align="left">
-                        <div className="w-18 h-7 text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100 self-stretch aspect-[2.3448275862068964] px-2 py-1">
+                        <div className="w-fit h-fit text-indigo-800 text-sm leading-5 whitespace-nowrap justify-center items-stretch rounded bg-indigo-100  px-2 py-1">
                           {translateType(category.type)}
                         </div>
                       </TableCell>
@@ -468,7 +468,7 @@ function Categories() {
             count={proPageCount}
             onChange={getProCategoryForPage}
             sx={{
-              margin: "10px auto",
+              margin: "0 auto",
               width: "fit-content",
               "& .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
                 {
