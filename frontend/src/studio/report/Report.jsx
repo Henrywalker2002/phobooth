@@ -67,7 +67,7 @@ function Report() {
       <div className="text-indigo-800 text-2xl font-semibold flex justify-center whitespace-nowrap ">
         Báo cáo kinh doanh
       </div>
-      <div className="w-full flex flex-col gap-5 items-center px-[80px] my-8">
+      <div className="w-full flex flex-col gap-5 items-center px-[80px] my-5">
         <Widgets studioInfor={studioInfor} setStudioInfor={setStudioInfor} />
 
         <ItemTable studioInfor={studioInfor} />

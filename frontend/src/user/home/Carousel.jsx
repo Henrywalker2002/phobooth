@@ -182,7 +182,7 @@ function Carousel({ handleAddToCart }) {
               </MenuList>
             </Paper>
           </div>
-          <div className="flex flex-col items-stretch w-[1000px] ml-5">
+          <div className="flex flex-col items-stretch w-fit ml-5">
             <div className="flex flex-col">
               <div className="justify-center items-stretch flex max-w-full gap-3 mr-16 rounded-[43px] self-end">
                 <Button
