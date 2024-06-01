@@ -32,7 +32,7 @@ function Complains() {
   const [pageCount, setPageCount] = React.useState(1);
   const [complainData, setComplainData] = React.useState({});
   const [filterVal, setFilterVal] = React.useState({});
-  const limit = 10;
+  const limit = 6;
 
   React.useEffect(() => {
     axiosPrivate
